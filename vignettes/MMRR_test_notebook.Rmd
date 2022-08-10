@@ -1,0 +1,57 @@
+---
+title: "MMRR"
+output: github_document
+---
+
+# Setup
+```{r libraries, warning = FALSE, message = FALSE}
+library("ccgplandgen")
+library("here")
+library("tidyverse")
+devtools::load_all()
+```
+### Load test data
+```{r data}
+# Read in genetic distance matrix
+gendist <- read_table(here("test_data","gen_dist_mat.txt"), col_names = FALSE)
+Ydist <- as.matrix(gendist)
+
+# Create list of points from file
+coords <- read_csv(here("test_data","LizardLocalities.csv"))
+colnames(coords) <- c("x","y")
+geodist <- as.matrix(dist(coords, diag = TRUE, upper = TRUE))
+
+# And a set of worldclim rasters for the study area
+envlayers <- raster::stack(list.files(here("test_data","Hispaniola"), full.names = TRUE))
+
+# Make env
+env <- raster::extract(envlayers, coords)
+env <- as_tibble(env)
+
+Xdist <- map(env, vec_to_dist)
+Xdist[["geodist"]] <- geodist
+
+```
+# Run MMRR
+
+## Model with all variables
+```{r all vars}
+results <- MMRR(Ydist, Xdist)
+
+results
+```
+
+
+## Model with variable selection
+```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
+results <- MMRR.varSel(Ydist, Xdist)
+
+results
+```
+
+
+
+
+
+
+

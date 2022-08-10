@@ -1,0 +1,86 @@
+---
+title: "Map Masks"
+output: github_document
+---
+
+# Setup
+```{r libraries, warning = FALSE, message = FALSE}
+library("ccgplandgen")
+library("raster")
+library("rgeos")
+library("here")
+library("tidyverse")
+devtools::load_all()
+```
+
+# Masks
+
+### Load test data 
+
+```{r test data}
+# Create list of points from file
+coords <- read_csv(here("data", "belli_df.csv")) %>% dplyr::select(long, lat)
+colnames(coords) <- c("x", "y")
+
+# And a set of worldclim rasters for the study area
+env_files <- list.files(here("data", "PC_layers"), full.names = TRUE)
+envlayers <- raster::stack(env_files)
+
+# map
+RGBmap <- raster::stack(here("data", "RGB_PC_stack.tif"))
+```
+
+## Range based mask
+
+Mask all areas outside range of environmental values included in data (conservative - if any area falls outside the range of the data for any variable, the area is masked)
+
+```{r range mask}
+map_mask <- extrap_mask(coords, envlayers, method = "range")
+plot_extrap_mask(RGBmap, map_mask, RGB_cols = TRUE)
+```
+
+
+## Standard deviation based mask
+
+Mask all areas outside of the mean +/- some number of SDs outside the environmental values included in data (conservative - if any area falls outside the range of the data for any variable, the area is masked)
+
+```{r sd mask}
+map_mask <- extrap_mask(coords, envlayers, method = "sd", nsd = 2)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "sd", nsd = 3)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+```
+
+## Buffer based mask
+
+Mask all areas outside of a circular buffer of a fixed width around the coordinates provided (agnostic to environment) 
+
+```{r buffer mask}
+map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 0.25)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 0.5)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 1)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+```
+
+## Convex hull based mask
+
+Mask all areas outside of a convex hull around the coordinates provided (agnostic to environment) 
+
+```{r chull mask}
+map_mask <- extrap_mask(coords, envlayers, method = "chull")
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "chull", buffer_width = 0.25)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "chull", buffer_width = 0.5)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+
+map_mask <- extrap_mask(coords, envlayers, method = "chull", buffer_width = 1)
+plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+```

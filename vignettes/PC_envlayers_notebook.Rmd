@@ -1,0 +1,53 @@
+---
+title: "Environmental PC Layers"
+output: github_document
+---
+```{r, warning = FALSE, message = FALSE}
+library("ccgplandgen")
+library("terra")
+library("here")
+library("viridis")
+devtools::load_all()
+```
+
+```{r}
+env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
+envstack <- terra::rast(env_files)
+```
+
+```{r plot rasters, fig.width = 5, fig.height = 5}
+terra::plot(envstack, col = turbo(100), axes = FALSE)
+```
+
+```{r, RGB plot, fig.width = 5, fig.height = 6}
+
+env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
+envstack <- terra::rast(env_files)
+
+for(layer in 1:3){
+  minval <- minmax(envstack[[layer]])[1,]
+  maxval <- minmax(envstack[[layer]])[2,]
+  
+  envstack[[layer]] <- ((envstack[[layer]] - minval) / (maxval - minval))*255
+}
+
+terra::plotRGB(envstack, r = 1, g = 2, b = 3)
+```
+
+```{r}
+env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
+envstack <- raster::stack(env_files)
+
+# scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
+for(layer in 1:3){
+    minval <- envstack[[layer]]@data@min
+    maxval <- envstack[[layer]]@data@max
+  
+    envstack[[layer]] <- ((envstack[[layer]] - minval) / (maxval - minval))*255
+  }
+
+plotRGB(envstack, r = 1, g = 2, b = 3)
+
+writeRaster(envstack, here("data",  "RGB_PC_stack.tif"), overwrite = TRUE)
+```
+

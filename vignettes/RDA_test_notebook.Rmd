@@ -1,0 +1,57 @@
+---
+title: "RDA"
+output: html_document
+---
+
+# Setup
+
+```{r, warning=FALSE, message=FALSE}
+library("ccgplandgen")
+library("here")
+library("gt")
+
+# RDA
+library("vegan")
+library("raster")
+library("robust")
+library("tidyverse")
+# BiocManager::install("qvalue")
+library("qvalue")
+
+devtools::load_all()
+```
+
+### Load Test Data
+
+```{r, warning = FALSE}
+# gen matrix
+gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
+gen <- gen[,-1]
+
+# coords
+coords <- read.table(here("test_data","Scelop.coord"))
+
+# And a set of worldclim rasters for the study area
+# And a set of worldclim rasters for the study area
+env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
+envstack <- raster::stack(env_files)
+
+#make env
+env <- raster::extract(envstack, coords)
+```
+
+# Run RDA
+```{r, warning = FALSE, message = FALSE}
+results <- rda_run(gen, env,coords, model = "full", sig = 0.05, Pin = 0.05, R2permutations = 1000, R2scope = T, padj_method = "fdr")
+```
+```{r warning = FALSE}
+lm_table(results$lm_df)
+```
+```{r}
+rda_biplot(TAB_loci, TAB_var, rda_axes = c(1,2))
+rda_biplot(TAB_loci, TAB_var, rda_axes = c(2,3))
+```
+
+
+
+

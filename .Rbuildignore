@@ -3,3 +3,4 @@
 ^landgen\.Rproj$
 ^\.Rproj\.user$
 ^package_setup\.qmd$
+^data-raw$
