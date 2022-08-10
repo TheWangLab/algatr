@@ -1,0 +1,16 @@
+---
+title: "package_setup"
+format: html
+editor: visual
+---
+
+```{r}
+library(usethis)
+library(here)
+library(devtools)
+```
+
+```{r}
+use_build_ignore("package_setup.qmd")
+```
+

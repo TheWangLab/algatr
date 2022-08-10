@@ -1,0 +1,5 @@
+^renv$
+^renv\.lock$
+^landgen\.Rproj$
+^\.Rproj\.user$
+^package_setup\.qmd$
