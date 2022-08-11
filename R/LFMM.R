@@ -3,7 +3,7 @@
 #  - test out k selection and add documentation for each method
 
 #' Run LFMM
-#'
+#' TODO: APB make a note of what the defaults are for all these params
 #' @param gen genotype matrix
 #' @param env dataframe with environmental data
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
@@ -20,10 +20,11 @@
 #' @examples
 lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k_selection = "tracy.widom", Kvals = 1:20, sig = 0.05, p.adj = "none"){
 
+
   # PCA to determine number of latent factors
   # if K is not specified it is calculated based on given K selection method
   if(is.null(K)){
-    K <- get_K(gen, coords, k_selection = k_selection, Kvals = Kvals)
+    K <- get_K(gen, coords, K_selection = K_selection, Kvals = Kvals)
   }
 
   # gen matrix
@@ -75,7 +76,7 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
 #' Function to Select K value
 #'
 #' @param gen genotype matrix
-#' @param k_selection method for performing k selection (can either by "tracy.widom", "quick.elbow", or "tess")
+#' @param K_selection method for performing k selection (can either by "tracy.widom", "quick.elbow", or "tess")
 #' @param coords coordinates for TESS based K selection
 #'
 #' @return
@@ -176,6 +177,19 @@ get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", 
   return(K)
 }
 
+#' Get candidate loci row numbers
+#'
+#' @param pvec vector of pvalues
+#' @param sig alpha level
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_loci <- function(pvec, sig){
+  loci <- which(pvec < sig)
+  return(loci)
+}
 
 # quickly choose an elbow for a PC.
 # at variance below 5% per component, choose the largest % drop

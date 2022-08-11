@@ -23,6 +23,7 @@ devtools::load_all()
 
 ```{r, warning = FALSE}
 # gen matrix
+# TODO: make sure to make it clear it's LFMM 2.0 (citation) not 1
 gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
 gen <- gen[,-1]
 
