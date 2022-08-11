@@ -5,7 +5,7 @@
 \alias{liz_vcf}
 \title{Example VCF from Bouzid et al. 2022}
 \format{
-A vcfR object with 1000 loci and 101 samples
+A vcfR object with 1000 loci and 53 samples
 }
 \source{
 \url{https://doi.org/10.1111/mec.15836}

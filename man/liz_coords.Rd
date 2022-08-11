@@ -5,7 +5,7 @@
 \alias{liz_coords}
 \title{Example coordinates from Bouzid et al. 2022}
 \format{
-A dataframe with x and y coordinates for 101 samples
+A dataframe with x and y coordinates for 53 samples
 }
 \source{
 \url{https://doi.org/10.1111/mec.15836}

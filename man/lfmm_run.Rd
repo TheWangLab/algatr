@@ -12,7 +12,8 @@ lfmm_run(
   lfmm_method = "ridge",
   k_selection = "tracy.widom",
   Kvals = 1:20,
-  sig = 0.05
+  sig = 0.05,
+  p.adj = "none"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ lfmm_run(
 \item{Kvals}{values of K to test if using "tess" method of K selection}
 
 \item{sig}{alpha level for determining candidate loci}
+
+\item{p.adj}{method to use for p-value correction (defaults to "none")}
 }
 \description{
 Run LFMM

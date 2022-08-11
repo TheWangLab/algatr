@@ -34,9 +34,9 @@ mat <- sim.cor(100,50)
 result <- princomp(mat)
 eig <- result$sdev^2
 elb.a <- quick.elbow(eig)
-pca.scree.plot(eig,elbow=elb.a,M=mat) 
+pca.scree.plot(eig,elbow=elb.a,M=mat)
 elb.b <- quick.elbow(eig,low=.05) # decrease 'low' to select more components
-pca.scree.plot(eig,elbow=elb.b,M=mat) 
+pca.scree.plot(eig,elbow=elb.b,M=mat)
 # random (largely independent) data, usually higher elbow #
 mat2 <- generate.test.matrix(5,3)
 result2 <- princomp(mat2)
