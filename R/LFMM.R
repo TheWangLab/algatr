@@ -13,13 +13,14 @@
 #' @param Kvals values of K to test if using "tess" method of K selection
 #' @param sig alpha level for determining candidate loci
 #' @param p.adj method to use for p-value correction (defaults to "none")
+#' @inheritParams lfmm::lfmm_test
 #'
 #' @return
 #' @export
 #'
 #' @examples
-lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k_selection = "tracy.widom", Kvals = 1:20, sig = 0.05, p.adj = "none"){
-
+lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k_selection = "tracy.widom",
+                     Kvals = 1:10, sig = 0.05, p.adj = "none", calibrate = "gif"){
 
   # PCA to determine number of latent factors
   # if K is not specified it is calculated based on given K selection method
@@ -39,7 +40,6 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
     envmat <- envmat[complete.cases(envmat),]
   }
 
-  # All Env
   # run model
   if(lfmm_method == "ridge"){lfmm_mod <- lfmm_ridge(genmat, envmat, K = K)}
   if(lfmm_method == "lasso"){lfmm_mod <- lfmm_lasso(genmat, envmat, K = K)}
@@ -48,26 +48,29 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
   pv <- lfmm_test(Y = genmat,
                   X = envmat,
                   lfmm = lfmm_mod,
-                  calibrate = "gif")
+                  calibrate = calibrate)
 
   # adjust pvalues
   pval_df <- as_tibble(pv$calibrated.pvalue)
+  # TODO: APB check this:
   pvalues <- map_df(pval_df, p.adjust, method = p.adj)
 
   # check qqplots
   par(mfrow = c(1, ncol(pvalues)))
   print(lfmm_qqplot(pvalues))
 
-  # get list of candidate loci and make manhattan plot
   # TODO: FIGURE OUT HOW TO ADD PLOT TITLES
-  cand_loci <- map(pvalues, get_loci, sig = sig)
-  # make plots
+  # make Manhattan plots
   print(lfmm_manhattanplot(pvalues, sig))
+
+  # get list of candidate loci
+  cand_loci <- map(pvalues, get_loci, sig = sig)
 
   # make list of results
   results <- list(K = K,
                   loci = cand_loci,
-                  pvalues = pvalues)
+                  pvalues = pvalues,
+                  mod = lfmm_mod)
 
   return(results)
 }
@@ -76,14 +79,14 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
 #' Function to Select K value
 #'
 #' @param gen genotype matrix
-#' @param K_selection method for performing k selection (can either by "tracy.widom", "quick.elbow", or "tess")
+#' @param K_selection method for performing K selection (can either by "tracy.widom", "quick.elbow", or "tess")
 #' @param coords coordinates for TESS based K selection
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_K <- function(gen, coords = NULL, k_selection = "tracy.widom", Kvals = Kvals, ...){
+get_K <- function(gen, coords = NULL, K_selection = "tracy.widom", Kvals = Kvals, ...){
 
   if(k_selection == "tracy.widom"){K <- get_K_tw(gen)}
 
@@ -96,6 +99,8 @@ get_K <- function(gen, coords = NULL, k_selection = "tracy.widom", Kvals = Kvals
   return(K)
 }
 
+#' TODO: Anusha fix below
+#' TODO: make critical point modifiable
 #' @describeIn get_K Determine K using Tracy-Widom Test
 #' @param gen genotype matrix
 #'
@@ -125,7 +130,7 @@ get_K_tw <- function(gen){
 }
 
 #' @describeIn get_K Determine K using PCA and \code{quick.elbow}
-#'
+#' TODO: make low and max.pc modifiable
 #' @param gen genotype matrix
 #'
 #' @return
@@ -151,7 +156,7 @@ get_K_elbow <- function(gen){
 
 
 #' @describeIn get_K Determine K using TESS and \code{bestK}
-#'
+#' TODO: add in colons for tess
 #' @param gen genotype matrix
 #' @param coords coordinates for "tess"
 #' @param Kvals values of K to test for "tess"
@@ -175,20 +180,6 @@ get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", 
   K <-  bestK(tess3_obj, Kvals)
 
   return(K)
-}
-
-#' Get candidate loci row numbers
-#'
-#' @param pvec vector of pvalues
-#' @param sig alpha level
-#'
-#' @return
-#' @export
-#'
-#' @examples
-get_loci <- function(pvec, sig){
-  loci <- which(pvec < sig)
-  return(loci)
 }
 
 # quickly choose an elbow for a PC.
@@ -284,6 +275,7 @@ bestK <- function(tess3_obj, Kvals){
 }
 
 #' Wrapper for find.clusters function
+#' TODO: check ... within wrapper function
 #' @param gen a genotype matrix
 #' @param ... additional arguments to pass to \code{adegenet::find.clusters}
 #' @inheritParams adegenet::find.clusters
@@ -344,7 +336,8 @@ lfmm_manhattanplot <- function(pvalues, sig){
   pvalues10$loci <- 1:nrow(pvalues10)
   pvalues_tidy <- pvalues10 %>% gather(env, p, colnames(pvalues))
 
-  plt <- ggplot(pvalues_tidy, aes(x = loci, y = p)) +
+  plt <-
+    ggplot2::ggplot(pvalues_tidy, aes(x = loci, y = p)) +
     geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     geom_point(alpha = 0.75) +
     facet_wrap( ~ env, nrow = 1) +
