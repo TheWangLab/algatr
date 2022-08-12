@@ -360,7 +360,7 @@ lfmm_manhattanplot <- function(pvalues, sig){
     ggplot2::ggplot(pvalues_tidy, aes(x = loci, y = p)) +
     geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     geom_point(alpha = 0.75) +
-    facet_wrap( ~ env, nrow = 1) +
+    facet_wrap( ~ env, nrow = ncol(pvalues)) +
     labs(x = NULL,
          y = "-log10(p)") +
     theme_bw() +
