@@ -1,0 +1,81 @@
+---
+title: "Gendist_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gendist_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Calculating genetic distances
+
+```{r setup, warning = FALSE, message = FALSE}
+library(landgen)
+library(vcfR)
+library(ecodist)
+library(adegenet)
+```
+
+For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist_calc()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are as follows:
+
+1.  Euclidean distance (the `"euclidean"` argument), which uses the `distance()` function within the ecodist package
+
+2.  Bray-Curtis distance (the `"bray-curtis"` argument), which uses the `distance()` function within the ecodist package
+
+3.  Proportion of shared alleles (the `"dps"` argument), which uses the `propShared()` function within the adegenet package
+
+4.  PC-based distance (the `"pc"` argument), which uses the `prcomp()` function within the stats package, and selects the number of PCs using a Tracy-Widom test
+
+5.  Processing distances generated using Plink (the `"plink"` argument)
+
+A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
+
+This package also allows a user to look at the relationship between distance metrics using the `plot_dist()` function.
+
+## Example
+
+As an example, we'll be using the *Sceloporus* RADseq dataset from [Bouzid et al., 2022](https://onlinelibrary.wiley.com/doi/10.1111/mec.15836). Although the original dataset contains >6K SNPs, we've pruned the dataset down to 1,000 SNPs and 101 individuals to make all vignettes run faster. For distances 1-4 above, a vcf is used as input. However, for formatting Plink distances, two files are required as output from Plink: the plink.dist file and the plink.dist.id file, the latter of which contains sample names.
+
+### Calculate genetic distances
+
+To calculate Euclidean distances between our samples:
+
+```{r}
+# Calculate Euclidean distance matrix
+euc_dists <- gen_dist_calc(vcf_file = here("TODO.vcf"), dist_type = "euclidean")
+
+head(euc_dists)
+```
+
+Now, let's process Plink distances:
+
+```{r}
+# TODO: code in a check here that plink files are in correct format?
+plink_dists <- gen_dist_calc(plink_file = here("TODO.dist"), plink_id_file = here("TODO.dist.id"), dist_type = "plink")
+```
+
+Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
+
+```{r}
+pc_dists <- gen_dist_calc(vcf_file = here("TODO.vcf"), dist_type = "pc")
+```
+
+### Compare genetic distance results
+
+To compare between the genetic distances you just produced, we can plot them:
+
+```{r}
+# Plot some pairwise comparisons
+p_euc_plink <- plot_dist(euc_dists, plink_dists)
+p_pc_plink <- plot_dist(pc_dists, plink_dists)
+
+# Show all plots as panels on a single plot
+plot_grid(p_euc_plink, p_pc_plink, nrow=1)
+```

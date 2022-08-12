@@ -1,20 +1,126 @@
-library("adegenet")
+#' Calculate genetic distances
+#'
+#' @param dist_type is the type of genetic distance to calculate
+#' @param criticalpoint is the critical point for the significance threshold for the TW test within the PCA
+#' @param vcf_file path to vcf file
+#' @param plink_file path to plink distance file (typically ".dist")
+#' @param plink_id_file path to plink id file (typically ".dist.id")
+#'
+#' @return pairwise distance matrix for given distance metric
+#'
+gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, criticalpoint = 2.0234){
 
-#' Function to measure genetic distances between samples, used as input for various downstream analyses
-#' Genetic distances are measured by proportions of shared alleles (DPS)
-#' 
-#' @param genind genind object containing genotypes (can contain missing values)
-#' @param species specifies species name (Genus_species) to save output file
-#' 
-#' @return square matrix with pairwise proportions of shared alleles (0 to 1), saved as csv
+  # Calculate Euclidean distances -------------------------------------------
 
-genDist <- function(genind, species){
-  
-  # calculate shared alleles from genind object
-  DPSdists <- propShared(genind)
-  
-  # define path to save output files to
-  path = "../data/GenDist"
-  
-  write_csv(as.data.frame(DPSdists), (paste(path, species, "_DPS_data.csv", sep = "")))
+  if (dist_type == "euclidean") {
+    # Read in vcf file
+    vcf <- vcfR::read.vcfR(vcf_file)
+    # Convert to genlight and matrix
+    gl <- vcfR::vcfR2genlight(vcf)
+    mat <- as.matrix(gl)
+    dists <- ecodist::distance(mat, method="euclidean")
+    dists <- as.matrix(dists)
+    return(as.data.frame(dists))
+  }
+
+  # Calculate Bray-Curtis distances -----------------------------------------
+
+  if (dist_type == "bray-curtis") {
+    # Read in vcf file
+    vcf <- vcfR::read.vcfR(vcf_file)
+    # Convert to genlight and matrix
+    gl <- vcfR::vcfR2genlight(vcf)
+    mat <- as.matrix(gl)
+    dists <- ecodist::distance(mat, method="bray-curtis")
+    dists <- as.matrix(dists)
+    return(as.data.frame(dists))
+  }
+
+  # Calculate proportion of shared alleles ----------------------------------
+
+  if (dist_type == "dps") {
+    # Read in vcf file
+    vcf <- vcfR::read.vcfR(vcf_file)
+    # Convert to genind
+    genind <- vcfR::vcfR2genind(vcf)
+    dists <- adegenet::propShared(genind)
+    return(as.data.frame(dists))
+  }
+
+
+  # Process Plink distance output files -------------------------------------
+
+  if (dist_type == "plink") {
+    dists <- as.data.frame(readr::read_tsv(plink_file, col_names = FALSE))
+    plink_names <- readr::read_tsv(plink_id_file, col_names = FALSE) %>%
+      dplyr::select(-`X1`) %>%
+      as.matrix()
+    # Assign row and col names according to sampleID
+    rownames(dists) <- plink_names
+    colnames(dists) <- plink_names
+    return(dists)
+  }
+
+  # PC-based dist -----------------------------------------------------------
+
+  if (dist_type == "pc"){
+    # Read in vcf file
+    vcf <- vcfR::read.vcfR(vcf_file)
+    # Convert to genlight
+    gl <- vcfR::vcfR2genlight(vcf)
+    # Perform PCA
+    pc <- stats::prcomp(gl)
+
+    # Get eig
+    eig <- pc$sdev^2
+
+    # Run Tracy-Widom test
+    # NOTE: critical point corresponds to significance level.
+    # If the significance level is 0.05, 0.01, 0.005, or 0.001,
+    # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively.
+    # The default is 2.0234.
+    tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
+
+    # Get K based on number of significant eigenvalues
+    K <- tw_result$SigntEigenL
+
+    # Calculate PC distance based on significant PCs
+    dists <- as.matrix(dist(pc$x[,1:K], diag = TRUE, upper = TRUE))
+    return(as.data.frame(dists))
+  }
+
+}
+
+#' Plot the relationship between two distance metrics
+#' TODO: are metric names really necessary?
+#'
+#' @param dist_x df containing square distance matrix for x axis
+#' @param dist_y df containing square distance matrix for y axis
+#' @param metric_name_x name of distance metric for x axis
+#' @param metric_name_y name of distance metric for y axis
+#'
+plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
+
+  # Melt from square to long
+  melt_x = harrietr::melt_dist(as.matrix(dist_x)) %>%
+    dplyr::rename(!!metric_name_x := dist)
+  melt_y = harrietr::melt_dist(as.matrix(dist_y)) %>%
+    dplyr::rename(!!metric_name_y := dist)
+
+  if (metric_name_x == "dps" || metric_name_y == "dps"){
+    # TODO: should check whether inds are the same across datasets, return something if not
+    joined <- dplyr::full_join(melt_x, melt_y) %>%
+      dplyr::mutate(rev_dps = (1-dps))
+    joined %>%
+      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
+      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
+      geom_point(color="black", size=.2, alpha = .5)
+  } else {
+    # TODO: should check whether inds are the same across datasets, return something if not
+    joined <- dplyr::full_join(melt_x, melt_y)
+    joined %>%
+      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
+      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
+      geom_point(color="black", size=.2, alpha = .5)
+  }
 }
