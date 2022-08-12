@@ -15,10 +15,11 @@
 #' @export
 #'
 #' @examples
-lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k_selection = "tracy.widom",
-                     Kvals = 1:10, sig = 0.05, p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
-                     low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
-                     criterion = "diffNgroup", max.n.clust = 10){
+lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
+                     k_selection = "tracy.widom", Kvals = 1:10, sig = 0.05,
+                     p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
+                     low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
+                     choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
 
   # PCA to determine number of latent factors
   # if K is not specified it is calculated based on given K selection method
@@ -55,12 +56,15 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
   # if p.adj method is specified, perform p-value correction by column (by env variable)
   pvalues <- map_df(pval_df, p.adjust, method = p.adj)
 
+  # stop if all pvalues are na
+  if(all(is.na(pvalues))) stop("all p-values are NA")
+
   # check qqplots
   par(mfrow = c(1, ncol(pvalues)))
   print(lfmm_qqplot(pvalues))
 
-  # TODO: FIGURE OUT HOW TO ADD PLOT TITLES
   # make Manhattan plots
+  colnames(pvalues) <- colnames(envmat)
   print(lfmm_manhattanplot(pvalues, sig))
 
   # get list of candidate loci
