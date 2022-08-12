@@ -1,31 +1,31 @@
 
-# TODO:
-#  - test out k selection and add documentation for each method
-
 #' Run LFMM
-#' TODO: APB make a note of what the defaults are for all these params
 #' @param gen genotype matrix
 #' @param env dataframe with environmental data
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
 #' @param K number of latent factors (if left blank, K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} or \code{"lasso"})
 #' @param k_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
-#' @param Kvals values of K to test if using "tess" method of K selection
 #' @param sig alpha level for determining candidate loci
 #' @param p.adj method to use for p-value correction (defaults to "none")
 #' @inheritParams lfmm::lfmm_test
+#' @inheritParams select_K
 #'
 #' @return
 #' @export
 #'
 #' @examples
 lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k_selection = "tracy.widom",
-                     Kvals = 1:10, sig = 0.05, p.adj = "none", calibrate = "gif"){
+                     Kvals = 1:10, sig = 0.05, p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
+                     low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
+                     criterion = "diffNgroup", max.n.clust = 10){
 
   # PCA to determine number of latent factors
   # if K is not specified it is calculated based on given K selection method
   if(is.null(K)){
-    K <- get_K(gen, coords, K_selection = K_selection, Kvals = Kvals)
+    K <- select_K(gen, K_selection = K_selection, coords = coords,
+               Kvals = Kvals, criticalpoint = criticalpoint, low = low,
+               max.pc = max.pc)
   }
 
   # gen matrix
@@ -52,7 +52,7 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
 
   # adjust pvalues
   pval_df <- as_tibble(pv$calibrated.pvalue)
-  # TODO: APB check this:
+  # if p.adj method is specified, perform p-value correction by column (by env variable)
   pvalues <- map_df(pval_df, p.adjust, method = p.adj)
 
   # check qqplots
@@ -76,52 +76,67 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge", k
 }
 
 
-#' Function to Select K value
+
+#' K selection
 #'
 #' @param gen genotype matrix
 #' @param K_selection method for performing K selection (can either by "tracy.widom", "quick.elbow", or "tess")
-#' @param coords coordinates for TESS based K selection
+#' @param coords if "tess" method is used, coordinates for TESS based K selection
+#' @param Kvals values of K to test if using "tess" method of K selection
+#' @param criticalpoint if "tracy.widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly. The default is 2.0234.
+#' @param low if "quick.elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance'.
+#' @param max.pc if "quick.elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n')
+#' @param pca.select if "find.clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar". For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).
+#' @param perc.pca if "find.clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA.
+#' @param choose.n.clust if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (TRUE, default), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
+#' @param criterion if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (TRUE, default), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
+#' @param max.n.clust if "find.clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_K <- function(gen, coords = NULL, K_selection = "tracy.widom", Kvals = Kvals, ...){
+select_K <- function(gen, K_selection = "tracy.widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
+                  low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
+                  criterion = "diffNgroup", max.n.clust = 10){
 
-  if(k_selection == "tracy.widom"){K <- get_K_tw(gen)}
+  if(k_selection == "tracy.widom") K <- select_K_tw(gen, criticalpoint)
 
-  if(k_selection == "quick.elbow"){K <- get_K_elbow(gen)}
+  if(k_selection == "quick.elbow") K <- select_K_elbow(gen, low, max.pc)
 
-  if(k_selection == "tess"){K <- get_K_tess(gen, coords, Kvals)}
+  if(k_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
 
-  if(k_selection == "find.clusters") K <- get_K_fc(gen)
+  if(k_selection == "find.clusters") K <- select_K_fc(gen,
+                                                   pca.select = pca.select,
+                                                   perc.pca = perc.pca,
+                                                   choose.n.clust = choose.n.clust,
+                                                   criterion = criterion,
+                                                   max.n.clust = max.n.clust)
 
   return(K)
 }
 
-#' TODO: Anusha fix below
-#' TODO: make critical point modifiable
-#' @describeIn get_K Determine K using Tracy-Widom Test
+
+#' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
+#' @inheritParams AssocTests::tw
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_K_tw <- function(gen){
+select_K_tw <- function(gen, criticalpoint = 2.0234){
+  # turn into df
+  df <- data.frame(gen)
+
   # run pca
-  pc <- prcomp(gen)
+  pc <- prcomp(~., df, na.action = na.omit)
 
   # get eig
   eig <- pc$sdev^2
 
   # run tracy widom test
-  # NOTE:
-  # the critical point is a numeric value corresponding to the significance level.
-  # If the significance level is 0.05, 0.01, 0.005, or 0.001,
-  # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly.
-  # The default is 2.0234.
-  tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = 0.9793)
+  tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
 
   # get K based on number of significant eigenvalues
   K <- tw_result$SigntEigenL
@@ -129,15 +144,15 @@ get_K_tw <- function(gen){
   return(K)
 }
 
-#' @describeIn get_K Determine K using PCA and \code{quick.elbow}
-#' TODO: make low and max.pc modifiable
+#' @describeIn select_K select K using PCA and \code{quick.elbow} method
 #' @param gen genotype matrix
+#' @inheritParams quick.elbow
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_K_elbow <- function(gen){
+select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
   # run pca
   pc <- prcomp(gen)
 
@@ -145,7 +160,7 @@ get_K_elbow <- function(gen){
   eig <- pc$sdev^2
   # estimate number of latent factors using quick.elbow (see general functions for description of how this function works)
   # this is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
-  K <- quick.elbow(eig, low = 0.08, max.pc = 0.9)
+  K <- quick.elbow(eig, low = low, max.pc = max.pc)
 
   par(pty = "s",mfrow = c(1,1))
   plot(eig, xlab = 'PC', ylab = "Variance explained")
@@ -155,8 +170,7 @@ get_K_elbow <- function(gen){
 }
 
 
-#' @describeIn get_K Determine K using TESS and \code{bestK}
-#' TODO: add in colons for tess
+#' @describeIn select_K select K using  TESS and \code{bestK} method
 #' @param gen genotype matrix
 #' @param coords coordinates for "tess"
 #' @param Kvals values of K to test for "tess"
@@ -167,9 +181,9 @@ get_K_elbow <- function(gen){
 #' @export
 #'
 #' @examples
-get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
+select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
   # run tess for all K values
-  tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # plot CV results and mark the K-value automatically selected
   plot(tess3_obj, pch = 19, col = "blue",
@@ -181,6 +195,30 @@ get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", 
 
   return(K)
 }
+
+
+
+#' @describeIn select_K select K using find.clusters method
+#' @param gen a genotype matrix
+#' @inheritParams adegenet::find.clusters
+#' @return
+#' @export
+#'
+#' @examples
+select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
+                        criterion = "diffNgroup", max.n.clust = 10){
+
+  fc <- adegenet::find.clusters(x,
+                                pca.select = pca.select,
+                                perc.pca = perc.pca,
+                                choose.n.clust = choose.n.clust,
+                                criterion = criterion,
+                                max.n.clust = max.n.clust)
+
+  K <- max(as.numeric(fc$grp))
+  return(K)
+}
+
 
 # quickly choose an elbow for a PC.
 # at variance below 5% per component, choose the largest % drop
@@ -219,7 +257,7 @@ get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", 
 #' eig2 <- result2$sdev^2
 #' elb2 <- quick.elbow(result2$sdev^2)
 #' pca.scree.plot(eig2,elbow=elb2,M=mat2)
-quick.elbow <- function(varpc,low=.08,max.pc=.9) {
+quick.elbow <- function(varpc, low=.08, max.pc=.9) {
   ee <- varpc/sum(varpc) # ensure sums to 1
   #print(round(log(ee),3))
   while(low>=max(ee)) { low <- low/2 } # when no big components, then adjust 'low'
@@ -273,28 +311,6 @@ bestK <- function(tess3_obj, Kvals){
   K <- min(which(slope <= quantile(slope)[4]))
   return(K)
 }
-
-#' Wrapper for find.clusters function
-#' TODO: check ... within wrapper function
-#' @param gen a genotype matrix
-#' @param ... additional arguments to pass to \code{adegenet::find.clusters}
-#' @inheritParams adegenet::find.clusters
-#' @return
-#' @export
-#'
-#' @examples
-get_K_fc <- function(gen, max.n.clust = nrow(x) - 1, perc.pca = 90, ...){
-  fc <- adegenet::find.clusters(x,
-                                pca.select = "percVar",
-                                perc.pca = perc.pca,
-                                choose.n.clust = FALSE,
-                                criterion = "diffNgroup",
-                                max.n.clust = max.n.clust,
-                                ...)
-  K <- max(as.numeric(fc$grp))
-  return(K)
-}
-
 
 #' LFMM QQplot
 #'
