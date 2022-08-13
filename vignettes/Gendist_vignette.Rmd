@@ -49,7 +49,7 @@ To calculate Euclidean distances between our samples:
 
 ```{r}
 # Calculate Euclidean distance matrix
-euc_dists <- gen_dist_calc(vcf_file = here("TODO.vcf"), dist_type = "euclidean")
+euc_dists <- gen_dist_calc(vcf_file = here("liz_test.vcf"), dist_type = "euclidean")
 
 head(euc_dists)
 ```
@@ -58,13 +58,13 @@ Now, let's process Plink distances:
 
 ```{r}
 # TODO: code in a check here that plink files are in correct format?
-plink_dists <- gen_dist_calc(plink_file = here("TODO.dist"), plink_id_file = here("TODO.dist.id"), dist_type = "plink")
+plink_dists <- gen_dist_calc(plink_file = here("liz_test.dist"), plink_id_file = here("liz_test.dist.id"), dist_type = "plink")
 ```
 
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
 
 ```{r}
-pc_dists <- gen_dist_calc(vcf_file = here("TODO.vcf"), dist_type = "pc")
+pc_dists <- gen_dist_calc(vcf_file = here("liz_test.vcf"), dist_type = "pc")
 ```
 
 ### Compare genetic distance results

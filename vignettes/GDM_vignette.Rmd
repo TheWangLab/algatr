@@ -1,0 +1,88 @@
+---
+title: "GDM_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GDM_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Generalized dissimilarity modeling (GDM)
+
+```{r setup, warning = FALSE, message = FALSE}
+library(landgen)
+library(gdm)
+library(here)
+library(tidyverse)
+library(raster)
+library(rgdal)
+library(readr)
+```
+
+TODO: [CITATIONS]; describe some overarching theory behind this method
+
+There are four main functions to perform a GDM analysis:
+
+1.  `gdm_do_everything()` - Run the actual GDM and allows for testing with all variables, or with model selection to choose the best-supported variables. This function largely uses the `gdm()` function within the gdm package.
+
+2.  `gdm_coeffs()` - Get coefficients from models to determine support
+
+3.  `gdm_map()` - Create a map given your model
+
+4.  `gdm_plot_isplines()` - Plot isplines
+
+## Read in and process data files
+
+Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
+
+```{r data}
+# Load genetic dist matrix and coordinates for 53 inds, and three environmental layers of test dataset
+load(here("data", "gendist.RDA"))
+load(here("data", "liz_coords.RDA"))
+load(here("data", "CA_env.RDA"))
+```
+
+## Run GDM
+
+TODO: explain under what circumstances you'd want to run the full vs best GDM
+
+### GDM with all variables
+
+```{r all vars}
+results <- gdm_do_everything(gendist, liz_coords, env = NULL, CA_env, model = "full", alpha = 0.05, nPerm = 10, scale = TRUE)
+```
+
+### GDM with model selection
+
+```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
+results <- gdm_do_everything(gendist, liz_coords, env = NULL, CA_env, model = "best", nPerm = 10, scale = TRUE)
+```
+
+## Examining results of GDM
+
+Let's assume we want to move forward with examining the results from the model selection output. First, we'll want to see the coefficients from the models obtained:
+
+```{r preds}
+predictors <- gdm_coeffs(mod)
+
+predictors
+```
+
+Now, let's create a map:
+
+```{r map}
+gdm_map(mod, envlayers, coords)
+```
+
+Finally, let's plot the isplines for our best model:
+
+```{r isplines, fig.width = 9, fig.height = 3}
+gdm_plot_isplines(mod)
+```
