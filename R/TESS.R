@@ -129,7 +129,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, spdf = NULL, tess_method = "pr
 
   # get best K value
   if(k_selection == "auto"){K <-  bestK(tess3_obj, Kvals)}
-  if(k_selection == "manual"){K <- as.numeric(readline(prompt="Enter K Value: "))}
+  if(k_selection == "manual"){K <- as.numeric(readline(prompt = "Enter K Value: "))}
 
   abline(v = K, col = "red", lty = "dashed")
 
@@ -216,6 +216,7 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
     # Skip if props are identical (kriging not possible)
     if(unique(krig_df$prop) == 1){
       # TODO: COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
+      # COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
       warning(paste0("Only one unique Q value for K = ", k, ", skipping (note: may want to consider different K value)"))
       next
     }
@@ -238,6 +239,7 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
   }
 
   # TODO: DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
+  # DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
 
   # rename layers
   names(krig_admix_r) <- paste0("K",1:K)
@@ -266,7 +268,7 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
 #' @export
 #'
 #' @examples
-tess_rainbow_plot <- function(krig_admix, coords = NULL, spdf = NULL, plot_method = "max", minQ = 0.20, alpha = 1, col_pal = "Default", reclassify = FALSE, poly = FALSE){
+tess_rainbow_plot <- function(krig_admix, coords = NULL, spdf = NULL, plot_method = "max", minQ = 0.10, alpha = 1, col_pal = "Default", reclassify = FALSE, poly = FALSE){
 
   # get raster stack
   r <- krig_admix[["raster"]]
@@ -327,10 +329,12 @@ tess_plot_max <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, c
     top_n(1, Q)
 
   # plot each kriged admixture map one by one on top of each other
+  # TODO: convert to purrr::map
   for(i in 1:K){
     pop_spdf <- pop_df[pop_df$K == i, ]
 
     # skip to next iteration if there is no more than one value for that K
+    # TODO: add warning about skipping
     if(nrow(pop_spdf) < 2) next
 
     # make into spdf and convert to raster
@@ -383,8 +387,13 @@ tess_plot_max <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, c
 #'
 #' @examples
 tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, minQ = 0.1, col_pal){
+tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, minQ = 0.10, col_pal){
 
   rl <- krig_admix[["raster"]]
+
+  if(reclassify) rl <- tess_reclass(rl)
+
+  # max of raster values for plotting
   maxr <- max(maxValue(rl))
 
   if(reclassify){
@@ -413,6 +422,7 @@ tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, m
          add = TRUE,
          legend = FALSE,
          zlim = c(minQ, maxr))
+         zlim = c(minr, maxr))
 
   }
 }
@@ -441,6 +451,15 @@ tess_plot_allK <- function(krig_admix, K = K, coords_spdf = NULL, spdf = NULL, c
   }
 }
 
+
+#' Creat TESS barplot
+#'
+#' @inheritParams tess_doEverything
+#'
+#' @return
+#' @export
+#'
+#' @examples
 tess_barplot <- function(qmat, col_pal = turbo(ncol(qmat))){
   pal <- CreatePalette(col_pal)
   barplot(qmat,
@@ -452,6 +471,7 @@ tess_barplot <- function(qmat, col_pal = turbo(ncol(qmat))){
 }
 
 
+# TODO: CHECK THIS
 #' Best K Selection based on cross entropy
 #'
 #' @param tess3_obj list produced by \code{\link{tess3}}
@@ -498,7 +518,6 @@ tess_reclass <- function(r, inc = 0.05, rec = "Default"){
 
 
 # FUNCTIONS IN TESTING ---------------------------------------------------------
-
 stack_maxQ <- function(krig_list){
   K <- length(krig_list)
   rs <- stack()
