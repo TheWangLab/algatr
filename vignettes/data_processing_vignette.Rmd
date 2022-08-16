@@ -1,0 +1,54 @@
+---
+title: "data_processing"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data_processing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Processing genomic data files
+
+```{r setup, warning = FALSE, message = FALSE}
+library(landgen)
+library(vcfR)
+```
+
+For landscape genomic analyses, we need to process our input data files in various ways, which are used throughout the analyses in this package. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
+
+1.    Convert a vcf file to a dosage matrix (the `vcf_to_dosage()` function) and to a genind object (the `vcf_to_genind()` function)
+
+2.    Remove NAs (the `gen_remove_na()` function)
+
+3.    Process environmental data into PCs (the `(TODO)` function)
+
+4.    Remove islands from spatial data (the `rm_islands()` function)
+
+## Examples
+
+### 1a. Converting a vcf to a dosage matrix
+
+A dosage matrix describes
+
+### 1b. Converting a vcf to a genind object
+
+Keep in mind that genind objects split up alleles such that each allele is assigned its own column. In this case, one can see that each locus name is appended with .0 or .1 (because these data are from a diploid organism):
+
+
+### 2. Removing missing values from genomic data
+
+Some landscape genomic methods cannot take in missing data. There are several ways to deal with this, including imputation of missing values or simply removing sites with any missing values, the latter of which is what the `gen_remove_na()` function does.
+
+
+
+### 3. Process environmental data layers
+
+### 4. Remove islands from spatial data for mapping
+
