@@ -114,10 +114,6 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 
     cc <- complete.cases(gdmData)
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
     
-    # Remove any remaining incomplete cases 
-    cc <- complete.cases(gdmData)
-    if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
-    
     # get subset of variables for final model
     finalvars <- gdm_var_select(gdmData, alpha = alpha, nPerm = nPerm)
     
