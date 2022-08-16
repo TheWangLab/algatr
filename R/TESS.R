@@ -216,7 +216,6 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
     # Skip if props are identical (kriging not possible)
     if(unique(krig_df$prop) == 1){
       # TODO: COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
-      # COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
       warning(paste0("Only one unique Q value for K = ", k, ", skipping (note: may want to consider different K value)"))
       next
     }
@@ -239,7 +238,6 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
   }
 
   # TODO: DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
-  # DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
 
   # rename layers
   names(krig_admix_r) <- paste0("K",1:K)
@@ -386,7 +384,6 @@ tess_plot_max <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, c
 #' @export
 #'
 #' @examples
-tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, minQ = 0.1, col_pal){
 tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, minQ = 0.10, col_pal){
 
   rl <- krig_admix[["raster"]]
@@ -421,8 +418,8 @@ tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, m
          main = plot_method,
          add = TRUE,
          legend = FALSE,
+         # TODO: why was this minr instead of minQ?
          zlim = c(minQ, maxr))
-         zlim = c(minr, maxr))
 
   }
 }
