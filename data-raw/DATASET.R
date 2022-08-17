@@ -52,6 +52,18 @@ CA_env <- raster::stack(list.files("inst/extdata/PC_layers/", full.names = TRUE)
 usethis::use_data(CA_env, overwrite = TRUE)
 
 
-
 dos <- dos[complete.cases(dos),]
 prcomp(~., data.frame(dos))
+
+# process plink genetic distances
+plink_file = here("data", "liz_test.dist")
+plink_id_file = here("data", "liz_test.dist.id")
+gendist <- as.data.frame(readr::read_tsv(plink_file, col_names = FALSE))
+plink_names <- readr::read_tsv(plink_id_file, col_names = FALSE) %>%
+  dplyr::select(-`X1`) %>%
+  as.matrix()
+
+# Assign row and col names according to sampleID
+rownames(gendist) <- plink_names
+colnames(gendist) <- plink_names
+usethis::use_data(gendist, overwrite = TRUE)

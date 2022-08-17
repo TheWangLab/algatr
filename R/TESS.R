@@ -3,6 +3,8 @@
 # - FIX PROJECTION WEIRDNESS -> have inputs be projected coords with same projection as SPDF or conversion? - do check and throw error if differen
 # - Copy wingen kriging code/use raster as grid for kriging
 # - FIX ARGUMENTS/WEIRD DF - make inputs rasters or df or both
+# - CHANGE FUNCTION NAME TO tess_do_everything
+# - change k_selection to K_selection
 
 #' TESS function to do everything
 #'
@@ -41,7 +43,7 @@ tess_full <- function(gen, coords, spdf, Kvals = 1:10,
     }
 
   # if only one value provided just use that
-  # FIX THIS TO NOT MAKE WEIRD DF (MAYBE SWITCH BACK FUNCTIONS TO TAKE MORE ARGUMENTS)
+  # TODO: FIX THIS TO NOT MAKE WEIRD DF (MAYBE SWITCH BACK FUNCTIONS TO TAKE MORE ARGUMENTS)
   if(length(Kvals) == 1){
 
     # K is just Kvals if there is only one value
@@ -67,7 +69,7 @@ tess_full <- function(gen, coords, spdf, Kvals = 1:10,
   col_pal = turbo(K)
 
   # plot all layers
-  # FIX THIS SO COORDS ARE PROJECTED Consistently
+  # TODO: FIX THIS SO COORDS ARE PROJECTED Consistently
   coords_spdf <- coord_proj(coords, spdf, crop_to_spdf = TRUE)
 
   # plot all kriged maps for each K
@@ -214,7 +216,7 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
 
     # Skip if props are identical (kriging not possible)
     if(unique(krig_df$prop) == 1){
-      # COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
+      # TODO: COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
       warning(paste0("Only one unique Q value for K = ", k, ", skipping (note: may want to consider different K value)"))
       next
     }
@@ -236,7 +238,7 @@ tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
 
   }
 
-  # DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
+  # TODO: DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
 
   # rename layers
   names(krig_admix_r) <- paste0("K",1:K)
@@ -392,6 +394,14 @@ tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, m
   # max of raster values for plotting
   maxr <- max(maxValue(rl))
 
+  if(reclassify){
+    rl <- tess_reclass(rl)
+
+    # max and raster values for plotting
+    maxr <- max(maxValue(rl))
+  }
+
+
   # plot kriged admixture maps while masking small values (e.g. < minQ)
   for(i in 1:K){
 
@@ -409,7 +419,8 @@ tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, m
          main = plot_method,
          add = TRUE,
          legend = FALSE,
-         zlim = c(minr, maxr))
+         # TODO: why was this minr instead of minQ?
+         zlim = c(minQ, maxr))
 
   }
 }
@@ -504,8 +515,7 @@ tess_reclass <- function(r, inc = 0.05, rec = "Default"){
 
 
 
-# FUNCTIONS IN TESTING : IGNORE ---------------------------------------------------------
-# TODO: move these to META
+# FUNCTIONS IN TESTING ---------------------------------------------------------
 stack_maxQ <- function(krig_list){
   K <- length(krig_list)
   rs <- stack()
