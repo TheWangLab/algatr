@@ -4,13 +4,16 @@ output: github_document
 ---
 
 # Setup
+
 ```{r libraries, warning = FALSE, message = FALSE}
 library("ccgplandgen")
 library("here")
 library("tidyverse")
 devtools::load_all()
 ```
+
 ### Load test data
+
 ```{r data}
 # Read in genetic distance matrix
 gendist <- read_table(here("test_data","gen_dist_mat.txt"), col_names = FALSE)
@@ -30,8 +33,8 @@ env <- as_tibble(env)
 
 Xdist <- map(env, vec_to_dist)
 Xdist[["geodist"]] <- geodist
-
 ```
+
 # Run MMRR
 
 ## Model with all variables

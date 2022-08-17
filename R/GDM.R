@@ -7,7 +7,7 @@
 #' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME)
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
-#' @param nPerm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
+#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE) TODO: ADD STOP
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
@@ -18,16 +18,13 @@
 #' @export
 #'
 #' @examples
-gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, nPerm = 50, scale = FALSE, plot_vars = TRUE){
-
-  # TODO: insert a CHECK here to match sample IDs between gendist and coords, otherwise insert warning
-  # to remind user to make sure before running anything
+gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE, plot_vars = TRUE){
 
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
 
   # Run model with all defaults
-  mod <- gdm_run(gendist, coords, env, model = model, alpha = alpha, nPerm = nPerm, scale = scale)
+  mod <- gdm_run(gendist, coords, env, model = model, alpha = alpha, n_perm = n_perm, scale = scale)
 
   # If mod is null, exit
   if(is.null(mod)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
@@ -61,7 +58,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @param env dataframe with environmental values for each coordinate
 #' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
 #' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
-#' @param nPerm number of permutations to use to calculate variable importance, only matters if model = "best"
+#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best"
 #' @param scale scale genetic distance data from 0 to 1
 #'
 #' @family GDM functions
@@ -70,12 +67,11 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @export
 #'
 #' @examples
-gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 50, scale = FALSE){
+gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
-  # TODO: CHECK SAMPLE IDS between gendist and coords; remove sample IDs from coords and continue
 
-  # Rename coords
+    # Rename coords
   coords <- dplyr::as_tibble(coords)
   colnames(coords) <- c("x","y")
 
@@ -83,7 +79,6 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 
   if(scale){gendist <- scale01(gendist)}
 
   # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
-  # TODO: should there be a warning here specifying that ind-level sampling is assumed?
   site <- 1:nrow(gendist)
 
   # Bind vector of sites with gen distances
@@ -122,14 +117,13 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Get subset of variables for final model
-    finalvars <- gdm_var_select(gdmData, alpha = alpha, nPerm = nPerm)
+    finalvars <- gdm_var_select(gdmData, alpha = alpha, n_perm = n_perm)
 
     # Stop if there are no significant final variables
     if(is.null(finalvars) | length(finalvars) == 0){
       warning("No significant combination of variables, found returning NULL object")
       return(NULL)
     }
-
 
     # Check if x is in finalvars (i.e., if geography is significant/should be included)
     if("geo" %in% finalvars){
@@ -174,7 +168,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 
 #'
 #' @param gdmData data formatted using GDM package
 #' @param alpha alpha level for determining variable significance
-#' @param nPerm number of permutations to run for variable testing
+#' @param n_perm number of permutations to run for variable testing
 #'
 #' @return
 #'
@@ -183,14 +177,13 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 
 #' @export
 #'
 #' @examples
-gdm_var_select <- function(gdmData, alpha = 0.05, nPerm = 10){
-
+gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
+  # TODO: EAC re-run this; save RDA and send to APB
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
-  # TODO: why geo default is false?
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     nPerm = nPerm)
+                     n_perm = n_perm)
 
   # Get pvalues from variable selection model
   pvalues <- vars[[3]]
@@ -229,7 +222,7 @@ gdm_var_select <- function(gdmData, alpha = 0.05, nPerm = 10){
 
 #' Make map from model
 #'
-#' @param gdm_model gdm model
+#' @param gdm_model GDM model
 #' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation
 #' @param coords
@@ -336,7 +329,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 #'
 #' @examples
 gdm_plot_isplines <- function(gdm_model){
-  gdm_model_splineDat <- isplineExtract(gdm_model)
+  gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
   par(mfrow=c(1,ncol(gdm_model_splineDat$x)), pty = "s")
 
@@ -428,12 +421,12 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   # Get all PC values from raster and remove NAs
   rastvals <- data.frame(values(pcaRast))[s,]
   colnames(rastvals) <- colnames(xpc)
-  rastvals <- rastvals[complete.cases(rastvals),]
+  rastvals <- rastvals[stats::complete.cases(rastvals),]
 
   # Get all RGB values from raster and remove NAs
   rastvalsRGB <- data.frame(values(pcaRastRGB))[s,]
   colnames(rastvalsRGB) <- colnames(rastvals)
-  rastvalsRGB <- rastvalsRGB[complete.cases(rastvalsRGB),]
+  rastvalsRGB <- rastvalsRGB[stats::complete.cases(rastvalsRGB),]
 
   # Create vector of RGB colors for plotting
   rastpcacols <- c()
@@ -450,27 +443,27 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   # FINAL PLOT----------------------------------------------------------------------------------------------------------
 
   # Plot points colored by RGB with variable vectors
-  plot <- ggplot() +
+  plot <- ggplot2::ggplot() +
 
     # Create axes that cross through origin
-    geom_hline(yintercept = 0, size=0.2, col = "gray") +
-    geom_vline(xintercept = 0, size=0.2, col = "gray") +
+    ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray") +
+    ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray") +
 
     # Plot points from entire raster
-    geom_point(data = rastvals, aes_string(x=x, y=y), col = rastpcacols, size = 4, alpha = 0.02) +
+    ggplot2::geom_point(data = rastvals, ggplot2::aes_string(x = x, y = y), col = rastpcacols, size = 4, alpha = 0.02) +
 
     # Plot coord values
-    geom_point(data = pcavals, aes_string(x=x, y=y), fill = pcacols, col = "black", pch = 21, size = 3) +
+    ggplot2::geom_point(data = pcavals, ggplot2::aes_string(x = x, y = y), fill = pcacols, col = "black", pch = 21, size = 3) +
 
     # Plot variable vectors
-    geom_text(data = varpc, aes(x=v1, y=v2, label=varnames), size = 4, vjust=1) +
-    geom_segment(data = varpc, aes(x=0, y=0, xend=v1, yend=v2), arrow=arrow(length=unit(0.2,"cm"))) +
+    ggplot2::geom_text(data = varpc, ggplot2::aes(x = v1, y = v2, label = varnames), size = 4, vjust=1) +
+    ggplot2::geom_segment(data = varpc, ggplot2::aes(x = 0, y = 0, xend = v1, yend=v2), arrow = ggplot2::arrow(length = unit(0.2,"cm"))) +
 
     # Plot formatting
-    coord_equal() +
-    theme_bw() +
-    theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(), axis.line = element_blank(), aspect.ratio=1)
+    ggplot2::coord_equal() +
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(), axis.line = element_blank(), aspect.ratio = 1)
 
   # Plot
   print(plot)

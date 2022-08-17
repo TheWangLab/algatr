@@ -1,0 +1,61 @@
+---
+title: "MMRR_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MMRR_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+### Multiple matrix regression with randomization (MMRR)
+
+```{r setup, warning = FALSE, message = FALSE}
+library(landgen)
+library(here)
+library(raster)
+library(tidyverse)
+library(purrr)
+```
+
+Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to disentangle isolation by distance (i.e., an association between genetic and geographic distances) from isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environment and geographic distances).
+
+The randomization aspect of MRR is that significance testing is achieved through random permutations of the rows and columns of the dependent matrix (i.e., genetic distances), and provides significance values for each variable. Once significance testing is completed, MMRR provides a "coefficient ratio", which is the ratio between regression coefficients and thus provides an idea of the relative contributions of IBD and IBE on the genetic variation of your data.
+
+There is one main function to perform a MMRR: `mmrr_do_everything()`. This function runs MMRR, and allows a user to run MMRR with all variables, or with model selection to choose the best-supported variables. This function outputs information on the final model, and coefficients for predictor variables.
+
+We can also use the `gdm_plot_isplines()` function to plot I-splines for each environmental variable and geographic distance, and `gdm_map()` to produce a PCA map with GDM results plotted.
+
+There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
+
+## Read in and process data files
+
+Running MMRR requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
+
+```{r data}
+load(here("data", "gendist.RDA"))
+load(here("data", "liz_coords.RDA"))
+load(here("data", "CA_env.RDA"))
+```
+
+### Run MMRR
+
+## MMRR with all variables
+
+```{r all vars}
+mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full", n_perm = 100)
+```
+
+## MMRR with model selection
+```{r best vars}
+mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", n_perm = 100)
+```
+
+### Results of MMRR
+mmrr_var_sel()

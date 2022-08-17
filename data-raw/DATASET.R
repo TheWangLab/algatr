@@ -6,13 +6,13 @@ liz_vcf <- vcfR::read.vcfR("inst/extdata/populations_r20.haplotypes.filtered_m70
 liz_vcf <- liz_vcf[1:1000,]
 
 # Get CA shapefile
-# download states from tigris
+# Download states from tigris
 states <- tigris::states(cb = TRUE)
-# reproject into wgs84 to match coordinates
+# Reproject into WGS84 to match coordinates
 states <- sf::st_transform(states, 4326)
-# convert to SPDF
+# Convert to SPDF
 states <- sf::as_Spatial(states)
-# subset out CA
+# Subset out CA
 CA <- states[which(states$NAME == "California"), "STUSPS"]
 
 # load and save coords

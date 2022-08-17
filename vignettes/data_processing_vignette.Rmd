@@ -18,37 +18,73 @@ knitr::opts_chunk$set(
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(landgen)
+library(here)
 library(vcfR)
+library(SNPRelate)
+library(SeqArray)
 ```
 
 For landscape genomic analyses, we need to process our input data files in various ways, which are used throughout the analyses in this package. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
 
-1.    Convert a vcf file to a dosage matrix (the `vcf_to_dosage()` function) and to a genind object (the `vcf_to_genind()` function)
+1.    Converting a vcf file to a dosage matrix (the `vcf_to_dosage()` function) and to a genind object (the `vcf_to_genind()` function)
 
-2.    Remove NAs (the `gen_remove_na()` function)
+2.    Pruning variants that are in linkage disequilibrium with one another (the `ld_prune()` function)  
 
-3.    Process environmental data into PCs (the `(TODO)` function)
-
-4.    Remove islands from spatial data (the `rm_islands()` function)
+3.    Remove NAs (the `gen_remove_na()` function)
 
 ## Examples
 
-### 1a. Converting a vcf to a dosage matrix
+Recall the way genotypes are encoded within a vcf: `"0/0"` denotes individual is homozygous for the reference allele, `"0/1"` for heterozygote, and `"1/1"` for a homozygote for the alternate allele; `"./."` is missing data.
 
-A dosage matrix describes
+```{r vcf}
+# Load the vcf
+load(here("data", "liz_vcf.rda"))
 
-### 1b. Converting a vcf to a genind object
+# Look at genotypes for five individuals at five sites:
+liz_vcf@gt[1:5,2:6]
+```
 
-Keep in mind that genind objects split up alleles such that each allele is assigned its own column. In this case, one can see that each locus name is appended with .0 or .1 (because these data are from a diploid organism):
+### Converting a vcf to a dosage matrix
 
+A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (). We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
 
-### 2. Removing missing values from genomic data
+```{r dosage}
+dosage <- vcf_to_dosage(liz_vcf)
 
+# Look at genotypes for five individuals at five sites:
+dosage[1:5,1:5]
+```
+
+### Converting a vcf to a genind object
+
+A genind object is a commonly used format for processing genotype data in R. We can convert a vcf to genind object using the `vcf_to_genind()` function, which largely uses `vcfR2genind()` within the vcfR package, but also has added functionality for assigning individuals to populations. Keep in mind that a genind object splits up alleles such that each allele is assigned its own column, and alleles are encoded with a single number (0, 1, or 2 for a diploid). In this case, one can see that each locus name is appended with .0 or .1 for each allele at a given locus (because these data are from a diploid organism):
+
+```{r genind}
+# Can also assign populations but default is NULL
+genind <- vcf_to_genind(liz_vcf)
+
+# Look at genotypes for five individuals at five sites:
+genind@tab[1:5,1:5]
+```
+
+### Removing sites that are in linkage disequilibrium
+
+We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpggdsLDpruning()` function within the SNPRelate package).
+TODO: describe temp files created within ld_prune function and that they'll be removed
+
+```{r LD-pruning}
+# Stick with ld.threshold default which is 0.6 but change slide.max.n given how small dataset is:
+ld_prune(vcf = here("data", "liz_test.vcf"), outname = "liz_test", out_format = "vcf", slide.max.n=10)
+
+# Let's take a look at the LD-pruned vcf:
+vcf_ldpruned <- read.vcfR("liz_test_LDpruned_r0.6_n10.vcf")
+
+# How many SNPs were retained after LD-pruning?
+nrow(vcf_ldpruned@gt)
+```
+
+### Removing missing values from genomic data
+
+TODO: deal with this section
 Some landscape genomic methods cannot take in missing data. There are several ways to deal with this, including imputation of missing values or simply removing sites with any missing values, the latter of which is what the `gen_remove_na()` function does.
-
-
-
-### 3. Process environmental data layers
-
-### 4. Remove islands from spatial data for mapping
 
