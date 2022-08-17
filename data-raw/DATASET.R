@@ -3,7 +3,7 @@
 # load and save vcf subset
 liz_vcf <- vcfR::read.vcfR("inst/extdata/populations_r20.haplotypes.filtered_m70_randomSNP.vcf")
 # subset out 1000 SNPs
-liz_vcf <- vcf[1:1000,]
+liz_vcf <- liz_vcf[1:1000,]
 
 # Get CA shapefile
 # download states from tigris
@@ -50,3 +50,8 @@ stopifnot(colnames(liz_vcf@gt)[-1] == IDS)
 # load env data
 CA_env <- raster::stack(list.files("inst/extdata/PC_layers/", full.names = TRUE))
 usethis::use_data(CA_env, overwrite = TRUE)
+
+
+
+dos <- dos[complete.cases(dos),]
+prcomp(~., data.frame(dos))
