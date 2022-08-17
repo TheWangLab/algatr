@@ -1,5 +1,14 @@
 
+#' Calculate environmental distance between environmental vars
+#'
+#' @param env dataframe with environmental values for each coordinate
+#'
+#' @return
+#' @export
+#'
+#' @examples
 env_dist <- function(env){
+
   # Standardize environmental variables
   scalenv <- scale(env, center = TRUE, scale = TRUE)
 
@@ -9,8 +18,16 @@ env_dist <- function(env){
 }
 
 
+#' Calculate geographic distance between sampling coordinates
+#'
+#' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y)
+#'
+#' @return
+#' @export
+#'
+#' @examples
 geo_dist <- function(coords){
-  # calculate geodesic distance between points
+  # Calculate geodesic distance between points
   distmat <- geodist::geodist(coords, measure = "geodesic")
 
   return(distmat)
