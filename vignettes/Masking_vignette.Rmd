@@ -16,4 +16,13 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(landgen)
+library(raster)
+library(rgeos)
+library(here)
+library(tidyverse)
+# devtools::load_all()
+```
+
+```{r data}
+
 ```

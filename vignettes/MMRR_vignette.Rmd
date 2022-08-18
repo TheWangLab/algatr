@@ -39,6 +39,7 @@ There are a few assumptions built within this function that the user must be awa
 Running MMRR requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
 
 ```{r data}
+# TODO: change to load example
 load(here("data", "gendist.RDA"))
 load(here("data", "liz_coords.RDA"))
 load(here("data", "CA_env.RDA"))
