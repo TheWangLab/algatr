@@ -140,6 +140,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
   raster::crs(coords) <- raster::crs(envlayers)
 
   # Add a buffer
+  # TODO: spatial object not projected, GEOS expects planar coords
   buff <- rgeos::gBuffer(coords, width = buffer_width)
 
   # Create a mask (just need one of the envlayers to do this since the values don't matter)
@@ -170,7 +171,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 
   # Create proper coords and add projection
   colnames(coords) <- c("x", "y")
-  raster::coordinates(coords) <- ~x+y
+  sp::coordinates(coords) <- ~x+y
   raster::crs(coords) <- raster::crs(env)
 
   # Add a buffer to coords
