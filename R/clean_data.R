@@ -118,8 +118,8 @@ gen_remove_na <- function(gen, nsd = 3){
 }
 
 #' Remove islands from mapping
-#' TODO: fill in param details
-#' @param input
+#' TODO: what's going on with shape within ms_filter_islands?
+#' @param input spatial object (envlayers) to be masked
 #' @param shape
 #' @param min_vertices
 #'
@@ -137,10 +137,10 @@ rm_islands <- function(input, shape, min_vertices = 10000){
 
   if(class(input)[1] == "data.frame" & all(colnames(input) %in% c("ID", "x", "y"))){
     sp <- coords
-    coordinates(sp) <- ~x+y
-    crs(sp) <- raster::crs("+proj=longlat +datum=WGS84 +no_defs")
+    raster::coordinates(sp) <- ~x+y
+    raster::crs(sp) <- raster::crs("+proj=longlat +datum=WGS84 +no_defs")
 
-    sp_sub <- over(no_island, sp, returnList = TRUE)
+    sp_sub <- sp::over(no_island, sp, returnList = TRUE)
     IDs <- sp_sub[[1]]$ID
     coords_noIsland <- coords[coords$ID %in% IDs,]
     return(coords_noIsland)

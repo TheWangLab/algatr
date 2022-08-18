@@ -3,7 +3,7 @@
 #'
 #' @description Creates a raster that can be used to mask areas falling outside the observation range of a dataset, as defined by coordinates and corresponding raster values
 #' @param method method to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.
-#' @return raster mask where TODO: what does this mean 1 values indicate areas that fall outside of observation range
+#' @return raster mask where values of 1 indicate areas that fall outside of observation range
 #' @details method can either be:
 #' 1. range - uses \code{\link{range_mask}}, mask all areas with values outside of the range of any of the values of the coords
 #' 2. sd - uses \code{\link{sd_mask}}, mask all areas outside the mean +/- stdev*nsd of any of the values of the coords (\code{nsd} defaults to 2)
@@ -55,6 +55,9 @@ range_mask <- function(coords, envlayers){
   envmask <- envlayers*0
 
   # Calculate min and max values
+  # TODO: dim(X) must have +ve length when using only PC1 envlayer
+  # bc we're providing vector rather than df/matrix; no error if we do:
+  vals <- as.matrix(vals)
   val_max <- apply(vals, 2, max, na.rm = TRUE)
   val_min <- apply(vals, 2, min, na.rm = TRUE)
 
@@ -89,6 +92,8 @@ range_mask <- function(coords, envlayers){
 sd_mask <- function(coords, envlayers, nsd){
 
   vals <- raster::extract(envlayers, coords)
+  # TODO: check that this is ok
+  vals <- as.matrix(vals)
   envmask <- envlayers*0
 
   val_mean <- apply(vals, 2, mean, na.rm = TRUE)
@@ -131,13 +136,13 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 
   # Create proper coords and add projection
   colnames(coords) <- c("x", "y")
-  raster::coordinates(coords) <- ~x+y
+  sp::coordinates(coords) <- ~x+y
   raster::crs(coords) <- raster::crs(envlayers)
 
-  # add a buffer
+  # Add a buffer
   buff <- rgeos::gBuffer(coords, width = buffer_width)
 
-  # create a mask (just need one of the envlayers to do this since the values don't matter)
+  # Create a mask (just need one of the envlayers to do this since the values don't matter)
   map_mask <- raster::mask(envlayers[[1]], buff, inverse = TRUE)
 
   # Modify mask to get values of 1 for any areas that should be masked
@@ -190,7 +195,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @param map_r raster you want masked
 #' @param map_mask raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
 #' @param RGB_cols whether the plot should be RGB-based or not
-#' @param mask_col color of mask (defaults to black)
+#' @param mask_col color and transparency of mask (defaults to black and alpha=0.9)
 #'
 #' @return plot \code{map} with areas masked based on \code{map_mask}
 #' @export
@@ -201,7 +206,7 @@ plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0,
 
   if(RGB_cols){raster::plotRGB(map_r, r = 1, g = 2, b = 3)} else {raster::plot(map_r)}
 
-  # plots mask as black semi-transparent layer over map
+  # Plots mask as black semi-transparent layer over map
   raster::plot(map_mask, col = mask_col, add = TRUE, legend = FALSE)
 
 }

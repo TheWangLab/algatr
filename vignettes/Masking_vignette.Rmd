@@ -27,55 +27,64 @@ library(tidyverse)
 
 Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled). This allows for avoidance of over-interpreting results from several analyses where mapping is a useful visualization tool (e.g., generalized dissimilarity modeling).
 
+This vignette goes through two main masking functions:
+
+1.    `extrap_mask()`
+
+2.    `plot_extrap_mask()`
+
 ## Read in data
 
 ```{r data}
-# TODO: change to load example
-load(here("data", "gendist.RDA"))
-load(here("data", "liz_coords.RDA"))
-load(here("data", "CA_env.RDA"))
+# Load test data, including CA_env which are the envlayers we'll be using
+load_example()
 
-# Load map for three environmental PCs
-env_files <- list.files(here("inst", "extdata", "PC_layers"), full.names = TRUE)
-# envstack <- terra::rast(env_files)
-RGBmap <- raster::stack(env_files)
-
+# For the purposes of simplicity, let's just use one of the PCs for mapping:
+envlayers <- CA_env$CA_rPCA1
 ```
 
 ## Make a range-based based
 
-Mask all areas outside range of environmental values included in data (conservative: if any area falls outside the range of the data for any variable, the area is masked).
+We can use the `extrap_mask()` function to mask all areas outside range of environmental values included in data (the `"range"` argument). This argument masks conservatively, meaning that if any area falls outside the range of the data for any variable, the area is masked.
 
 ```{r range mask}
-map_mask <- extrap_mask(liz_coords, CA_env, method = "range")
-plot_extrap_mask(RGBmap, map_mask, RGB_cols = TRUE)
+# Extrapolate env values for given coordinates
+map_mask <- extrap_mask(liz_coords, envlayers, method = "range")
+
+# Now, plot the map with masked areas
+plot_extrap_mask(envlayers, map_mask, RGB_cols = TRUE)
+
+# Let's make the masked areas white with no transparency
+plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE, mask_col = rgb(1, 1, 1, alpha = 1))
 ```
 
-## Standard deviation based mask
+## Standard deviation-based mask
 
-Mask all areas outside of the mean +/- some number of SDs outside the environmental values included in data (conservative - if any area falls outside the range of the data for any variable, the area is masked)
+We can also mask using the `"sd"` argument, which masks all areas outside of the mean, +/- some number of standard deviations outside the environmental values included in data (normalized using the `nsd` parameter). This method is still as conservative as the `"range"` argument from above.
 
 ```{r sd mask}
-map_mask <- extrap_mask(coords, envlayers, method = "sd", nsd = 2)
-plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+# Let's start with nsd=2
+map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 2)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 
-map_mask <- extrap_mask(coords, envlayers, method = "sd", nsd = 3)
-plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+# Now, increase nsd to 3 and see how the map masking changes:
+map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 3)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 ```
 
-## Buffer based mask
+## Buffer-based mask
 
-Mask all areas outside of a circular buffer of a fixed width around the coordinates provided (agnostic to environment) 
+We can mask all areas outside of a circular buffer of a fixed width around the coordinates provided using the `"buffer"` argument. Given how the buffer is calculated, this masking is agnostic to environment.
 
 ```{r buffer mask}
-map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 0.25)
-plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 0.25)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 
-map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 0.5)
-plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 0.5)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 
-map_mask <- extrap_mask(coords, envlayers, method = "buffer", buffer_width = 1)
-plot_extrap_mask(RGBmap, map_mask, RGB = TRUE)
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 1)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 ```
 
 ## Convex hull based mask
