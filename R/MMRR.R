@@ -4,10 +4,10 @@
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y)
-#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME)
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 999)
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
+#' @param env dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers
+#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME - Should have option for leaving it NULL)
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); default = "best"
+#' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (default = 999)
 #'
 #' @return
 #' @export
