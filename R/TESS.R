@@ -1,7 +1,8 @@
 
 # TODO:
-# - FIX PROJECTION WEIRDNESS -> have inputs be projected coords with same projection as SPDF or conversion?
-# - FIX ARGUMENTS/WEIRD DF
+# - FIX PROJECTION WEIRDNESS -> have inputs be projected coords with same projection as SPDF or conversion? - do check and throw error if differen
+# - Copy wingen kriging code/use raster as grid for kriging
+# - FIX ARGUMENTS/WEIRD DF - make inputs rasters or df or both
 # - CHANGE FUNCTION NAME TO tess_do_everything
 # - change k_selection to K_selection
 
