@@ -28,8 +28,7 @@ For landscape genomic analyses, environmental data layers must be processed. In 
 For our test dataset, and XXX, we will be using PC-based processing of environmental layers
 
 (1) Import environmental layers
-(2) Get PCs from them
-(3) Calculate environmental distance
+(2) Calculate environmental distance
 
 ```{r data}
 env_files <- list.files(here("inst", "extdata", "PC_layers"), full.names = TRUE)
@@ -69,7 +68,3 @@ plotRGB(envstack, r = 1, g = 2, b = 3)
 
 writeRaster(envstack, here("data",  "RGB_PC_stack.tif"), overwrite = TRUE)
 ```
-
-Calculate environmental distance using the `env_dist()` function
-
-
