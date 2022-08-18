@@ -42,10 +42,7 @@ Running a GDM requires three data files for input: a genetic distance matrix (th
 
 ```{r data}
 # Load genetic dist matrix and coordinates for 53 inds, and three environmental layers for test dataset
-# TODO: load example dataset
-load(here("data", "gendist.RDA"))
-load(here("data", "liz_coords.RDA"))
-load(here("data", "CA_env.RDA"))
+load_example()
 
 # Our code assumes that the first column is longitude and second is latitude; check this:
 head(liz_coords)

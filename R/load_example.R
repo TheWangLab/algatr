@@ -11,6 +11,7 @@ load_example <- function(quiet = FALSE){
   utils::data("liz_vcf")
   utils::data("liz_coords")
   utils::data("CA_env")
+  utils::data("gendist")
 
   if (!quiet) {
     # give message with information about objects
@@ -21,6 +22,7 @@ load_example <- function(quiet = FALSE){
       crayon::yellow(paste0("vcfR object (1000 loci x 53 samples)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
       crayon::blue(crayon::bold("\n*CA_env*")), crayon::blue("RasterStack with PC environmental layers"),
+      crayon::magenta(crayon::bold("\n*gendist*")), crayon::magenta("Genetic distance matrix"),
       crayon::cyan(crayon::bold("\n\n-------------------------------------------------\n"))
     )))
   }
