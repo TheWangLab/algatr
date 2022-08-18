@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Calculating genetic distances
+# Calculating genetic distances
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(landgen)

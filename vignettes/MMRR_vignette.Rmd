@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Multiple matrix regression with randomization (MMRR)
+# Multiple matrix regression with randomization (MMRR)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(landgen)
@@ -34,7 +34,7 @@ We can also use the `gdm_plot_isplines()` function to plot I-splines for each en
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
 
-## Read in and process data files
+### Read in and process data files
 
 Running MMRR requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
 
@@ -43,20 +43,22 @@ Running MMRR requires three data files for input: a genetic distance matrix (the
 load_example()
 ```
 
-### Run MMRR
+## Run MMRR
 
-## MMRR with all variables
+### MMRR with all variables
 
 ```{r all vars}
 mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full", n_perm = 100)
 ```
 
-## MMRR with model selection
+### MMRR with model selection
+
 ```{r best vars}
 mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", n_perm = 100)
 ```
 
-### Results of MMRR
+## MMRR results
+
 ```{r results}
 results <- mmrr_var_sel()
 ```

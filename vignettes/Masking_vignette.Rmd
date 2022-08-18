@@ -22,6 +22,7 @@ library(raster)
 library(rgeos)
 library(here)
 library(tidyverse)
+library(viridis)
 # devtools::load_all()
 ```
 
@@ -41,6 +42,9 @@ load_example()
 
 # For the purposes of simplicity, let's just use one of the PCs for mapping:
 envlayers <- CA_env$CA_rPCA1
+
+# Let's take a look at the map with no masking:
+plot(envlayers, col = viridis(100), axes = FALSE, box = FALSE)
 ```
 
 ## Make a range-based based

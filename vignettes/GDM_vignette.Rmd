@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Generalized dissimilarity modeling (GDM)
+# Generalized dissimilarity modeling (GDM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(landgen)
@@ -36,7 +36,7 @@ We can also use the `gdm_plot_isplines()` function to plot I-splines for each en
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
 
-## Read in and process data files
+### Read in and process data files
 
 Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
 
