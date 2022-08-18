@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+### Masking maps for landscape genomics
+
 ```{r setup}
 library(landgen)
 library(raster)
@@ -22,6 +24,8 @@ library(here)
 library(tidyverse)
 # devtools::load_all()
 ```
+
+Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled).
 
 ```{r data}
 
