@@ -47,7 +47,11 @@ envlayers <- CA_env$CA_rPCA1
 plot(envlayers, col = viridis(100), axes = FALSE, box = FALSE)
 ```
 
-## Make a range-based based
+## Making masked maps
+
+------------------------------------------------------------------------
+
+### Make a range-based based
 
 We can use the `extrap_mask()` function to mask all areas outside range of environmental values included in data (the `"range"` argument). This argument masks conservatively, meaning that if any area falls outside the range of the data for any variable, the area is masked.
 
@@ -56,13 +60,13 @@ We can use the `extrap_mask()` function to mask all areas outside range of envir
 map_mask <- extrap_mask(liz_coords, envlayers, method = "range")
 
 # Now, plot the map with masked areas
-plot_extrap_mask(envlayers, map_mask, RGB_cols = TRUE)
+plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE)
 
 # Let's make the masked areas white with no transparency
 plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE, mask_col = rgb(1, 1, 1, alpha = 1))
 ```
 
-## Standard deviation-based mask
+### Standard deviation-based mask
 
 We can also mask using the `"sd"` argument, which masks all areas outside of the mean, +/- some number of standard deviations outside the environmental values included in data (normalized using the `nsd` parameter). This method is still as conservative as the `"range"` argument from above.
 
@@ -76,7 +80,7 @@ map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 3)
 plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 ```
 
-## Buffer-based mask
+### Buffer-based mask
 
 We can mask all areas outside of a circular buffer of a fixed width around the coordinates provided using the `"buffer"` argument. Given how the buffer is calculated, this masking is agnostic to environment. We can adjust the size of the circular buffer using the `buffer_width` option.
 
@@ -93,7 +97,7 @@ map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width =
 plot_extrap_mask(envlayers, map_mask, RGB = FALSE, mask_col = rgb(1, 1, 1, alpha = 1))
 ```
 
-## Convex hull-based mask
+### Convex hull-based mask
 
 We can also mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument. As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` option.
 

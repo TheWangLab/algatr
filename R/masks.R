@@ -205,6 +205,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)){
 
+  # TODO: should we edit to include options for coloring map other than RGB stuff? e.g., viridis?
   if(RGB_cols){raster::plotRGB(map_r, r = 1, g = 2, b = 3)} else {raster::plot(map_r)}
 
   # Plots mask as black semi-transparent layer over map

@@ -43,7 +43,9 @@ This package also allows a user to look at the relationship between distance met
 
 As an example, we'll be using the *Sceloporus* RADseq dataset from [Bouzid et al., 2022](https://onlinelibrary.wiley.com/doi/10.1111/mec.15836). Although the original dataset contains >6K SNPs, we've pruned the dataset down to 1,000 SNPs and 101 individuals to make all vignettes run faster. For distances 1-4 above, a vcf is used as input. However, for formatting Plink distances, two files are required as output from Plink: the plink.dist file and the plink.dist.id file, the latter of which contains sample names.
 
-### Calculate genetic distances
+## Calculate genetic distances
+
+------------------------------------------------------------------------
 
 To calculate Euclidean distances between our samples:
 

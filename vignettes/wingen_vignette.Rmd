@@ -31,94 +31,78 @@ In short, wingen uses a moving window approach to create maps of genetic diversi
 
 In it, we describe wingen in this paper as follows:
 
-*"(wingen) creates continuous maps of pi, heterozygosity, and allelic richness from standard genotypic and spatial data using a moving window approach. In our approach, the landscape is divided up into cells and genetic diversity is calculated from samples falling within a window (i.e. a box) around each cell (Fig 1). In such a way, the neighborhood around each cell, as defined by the window dimensions, is treated as a population for estimating genetic diversity. The output is a map in which each cell represents the genetic diversity of the neighborhood around it. Because these neighborhoods can contain different numbers of samples, we provide options for rarefaction to control for the effects of sample size differences on measures of genetic diversity. *
+TODO: please see the wingen vignette and documentation for further details on this package.
+
+*"(wingen) creates continuous maps of pi, heterozygosity, and allelic richness from standard genotypic and spatial data using a moving window approach. In our approach, the landscape is divided up into cells and genetic diversity is calculated from samples falling within a window (i.e. a box) around each cell (Fig 1). In such a way, the neighborhood around each cell, as defined by the window dimensions, is treated as a population for estimating genetic diversity. The output is a map in which each cell represents the genetic diversity of the neighborhood around it. Because these neighborhoods can contain different numbers of samples, we provide options for rarefaction to control for the effects of sample size differences on measures of genetic diversity.*
 
 *We also include options for spatial interpolation to create smoother genetic diversity surfaces from the moving window maps. To do this, we use a type of interpolation known as kriging, which estimates values at unknown points using a spatial model known as a variogram. Using kriging based interpolation allows for smoothing out of discontinuities created by the moving window. Finally, the original moving window map as well as the kriged surfaces can be masked to exclude regions that were not sampled or were undersampled. Altogether, wingen provides the tools to create informative maps of genetic diversity that can be used in conservation or population genetic analyses."*
 
-## Example
-
-To demonstrate how wingen works, we will use a subset the data from the simulation example from the package paper (Bishop et al., 202X). These simulations were created using Geonomics (Terasaki Hart et al., 2022) to generate a realistic landscape genomic dataset. In this simulation, spatial variation in genetic diversity is produced by varying population size and gene flow across the landscape via heterogenous carrying capacity and conductance surfaces. These surfaces are based on an example digital elevation model of Tolkien’s Middle Earth produced by the Center for Geospatial Analysis at William & Mary ([Robert, 2020](https://scholarworks.wm.edu/asoer/3/)).
-
-### Load Middle Earth example
+### Load data
 
 The smaller Middle Earth example dataset used in our example contains three objects which are loaded by `load_middle_earth_ex()`:
 
-1. `lotr_vcf` - a vcfR object containing the genetic data
+1.  `lotr_vcf` - a vcfR object containing the genetic data
 
-2. `lotr_coords` - a dataframe object containing sample coordinates
+2.  `lotr_coords` - a dataframe object containing sample coordinates
 
-3. `lotr_lyr` - a raster object of the landscape (higher values indicate greater connectivity/carrying capacity)
-
+3.  `lotr_lyr` - a raster object of the landscape (higher values indicate greater connectivity/carrying capacity)
 
 ```{r load example data, fig.width = 5, fig.height = 5}
-load_middle_earth_ex()
+load_example()
 
-# Genetic data
-lotr_vcf
-
-# Coordinates
-head(lotr_coords)
-
-# Raster data
-lotr_lyr
+# For the purposes of simplicity, let's just use one of the PCs for mapping:
+envlayers <- CA_env$CA_rPCA1
 
 # Map of data
-plot(lotr_lyr, col = magma(100), axes = FALSE, box = FALSE)
-points(lotr_coords, col = mako(1, begin = 0.8), pch = 3, cex = 0.5)
+plot(envlayers, col = magma(100), axes = FALSE, box = FALSE)
+
+# Plot points on top
+points(liz_coords, col = mako(1, begin = 0.4), pch = 3, cex = 0.5)
 ```
 
-If users don't have a raster layer of their landscape, they can generate one from their coordinates using the `coords_to_raster()` function. The resolution of this raster can be either tuned with the `agg` (to aggregate) and `disagg` (to disaggregate) arguments or defined using the `res` argument. The `res` argument can either be a single value (e.g., 0.00833) or a vector of two values with the x and y resolutions.
+If users don't have a raster layer of their landscape, they can generate one from their coordinates using the `coords_to_raster()` function. The resolution of this raster can be either tuned with the `agg` (to aggregate) and `disagg` (to disaggregate) arguments or defined using the `res` argument.
 
 ```{r, fig.width = 5, fig.height = 5}
-ex_raster1 <- coords_to_raster(lotr_coords, buffer = 1, plot = TRUE)
-ex_raster2 <- coords_to_raster(lotr_coords, buffer = 1, agg = 2, plot = TRUE)
-ex_raster3 <- coords_to_raster(lotr_coords, buffer = 1, disagg = 4, plot = TRUE)
-ex_raster4 <- coords_to_raster(lotr_coords, buffer = 1, res = 10, plot = TRUE)
+ex_raster1 <- coords_to_raster(liz_coords, buffer = 1, plot = TRUE)
+ex_raster2 <- coords_to_raster(liz_coords, buffer = 1, agg = 2, plot = TRUE)
+ex_raster3 <- coords_to_raster(liz_coords, buffer = 1, disagg = 4, plot = TRUE)
 ```
 
-## Workflow
+## Example
 
 The workflow of wingen uses three main functions:
 
-1. `window_gd()` to generate moving window maps of genetic diversity
+1.  `window_gd()` to generate moving window maps of genetic diversity
 
-2. `krig_gd()` to use kriging to interpolate the moving window maps 
+2.  `krig_gd()` to use kriging to interpolate the moving window maps
 
-3. `mask_gd()` to mask areas of the maps from (1) and (2) (e.g., to exclude undersampled areas)
-
+3.  `mask_gd()` to mask areas of the maps from (1) and (2) (e.g., to exclude undersampled areas)
 
 ### Run moving window calculations
 
-----------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 The main arguments to `window_gd()` are:
 
-1. `vcf` - An object of type vcf with genotypic data. The order of this file matters! The coordinate and genetic data should be in the same order, as there are currently no checks for this.
+1.  `vcf` - An object of type vcf with genotypic data. The order of this file matters! The coordinate and genetic data should be in the same order, as there are currently no checks for this.
 
+2.  `coords` - A matrix or dataframe with two columns representing the coordinates of the samples. The first column should be x (i.e., Longitude) and the second should be y (i.e., Latitude).
 
-2. `coords` - A matrix or dataframe with two columns representing the coordinates of the samples. The first column should be x (i.e., Longitude) and the second should be y (i.e., Latitude). 
+3.  `lyr` - A RasterLayer which the window will move across to create the final map. In most cases, this will take the form of a raster of the study area.
 
+4.  `stat` - The genetic diversity summary statistic to calculate. We provide options for calculating nucleotide diversity (pi), average allelic richness, or average heterozygosity. Currently, the option to calculate nucleotide diversity only works for bi-allelic data. In addition, there are two functions for calculating allelic richness: (1) `“allelic.richness”` which uses the `allelic.richness()` function from the hierfstat package and (2) `“biallelic.richness”`, which provides a much faster calculation of allelic richness, but only works for bi-allelic data.
 
-3. `lyr` - A RasterLayer which the window will move across to create the final map. In most cases, this will take the form of a raster of the study area. 
+5.  `fact` - To decrease computational time, we provide the option to aggregate the input raster layer by some factor defined using the `fact` argument. Increasing `fact` will decrease the number of cells and thereby decrease the number of calculations, with the trade-off of decreasing the resolution of the output layers. Users should keep in mind that if they increase `fact`, they may simultaneously want to decrease `wdim` because the proportion of the landscape covered by the neighborhood matrix would otherwise increase substantially.
 
+6.  `wdim` - Used to create the neighborhood matrix for the moving window based on the dimensions provided. This argument can either be set to one value (e.g., 3) which will create a square window (e.g., 3 x 3), or two values can be provided to create a rectangular window (e.g., 3 x 5). We encourage users to experiment with different values of `wdim` to determine the sensitivity of their results to this parameter. Ideally, `wdim` would be set with some knowledge of the study system in mind (e.g., the dispersal patterns and/or neighborhood size of the study organism). A preview of the window size relative to the landscape can be obtained using the `preview_window()` function.
 
-4. `stat` - The genetic diversity summary statistic to calculate. We provide options for calculating nucleotide diversity (pi), average allelic richness, or average heterozygosity. Currently, the option to calculate nucleotide diversity only works for bi-allelic data. In addition, there are two functions for calculating allelic richness: (1) `“allelic.richness”` which uses the `allelic.richness()` function from the hierfstat package and (2) `“biallelic.richness”`, which provides a much faster calculation of allelic richness, but only works for bi-allelic data. 
-
-
-5. `fact` - To decrease computational time, we provide the option to aggregate the input raster layer by some factor defined using the `fact` argument. Increasing `fact` will decrease the number of cells and thereby decrease the number of calculations, with the trade-off of decreasing the resolution of the output layers. Users should keep in mind that if they increase `fact`, they may simultaneously want to decrease `wdim` because the proportion of the landscape covered by the neighborhood matrix would otherwise increase substantially. 
-
-
-6. `wdim` - Used to create the neighborhood matrix for the moving window based on the dimensions provided. This argument can either be set to one value (e.g., 3) which will create a square window (e.g., 3 x 3), or two values can be provided to create a rectangular window (e.g., 3 x 5). We encourage users to experiment with different values of `wdim` to determine the sensitivity of their results to this parameter. Ideally, `wdim` would be set with some knowledge of the study system in mind (e.g., the dispersal patterns and/or neighborhood size of the study organism). A preview of the window size relative to the landscape can be obtained using the `preview_window()` function.
-
-
-7. `rarify` - Users have the option to perform rarefaction by setting the `rarify` argument to `TRUE.` If `rarify = TRUE`, users then define `rarify_n` as the number of samples to rarify to and `rarify_nit` as the number of iterations for rarefaction (e.g., if `rarify_n = 4` and `rarify_nit = 5`, for each sample set, four random samples will be drawn five times). As the window moves across the landscape, three things can occur based on the number of samples in the window: (1) if the number of samples is lower than `rarify_n`, genetic diversity is not calculated and a raster value of `NA` is assigned, (2) if the number of samples is equal to `rarify_n` the genetic diversity statistic is calculated for those samples, (3) if the number of samples is greater than `rarify_n`, rarefaction is implemented and that set of samples is subsampled `rarify_nit` times to a size of `rarify_n` and the mean (or another summary statistic set using `fun`) of those `rarify_nit` iterations is used.
+7.  `rarify` - Users have the option to perform rarefaction by setting the `rarify` argument to `TRUE.` If `rarify = TRUE`, users then define `rarify_n` as the number of samples to rarify to and `rarify_nit` as the number of iterations for rarefaction (e.g., if `rarify_n = 4` and `rarify_nit = 5`, for each sample set, four random samples will be drawn five times). As the window moves across the landscape, three things can occur based on the number of samples in the window: (1) if the number of samples is lower than `rarify_n`, genetic diversity is not calculated and a raster value of `NA` is assigned, (2) if the number of samples is equal to `rarify_n` the genetic diversity statistic is calculated for those samples, (3) if the number of samples is greater than `rarify_n`, rarefaction is implemented and that set of samples is subsampled `rarify_nit` times to a size of `rarify_n` and the mean (or another summary statistic set using `fun`) of those `rarify_nit` iterations is used.
 
 We suggest that users select `rarify_n` and `rarify_nit` such that the number of possible ways to choose `rarify_n` from a sample of size `rarify_n` plus one is greater than `rarify_nit` in order for there to always be `rarify_nit` number of unique combinations of size `rarify_n`. If `rarify = FALSE`, rarefaction is not performed and only steps (1) and (2) occur such that: (1) if the number of samples in the window is less than the `min_n` argument, genetic diversity is not calculated and a raster value of `NA` is assigned, and (2) if the number of samples is equal to or greater than `min_n`, the genetic diversity statistic is calculated for those samples. We highly encourage users to perform rarefaction as genetic diversity statistics are sensitive to sample size. The main benefit of not performing rarefaction is decreased computational time; however, this is not worth the trade-off in inaccuracy unless you are confident that there is no effect of rarefaction after performing your analysis with and without rarefaction.
 
+8.  `parallel` - In order to increase computational efficiency, we provide the option for parallelization by setting the `parallel` argument to `TRUE.` Parallelization is performed using the foreach and doParallel R packages.
 
-8. `parallel` - In order to increase computational efficiency, we provide the option for parallelization by setting the `parallel` argument to `TRUE.` Parallelization is performed using the foreach and doParallel R packages. 
-
-----------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 Before running `window_gd()`, users can preview the moving window and the counts within each cell of the raster to get a sense of how big the window is and what the density of counts looks like across the landscape. Here, we provide the raster layer (`lotr_lyr`), the coordinates (`lotr_coords`), the window dimensions (5), the aggregation factor (3), and the minimum sample number (`min_n`). Min_n will be used to mask the sample count layer to show how much of the landscape will be excluded due to low sample counts (note: `min_n` is equivalent to `rarify_n` if rarefaction is used).
 
@@ -159,14 +143,11 @@ plot_count(wgd, main = "Window sample counts")
 
 To produce smoother maps of genetic diversity, we provide the function `krig_gd()` which creates a spatially interpolated raster from the moving window raster produced by `window_gd()`. This function uses the `autoKrige()` function from the R package automap to perform kriging on the moving window raster using an automatically generated variogram. Note that the RasterStack from `window_gd()`, including both the genetic diversity layer and the sample count layer, can be used and will generate kriged maps of both genetic diversity and sample count.
 
-
 Kriging is performed by first transforming the moving window layer into a set of coordinates with corresponding genetic diversity (or sample count) values and then interpolating using these coordinates across the grid provided. Because of this, it is important to keep in mind how the coordinates from the moving window raster and the grid align. If the resolution of the moving window raster is much lower than that of the grid, there are fewer points for interpolation which can result in grid-like artifacts during kriging.
-
 
 To deal with this issue, users can either (1) resample their moving window raster layers and grid layers to the same resolution using the `resample` argument, or (2) manually disaggregate or aggregate either the moving window or grid layers using the `r_agg`, `r_disagg`, `grd_agg`, or `grd_disagg` arguments. Generally, if users want a smoother resulting surface, a higher resolution grid layer should be used (this can be accomplished by using the `grd_disagg` argument to disaggregate the grid layer). The resampling, aggregation, and disaggregation options currently only work if the object provided to create the grid is a RasterLayer. Keep in mind that increasing the resolution of the moving window layer (i.e., either by resampling or disaggregating) can increase computational time substantially as this increases the number of coordinates being used for kriging. This is also the case for increasing the resolution of the grid layer, though to a lesser extent.
 
-To run this function, we provide the RasterStack output from `window_gd()`, the indices of the layers we want to krige (in this case both the (1) genetic diversity and (2) sample count layers), and the raster layer to interpolate across. We also disaggregate the original layer by a factor of two to get a smoother output surface (users should play around with this parameter). The output of this function is a RasterStack of the kriged input layers. 
-
+To run this function, we provide the RasterStack output from `window_gd()`, the indices of the layers we want to krige (in this case both the (1) genetic diversity and (2) sample count layers), and the raster layer to interpolate across. We also disaggregate the original layer by a factor of two to get a smoother output surface (users should play around with this parameter). The output of this function is a RasterStack of the kriged input layers.
 
 ```{r krige results, fig.width = 5, fig.height = 5, cache = TRUE}
 # Note: this step can take a little while
@@ -180,7 +161,7 @@ plot_count(kgd, main = "Kriged sample counts")
 
 Next, we mask the resulting kriged layers. Masking can be performed using a variety of methods.
 
-For example, we can mask using the carrying capacity layer to exclude any areas where the carrying capacity is lower than 0.01 (alternatively, one could use a species distribution model or habitat suitability model to exclude areas where the probability of presence is very low): 
+For example, we can mask using the carrying capacity layer to exclude any areas where the carrying capacity is lower than 0.01 (alternatively, one could use a species distribution model or habitat suitability model to exclude areas where the probability of presence is very low):
 
 ```{r mask results 1, fig.width = 5, fig.height = 5}
 mgd <- mask_gd(kgd, lotr_lyr, minval = 0.01)
@@ -188,7 +169,7 @@ mgd <- mask_gd(kgd, lotr_lyr, minval = 0.01)
 plot_gd(mgd, main = "Kriged & masked pi")
 ```
 
-You could also mask the layer using the sample counts layer produced by wingen to exclude undersampled areas (in this case, areas where the kriged value is lower than 1): 
+You could also mask the layer using the sample counts layer produced by wingen to exclude undersampled areas (in this case, areas where the kriged value is lower than 1):
 
 ```{r mask results 2, fig.width = 5, fig.height = 5}
 mgd <- mask_gd(kgd[["pi"]], kgd[["sample_count"]], minval = 1)
@@ -261,7 +242,6 @@ AR_wgd <- window_gd(lotr_vcf,
           rarify = TRUE)
 ```
 
-
 ```{r, fig.width = 5, fig.height = 5}
 plot_gd(pi_wgd, bkg = range_map, main = "Pi")
 plot_gd(het_wgd, bkg = range_map, main = "Heterozygosity")
@@ -269,4 +249,3 @@ plot_gd(AR_wgd, bkg = range_map, main = "Allelic Richness")
 ```
 
 ### For additional information, see our paper found here: [LINK]
-
