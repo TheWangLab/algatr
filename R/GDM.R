@@ -2,13 +2,13 @@
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
 #' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
-#' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y) TODO: FIX THIS
+#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
-#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME)
+#' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
 #' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
-#' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE) TODO: ADD STOP
+#' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
 #' @return list with final model, predictor coefficients, and PCA RGB map
@@ -20,28 +20,32 @@
 #' @examples
 gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE, plot_vars = TRUE){
 
+  # format coordinates
+  coords <- data.frame(coords)
+  colnames(coords) <- c("x", "y")
+
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
 
   # Run model with all defaults
-  mod <- gdm_run(gendist, coords, env, model = model, alpha = alpha, n_perm = n_perm, scale = scale)
+  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, n_perm = n_perm, scale = scale)
 
   # If mod is null, exit
-  if(is.null(mod)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
+  if(is.null(gdm_model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
 
   # Get coefficients from models
-  predictors <- gdm_coeffs(mod)
+  predictors <- gdm_coeffs(gdm_model)
 
   # Create and plot map
-  map <- gdm_map(mod, envlayers, coords, plot_vars = plot_vars)
+  map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
 
   # Plot isplines
-  gdm_plot_isplines(mod)
+  gdm_plot_isplines(gdm_model)
 
   # Create list to store results
   results <- list()
   # Add model
-  results[["model"]] <- mod
+  results[["model"]] <- gdm_model
   # Add predictors
   results[["predictors"]] <- predictors
   # Add raster(s)
@@ -77,6 +81,8 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 
   # Scale genetic distance data from 0 to 1
   if(scale){gendist <- scale01(gendist)}
+  if(!scale & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale = TRUE to rescale from 0 to 1")
+  if(!scale & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale = TRUE to rescale from 0 to 1")
 
   # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
   site <- 1:nrow(gendist)
@@ -183,7 +189,7 @@ gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     n_perm = n_perm)
+                     nPerm = n_perm)
 
   # Get pvalues from variable selection model
   pvalues <- vars[[3]]
@@ -226,7 +232,7 @@ gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
 #' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation
 #' @param coords
-#' @param scl # TODO: what is this?
+#' @param scl constant for rescaling variable vectors for plotting
 #' @param plot
 #'
 #' @return GDM RGB map
@@ -284,7 +290,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 
   # If there are fewer than 3 n_layers (e.g., <3 variables), the RGB plot won't work (because there isn't an R, G, and B)
   # To get around this, create a blank raster (i.e., a white raster), and add it to the stack
-  # TODO: !COME BACK TO THIS!
   if(n_layers < 3){
     warning("Fewer than three non-zero coefficients provided, adding white substitute layers to RGB plot")
     # Create white raster by multiplying a layer of pcaRast by 0 and adding 255
@@ -297,13 +302,11 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
   if(n_layers == 1){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster, white_raster)}
 
   # Plot raster
-  # TODO: points() in terra?
   if(plot){plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)}
   if(!is.null(coords)) points(coords, cex = 1.5)
 
   # Plot variable vectors
   if(plot_vars & (n_layers == 3)){
-    # TODO: FIX SO THAT THIS WORKS IF NO COORDS ARE PROVIDED
     gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl)
   }
   if(plot_vars & (n_layers != 3)){
@@ -365,7 +368,7 @@ gdm_plot_isplines <- function(gdm_model){
 #' @export
 #'
 #' @examples
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 0.5){
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1){
 
   # Confirm there are exactly 3 axes
   if(nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
@@ -396,18 +399,18 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
 
   # GET RGB VALS FOR EACH COORD----------------------------------------------------------------------------------------
 
-  pcavalsRBG <- data.frame(raster::extract(pcaRastRGB, coords))
-  colnames(pcavalsRBG) <- colnames(xpc)
+  pcavalsRGB <- data.frame(raster::extract(pcaRastRGB, coords))
+  colnames(pcavalsRGB) <- colnames(xpc)
 
   # Create vector of RGB colors for plotting
   pcacols <- c()
-  for(i in 1:nrow(pcavalsRBG)){
-    if(any(is.na(pcavalsRBG[i,]))){
+  for(i in 1:nrow(pcavalsRGB)){
+    if(any(is.na(pcavalsRGB[i,]))){
       pcacols[i] <- NA
     }
     else {
       # r=1, g=2, b=3 (TODO: FIX TO MAKE THIS FLEXIBLE)
-      pcacols[i] <- rgb(pcavalsRBG[,1][i], pcavalsRBG[,2][i], pcavalsRBG[,3][i], maxColorValue = 255)
+      pcacols[i] <- rgb(pcavalsRGB[,1][i], pcavalsRGB[,2][i], pcavalsRGB[,3][i], maxColorValue = 255)
     }
 
   }
@@ -517,13 +520,24 @@ gdm_coeffs <- function(gdm_model){
 }
 
 
-# TODO: ADD THESE IN LATER
+#' Scale a raster stack from 0 to 255
+#'
+#' @param s RasterStack
+#'
+#' @noRd
+#' @export
 stack_to_rgb <- function(s){
   new_stack <- s
   for(i in 1:nlayers(s)){new_stack[[i]] <- raster_to_rgb(s[[i]])}
   return(new_stack)
 }
 
+#' Scale raster form 0 to 255
+#'
+#' @param r RasterLayer
+#'
+#' @noRd
+#' @export
 raster_to_rgb <- function(r){
   if(r@data@max == 0){r <- 255} else {r <- (r-r@data@min) / (r@data@max-r@data@min)*255}
 }
