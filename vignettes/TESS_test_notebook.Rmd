@@ -38,20 +38,30 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
-# gen matrix
-load(here("data", "gendist.RDA"))
-load(here("data", "liz_coords.RDA"))
-load(here("data", "CA_env.RDA"))
-load(here("data", "liz_vcf.RDA"))
-gen <- vcf_to_dosage(liz_vcf)
-grid <- aggregate(CA_env[[1]], 4)
+load_example()
 ```
 
 
 # Do everything function
+
+```{r}
+# convert vcf to genotype matrix
+gen <- vcf_to_dosage(liz_vcf)
+```
+
+```{r}
+# create a RasterLayer for kriging
+# here we just use one environmental layer, aggregated to increase computational speed
+raster <- aggregate(CA_env[[1]], 4)
+
+# alternatively a raster can be created from coordinates
+raster2 <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot = TRUE)
+```
+
+
 ```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
 par(pty = "s", mar = rep(2,4))
-results <- tess_full(gen, liz_coords, grid, Kvals = 1:3, K_selection = "auto", minQ = 0.10)
+results <- tess_full(gen, liz_coords, raster, Kvals = 1:3, K_selection = "auto", minQ = 0.10)
 ```
 
 
@@ -80,7 +90,7 @@ qmat <- qmatrix(tess3_obj, K = tess3_result$K)
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
 # krige Qmatrix
-krig_admix <- tess_krig(qmat, liz_coords, grid)
+krig_admix <- tess_krig(qmat, liz_coords, raster)
 ```
 
 ## Plotting 

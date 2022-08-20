@@ -4,7 +4,7 @@
 \alias{allK_plot_helper}
 \title{Helper function for all K plotting}
 \usage{
-allK_plot_helper(K, krig_admix, coords = NULL, col, col_breaks)
+allK_plot_helper(K, krig_admix, coords = NULL, col, col_breaks, ...)
 }
 \arguments{
 \item{K}{K value}
@@ -14,6 +14,8 @@ allK_plot_helper(K, krig_admix, coords = NULL, col, col_breaks)
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
 \item{col}{single color code}
+
+\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot.}
 }
 \description{
 Helper function for all K plotting

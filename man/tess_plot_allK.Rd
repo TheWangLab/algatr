@@ -7,14 +7,17 @@
 tess_plot_allK(
   krig_admix,
   coords = NULL,
-  col_pal = viridis::turbo,
-  col_breaks = 20
+  col_pal = landgen_col_default("base"),
+  col_breaks = 20,
+  ...
 )
 }
 \arguments{
 \item{krig_admix}{RasterStack returned by \link[landgen]{tess_krig}}
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
+
+\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot.}
 }
 \description{
 Plot all kriged Q values for each K

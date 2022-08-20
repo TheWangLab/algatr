@@ -2,16 +2,17 @@
 % Please edit documentation in R/TESS.R
 \name{tess_plot}
 \alias{tess_plot}
-\title{Make rainbow TESS plot from kriged admixture plots}
+\title{Make rainbow TESS plot from kriged admixture rasters}
 \usage{
 tess_plot(
   krig_admix,
   coords = NULL,
   plot_method = "maxQ",
-  col_pal = viridis::turbo,
+  col_pal = landgen_col_default("base"),
   col_breaks = 20,
   col_alpha = 0.5,
-  minQ = 0.1
+  minQ = 0.1,
+  legend = TRUE
 )
 }
 \arguments{
@@ -19,16 +20,18 @@ tess_plot(
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
-\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
+\item{plot_method}{method for making rainbow map of kriged layers (options: \code{"maxQ"} to only plot the max Q value for each cell (default), \code{"allQ"} to plot all Qvalues greater than \code{minQ}, \code{"maxQ_poly"} or \code{"allQ_poly"} to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
 
-\item{col_pal}{function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo})}
+\item{col_pal}{function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo}). If using \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"}, the function must accept \code{alpha} as an argument}
 
-\item{col_breaks}{if using "maxQ" and "allQ" plot methods, the number of breaks to use when plotting kriged maps}
+\item{col_breaks}{if using \code{"maxQ"} and \code{"allQ"} plot methods, the number of breaks to use when plotting kriged maps}
 
-\item{col_alpha}{if using the "allQ" plot method, an alpha-transparency level in the range \link{0,1} (0 means transparent and 1 means opaque) provided to \code{col_pal} function}
+\item{col_alpha}{if using the \code{"allQ"} plot method, an alpha-transparency level in the range \link{0,1} (0 means transparent and 1 means opaque) provided to \code{col_pal} function}
 
-\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
+\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} is used (defaults to 0.10)}
+
+\item{legend}{whether to include legend (defaults to TRUE)}
 }
 \description{
-Make rainbow TESS plot from kriged admixture plots
+Make rainbow TESS plot from kriged admixture rasters
 }

@@ -11,7 +11,6 @@ tess_full(
   Kvals = 1:10,
   K_selection = "auto",
   plot_method = "maxQ",
-  ggplot_fill = ggplot2::scale_fill_viridis_d(option = "turbo"),
   col_breaks = 20,
   col_alpha = 0.5,
   minQ = 0.1,
@@ -30,8 +29,6 @@ tess_full(
 \item{Kvals}{vector of K values to test}
 
 \item{K_selection}{how to perform k selection (options: "auto" for automatic selection based on \link[landgen]{bestK} (default) or "manual" to enter into console)}
-
-\item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[landgen]{scale_fill_viridis_d}, \code{option = "turbo"})}
 
 \item{ploidy}{an integer corresponding to ploidy of the studied
 organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}

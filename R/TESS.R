@@ -288,15 +288,15 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   return(plt)
 }
 
-#' Make rainbow TESS plot from kriged admixture plots
+#' Make rainbow TESS plot from kriged admixture rasters
 #'
 #' @param krig_admix RasterStack returned by \link[landgen]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
-#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
-#' @param col_pal function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo})
-#' @param col_breaks if using "maxQ" and "allQ" plot methods, the number of breaks to use when plotting kriged maps
-#' @param col_alpha if using the "allQ" plot method, an alpha-transparency level in the range [0,1] (0 means transparent and 1 means opaque) provided to \code{col_pal} function
-#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @param plot_method method for making rainbow map of kriged layers (options: \code{"maxQ"} to only plot the max Q value for each cell (default), \code{"allQ"} to plot all Qvalues greater than \code{minQ}, \code{"maxQ_poly"} or \code{"allQ_poly"} to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param col_pal function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo}). If using \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"}, the function must accept \code{alpha} as an argument
+#' @param col_breaks if using \code{"maxQ"} and \code{"allQ"} plot methods, the number of breaks to use when plotting kriged maps
+#' @param col_alpha if using the \code{"allQ"} plot method, an alpha-transparency level in the range [0,1] (0 means transparent and 1 means opaque) provided to \code{col_pal} function
+#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} is used (defaults to 0.10)
 #' @param legend whether to include legend (defaults to TRUE)
 #' @inheritParams tess_full
 #'
@@ -587,12 +587,11 @@ bestK <- function(tess3_obj, Kvals){
 
 
 #' Create default TESS color palette
-#' @param n number of colors to generate
+#' @param n number of colors to generate (must be less than 9)
 #'
 #' @export
-#' @noRd
 #'
-tess_col_default <- function(n){
+tess_col_default <- function(n, alpha = 1){
   if (n > 9) stop("The default color palette expects less than 9 values")
   tessCP <- CreatePalette()
   tesscol <- sapply(1:n, function(x, tessCP){tessCP[[x]][9]}, tessCP)
