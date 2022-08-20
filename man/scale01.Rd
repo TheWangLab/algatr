@@ -18,7 +18,7 @@ Scale genetic distances from 0 to 1
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
-\code{\link{gdm_doEverything}()},
+\code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},

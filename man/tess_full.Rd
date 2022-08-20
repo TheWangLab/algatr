@@ -7,14 +7,17 @@
 tess_full(
   gen,
   coords,
-  spdf,
+  grid,
   Kvals = 1:10,
+  K_selection = "auto",
+  plot_method = "maxQ",
+  ggplot_fill = ggplot2::scale_fill_viridis_d(option = "turbo"),
+  col_breaks = 20,
+  col_alpha = 0.5,
+  minQ = 0.1,
+  tess_method = "projected.ls",
   ploidy = 2,
-  n_cell = 1000,
-  k_selection = "auto",
-  plot_method = "max",
-  minQ = 0,
-  tess_method = "projected.ls"
+  correct_kriged_Q = TRUE
 )
 }
 \arguments{
@@ -22,19 +25,18 @@ tess_full(
 
 \item{coords}{dataframe with x and y coordinates}
 
-\item{spdf}{Spatial Points Dataframe to create grid for kriging}
+\item{grid}{RasterLayer or other gridded spatial object for kriging}
 
 \item{Kvals}{vector of K values to test}
 
-\item{ploidy}{ploidy of organism (defaults to 2)}
+\item{K_selection}{how to perform k selection (options: "auto" for automatic selection based on \link[landgen]{bestK} (default) or "manual" to enter into console)}
 
-\item{n_cell}{number of grid cells to use when kriging}
+\item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[landgen]{scale_fill_viridis_d}, \code{option = "turbo"})}
 
-\item{k_selection}{how to perform k selection (options: "auto" for automatic selection based on \code{\link{bestK}} or "manual" to enter into console)}
+\item{ploidy}{an integer corresponding to ploidy of the studied
+organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
 
-\item{plot_method}{method for making rainbow map of kriged layers (options: "max" to only plot the max Q value for each cell or "all" to plot all Qvalues greater than \code{minQ})}
-
-\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used}
+\item{correct_kriged_Q}{whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
 \value{
 list with all TESS results, final K value, and final kriged raster

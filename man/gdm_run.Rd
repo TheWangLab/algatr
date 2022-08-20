@@ -10,7 +10,7 @@ gdm_run(
   env,
   model = "best",
   alpha = 0.05,
-  nPerm = 50,
+  n_perm = 50,
   scale = FALSE
 )
 }
@@ -25,7 +25,7 @@ gdm_run(
 
 \item{alpha}{alpha level for variable selection (defaults to 0.05), only matters if model = "best"}
 
-\item{nPerm}{number of permutations to use to calculate variable importance, only matters if model = "best"}
+\item{n_perm}{number of permutations to use to calculate variable importance, only matters if model = "best"}
 
 \item{scale}{scale genetic distance data from 0 to 1}
 }
@@ -38,7 +38,7 @@ Run GDM and return model object
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
-\code{\link{gdm_doEverything}()},
+\code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},

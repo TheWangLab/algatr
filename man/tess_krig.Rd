@@ -4,16 +4,16 @@
 \alias{tess_krig}
 \title{Krige admixture values}
 \usage{
-tess_krig(qmat, coords, spdf, n_cell = 10000)
+tess_krig(qmat, coords, grid, correct_kriged_Q = TRUE)
 }
 \arguments{
 \item{qmat}{qmatrix}
 
 \item{coords}{dataframe with x and y coordinates}
 
-\item{spdf}{Spatial Points Dataframe to create grid for kriging}
+\item{grid}{RasterLayer or other gridded spatial object for kriging}
 
-\item{n_cell}{number of grid cells to use when kriging}
+\item{correct_kriged_Q}{whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
 \description{
 Krige admixture values

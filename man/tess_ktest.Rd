@@ -8,10 +8,10 @@ tess_ktest(
   gen,
   coords,
   Kvals = 1:10,
-  spdf = NULL,
+  grid = NULL,
   tess_method = "projected.ls",
-  ploidy = 2,
-  k_selection = "auto"
+  K_selection = "auto",
+  ploidy = 2
 )
 }
 \arguments{
@@ -21,11 +21,12 @@ tess_ktest(
 
 \item{Kvals}{vector of K values to test}
 
-\item{tess_method}{method provided to tess}
+\item{grid}{RasterLayer or other gridded spatial object for kriging}
 
-\item{ploidy}{ploidy of organism (defaults to 2)}
+\item{K_selection}{how to perform k selection (options: "auto" for automatic selection based on \link[landgen]{bestK} (default) or "manual" to enter into console)}
 
-\item{k_selection}{how to perform k selection (options: "auto" for automatic selection based on \code{\link{bestK}} or "manual" to enter into console)}
+\item{ploidy}{an integer corresponding to ploidy of the studied
+organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
 }
 \description{
 Test multiple K values
