@@ -8,9 +8,7 @@
 #' @examples
 load_example <- function(quiet = FALSE){
   # load all data
-  utils::data("liz_vcf")
-  utils::data("liz_coords")
-  utils::data("CA_env")
+  utils::data(list = c("liz_vcf", "liz_coords", "CA_env"))
 
   if (!quiet) {
     # give message with information about objects
