@@ -44,7 +44,7 @@ load(here("data", "liz_coords.RDA"))
 load(here("data", "CA_env.RDA"))
 load(here("data", "liz_vcf.RDA"))
 gen <- vcf_to_dosage(liz_vcf)
-grid <- aggregate(CA_env[[1]], 10)
+grid <- aggregate(CA_env[[1]], 4)
 ```
 
 
@@ -83,36 +83,49 @@ qmat <- qmatrix(tess3_obj, K = tess3_result$K)
 krig_admix <- tess_krig(qmat, liz_coords, grid)
 ```
 
-## Basic plotting 
+## Plotting 
+
+### Basic ggplot
+
+```{r, fig.width = 5, fig.height = 5}
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ")
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ_poly")
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ", minQ = 0.20)
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
+```
 
 ```{r}
+tess_barplot(qmat, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
+```
+
+## Extended base R plotting
+
+To plot individual layers and have more control over color breaks, alpha levels, legend/color scale settings, etc. use base R plotting functions
+
+```{r, fig.width = 10, fig.height = 4}
 par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
-tess_plot_allK(krig_admix, col_breaks = 20)
+tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
 
 ```{r, fig.width = 5, fig.height = 5, warning = FALSE}
 par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
-tess_rainbow_plot(krig_admix, plot_method = "max")
-tess_rainbow_plot(krig_admix, plot_method = "all", minQ = 0.20, col_alpha = 0.90)
-tess_rainbow_plot(krig_admix, plot_method = "max_poly")
-tess_rainbow_plot(krig_admix, plot_method = "all_poly", minQ = 0.20, col_alpha = 0.50)
-```
 
-```{r}
-tess_barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
+tess_plot(krig_admix, plot_method = "maxQ", col_breaks = 20)
+tess_plot(krig_admix, plot_method = "allQ", col_breaks = 20, minQ = 0.20, col_alpha = 0.90)
+tess_plot(krig_admix, plot_method = "maxQ_poly")
+tess_plot(krig_admix, plot_method = "allQ_poly", minQ = 0.20, col_alpha = 0.50)
 ```
 
 ## Plotting with default package funciton
 
 ```{r}
-barplot(qmatrix(tess3_result$tess3_obj, K = 3), sort.by.Q = TRUE,
+barplot(qmat, sort.by.Q = TRUE,
             border = NA, space = 0,
             xlab = "Individuals", ylab = "Ancestry coefficients")
 ```
 
 ```{r, fig.width = 5, fig.height = 5}
-par(pty = "s", mar = rep(2,4))
-plot(qmatrix(tess3_result$tess3_obj, K = 3), 
+plot(qmat, 
      liz_coords, 
      method = "map.max", 
      interpol = FieldsKrigModel(10),  
@@ -121,6 +134,6 @@ plot(qmatrix(tess3_result$tess3_obj, K = 3),
      col.palette = CreatePalette(),
      resolution = c(300,300), cex = .4)
 
-tess_rainbow_plot(krig_admix, liz_coords, plot_method = "max", col_pal =  tess_col_default)
+par(pty = "s", mar = rep(0,4))
+tess_plot(krig_admix, liz_coords, plot_method = "maxQ", col_pal =  tess_col_default)
 ```
-
