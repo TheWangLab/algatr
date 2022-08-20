@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ## Calculating genetic distances
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(landgen)
+library(algatr)
 library(vcfR)
 library(ecodist)
 library(adegenet)

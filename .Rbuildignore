@@ -1,6 +1,6 @@
 ^renv$
 ^renv\.lock$
-^landgen\.Rproj$
+^algatr\.Rproj$
 ^\.Rproj\.user$
 ^package_setup\.qmd$
 ^data-raw$

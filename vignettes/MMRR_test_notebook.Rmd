@@ -6,7 +6,7 @@ output: github_document
 # Setup
 
 ```{r libraries, warning = FALSE, message = FALSE}
-library("ccgplandgen")
+library("algatr")
 library("here")
 library("tidyverse")
 devtools::load_all()

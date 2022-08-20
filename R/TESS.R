@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[landgen]{bestK} (default) or "manual" to enter into console)
+#' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
 #' @param correct_kriged_Q whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
@@ -61,10 +61,10 @@ tess_full <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
   # PLOTS --------------------------------------------------------------------------------------------------------
 
   # Plot max Q-values
-  print(tess_ggplot(krig_admix, coords, plot_method = "maxQ", ggplot_fill = landgen_col_default("ggplot")))
+  print(tess_ggplot(krig_admix, coords, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot")))
 
   # Make barplot
-  print(tess_barplot(qmat = qmat, col_pal = landgen_col_default("base")))
+  print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
 
@@ -218,10 +218,10 @@ raster_to_grid <- function(x) {
 
 #' ggplot of TESS results
 #'
-#' @param krig_admix RasterStack returned by \link[landgen]{tess_krig}
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
-#' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[landgen]{scale_fill_viridis_d}, \code{option = "turbo"})
+#' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @inheritParams tess_full
 #'
@@ -229,7 +229,7 @@ raster_to_grid <- function(x) {
 #' @export
 #'
 #' @examples
-tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = landgen_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE){
+tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE){
 
   # set up ggplot df
   gg_df <- krig_admix %>%
@@ -290,7 +290,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 
 #' Make rainbow TESS plot from kriged admixture rasters
 #'
-#' @param krig_admix RasterStack returned by \link[landgen]{tess_krig}
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param plot_method method for making rainbow map of kriged layers (options: \code{"maxQ"} to only plot the max Q value for each cell (default), \code{"allQ"} to plot all Qvalues greater than \code{minQ}, \code{"maxQ_poly"} or \code{"allQ_poly"} to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param col_pal function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo}). If using \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"}, the function must accept \code{alpha} as an argument
@@ -304,7 +304,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @export
 #'
 #' @examples
-tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal = landgen_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
+tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
 
   # Get K based on the number of layers
   K <- raster::nlayers(krig_admix)
@@ -331,7 +331,7 @@ tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal =
 #'
 #' @export
 #' @noRd
-tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = landgen_col_default("base"), col_breaks = 20, legend = TRUE){
+tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, legend = TRUE){
 
    # make and summarize dataframe by only retaining highest Q values for each point
   pop_df <-  krig_admix %>%
@@ -405,7 +405,7 @@ max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
 #'
 #' @export
 #' @noRd
-tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pal = landgen_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
+tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
 
   # Get max raster value for plotting (minQ defines minimum)
   maxr <- max(maxValue(krig_admix))
@@ -452,7 +452,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 
 #' Plot all kriged Q values for each K
 #'
-#' @param krig_admix RasterStack returned by \link[landgen]{tess_krig}
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot.
 #' @inheritParams tess_full
@@ -461,7 +461,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 #' @export
 #'
 #' @examples
-tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = landgen_col_default("base"), col_breaks = 20, ...){
+tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
 
   # get K
   K <- raster::nlayers(krig_admix)
@@ -533,7 +533,7 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 #' @export
 #'
 #' @examples
-tess_barplot <- function(qmat, col_pal = landgen_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
+tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
   # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 
   # get K
@@ -599,13 +599,13 @@ tess_col_default <- function(n, alpha = 1){
   return(tesspal(n))
 }
 
-#' Create default landgen color palette for TESS
+#' Create default algatr color palette for TESS
 #'
 #' @param x whether to return ggplot or base color scale function
 #'
 #' @export
 #' @noRd
-landgen_col_default <- function(x){
+algatr_col_default <- function(x){
   if(x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
   if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
   return(col)

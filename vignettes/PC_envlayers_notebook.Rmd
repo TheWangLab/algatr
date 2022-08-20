@@ -3,7 +3,7 @@ title: "Environmental PC Layers"
 output: github_document
 ---
 ```{r, warning = FALSE, message = FALSE}
-library("ccgplandgen")
+library("algatr")
 library("terra")
 library("here")
 library("viridis")

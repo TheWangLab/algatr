@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ### Processing environmental data
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(landgen)
+library(algatr)
 library(terra)
 library(here)
 library(viridis)

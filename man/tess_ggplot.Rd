@@ -8,19 +8,19 @@ tess_ggplot(
   krig_admix,
   coords = NULL,
   plot_method = "maxQ",
-  ggplot_fill = landgen_col_default("ggplot"),
+  ggplot_fill = algatr_col_default("ggplot"),
   minQ = 0.1,
   plot_axes = FALSE
 )
 }
 \arguments{
-\item{krig_admix}{RasterStack returned by \link[landgen]{tess_krig}}
+\item{krig_admix}{RasterStack returned by \link[algatr]{tess_krig}}
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
 \item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
 
-\item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[landgen]{scale_fill_viridis_d}, \code{option = "turbo"})}
+\item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})}
 
 \item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
 }

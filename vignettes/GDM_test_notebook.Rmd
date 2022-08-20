@@ -3,7 +3,7 @@ title: "GDM"
 output: github_document
 ---
 ```{r libraries, warning = FALSE, message = FALSE}
-#library("landgen")
+#library("algatr")
 library("gdm")
 library("here")
 library("tidyverse")

@@ -6,7 +6,7 @@
 \usage{
 tess_barplot(
   qmat,
-  col_pal = landgen_col_default("base"),
+  col_pal = algatr_col_default("base"),
   sort_by_Q = TRUE,
   legend = TRUE,
   legend_position = "bottomright",

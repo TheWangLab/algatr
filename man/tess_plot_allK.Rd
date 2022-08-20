@@ -7,13 +7,13 @@
 tess_plot_allK(
   krig_admix,
   coords = NULL,
-  col_pal = landgen_col_default("base"),
+  col_pal = algatr_col_default("base"),
   col_breaks = 20,
   ...
 )
 }
 \arguments{
-\item{krig_admix}{RasterStack returned by \link[landgen]{tess_krig}}
+\item{krig_admix}{RasterStack returned by \link[algatr]{tess_krig}}
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
