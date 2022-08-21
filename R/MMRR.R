@@ -4,16 +4,16 @@
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y)
-#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME)
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 999)
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
+#' @param env dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers
+#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME - Should have option for leaving it NULL)
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); default = "best"
+#' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (default = 999)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "best", n_perm = 999){
+mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "best", nperm = 999){
 
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
@@ -29,8 +29,8 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "
   Ydist <- as.matrix(gendist)
 
   # Run MMRR with variable selection
-  if(model == "best"){mod <- mmrr_var_sel(Ydist, Xdist, n_perm = n_perm)}
-  if(model == "full"){mod <- MMRR(Ydist, Xdist, n_perm = n_perm)}
+  if(model == "best"){mod <- mmrr_var_sel(Ydist, Xdist, nperm = nperm)}
+  if(model == "full"){mod <- MMRR(Ydist, Xdist, nperm = nperm)}
 
   # If NULL, exit with NULL
   if(is.null(mod)){warning("model is NULL, returning NULL object"); return(NULL)}
@@ -54,12 +54,12 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
-#' @param n_perm is the number of permutations to be used in significance tests. Default = 999.
+#' @param nperm is the number of permutations to be used in significance tests. Default = 999.
 #' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
 
-mmrr_var_sel <- function(Y, X, n_perm = 999, stdz = TRUE){
+mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
   # Fit full model
-  mmrr.model <- MMRR(Y, X, n_perm = n_perm, stdz = stdz)
+  mmrr.model <- MMRR(Y, X, nperm = nperm, stdz = stdz)
   pvals <- mmrr.model$tpvalue[-1] # Remove intercept p-value
 
   # Eliminate variable with highest p-value, re-fit, and continue until only significant variables remain
@@ -67,7 +67,7 @@ mmrr_var_sel <- function(Y, X, n_perm = 999, stdz = TRUE){
     print(pvals)
     rem.var <- which(pvals == max(pvals))
     X <- X[-rem.var]
-    mmrr.model <- MMRR(Y, X, n_perm = n_perm, stdz = stdz)
+    mmrr.model <- MMRR(Y, X, nperm = nperm, stdz = stdz)
     pvals <- mmrr.model$tpvalue[-1]
   }
 
@@ -80,15 +80,18 @@ mmrr_var_sel <- function(Y, X, n_perm = 999, stdz = TRUE){
 #' MMRR performs Multiple Matrix Regression with Randomization analysis
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
-#' @param n_perm is the number of permutations to be used in significance tests. Default = 999.
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
-
-MMRR <- function(Y, X, n_perm = 999, stdz = TRUE){
+#' @param nperm is the number of permutations to be used in significance tests. Default = 999.
+#' @param scale if TRUE then matrices will be standardized. Default = TRUE.
+#' @details
+#' When using MMRR, please cite the original citation:
+#' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
+#' @export
+MMRR <- function(Y, X, nperm = 999, scale = TRUE){
   # Compute regression coefficients and test statistics
   nrowsY <- nrow(Y)
-  y <- unfold(Y, stdz)
-  if(is.null(names(X)))names(X) <- paste("X", 1:length(X),sep="")
-  Xmats <- sapply(X, unfold, stdz = stdz)
+  y <- unfold(Y, scale)
+  if(is.null(names(X)))names(X) <- paste("X", 1:length(X), sep="")
+  Xmats <- sapply(X, unfold, scale = scale)
   fit <- stats::lm(y ~ Xmats)
   coeffs <- fit$coefficients
   summ <- summary(fit)
@@ -103,10 +106,10 @@ MMRR <- function(Y, X, n_perm = 999, stdz = TRUE){
   rownames(conf_df) <-  c("Intercept", names(X))
 
   # Perform permutations
-  for(i in 1:n_perm){
+  for(i in 1:nperm){
     rand <- sample(1:nrowsY)
     Yperm <- Y[rand, rand]
-    yperm <- unfold(Yperm, stdz)
+    yperm <- unfold(Yperm, scale)
     fit <- stats::lm(yperm ~ Xmats)
     summ <- summary(fit)
     Fprob <- Fprob + as.numeric(summ$fstatistic[1] >= Fstat)
@@ -114,8 +117,8 @@ MMRR <- function(Y, X, n_perm = 999, stdz = TRUE){
   }
 
   # Return values
-  tp <- tprob/(n_perm+1)
-  Fp <- Fprob/(n_perm+1)
+  tp <- tprob / (nperm + 1)
+  Fp <- Fprob / (nperm + 1)
   names(r.squared) <- "r.squared"
   names(coeffs) <- c("Intercept", names(X))
   names(tstat) <- paste(c("Intercept", names(X)), "(t)", sep="")
@@ -134,12 +137,77 @@ MMRR <- function(Y, X, n_perm = 999, stdz = TRUE){
 
 #' unfold converts the lower diagonal elements of a matrix into a vector
 #' @param X is a distance matrix.
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#' @param scale if TRUE then matrices will be standardized. Default = TRUE.
 
-unfold <- function(X, stdz = TRUE){
+unfold <- function(X, scale = TRUE){
   x <- vector()
   for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
-  if(stdz == TRUE) x <- raster::scale(x, center = TRUE, scale = TRUE)
+  if(scale == TRUE) x <- raster::scale(x, center = TRUE, scale = TRUE)
   return(x)
 }
 
+#' Plot MMMR
+#'
+#' Plots the results of an MMRR analysis
+#'
+#' @param reg The fitted MMRR model
+#' @param Y The dependent variable in the form of a distance matrix
+#' @param X A list of independent variables in the form of distance matrices (with optional names)
+#' @param scale If TRUE, all variables are scaled
+#' @param varNames A vector of names for the variables in the model (optional)
+#' @param lineCol Color for regression line
+#' @param ... Additional arguments to be passed to plot() function (optional)
+#' @details
+#' The objects supplied for Y and X should be the same variables used to fit the MMRR model.  The parameter 'scale' should be the same as used to fit the model.
+#' The varNames argument can be used to specify variable names for labeling the plot axes.  The first name is for the dependent variable; additional names should be supplied in the same order as the independent variables.
+#'
+#' When using MMRR, please cite the original citation:
+#' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
+#' @export
+plotMMRR <- function(reg, Y, X, scale = TRUE, varNames = NULL, lineCol = "blue", ...){
+  y <- unfold(Y, scale)
+  if(length(varNames) > 0){
+    name.Y <-
+      varNames[1]
+  } else {
+    name.Y <- substitute(Y)
+  }
+  # Plot single variable relationships
+  for(i in 1:length(X)){
+    x <- unfold(X[[i]], scale = scale)
+    if(length(varNames) >= i + 1){
+      name.X <- varNames[i + 1]
+    } else {
+      name.X <- names(X)[i]
+    }
+    plot(x, y, ylab = name.Y, xlab = name.X, ...)
+    lm.reg <- lm(y ~ x)
+    abline(reg = lm.reg, col = lineCol)
+  }
+  # Plot fitted relationship
+  x <- matrix(nrow=length(X), ncol = length(y))
+  for(i in 1:length(X)){
+    x[i,] <- unfold(X[[i]], scale)
+    x[i,] <- reg$coefficients[i+1] * x[i,]
+  }
+  plot(colSums(x), y, ylab = substitute(Y), xlab = "Predicted Distance", ...)
+  lm.reg <- lm(y ~ colSums(x))
+  abline(reg = lm.reg, col = lineCol)
+  # Plot covariances
+  cmb <- combn(1:length(X), 2)
+  for(i in 1:ncol(cmb)){
+    x <- unfold(X[[cmb[1, i]]], scale = scale)
+    y <- unfold(X[[cmb[2, i]]], scale = scale)
+    if(length(varNames) > cmb[1, i]){
+      name.x <- varNames[cmb[1, i] + 1]
+    } else {
+      name.x <- names(X[cmb[1, i]])
+    }
+    if(length(varNames) > cmb[2, i]){
+      name.y <- varNames[cmb[2, i] + 1]
+    } else {
+      name.y <- names(X[cmb[2, i]])
+    }
+    plot(x, y, ylab = name.y, xlab = name.x, ...)
+  }
+}
