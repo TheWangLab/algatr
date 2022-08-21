@@ -454,8 +454,11 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     # Plot formatting
     ggplot2::coord_equal() +
     ggplot2::theme_bw() +
-    ggplot2::theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(), axis.line = element_blank(), aspect.ratio = 1)
+    ggplot2::theme(panel.border = element_blank(),
+                   panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank(),
+                   axis.line = element_blank(),
+                   aspect.ratio = 1)
 
   # Plot
   print(plot)
