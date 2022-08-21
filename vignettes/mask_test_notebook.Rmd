@@ -5,7 +5,7 @@ output: github_document
 
 # Setup
 ```{r libraries, warning = FALSE, message = FALSE}
-library("ccgplandgen")
+library("algatr")
 library("raster")
 library("rgeos")
 library("here")

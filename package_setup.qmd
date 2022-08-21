@@ -17,5 +17,7 @@ use_build_ignore("package_setup.qmd")
 ```{r}
 # Creates and modifies external data for use in package
 usethis::use_data_raw()
+usethis::use_pipe()
 ```
 
+`{r} usethis::use_logo("logo.png") usethis::use_readme_rmd() 2`

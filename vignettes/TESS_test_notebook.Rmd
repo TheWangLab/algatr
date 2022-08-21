@@ -5,7 +5,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# Setup
+## Setup
 
 ```{r, warning = FALSE, message = FALSE}
 library("here")
@@ -24,11 +24,10 @@ source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
 source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
 
 # need LEA library for cross entropy
-
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 #install.packages("BiocManager")
 #BiocManager::install("LEA")
-library("LEA")
+#library("LEA")
 
 # devtools::install_github("cran/automap")
 library("automap")
@@ -36,116 +35,116 @@ library("spatialEco")
 
 devtools::load_all()
 ```
-### Load Test Data
+## Load Test Data
 
 ```{r, warning = FALSE}
-# gen matrix
-gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
-gen <- gen[,-1]
-
-# coords
-coords <- read.table(here("test_data","Scelop.coord"))
-coords <- as.matrix(coords)
-
+load_example()
 ```
 
 ```{r}
-# CA shape file
-CA_boundary <- readOGR(here("data","CA_State","CA_State_TIGER2016.shp"))
-spdf <- CA_boundary
+# convert vcf to genotype matrix
+gen <- vcf_to_dosage(liz_vcf)
+```
+
+```{r}
+# create a RasterLayer for kriging
+# here we just use one environmental layer, aggregated to increase computational speed
+krig_raster <- aggregate(CA_env[[1]], 4)
+
+# alternatively a raster can be created from coordinates
+krig_raster2 <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot = TRUE)
+```
+
+## Run everyhting
+
+
+```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
+par(pty = "s", mar = rep(2,4))
+results <- tess_do_everything(gen, liz_coords, raster, Kvals = 1:3, K_selection = "auto", minQ = 0.10)
 ```
 
 
-# Do everything function
-```{r, cache = TRUE, results = FALSE, warning = FALSE}
-tess_full(gen, coords, Kvals = 1:3, spdf = CA_boundary, ploidy = 2, n_cell = 10000, k_selection = "auto", plot_method = "max", minQ = 0.20)
-```
-
-
-# Plotting 
-
-## Example TESS
+## Line by line TESS
 
 ### Run TESS
-```{r}
-K = 10
-```
-
 
 ```{r, cache = TRUE}
-tess3_obj <- tess3(X = gen, coord = coords, K = 1:K, ploidy = 2) 
+# run tess with multiple K values
+tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:10, ploidy = 2) 
+
+# look at resulting object (ANNE: provide a description of what is in this object)
+summary(tess3_result)
+
+# get tess object
+tess3_obj <- tess3_result$tess3_obj
+
+# or run with one K value
+tess3_obj <- tess3(gen, coord = as.matrix(liz_coords), K = 3, ploidy = 2) 
+
+# get best K and get Qmatrix
+qmat <- qmatrix(tess3_obj, K = 4)
+
 ```
 
 ### Krig Q values
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
-krig_list <- list()
-for(i in 2:K){
-  qmat <- qmatrix(tess3_obj, K = i)
-  krig_admix <- tess_krig(qmat, coords, spdf, n_cell = 10000)
-  krig_list[[i]] <- krig_admix
-}
-```
-## Basic plotting 
-
-```{r, fig.width = 12, fig.height=15, warning = FALSE}
-par(pty = "s", mfrow = c(K, 6), mar = rep(0,4))
-for(i in 2:K){
-  krig_admix <- krig_list[[i]]
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "max", alpha = 1)
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "all", alpha = 0.9, minQ = 0.1)
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "max", alpha = 0.9, reclassify = TRUE)
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "all", alpha = 0.9, reclassify = TRUE)
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "max_poly", alpha = 0.9)
-  tess_rainbow_plot(krig_admix, coords, spdf, plot_method = "all_poly", alpha = 0.5, minQ = 1/i)
-}
+# krige Qmatrix
+krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
 ```
 
-## Plotting Max Q
+## Plotting 
 
-**TODO: turn this code into functions**
+### Basic ggplot
 
-```{r, cache = TRUE, warning = FALSE, output = FALSE, fig.width = 90}
-rs <- stack_maxQ(krig_list)
+```{r, fig.width = 5, fig.height = 5}
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ")
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ_poly")
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ", minQ = 0.20)
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
 ```
 
-```{r, fig.width = 8, fig.height = 4}
-rmean <- calc(rs, mean)
-
-rvar <- rmean
-m <- matrix(rep(1,9), nrow = 3)
-rvar <- focal(rvar, w = m, fun = var)
-
-par(mfrow = c(1,2), mar = rep(1,4), oma = rep(2,4))
-plot(rmean, col = magma(100), axes = FALSE, box = FALSE)
-plot(log(rvar), col = magma(100), axes = FALSE, box = FALSE)
-
+```{r}
+tess_barplot(qmat, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
 ```
 
-## Plotting Admixture Zones 
+## Extended base R plotting
 
-```{r, cache = TRUE, fig.width = 5, fig.height = 5}
-rv_stack <- make_boundaries_allK(krig_list, boundaries = TRUE)
-par(mfrow=c(1,1))
-plot_boundaries(rv_stack)
+To plot individual layers and have more control over color breaks, alpha levels, legend/color scale settings, etc. use base R plotting functions
 
-par(mfrow=c(2,2), mar = rep (2,4))
-plot_boundaries(rv_stack, option = "mean", log_transform = FALSE, main = "mean", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "mean", log_transform = TRUE, main = "log(mean)", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "weighted.mean", log_transform = FALSE, main = "weighted mean", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "weighted.mean", log_transform = TRUE, main = "log(weighted mean)", tess3_obj = tess3_obj)
+```{r, fig.width = 10, fig.height = 4}
+par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
+tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
 
-```{r, cache = TRUE, fig.width = 5, fig.height = 5}
-rv_stack <- make_boundaries_allK(krig_list, minQ = 0.9, boundaries = FALSE)
-par(mfrow=c(1,1))
-plot_boundaries(rv_stack)
+```{r, fig.width = 5, fig.height = 5, warning = FALSE}
+par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
 
-par(mfrow=c(2,2), mar = rep(2,4))
-plot_boundaries(rv_stack, option = "mean", log_transform = FALSE, main = "mean", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "mean", log_transform = TRUE, main = "log(mean)", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "weighted.mean", log_transform = FALSE, main = "weighted mean", tess3_obj = tess3_obj)
-plot_boundaries(rv_stack, option = "weighted.mean", log_transform = TRUE, main = "log(weighted mean)", tess3_obj = tess3_obj)
+tess_plot(krig_admix, plot_method = "maxQ", col_breaks = 20)
+tess_plot(krig_admix, plot_method = "allQ", col_breaks = 20, minQ = 0.20, col_alpha = 0.90)
+tess_plot(krig_admix, plot_method = "maxQ_poly")
+tess_plot(krig_admix, plot_method = "allQ_poly", minQ = 0.20, col_alpha = 0.50)
+```
+
+## Plotting with default tess3r package functions
+
+```{r}
+barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
 ```
 
 
+NOTE: the original tess3r package uses a different type of kriging than autoKrige, it also kriges and plots in the same function (so there isn't an easy way to get the raster output). 
+```{r, fig.width = 5, fig.height = 5}
+plot(qmat, 
+     liz_coords, 
+     method = "map.max", 
+     interpol = FieldsKrigModel(10),  
+     main = "Ancestry coefficients",
+     xlab = "Longitude", ylab = "Latitude", 
+     col.palette = CreatePalette(),
+     resolution = c(300,300), cex = .4)
+
+# comparison to algatr
+par(pty = "s", mar = rep(0,4))
+tess_plot(krig_admix, liz_coords, plot_method = "maxQ", col_pal =  tess_col_default)
+```

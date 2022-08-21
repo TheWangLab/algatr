@@ -8,24 +8,11 @@ tess_ktest(
   gen,
   coords,
   Kvals = 1:10,
-  spdf = NULL,
+  grid = NULL,
   tess_method = "projected.ls",
-  ploidy = 2,
-  k_selection = "auto"
+  K_selection = "auto",
+  ploidy = 2
 )
-}
-\arguments{
-\item{gen}{genotype matrix}
-
-\item{coords}{dataframe with x and y coordinates}
-
-\item{Kvals}{vector of K values to test}
-
-\item{tess_method}{method provided to tess}
-
-\item{ploidy}{ploidy of organism (defaults to 2)}
-
-\item{k_selection}{how to perform k selection (options: "auto" for automatic selection based on \code{\link{bestK}} or "manual" to enter into console)}
 }
 \description{
 Test multiple K values

@@ -1,22 +1,13 @@
 
-# TODO:
-# - FIX PROJECTION WEIRDNESS -> have inputs be projected coords with same projection as SPDF or conversion? - do check and throw error if differen
-# - Copy wingen kriging code/use raster as grid for kriging
-# - FIX ARGUMENTS/WEIRD DF - make inputs rasters or df or both
-# - CHANGE FUNCTION NAME TO tess_do_everything
-# - change k_selection to K_selection
-
 #' TESS function to do everything
 #'
 #' @param gen genotype matrix
 #' @param coords dataframe with x and y coordinates
+#' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param spdf Spatial Points Dataframe to create grid for kriging
-#' @param ploidy ploidy of organism (defaults to 2)
-#' @param n_cell number of grid cells to use when kriging
-#' @param k_selection how to perform k selection (options: "auto" for automatic selection based on \code{\link{bestK}} or "manual" to enter into console)
-#' @param plot_method method for making rainbow map of kriged layers (options: "max" to only plot the max Q value for each cell or "all" to plot all Qvalues greater than \code{minQ})
-#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used
+#' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
+#' @param correct_kriged_Q whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
+#' @inheritParams tess3r::tess3
 #'
 #' @family TESS functions
 #'
@@ -24,30 +15,34 @@
 #' @export
 #'
 #' @examples
-tess_full <- function(gen, coords, spdf, Kvals = 1:10,
-                      ploidy = 2, n_cell = 1000, k_selection = "auto",
-                      plot_method = "max", minQ = 0,
-                      tess_method = "projected.ls"){
+tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
+                      plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
+                      tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE){
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
-  # test different k values if more than one provided
-  if(length(Kvals)>1){
-    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, ploidy = ploidy, k_selection = k_selection)
 
-    # get K
+  # Convert coords to matrix
+  coords <- as.matrix(coords)
+
+  # Test different k values, if more than one provided
+  if(length(Kvals) > 1){
+
+    # Run TESS K test
+    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy)
+
+    # Get K
     K <- tess_results[["K"]]
 
-    # get tessobj
+    # Get tessobj
     tess3_obj <- tess_results[["tess3_obj"]]
 
     }
 
-  # if only one value provided just use that
-  # TODO: FIX THIS TO NOT MAKE WEIRD DF (MAYBE SWITCH BACK FUNCTIONS TO TAKE MORE ARGUMENTS)
+  # If only one K value is provided, just use that
   if(length(Kvals) == 1){
 
     # K is just Kvals if there is only one value
-    K = Kvals
+    K <- Kvals
 
     # run tess for given K value
     tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
@@ -56,50 +51,31 @@ tess_full <- function(gen, coords, spdf, Kvals = 1:10,
 
   # KRIGE QMATRIX  -----------------------------------------------------------------------------------------------
 
-  # get Qmatrix
+  # Get Qmatrix
   qmat <- qmatrix(tess3_obj, K = K)
 
-  # krige Qmatrix
-  krig_admix <- tess_krig(qmat = qmat, coords = coords, spdf = spdf, n_cell = n_cell)
+  # Krige Qmatrix
+  krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q)
 
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
-  # set col pal
-  col_pal = turbo(K)
+  # Plot max Q-values
+  print(tess_ggplot(krig_admix, coords, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot")))
 
-  # plot all layers
-  # TODO: FIX THIS SO COORDS ARE PROJECTED Consistently
-  coords_spdf <- coord_proj(coords, spdf, crop_to_spdf = TRUE)
-
-  # plot all kriged maps for each K
-  par(pty = "s", mar = rep(1,4), mfrow = c(1,2))
-  tess_plot_allK(krig_admix, coords_spdf = coords_spdf, spdf = spdf, col_pal = col_pal)
-
-  # make rainbow plots
-  par(pty = "s", mar = rep(0,4), mfrow = c(1,2))
-  tess_rainbow_plot(krig_admix, coords = coords_spdf, spdf = spdf, plot_method = "max", minQ = minQ, col_pal = col_pal)
-  tess_rainbow_plot(krig_admix, coords = coords_spdf, spdf = spdf, plot_method = "all", minQ = minQ, col_pal = col_pal)
-
-  # make barplot
-  par(pty = "m", mfrow = c(1,1))
-  tess_barplot(qmat = qmat, col_pal = col_pal)
-
-  # make maxQ plot
-  par(pty = "m", mfrow = c(1,1), mar = rep(0,4))
-  maxQ <- map_maxQ(krig_admix, plot_map = TRUE)
+  # Make barplot
+  print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
 
-  # create list with all outputs
+  # Create list with all outputs
   tess_results <- list(K = K,
                        Qmatrix = qmat,
                        krig_admix = krig_admix,
                        tess_results = tess3_obj,
                        coords = coords,
                        Kvals = Kvals,
-                       spdf = spdf,
-                       maxQ = maxQ)
+                       grid = grid)
 
   return(tess_results)
 }
@@ -107,369 +83,486 @@ tess_full <- function(gen, coords, spdf, Kvals = 1:10,
 
 #' Test multiple K values
 #'
-#' @param gen genotype matrix
-#' @param coords dataframe with x and y coordinates
-#' @param Kvals vector of K values to test
-#' @param tess_method method provided to tess
-#' @param ploidy ploidy of organism (defaults to 2)
-#' @param k_selection how to perform k selection (options: "auto" for automatic selection based on \code{\link{bestK}} or "manual" to enter into console)
-#'
+#' @inheritParams tess_full
 #' @return
 #' @export
 #'
 #' @examples
-tess_ktest <- function(gen, coords, Kvals = 1:10, spdf = NULL, tess_method = "projected.ls", ploidy = 2, k_selection = "auto"){
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "auto", ploidy = 2){
 
-  # run tess for all K values
+  # Format coordinates
+  coords <- as.matrix(coords)
+
+  # Run tess for all K values
   tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
-  # plot CV results and mark the K-value automatically selected
+  # Plot CV results
   plot(tess3_obj, pch = 19, col = "blue",
        xlab = "Number of ancestral populations",
        ylab = "Cross-validation score")
 
-  # get best K value
-  if(k_selection == "auto"){K <-  bestK(tess3_obj, Kvals)}
-  if(k_selection == "manual"){K <- as.numeric(readline(prompt = "Enter K Value: "))}
+  # Get best K value
+  if(K_selection == "auto"){K <-  bestK(tess3_obj, Kvals)}
+  if(K_selection == "manual"){K <- as.numeric(readline(prompt = "Enter K Value: "))}
 
+  # Mark the K-value selected
   abline(v = K, col = "red", lty = "dashed")
 
-  # create list with tess3 object and K value
+  # Create list with tess3 object and K value
   tess_results <- list(K = K,
                     tess3_obj = tess3_obj,
                     coords = coords,
                     Kvals = Kvals,
-                    spdf = spdf)
+                    grid = grid)
 
   return(tess_results)
 }
 
-
-#' Plot results from K value testing
-#'
-#' @param tess_results list produced by \code{\link{tess_ktest}} with Kvals, coords, and spdf
-#' @param n_cell number of grid cells to use when kriging
-#' @param plot_method method for making rainbow map of kriged layers (options: "max" to only plot the max Q value for each cell or "all" to plot all Qvalues greater than \code{minQ})
-#'
-#' @return
-#' @export
-#'
-#' @examples
-tess_ktest_plot <- function(tess_results, n_cell = 1000, plot_method = "max"){
-
-  # get objects from tess results list
-  Kvals <- tess_results[["Kvals"]]
-  coords <- tess_results[["coords"]]
-  spdf <- tess_results[["spdf"]]
-
-  # krige and plot results
-  par(pty = "s", mfrow = c(3,3), mar = rep(0,4), oma = rep(0,4))
-  for(k in Kvals[-1]){
-    # get Qmatrix
-    qmat <-  qmatrix(tess_results[["tess3_obj"]], k)
-
-    # krige qmatrix
-    krig_admix <- tess_krig(qmat = qmat, coords = coords, spdf = spdf, n_cell = n_cell)
-
-    # plot all layers
-    raster::plot(krig_admix, col = plasma(100), zlim = c(0, max(maxValue(krig_admix))), axes = FALSE, box = FALSE)
-
-    # make rainbow plots
-    tess_rainbow_plot(krig_admix, spdf = spdf, plot_method = plot_method, minQ = minQ)
-
-    # make barplot
-    pal <- CreatePalette(turbo(K))
-    barplot(qmat, sort.by.Q = TRUE,
-            border = NA, space = 0,
-            col.palette = pal,
-            xlab = "Individuals", ylab = "Ancestry coefficients")
-  }
-}
-
-
 #' Krige admixture values
 #'
 #' @param qmat qmatrix
-#' @param coords dataframe with x and y coordinates
-#' @param spdf Spatial Points Dataframe to create grid for kriging
-#' @param n_cell number of grid cells to use when kriging
+#' @inheritParams tess_full
 #'
 #' @return
 #' @export
 #'
 #' @examples
-tess_krig <- function(qmat, coords, spdf, n_cell = 10000){
+tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
 
-  # define K
+  # Get K
   K <- ncol(qmat)
 
-  # make grid for kriging
-  krig_grid <- spdf_to_grid(spdf, n_cell = n_cell)
-
-  krig_admix_r <- stack()
-  krig_admix_df <- data.frame()
-  for(k in 1:K){
-    # make qmat into spdf
-    # TODO: FIX PROJECTION STUFF
-    krig_df <- coord_proj(coords, spdf)
-    krig_df$prop <- qmat[,k]
-
-    # Skip if props are identical (kriging not possible)
-    if(unique(krig_df$prop) == 1){
-      # TODO: COME BACK AND FIX THIS SO THAT A BLANK RASTER IS ADDED
-      warning(paste0("Only one unique Q value for K = ", k, ", skipping (note: may want to consider different K value)"))
-      next
-    }
-
-    # Krige
-    krig_res <- autoKrige(prop ~ 1, krig_df, krig_grid)
-    krig_spdf <- krig_res$krige_output
-
-    # turn SPDF into raster and stack
-    krig_raster <- raster::rasterFromXYZ(krig_spdf, crs = raster::crs(krig_grid))
-    krig_admix_r <- raster::stack(krig_admix_r, krig_raster)
-
-    # save SPDF
-    krig_df <- data.frame(krig_spdf)
-    # add K value
-    krig_df$K <- k
-    # add to df
-    krig_admix_df <- bind_rows(krig_admix_df, krig_df)
-
+  # Make grid for kriging
+  if (inherits(grid, "RasterLayer")) {
+    krig_grid <- raster_to_grid(grid)
+  } else if (sp::gridded(grid)) {
+    krig_grid <- grid
+  } else {
+    stop(" unable to find an inherited method for type of grid provided")
   }
 
-  # TODO: DECIDE IF YOU WANT THIS: convert all values greater than 1 to 1 and all values less than 0 to 0
+  # Remove any CRS values before kriging (autoKrige doesn't like lonlat projection systems)
+  raster::crs(krig_grid) <- NA
 
-  # rename layers
-  names(krig_admix_r) <- paste0("K",1:K)
+  # Make coords into spatial object
+  krig_df <- data.frame(coords)
+  sp::coordinates(krig_df) <- ~x+y
 
-  # convert K to factor
-  krig_admix_df$K <- factor(krig_admix_df$K)
-  # add column names
-  colnames(krig_admix_df) <- c("x", "y", "Q", "var", "stdev", "optional", "K")
+  # Krige each K value
+  krig_admix <- raster::stack(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
 
-  # return stack and dataframe
-  krig_admix <- list(raster = krig_admix_r, dataframe = krig_admix_df)
+  # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
+  if(correct_kriged_Q){
+    krig_admix[krig_admix < 0] <- 0
+    krig_admix[krig_admix > 1] <- 1
+  }
 
+  # Rename layers
+  names(krig_admix) <- paste0("K", 1:K)
+
+  # Return stack
   return(krig_admix)
 }
 
-#' Make rainbow TESS plot from kriged admixture plots
+#' Krige one K value
 #'
-#' @param krig_admix list returned by  \code{\link{tess_krig}}
-#' @param coords dataframe with x and y coordinates for plotting (not required)
-#' @param spdf Spatial Points Dataframe for plotting (not required)
-#' @param plot_method method for making rainbow map of kriged layers (options: "max" to only plot the max Q value for each cell or "all" to plot all Qvalues greater than \code{minQ})
-#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used
-#' @param alpha transparency for plotting
+#' @param K K value
+#' @param qmat Q matrix
+#'
+#' @export
+#' @noRd
+krig_K <- function(K, qmat, krig_grid, krig_df){
+
+  # Add Q values to spatial dataframe
+  krig_df$Q <- qmat[,K]
+
+  # Skip if all of the Q values are identical (kriging not possible)
+  if(length(unique(krig_df$Q)) == 1){
+    warning(paste0("Only one unique Q value for K = ", K, ", skipping (note: may want to consider different K value)"))
+    next
+  }
+
+  # Krige (capture output so it is not printed automatically)
+  co <- capture.output(krig_res <- autoKrige(Q ~ 1, krig_df, krig_grid))
+
+  # Get Krige output
+  krig_spdf <- krig_res$krige_output
+
+  # Turn into raster
+  krig_raster <- raster::rasterFromXYZ(krig_spdf)
+
+  return(krig_raster)
+}
+
+
+#' Convert a raster to a grid
+#'
+#' @param x RasterLayer
+#'
+#' @return gridded SpatialPixelsDataFrame
+#' @export
+#' @noRd
+raster_to_grid <- function(x) {
+
+  # Convert raster to dataframe
+  grd <- data.frame(raster::rasterToPoints(x))
+
+  # Convert dataframe to spatial dataframe
+  sp::coordinates(grd) <- ~ x + y
+
+  # Convert into gridded object
+  sp::gridded(grd) <- TRUE
+
+  return(grd)
+}
+
+#' ggplot of TESS results
+#'
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
+#' @param coords dataframe with x and y coordinates for plotting (optional)
+#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
+#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @inheritParams tess_full
 #'
 #' @return
 #' @export
 #'
 #' @examples
-tess_rainbow_plot <- function(krig_admix, coords = NULL, spdf = NULL, plot_method = "max", minQ = 0.10, alpha = 1, col_pal = "Default", reclassify = FALSE, poly = FALSE){
+tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE){
 
-  # get raster stack
-  r <- krig_admix[["raster"]]
+  # set up ggplot df
+  gg_df <- krig_admix %>%
+    raster::rasterToPoints() %>%
+    tidyr::as_tibble() %>%
+    tidyr::gather("K", "Q", -c(x, y)) %>%
+    dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
+    dplyr::group_by(x, y)
 
-  # determine K based on_cell number of layers
-  K <- nlayers(r)
+  # use max or all Q
+  if(plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
+  if(plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > 0.20)
 
-  # set col pal
-  if(col_pal == "Default"){
-    col_pal <- turbo(K, alpha)
+  # set up base plot
+  plt <- ggplot2::ggplot()
+
+  # plot as polygon or continuous Q
+  if(plot_method == "maxQ_poly" | plot_method == "allQ_poly"){
+    plt <- plt + ggplot2::geom_tile(data = gg_df, aes(x = x, y = y, fill = K), alpha = 0.5)
+  } else {
+    plt <- plt +
+      ggplot2::geom_tile(data = gg_df, aes(x = x, y = y, fill = K, alpha = Q)) +
+      ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1),
+                                guide = guide_legend())
   }
 
-  # get extent of raster (to set up plot)
-  ext <- extent(r)
-  # set up base plot (! important ! Don't remove or things will get wonky)
-  plot(1, legend = FALSE, axes = FALSE, box = FALSE, type = "n",
-       xlim = c(ext[1], ext[2]), ylim = c(ext[3], ext[4]),
-       xlab = "", ylab = "")
+  # add color
+  plt <- plt + ggplot_fill
+
+  # add themes and coord controls
+  plt <-  plt + ggplot2::coord_equal() + ggplot2::theme_bw()
+
+  # add axes
+  if(plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = element_blank(),
+                                            panel.grid.major.y = element_blank(),
+                                            panel.grid.minor.x = element_blank(),
+                                            panel.grid.major.x = element_blank(),
+                                            aspect.ratio = 1)
+
+  if(!plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = element_blank(),
+                                            panel.grid.major.y = element_blank(),
+                                            panel.grid.minor.x = element_blank(),
+                                            panel.grid.major.x = element_blank(),
+                                            axis.title.x = element_blank(),
+                                            axis.text.x = element_blank(),
+                                            axis.ticks.x = element_blank(),
+                                            axis.title.y = element_blank(),
+                                            axis.text.y = element_blank(),
+                                            axis.ticks.y = element_blank(),
+                                            panel.border = element_blank(),
+                                            aspect.ratio = 1)
+
+  # add coords
+  if(!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), aes(x = x, y = y))
+
+  return(plt)
+}
+
+#' Make rainbow TESS plot from kriged admixture rasters
+#'
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
+#' @param coords dataframe with x and y coordinates for plotting (optional)
+#' @param plot_method method for making rainbow map of kriged layers (options: \code{"maxQ"} to only plot the max Q value for each cell (default), \code{"allQ"} to plot all Qvalues greater than \code{minQ}, \code{"maxQ_poly"} or \code{"allQ_poly"} to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param col_pal function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo}). If using \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"}, the function must accept \code{alpha} as an argument
+#' @param col_breaks if using \code{"maxQ"} and \code{"allQ"} plot methods, the number of breaks to use when plotting kriged maps
+#' @param col_alpha if using the \code{"allQ"} plot method, an alpha-transparency level in the range [0,1] (0 means transparent and 1 means opaque) provided to \code{col_pal} function
+#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} is used (defaults to 0.10)
+#' @param legend whether to include legend (defaults to TRUE)
+#' @inheritParams tess_full
+#'
+#' @return
+#' @export
+#'
+#' @examples
+tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
+
+  # Get K based on the number of layers
+  K <- raster::nlayers(krig_admix)
 
   # Select method and options
-  if(plot_method == "max"){tess_plot_max(krig_admix, K = K, reclassify = reclassify, poly = FALSE, col_pal = col_pal)}
-  if(plot_method == "all"){tess_plot_all(krig_admix, K = K, reclassify = reclassify, poly = FALSE, minQ = minQ, col_pal = col_pal)}
-  if(plot_method == "max_poly"){tess_plot_max(krig_admix, K = K, reclassify = reclassify, poly = TRUE, col_pal = col_pal)}
-  if(plot_method == "all_poly"){tess_plot_all(krig_admix, K = K, reclassify = reclassify, poly = TRUE, minQ = minQ, col_pal = col_pal)}
-
+  # suppress irrelevant plot warnings
+  suppressWarnings({
+  if(plot_method == "maxQ") tess_plot_max(krig_admix, K = K, coords = coords, poly = FALSE, col_pal = col_pal, col_breaks = col_breaks, legend = TRUE)
+  if(plot_method == "allQ") tess_plot_all(krig_admix, K = K, coords = coords, poly = FALSE, col_pal = col_pal, col_breaks = col_breaks, col_alpha = col_alpha, minQ = minQ, legend = TRUE)
+  if(plot_method == "maxQ_poly") tess_plot_max(krig_admix, K = K, coords = coords, poly = TRUE, col_pal = col_pal, legend = TRUE)
+  if(plot_method == "allQ_poly") tess_plot_all(krig_admix, K = K, coords = coords, poly = TRUE, col_pal = col_pal, col_alpha = col_alpha, minQ = minQ, legend = TRUE)
+  })
 
   # add coordinates if given
-  if(!is.null(coords)){points(coords, pch = 16)}
-  # add spdf boundary if
-  if(!is.null(spdf)){raster::plot(spdf, add = TRUE)}
+  if(!is.null(coords)) points(coords, pch = 3)
 }
 
 
 #' Plot method: Q max
 #'
-#' @describeIn tess_rainbow_plot plot based on max of Qvalues
+#' @inheritParams tess_plot
+#' @param K K value
+#' @param poly whether to plot as polygon instead of continous Q values
 #'
-#' @param krig_admix
-#' @param K
-#' @param reclassify
-#' @param poly
-#' @param col_pal
-#'
-#' @return
 #' @export
+#' @noRd
+tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, legend = TRUE){
+
+   # make and summarize dataframe by only retaining highest Q values for each point
+  pop_df <-  krig_admix %>%
+    raster::rasterToPoints() %>%
+    tidyr::as_tibble() %>%
+    tidyr::gather("K", "Q", -c(x, y)) %>%
+    dplyr::mutate(K = as.numeric(gsub("K", "", K))) %>%
+    dplyr::group_by(x, y) %>%
+    dplyr::top_n(1, Q)
+
+  # Get extent of raster (to set up plot)
+  ext <- extent(krig_admix)
+
+  # Set up base plot (! important ! Don't remove or things will get wonky)
+  plot(1, legend = FALSE, axes = FALSE, box = FALSE, type = "n",
+       xlim = c(ext[1], ext[2]), ylim = c(ext[3], ext[4]),
+       xlab = "", ylab = "")
+
+  # Plot each kriged admixture layer one by one on top of each other
+  purrr::walk(1:K, max_plot_helper, pop_df, poly = poly, col = col_pal(K), col_breaks = col_breaks)
+
+  # add legend
+  if(legend) legend("topright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K), bty = "n")
+
+  # Add coordinates
+  if(!is.null(coords)) points(coords, pch = 3)
+
+}
+
+#' K max plotting helper function
 #'
-#' @examples
-tess_plot_max <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, col_pal){
+#' @inheritParams tess_plot
+#' @param K K value
+#' @param pop_df SpatialPointsDataFrame with K and Q-values
+#' @param poly whether to plot as polygon instead of continous Q values
+#' @param col single color code
+#'
+#' @export
+#' @noRd
+max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
 
-  # max and min raster values for plotting
-  # TODO: FIX THIS
-  maxr <- max(maxValue(krig_admix[["raster"]]))
-  minr <- min(minValue(krig_admix[["raster"]]))
+  # Subset by K
+  pop_spdf <- pop_df[pop_df$K == K, ]
 
-  # summarize dataframe by only retaining highest Q values for each point
-  pop_df <-  krig_admix[["dataframe"]] %>%
-    group_by(x, y) %>%
-    top_n(1, Q)
-
-  # plot each kriged admixture map one by one on top of each other
-  # TODO: convert to purrr::map
-  for(i in 1:K){
-    pop_spdf <- pop_df[pop_df$K == i, ]
-
-    # skip to next iteration if there is no more than one value for that K
-    # TODO: add warning about skipping
-    if(nrow(pop_spdf) < 2) next
-
-    # make into spdf and convert to raster
-    coordinates(pop_spdf) <- ~x+y
-    rl <- rasterFromXYZ(pop_spdf)
-
-    if(reclassify){
-      rl <- tess_reclass(rl)
-
-      # reset max and min raster values for plotting
-      maxr <- max(maxValue(rl))
-      minr <- min(minValue(rl))
-    }
-
-    # make color palette (if poly use solid color, if not use gradient)
-    if(poly){
-      cols <- col_pal[i]
-
-    } else {
-      colors <- c(rgb(1,1,1,alpha = 0), col_pal[i])
-      kpal <- colorRampPalette(colors, interpolate="linear", alpha = TRUE)
-      cols <- kpal(100)
-      }
-
-    # plot raster
-    raster::plot(rl,
-         add = TRUE,
-         legend = FALSE,
-         col = cols,
-         main = plot_method,
-         zlim = c(minr, maxr))
-
+  # Skip to next iteration if there is no more than one value for that K
+  if(nrow(pop_spdf) < 2){
+    warning(paste0("less than two values found for K = ", K,", skipping..."))
+    next
   }
 
+  # Make into spdf and convert to raster
+  sp::coordinates(pop_spdf) <- ~x+y
+  rl <- raster::rasterFromXYZ(pop_spdf[, "Q"])
+
+  # if not poly plot, set zlim to range of all Q values
+  if(!poly) zlim <- range(pop_df$Q)
+
+  # Plot raster
+  raster::plot(rl,
+               add = TRUE,
+               legend = FALSE,
+               col = make_plot_col(K, col, col_breaks, poly),
+               zlim = zlim)
 }
 
 #' Plot method: Q all
 #'
-#' @describeIn tess_rainbow_plot plot based on all Qvalues
+#' @inheritParams tess_plot
+#' @param K K value
+#' @param poly whether to plot as polygon instead of continous Q values
 #'
-#' @param krig_admix
-#' @param K
-#' @param reclassify
-#' @param poly
-#' @param minQ
-#' @param col_pal
+#' @export
+#' @noRd
+tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
+
+  # Get max raster value for plotting (minQ defines minimum)
+  maxr <- max(maxValue(krig_admix))
+
+  # Get extent of raster (to set up plot)
+  ext <- extent(krig_admix)
+
+  # Set up base plot (! important ! Don't remove or things will get wonky)
+  plot(1, legend = FALSE, axes = FALSE, box = FALSE, type = "n",
+       xlim = c(ext[1], ext[2]), ylim = c(ext[3], ext[4]),
+       xlab = "", ylab = "")
+
+  # Plot kriged admixture layers while masking values < minQ
+  purrr::walk(1:K, all_plot_helper, krig_admix, poly = poly, col = col_pal(K, alpha = col_alpha), col_breaks = col_breaks, zlim = c(minQ, maxr))
+
+  # add legend
+  if(legend) legend("topright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K), bty = "n")
+
+  # Add coordinates
+  if(!is.null(coords)) points(coords, pch = 3)
+
+}
+
+#' Helper function for max plotting
+#'
+#' @inheritParams tess_plot
+#' @param K K value
+#' @param poly whether to plot as polygon instead of continous Q values
+#' @param col single color code
+#'
+#' @export
+#' @noRd
+#'
+all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NULL){
+
+  # Plot raster
+  raster::plot(krig_admix[[K]],
+               col = make_plot_col(K, col, col_breaks, poly),
+               add = TRUE,
+               legend = FALSE,
+               zlim = zlim)
+
+}
+
+#' Plot all kriged Q values for each K
+#'
+#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
+#' @param coords dataframe with x and y coordinates for plotting (optional)
+#' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot.
+#' @inheritParams tess_full
 #'
 #' @return
 #' @export
 #'
 #' @examples
-tess_plot_all <- function(krig_admix, K = K, reclassify = FALSE, poly = FALSE, minQ = 0.10, col_pal){
+tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
 
-  rl <- krig_admix[["raster"]]
-
-  if(reclassify) rl <- tess_reclass(rl)
-
-  # max of raster values for plotting
-  maxr <- max(maxValue(rl))
-
-  if(reclassify){
-    rl <- tess_reclass(rl)
-
-    # max and raster values for plotting
-    maxr <- max(maxValue(rl))
-  }
-
+  # get K
+  K <- raster::nlayers(krig_admix)
 
   # plot kriged admixture maps while masking small values (e.g. < minQ)
-  for(i in 1:K){
-
-    # make color palette (if poly use solid color, if not use gradient)
-    if(poly){
-      cols <- col_pal[i]
-    } else {
-      colors <- c(rgb(1,1,1,alpha = 0), col_pal[i])
-      kpal <- colorRampPalette(colors, interpolate="linear", alpha = TRUE)
-      cols <- kpal(100)
-    }
-
-    raster::plot(rl[[i]],
-         col = cols,
-         main = plot_method,
-         add = TRUE,
-         legend = FALSE,
-         # TODO: why was this minr instead of minQ?
-         zlim = c(minQ, maxr))
+  purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords,  col = col_pal(K), col_breaks = col_breaks, ...)
 
   }
-}
 
-tess_plot_allK <- function(krig_admix, K = K, coords_spdf = NULL, spdf = NULL, col_pal = turbo(K)){
-
-  r <- krig_admix[["raster"]]
-  K <- nlayers(r)
-
-  for(i in 1:K){
-    cols <- c(rgb(1,1,1,alpha = 0), col_pal[i])
-
-    kpal <- colorRampPalette(cols, interpolate="linear", alpha = TRUE)
-
-    raster::plot(krig_admix[["raster"]][[i]],
-         col = kpal(100),
-         zlim = c(0, max(maxValue(r))),
-         axes = FALSE,
-         box = FALSE,
-         main = paste0("K=",i))
-
-    # add coordinates if given
-    if(!is.null(coords_spdf)){points(coords_spdf, pch = 16)}
-    # add spdf boundary if
-    if(!is.null(spdf)){raster::plot(spdf, add = TRUE)}
-  }
-}
-
-
-#' Creat TESS barplot
+#' Helper function for all K plotting
 #'
-#' @inheritParams tess_doEverything
+#' @inheritParams tess_plot_allK
+#' @param K K value
+#' @param col single color code
+#'
+#' @export
+#'
+allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...){
+
+  # suppress irrelevant plot warnings
+  suppressWarnings({raster::plot(krig_admix[[K]],
+               col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
+               zlim = c(0, max(maxValue(krig_admix))),
+               axes = FALSE,
+               box = FALSE,
+               main = paste0("K = ",K),
+               ...)})
+
+  # add coordinates if given
+  if(!is.null(coords)) points(coords, pch = 3)
+}
+
+#' Make color vector for plotting
+#'
+#' @param K K value (used to index col)
+#' @param col vector of colors
+#' @param alpha transparency to start color scale at
+#' @inheritParams tess_plot
+#'
+#' @export
+#' @noRd
+make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col = rgb(1, 1, 1, alpha)){
+
+  if(poly){
+    # Make color palette using only solid color
+    plot_col <- col[K]
+  } else {
+    # Make color palette gradient from transparent to color defined by K
+    kpal <- colorRampPalette(c(start_col, col[K]), interpolate = "linear", alpha = TRUE)
+    plot_col <- kpal(col_breaks)
+  }
+
+  return(plot_col)
+}
+
+#' Create TESS Barplot
+#'
+#' Based on code from: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
+#'
+#' @param qmat Q matrix
+#' @param sort_by_Q whether to sort bars by Q value (equivalent to \link[tess3r]{barplot} sort.by.Q)
+#' @param legend whether to display legend (defaults to TRUE)
+#' @param legend_position the x and y coordinates or keyword to determine legend position (defaults to bottom right)
+#' @inheritParams tess_full
+#' @inheritParams graphics::barplot
+#' @param ... other parameters of the function \code{\link{barplot.default}}.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-tess_barplot <- function(qmat, col_pal = turbo(ncol(qmat))){
-  pal <- CreatePalette(col_pal)
-  barplot(qmat,
-          sort.by.Q = TRUE,
-          border = NA,
-          space = 0,
-          col.palette = pal,
-          xlab = "Individuals", ylab = "Ancestry coefficients")
+tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
+  # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
+
+  # get K
+  K <- ncol(qmat)
+
+  if (sort_by_Q) {
+    gr = apply(qmat, MARGIN = 1, which.max)
+    gm = max(gr)
+    gr.o = order(sapply(1:gm, FUN = function(g) mean(qmat[,g])))
+    gr = sapply(gr, FUN = function(i) gr.o[i])
+    or = order(gr)
+    Qm = t(qmat[or,])
+    class(Qm) = "matrix"
+    graphics::barplot(Qm, col =  col_pal(K), border = border, space = space, ...)
+    legend("bottomright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
+    return(list(order = or))
+  }
+  else {
+    Qm = t(qmat)
+    class(Qm) = "matrix"
+    graphics::barplot(Qm, col =  col_pal(ncol(qmat)), border = border, space = space, ...)
+    legend(legend_position, pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
+    return(list(order = 1:nrow(qmat)))
+  }
+
 }
 
 
-# TODO: CHECK THIS
+# TODO: ANNE CHECK THIS
 #' Best K Selection based on cross entropy
 #'
 #' @param tess3_obj list produced by \code{\link{tess3}}
@@ -492,193 +585,28 @@ bestK <- function(tess3_obj, Kvals){
   return(K)
 }
 
-#' Reclassify Kriged Qmatrix Raster
+
+#' Create default TESS color palette
+#' @param n number of colors to generate (must be less than 9)
 #'
-#' @param r kriged Q raster
-#' @param inc increment for reclassification bins
-#' @param rec reclassify matrix (if not provided, will be set to default)
-#'
-#' @return
 #' @export
 #'
-#' @examples
-tess_reclass <- function(r, inc = 0.05, rec = "Default"){
-
-  if(rec == "Default"){
-    v1 <- seq(0,0.9,inc)
-    v2 <- seq(0.1,1,inc)
-    rec <- cbind(v1, v2, v1)
-  }
-
-  r <- reclassify(r, rec)
+tess_col_default <- function(n, alpha = 1){
+  if (n > 9) stop("The default color palette expects less than 9 values")
+  tessCP <- CreatePalette()
+  tesscol <- sapply(1:n, function(x, tessCP){tessCP[[x]][9]}, tessCP)
+  tesspal <- colorRampPalette(tesscol, interpolate = "linear", alpha = TRUE)
+  return(tesspal(n))
 }
 
-
-
-# FUNCTIONS IN TESTING ---------------------------------------------------------
-stack_maxQ <- function(krig_list){
-  K <- length(krig_list)
-  rs <- stack()
-  for(i in 2:K){
-    krig_admix <- krig_list[[i]]
-    r <- map_maxQ(krig_admix)
-    rs <- stack(rs, r)
-  }
-  return(rs)
-}
-
-#' Make raster with max Q values
+#' Create default algatr color palette for TESS
 #'
-#' @param krig_admix
-#' @param alpha
-#' @param zlim
-#' @param add
-#' @param cols
-#' @param plot_map
+#' @param x whether to return ggplot or base color scale function
 #'
-#' @return
 #' @export
-#'
-#' @examples
-map_maxQ <- function(krig_admix, alpha = alpha, add = FALSE, cols = "Default", plot_map = FALSE){
-  # summarize dataframe by only retaining highest Q values for each point
-  pop_spdf <-  krig_admix[["dataframe"]] %>%
-    group_by(x, y) %>%
-    top_n(1, Q)
-
-  # make into spdf and convert to raster
-  coordinates(pop_spdf) <- ~x+y
-  rl <- rasterFromXYZ(pop_spdf)
-
-  if(plot_map ){
-    if(cols == "Default"){
-      cols <- magma(100)
-    }
-
-    raster::plot(rl, col = cols, add = add, legend = FALSE, axes = FALSE, box = FALSE)
-  }
-
-
-  return(rl)
+#' @noRd
+algatr_col_default <- function(x){
+  if(x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
+  if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
+  return(col)
 }
-
-#' Make raster of population boundaries
-#'
-#' @param krig_admix
-#' @param K
-#' @param m
-#' @param minQ
-#' @param boundaries
-#'
-#' @return
-#' @export
-#'
-#' @examples
-make_boundary_raster <- function(krig_admix, K, m = matrix(rep(1,9), nrow = 3), minQ = NULL, boundaries = FALSE){
-  r <-  krig_admix[["raster"]][[1]]
-  r[] <- NA
-
-  pop_df <-  krig_admix[["dataframe"]] %>%
-    group_by(x, y) %>%
-    top_n(1, Q)
-
-  rs <- r
-  # plot each kriged admixture map one by one on top of each other
-  for(i in 1:K){
-    pop_spdf <- pop_df[pop_df$K == i, ]
-
-    # skip to next iteration if there are no values for that K
-    if(nrow(pop_spdf) == 0) next
-    if(length(unique(pop_spdf$x)) == 1) next
-    if(length(unique(pop_spdf$y)) == 1) next
-
-    # make into spdf and convert to raster
-    coordinates(pop_spdf) <- ~x+y
-    rl <- rasterFromXYZ(pop_spdf)
-
-    # mask areas where Q is high (pop assignment certain)
-    if(is.numeric(minQ)){rl[rl > minQ] <- minQ}
-
-    # only plot boundaries beween pops
-    if(boundaries){rl <- rl*0+i}
-
-    # stitch rasters together
-    rs <- mosaic(rs, rl, fun = min)
-
-  }
-
-  rv <- focal(rs, w = m, fun = var)
-
-  # only plot boundaries beween pops
-  if(boundaries){rv[rv != 0] <- 1}
-
-  return(rv)
-
-}
-
-#' Make boundary rasters for a set of K values
-#'
-#' @param krig_list
-#' @param minQ
-#' @param boundaries
-#'
-#' @return
-#' @export
-#'
-#' @examples
-make_boundaries_allK <- function(krig_list, minQ = NULL, boundaries = FALSE){
-  K = length(krig_list)
-
-  rv_stack <- stack()
-  for(k in 2:K){
-    krig_admix <- krig_list[[k]]
-    rv <- make_boundary_raster(krig_admix, K = k, minQ = minQ, boundaries = boundaries)
-    rv_stack <- stack(rv_stack, rv)
-  }
-  names(rv_stack) <- paste0("K", 2:K)
-
-  return(rv_stack)
-}
-
-#' Plot boundaries
-#'
-#' @param rv_stack
-#' @param option
-#' @param log_transform
-#' @param col
-#' @param weights
-#' @param tess3_obj
-#' @param main
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot_boundaries <- function(rv_stack, option = "all", log_transform = FALSE,
-                            col = magma(100),
-                            weights = NULL, tess3_obj = NULL,
-                            main = ""){
-  if(option == "all"){
-    rv_summary <- rv_stack
-  }
-
-  if(option == "mean"){
-    rv_summary <-  raster::mean(rv_stack)
-  }
-
-  if(option == "weighted.mean"){
-    if(!is.null(tess3_obj)){
-      ce_vec <- unlist(lapply(tess3_obj, function(x){x <- x$crossentropy}))
-      weights <- 1/ce_vec[-1]
-    }
-
-    rv_summary <-  weighted.mean(rv_stack, w = weights[1:nlayers(rv_stack)])
-  }
-
-  if(log_transform){
-    rv_summary <- log(rv_summary)
-  }
-
-  raster::plot(rv_summary, col = magma(100), axes = FALSE, box = FALSE, main = main)
-}
-

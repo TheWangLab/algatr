@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ### Multiple matrix regression with randomization (MMRR)
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(landgen)
+library(algatr)
 library(here)
 ```
 
