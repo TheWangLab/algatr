@@ -201,7 +201,6 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
 #'
 #' @examples
 gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
-  # TODO: EAC re-run this; save RDA and send to APB
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
@@ -295,15 +294,11 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
   # Make PCA raster
   pcaRast <- raster::predict(rastTrans, pcaSamp, index=1:n_layers)
 
-  # Make copy of PCA raster to transform into RGB values
-  pcaRastRGB <- pcaRast
-
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
-  for(layer in 1:n_layers){
-    # If all values are 0 assign value as white (255)
-    if(pcaRastRGB[[layer]]@data@max == 0){pcaRastRGB[[layer]] <- 255; next}
-    pcaRastRGB[[layer]] <- (pcaRastRGB[[layer]]-pcaRastRGB[[layer]]@data@min) / (pcaRastRGB[[layer]]@data@max-pcaRastRGB[[layer]]@data@min)*255
-  }
+  pcaRastRGB <- raster::stack(purrr::map(1:n_layers, function(i, pcaRast){
+    x <- pcaRast[[i]]
+    if(x@data@max == 0) x[] <- 255 else x <- (x - x@data@min) / (x@data@max - x@data@min)*255
+    return(x)}, pcaRast))
 
   # If there are fewer than 3 n_layers (e.g., <3 variables), the RGB plot won't work (because there isn't an R, G, and B)
   # To get around this, create a blank raster (i.e., a white raster), and add it to the stack
@@ -351,7 +346,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 gdm_plot_isplines <- function(gdm_model){
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
-  for(i in 1:ncol(gdm_model_splineDat$x)){
+  purrr::walk(1:ncol(gdm_model_splineDat$x), function(i){
     plot(gdm_model_splineDat$x[,i],
          gdm_model_splineDat$y[,i],
          cex.lab = 1.5,
@@ -361,8 +356,7 @@ gdm_plot_isplines <- function(gdm_model){
          ylim = c(0, max(gdm_model_splineDat$y)),
          xlab = colnames(gdm_model_splineDat$x)[i],
          ylab = "Partial Regression Distance")
-
-  }
+  })
 }
 
 
@@ -418,18 +412,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   colnames(pcavalsRGB) <- colnames(xpc)
 
   # Create vector of RGB colors for plotting
-  pcacols <- c()
-  for(i in 1:nrow(pcavalsRGB)){
-    if(any(is.na(pcavalsRGB[i,]))){
-      pcacols[i] <- NA
-    }
-    else {
-      # r=1, g=2, b=3 (TODO: FIX TO MAKE THIS FLEXIBLE)
-      pcacols[i] <- rgb(pcavalsRGB[,1][i], pcavalsRGB[,2][i], pcavalsRGB[,3][i], maxColorValue = 255)
-    }
-
-  }
-
+  pcacols <- apply(pcavalsRGB, 1, create_rgb_vec)
 
   # GET RGB VALS FOR ENTIRE RASTER-------------------------------------------------------------------------------------
 
@@ -447,16 +430,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   rastvalsRGB <- rastvalsRGB[stats::complete.cases(rastvalsRGB),]
 
   # Create vector of RGB colors for plotting
-  rastpcacols <- c()
-  for(i in 1:nrow(rastvalsRGB)){
-    if(any(is.na(rastvalsRGB[i,]))){
-      rastpcacols[i] <- NA
-    } else {
-      # r=1, g=2, b=3 (TODO: FIX TO MAKE THIS FLEXIBLE)
-      rastpcacols[i] <- rgb(rastvalsRGB[,1][i], rastvalsRGB[,2][i], rastvalsRGB[,3][i], maxColorValue = 255)
-    }
-
-  }
+  rastpcacols <- apply(rastvalsRGB, 1, create_rgb_vec)
 
   # FINAL PLOT----------------------------------------------------------------------------------------------------------
 
@@ -487,6 +461,14 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   print(plot)
 }
 
+#' Helper function to create rgb vector
+#'
+#' @export
+#' @noRd
+create_rgb_vec <- function(vec){
+  if(any(is.na(vec))) x <- NA else x <- rgb(vec[1], vec[2], vec[3], maxColorValue = 255)
+  return(x)
+}
 
 #' Scale genetic distances from 0 to 1
 #'
@@ -542,8 +524,8 @@ gdm_coeffs <- function(gdm_model){
 #' @noRd
 #' @export
 stack_to_rgb <- function(s){
-  new_stack <- s
-  for(i in 1:nlayers(s)){new_stack[[i]] <- raster_to_rgb(s[[i]])}
+  stack_list <- as.list(s)
+  new_stack <- raster::stack(purrr::map(stack_list, raster_to_rgb))
   return(new_stack)
 }
 
