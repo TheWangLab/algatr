@@ -20,8 +20,9 @@ env_dist <- function(env){
 
 #' Calculate geographic distance between sampling coordinates
 #'
-#' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y - What a stupid thing for geodist to require.)
+#' @param coords dataframe with x and y coordinates
 #' @param type The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.
+#' @param lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @details
 #' Euclidean, or linear, distances are calculated using the geodist package: Padgham M, Sumner M (2021). geodist: Fast, Dependency-Free Geodesic Distance Calculations. R package version 0.0.7, Available: https://CRAN.R-project.org/package=geodist.
 #' Topographic distances are calculated using the topoDistance package: Wang I.J. (2020) Topographic path analysis for modeling dispersal and functional connectivity: calculating topographic distances using the TOPODISTANCE R package. Methods in Ecology and Evolution, 11: 265-272.
@@ -32,11 +33,6 @@ env_dist <- function(env){
 #' @examples
 geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   if(type == "Euclidean" | type == "euclidean" | type == "linear"){
-    # Check colnames
-    for(i in 1:length(colnames(coords))){
-      if(colnames(coords)[i] == "lon" | colnames(coords)[i] == "Lon" | colnames(coords)[i] == "longitude" | colnames(coords)[i] == "Longitude") colnames(coords)[i] <- "x"
-      if(colnames(coords)[i] == "lat" | colnames(coords)[i] == "Lat" | colnames(coords)[i] == "latitude" | colnames(coords)[i] == "Latitude") colnames(coords)[i] <- "y"
-    }
     # Calculate geodesic distance between points
     distmat <- geodist::geodist(coords, measure = "geodesic")
   }
