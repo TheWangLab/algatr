@@ -15,7 +15,7 @@ You can install the development version of algatr from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("AnushaPB/landgen", build_vignettes = TRUE)
+devtools::install_github("TheWangLab/landgen", build_vignettes = TRUE)
 ```
 
 ## Example
