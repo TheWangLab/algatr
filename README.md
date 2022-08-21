@@ -3,6 +3,9 @@
 
 # algatr <img src="man/figures/logo.png" align="right" height="120" />
 
+**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
+(**algatr**) was built to…
+
 <!-- badges: start -->
 <!-- badges: end -->
 
