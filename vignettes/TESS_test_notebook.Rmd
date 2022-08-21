@@ -71,8 +71,10 @@ results <- tess_do_everything(gen, liz_coords, raster, Kvals = 1:3, K_selection 
 ```{r, cache = TRUE}
 # run tess with multiple K values
 tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:10, ploidy = 2) 
+
 # look at resulting object (ANNE: provide a description of what is in this object)
 summary(tess3_result)
+
 # get tess object
 tess3_obj <- tess3_result$tess3_obj
 
