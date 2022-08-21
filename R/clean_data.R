@@ -84,38 +84,6 @@ vcf_to_genind <- function(x, pops = NULL){
   return(genind)
 }
 
-#' Remove NAs from genetic data
-#' TODO: what is gen? gendist matrix? need to fill in param details
-#' @param gen
-#' @param nsd
-#'
-#' @return
-#' @export
-#'
-#' @examples
-gen_remove_na <- function(gen, nsd = 3){
-
-  gen_filter <- gen
-
-  while(any(is.na(gen_filter))){
-
-    na_ind <- apply(gen_filter, 1, function(x) sum(is.na(x)))
-    co_ind <- mean(na_ind) + nsd*sd(na_ind)
-    gen_filter <- gen_filter[which(na_ind < co_ind),]
-
-    na_loci <- apply(gen_filter, 2, function(x) sum(is.na(x)))
-    co_loci <- mean(na_loci) + nsd*sd(na_loci)
-    gen_filter <- gen_filter[,which(na_loci < co_loci)]
-
-    print(dim(gen_filter))
-  }
-
-  # TODO: if input is gendist, it returns twice because matrix
-  message(paste("Input:", dim(gen)))
-  message(paste("Output:", dim(gen_filter)))
-
-  return(gen_filter)
-}
 
 #' Remove islands from mapping
 #' TODO: fill in param details
