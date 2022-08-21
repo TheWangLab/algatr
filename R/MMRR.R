@@ -41,7 +41,7 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
     names(Xdist_best) <- names(mod$coefficients)[-1]
 
     # plot results
-    plot_mmrr(mod, Ydist, Xdist_best, stdz = stdz)
+    plot_mmrr(Y = Ydist, X = Xdist_best, mod = mod, stdz = stdz)
 
   }
 
@@ -52,7 +52,7 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
     if(is.null(mod)) return(NULL)
 
     # plot results
-    plot_mmrr(mod, Ydist, Xdist, stdz = TRUE)
+    plot_mmrr(Y = Ydist, X = Xdist, mod = mod, stdz = stdz)
     }
 
   # Make nice data frame
@@ -186,9 +186,9 @@ mmrr_df <- function(mod){
 
 #' Plot MMRR results
 #'
-#' @param mod The fitted MMRR model
 #' @param Y The dependent variable in the form of a distance matrix
-#' @param X A list of independent variables in the form of distance matrices (with optional names)
+#' @param X A list of independent variables in the form of distance matrices (required if `plot_type = "fitted"`, `vars` or `"all"`)
+#' @param mod The fitted MMRR model (required if `plot_type = "fitted"` or `"all"`)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #' @param scale If TRUE, all variables are scaled
 #' @param varNames A vector of names for the variables in the model (optional)
@@ -197,7 +197,7 @@ mmrr_df <- function(mod){
 #' @export
 #'
 #' @examples
-plot_mmrr <- function(mod, Y, X, plot_type = "all", stdz = TRUE, var_names = NULL){
+plot_mmrr <- function(Y, X = NULL, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL){
 
   # Plot single variable relationships
   if("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
