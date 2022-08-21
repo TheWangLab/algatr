@@ -7,7 +7,7 @@
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
-#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
+#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
@@ -18,17 +18,18 @@
 #' @export
 #'
 #' @examples
-gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE, plot_vars = TRUE){
+gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, nperm = 50,
+                              geodist_type = "Euclidean", dist_lyr = NULL, scale = FALSE, plot_vars = TRUE){
 
   # format coordinates
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
   # If not provided, make env data frame from layers and coords
-  if(is.null(env)){env <- raster::extract(envlayers, coords)}
+  if(is.null(env)){env <- raster::extract(envlayers, coords)} # This shouldn't be necessary since predData with rasterStack should extract automatically
 
   # Run model with all defaults
-  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, n_perm = n_perm, scale = scale)
+  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, nperm = nperm, scale = scale, geodist_type = geodist_type, dist_lyr = dist_lyr)
 
   # If mod is null, exit
   if(is.null(gdm_model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
@@ -62,7 +63,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @param env dataframe with environmental values for each coordinate
 #' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
 #' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
-#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best"
+#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best"
 #' @param scale scale genetic distance data from 0 to 1
 #'
 #' @family GDM functions
@@ -71,7 +72,8 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @export
 #'
 #' @examples
-gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE){
+gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 50, scale = FALSE,
+                    geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
@@ -97,7 +99,14 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
                         env)
 
   # Format data for GDM
-  gdmData <- gdm::formatsitepair(gdmGen, 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+  if(geodist_type == "resistance" | geodist_type == "topographic"){
+    distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+    gdmDist <- cbind(site, distmat)
+    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+  } else {
+    gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+  }
+
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -108,22 +117,28 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Run GDM with all predictors
-    gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
+    if(geodist_type == "resistance" | geodist_type == "topographic"){
+      gdm_model_final <- gdm::gdm(gdmData, geo = FALSE)
+    } else {
+      gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
+    }
   }
 
   # If model = "best", go through variable selection procedure
   if(model == "best"){
     # Add distance matrix separately
-    geodist <- geo_dist(coords[,c("x","y")])
-    gdmDist <- cbind(site, geodist)
-    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+    if(geodist_type == "Euclidean"){
+      geodist <- geo_dist(coords[,c("x","y")])
+      gdmDist <- cbind(site, geodist)
+      gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+    }
 
     # Remove any remaining incomplete cases
     cc <- stats::complete.cases(gdmData)
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Get subset of variables for final model
-    finalvars <- gdm_var_select(gdmData, alpha = alpha, n_perm = n_perm)
+    finalvars <- gdm_var_select(gdmData, alpha = alpha, nperm = nperm)
 
     # Stop if there are no significant final variables
     if(is.null(finalvars) | length(finalvars) == 0){
@@ -174,7 +189,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 #'
 #' @param gdmData data formatted using GDM package
 #' @param alpha alpha level for determining variable significance
-#' @param n_perm number of permutations to run for variable testing
+#' @param nperm number of permutations to run for variable testing
 #'
 #' @return
 #'
@@ -183,13 +198,13 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 #' @export
 #'
 #' @examples
-gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
+gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
   # TODO: EAC re-run this; save RDA and send to APB
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     nPerm = n_perm)
+                     nPerm = nperm)
 
   # Get pvalues from variable selection model
   pvalues <- vars[[3]]
