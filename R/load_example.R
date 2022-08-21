@@ -10,6 +10,10 @@ load_example <- function(quiet = FALSE){
   # load all data
   utils::data(list = c("liz_vcf", "liz_coords", "CA_env"))
 
+  # temp fix for rda issue with env data
+  CA_env <- raster::stack(system.file("extdata", "CA_env.tif", package = "algatr"))
+  assign("CA_env", CA_env, envir = .GlobalEnv)
+
   if (!quiet) {
     # give message with information about objects
     return(message(cat(

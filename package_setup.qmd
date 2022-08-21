@@ -19,3 +19,8 @@ use_build_ignore("package_setup.qmd")
 usethis::use_data_raw()
 ```
 
+```{r}
+usethis::use_logo("logo.png")
+usethis::use_readme_rmd()
+2```
+
