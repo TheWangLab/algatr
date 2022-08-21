@@ -3,11 +3,13 @@
 #'
 #' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
 #' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
+#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
 #' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
+#' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
+#' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
@@ -18,7 +20,7 @@
 #' @export
 #'
 #' @examples
-gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, nperm = 50,
+gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", alpha = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale = FALSE, plot_vars = TRUE){
 
   # format coordinates
@@ -26,7 +28,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   colnames(coords) <- c("x", "y")
 
   # If not provided, make env data frame from layers and coords
-  if(is.null(env)){env <- raster::extract(envlayers, coords)} # This shouldn't be necessary since predData with rasterStack should extract automatically
+  if(is.null(env)){env <- raster::extract(envlayers, coords)}
 
   # Run model with all defaults
   gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, nperm = nperm, scale = scale, geodist_type = geodist_type, dist_lyr = dist_lyr)
@@ -37,11 +39,11 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   # Get coefficients from models
   predictors <- gdm_coeffs(gdm_model)
 
-  # Create and plot map
-  map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
-
   # Plot isplines
   gdm_plot_isplines(gdm_model)
+
+  # Create and plot map
+  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
 
   # Create list to store results
   results <- list()
@@ -50,7 +52,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   # Add predictors
   results[["predictors"]] <- predictors
   # Add raster(s)
-  results[["rast"]] <- map
+  if(geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
 
   return(results)
 }
@@ -348,8 +350,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 #' @examples
 gdm_plot_isplines <- function(gdm_model){
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
-
-  par(mfrow=c(1,ncol(gdm_model_splineDat$x)), pty = "s")
 
   for(i in 1:ncol(gdm_model_splineDat$x)){
     plot(gdm_model_splineDat$x[,i],
