@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-tess_full <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
+tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
                       plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
                       tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE){
 
