@@ -4,17 +4,21 @@
 \alias{MMRR}
 \title{MMRR performs Multiple Matrix Regression with Randomization analysis}
 \usage{
-MMRR(Y, X, n_perm = 999, stdz = TRUE)
+MMRR(Y, X, nperm = 999, scale = TRUE)
 }
 \arguments{
 \item{Y}{is a dependent distance matrix}
 
 \item{X}{is a list of independent distance matrices (with optional names)}
 
-\item{n_perm}{is the number of permutations to be used in significance tests. Default = 999.}
+\item{nperm}{is the number of permutations to be used in significance tests. Default = 999.}
 
-\item{stdz}{if TRUE then matrices will be standardized. Default = TRUE.}
+\item{scale}{if TRUE then matrices will be standardized. Default = TRUE.}
 }
 \description{
 MMRR performs Multiple Matrix Regression with Randomization analysis
+}
+\details{
+When using MMRR, please cite the original citation:
+Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
 }

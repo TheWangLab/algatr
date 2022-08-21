@@ -11,7 +11,7 @@ mmrr_do_everything(
   env = NULL,
   envlayers,
   model = "best",
-  n_perm = 999
+  nperm = 999
 )
 }
 \arguments{
@@ -19,13 +19,13 @@ mmrr_do_everything(
 
 \item{coords}{dataframe with x and y coordinates (MUST BE CALLED X AND Y)}
 
-\item{env}{dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers}
+\item{env}{dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers}
 
-\item{envlayers}{envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME)}
+\item{envlayers}{envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME - Should have option for leaving it NULL)}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); default = "best"}
 
-\item{n_perm}{number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 999)}
+\item{nperm}{number of permutations to use to calculate variable importance; only used if model = "best" (default = 999)}
 }
 \description{
 MMRR function to do everything ()

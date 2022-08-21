@@ -4,14 +4,14 @@
 \alias{mmrr_var_sel}
 \title{mmrr_var_sel performs MMRR with backward elimination variable selection}
 \usage{
-mmrr_var_sel(Y, X, n_perm = 999, stdz = TRUE)
+mmrr_var_sel(Y, X, nperm = 999, stdz = TRUE)
 }
 \arguments{
 \item{Y}{is a dependent distance matrix}
 
 \item{X}{is a list of independent distance matrices (with optional names)}
 
-\item{n_perm}{is the number of permutations to be used in significance tests. Default = 999.}
+\item{nperm}{is the number of permutations to be used in significance tests. Default = 999.}
 
 \item{stdz}{if TRUE then matrices will be standardized. Default = TRUE.}
 }

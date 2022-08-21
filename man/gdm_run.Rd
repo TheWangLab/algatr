@@ -10,8 +10,11 @@ gdm_run(
   env,
   model = "best",
   alpha = 0.05,
-  n_perm = 50,
-  scale = FALSE
+  nperm = 50,
+  scale = FALSE,
+  geodist_type = "Euclidean",
+  distPreds = NULL,
+  dist_lyr = NULL
 )
 }
 \arguments{
@@ -25,7 +28,7 @@ gdm_run(
 
 \item{alpha}{alpha level for variable selection (defaults to 0.05), only matters if model = "best"}
 
-\item{n_perm}{number of permutations to use to calculate variable importance, only matters if model = "best"}
+\item{nperm}{number of permutations to use to calculate variable importance, only matters if model = "best"}
 
 \item{scale}{scale genetic distance data from 0 to 1}
 }
