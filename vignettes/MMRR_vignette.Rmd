@@ -19,9 +19,6 @@ knitr::opts_chunk$set(
 ```{r setup, warning = FALSE, message = FALSE}
 library(landgen)
 library(here)
-library(raster)
-library(tidyverse)
-library(purrr)
 ```
 
 Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to disentangle isolation by distance (i.e., an association between genetic and geographic distances) from isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environment and geographic distances).
@@ -48,14 +45,11 @@ load(here("data", "CA_env.RDA"))
 
 ## MMRR with all variables
 
-```{r all vars}
-mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full", n_perm = 100)
+```{r all vars, fig.width = 5, fig.height = 5}
+mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full")
 ```
 
 ## MMRR with model selection
-```{r best vars}
-mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", n_perm = 100)
+```{r best vars, fig.width = 5, fig.height = 5}
+mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
-
-### Results of MMRR
-mmrr_var_sel()

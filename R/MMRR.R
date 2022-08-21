@@ -1,19 +1,19 @@
-
 #' MMRR function to do everything ()
-#' TODO: gendist matrix must range between 0 and 1 as with GDM?
+#' TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB
 #'
 #' @param gendist matrix of genetic distances
-#' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y)
+#' @param coords dataframe with x and y coordinates
 #' @param env dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers
-#' @param envlayers envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME - Should have option for leaving it NULL)
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); default = "best"
-#' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (default = 999)
+#' @param envlayers rasters for for extracting environmental values using coordinates if `env` isn't provided
+#' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
+#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
+#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "best", nperm = 999){
+mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE){
 
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
@@ -29,23 +29,42 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "
   Ydist <- as.matrix(gendist)
 
   # Run MMRR with variable selection
-  if(model == "best"){mod <- mmrr_var_sel(Ydist, Xdist, nperm = nperm)}
-  if(model == "full"){mod <- MMRR(Ydist, Xdist, nperm = nperm)}
+  if(model == "best"){
+    mod <- mmrr_var_sel(Ydist, Xdist, nperm = nperm, stdz = stdz)
 
-  # If NULL, exit with NULL
-  if(is.null(mod)){warning("model is NULL, returning NULL object"); return(NULL)}
+    # If NULL, exit with NULL
+    if(is.null(mod)) return(NULL)
+
+    # subset Xdist with significant variables
+    # note: the list() and names() part are necessary to ensure a named list is produced if there is only one significant variable
+    Xdist_best <- list(Xdist[[names(mod$coefficients)[-1]]])
+    names(Xdist_best) <- names(mod$coefficients)[-1]
+
+    # plot results
+    plot_mmrr(mod, Ydist, Xdist_best, stdz = stdz)
+
+  }
+
+  if(model == "full"){
+    mod <- MMRR(Ydist, Xdist, nperm = nperm)
+
+    # If NULL, exit with NULL
+    if(is.null(mod)) return(NULL)
+
+    # plot results
+    plot_mmrr(mod, Ydist, Xdist, stdz = TRUE)
+    }
 
   # Make nice data frame
-  coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
-  coeff_df$var <- rownames(coeff_df)
-  ci_df <- data.frame(mod$conf_df)
-  ci_df$var <- rownames(ci_df)
-  coeff_df <- merge(coeff_df, ci_df, by = "var")
-  rownames(coeff_df) <- NULL
+  coeff_df <- mmrr_df(mod)
 
   # Make results list
   results <- list(coeff_df = coeff_df,
-                  mod = mod)
+                  mod = mod,
+                  Ydist = Ydist,
+                  Xdist = Xdist)
+
+  if(model == "best") results[["Xdist_best"]] <- Xdist_best
 
   return(results)
 
@@ -54,25 +73,25 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers, model = "
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
-#' @param nperm is the number of permutations to be used in significance tests. Default = 999.
+#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
-
 mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
   # Fit full model
-  mmrr.model <- MMRR(Y, X, nperm = nperm, stdz = stdz)
+  mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
   pvals <- mmrr.model$tpvalue[-1] # Remove intercept p-value
 
-  # Eliminate variable with highest p-value, re-fit, and continue until only significant variables remain
+  # Eliminate variable with highest p-value, re-fit, and continue until only significant variables remain or no variables remain
   while((max(pvals) > 0.05) & (length(pvals) > 1)){
     print(pvals)
     rem.var <- which(pvals == max(pvals))
     X <- X[-rem.var]
-    mmrr.model <- MMRR(Y, X, nperm = nperm, stdz = stdz)
+    if(length(X) == 0) break
+    mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
     pvals <- mmrr.model$tpvalue[-1]
   }
 
   # Repetitive test, but just to be sure
-  if((length(pvals) == 1) & all(pvals > 0.05)){warning("No significant variable combo found, returning NULL object"); mmrr.model <- NULL}
+  if(length(X) == 0 | (length(pvals) == 1) & all(pvals > 0.05)){warning("No significant variable combo found, returning NULL object"); mmrr.model <- NULL}
 
   return(mmrr.model)
 }
@@ -146,68 +165,129 @@ unfold <- function(X, scale = TRUE){
   return(x)
 }
 
-#' Plot MMMR
+
+#' Make nice dataframe from MMRR results
 #'
-#' Plots the results of an MMRR analysis
+#' @param mod The fitted MMRR model
 #'
-#' @param reg The fitted MMRR model
+#' @return
+#' @export
+#'
+#' @examples
+mmrr_df <- function(mod){
+  coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
+  coeff_df$var <- rownames(coeff_df)
+  ci_df <- data.frame(mod$conf_df)
+  ci_df$var <- rownames(ci_df)
+  coeff_df <- merge(coeff_df, ci_df, by = "var")
+  rownames(coeff_df) <- NULL
+  return(coeff_df)
+}
+
+#' Plot MMRR results
+#'
+#' @param mod The fitted MMRR model
 #' @param Y The dependent variable in the form of a distance matrix
 #' @param X A list of independent variables in the form of distance matrices (with optional names)
+#' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #' @param scale If TRUE, all variables are scaled
 #' @param varNames A vector of names for the variables in the model (optional)
-#' @param lineCol Color for regression line
-#' @param ... Additional arguments to be passed to plot() function (optional)
-#' @details
-#' The objects supplied for Y and X should be the same variables used to fit the MMRR model.  The parameter 'scale' should be the same as used to fit the model.
-#' The varNames argument can be used to specify variable names for labeling the plot axes.  The first name is for the dependent variable; additional names should be supplied in the same order as the independent variables.
 #'
-#' When using MMRR, please cite the original citation:
-#' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
+#' @return
 #' @export
-plotMMRR <- function(reg, Y, X, scale = TRUE, varNames = NULL, lineCol = "blue", ...){
-  y <- unfold(Y, scale)
-  if(length(varNames) > 0){
-    name.Y <-
-      varNames[1]
-  } else {
-    name.Y <- substitute(Y)
-  }
+#'
+#' @examples
+plot_mmrr <- function(mod, Y, X, plot_type = "all", stdz = TRUE, var_names = NULL){
+
   # Plot single variable relationships
-  for(i in 1:length(X)){
-    x <- unfold(X[[i]], scale = scale)
-    if(length(varNames) >= i + 1){
-      name.X <- varNames[i + 1]
-    } else {
-      name.X <- names(X)[i]
-    }
-    plot(x, y, ylab = name.Y, xlab = name.X, ...)
-    lm.reg <- lm(y ~ x)
-    abline(reg = lm.reg, col = lineCol)
-  }
+  if("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
+
   # Plot fitted relationship
-  x <- matrix(nrow=length(X), ncol = length(y))
-  for(i in 1:length(X)){
-    x[i,] <- unfold(X[[i]], scale)
-    x[i,] <- reg$coefficients[i+1] * x[i,]
-  }
-  plot(colSums(x), y, ylab = substitute(Y), xlab = "Predicted Distance", ...)
-  lm.reg <- lm(y ~ colSums(x))
-  abline(reg = lm.reg, col = lineCol)
+  if("all" %in% plot_type | "fitted" %in% plot_type) print(mmrr_plot_fitted(mod, Y, X, stdz = TRUE))
+
+  # Plot fitted relationship
+  if("all" %in% plot_type | "cov" %in% plot_type) print(mmrr_plot_cov(X, stdz = TRUE))
+
+  return()
+}
+
+#' Plot single variable relationships
+#'
+#' @inheritParams plot_mmrr
+#'
+#' @export
+#' @noRd
+mmrr_plot_vars <- function(Y, X, stdz = TRUE){
+  # Unfold X and Y
+  y <- unfold(Y, scale = stdz)
+  dfX <- purrr::map_dfc(X, unfold, scale = stdz) %>% purrr::map_dfc(as.numeric)
+
+  # Make single variable dataframe
+  df <- dfX %>%
+    dplyr::mutate(Y = y) %>%
+    tidyr::gather("var", "X", -Y)
+
+  # Plot single variable relationships
+  plt_lm <- ggplot2::ggplot(df, ggplot2::aes(X, Y)) +
+    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
+    ggplot2::facet_wrap(~var, scales = "free") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
+
+  return(plt_lm)
+}
+
+#' Plot fitted relationship
+#'
+#' @inheritParams plot_mmrr
+#'
+#' @export
+#' @noRd
+mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
+
+  # Make model dataframe
+  coeff_df <- mmrr_df(mod)
+
+  # Make fitted dataframe
+  df_fitted <- purrr::map_dfc(X, unfold, scale = stdz) %>%
+    purrr::map_dfc(as.numeric) %>%
+    dplyr::mutate(Y = unfold(Y, scale = stdz)) %>%
+    tidyr::gather("var", "X", -Y) %>%
+    dplyr::left_join(coeff_df, by = "var") %>%
+    dplyr::mutate(coeffX = coeff*X) %>%
+    dplyr::select(Y, coeffX) %>%
+    dplyr::group_by(Y) %>%
+    dplyr::summarise(Yfitted = sum(coeffX))
+
+  # Plot fitted relationship
+  plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +
+    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
+    ggplot2::theme_bw() +
+    ggplot2::ylab("Observed Genetic Distance") +
+    ggplot2::xlab("Predicted Genetic Distance") +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
+
+  return(plt_fitted)
+}
+
+#' Plot covariances
+#'
+#' @inheritParams plot_mmrr
+#'
+#' @export
+#' @noRd
+mmrr_plot_cov <- function(X, stdz = TRUE){
+
+  # Unfold X
+  dfX <- purrr::map_dfc(X, unfold, scale = stdz) %>% purrr::map_dfc(as.numeric)
+
   # Plot covariances
-  cmb <- combn(1:length(X), 2)
-  for(i in 1:ncol(cmb)){
-    x <- unfold(X[[cmb[1, i]]], scale = scale)
-    y <- unfold(X[[cmb[2, i]]], scale = scale)
-    if(length(varNames) > cmb[1, i]){
-      name.x <- varNames[cmb[1, i] + 1]
-    } else {
-      name.x <- names(X[cmb[1, i]])
-    }
-    if(length(varNames) > cmb[2, i]){
-      name.y <- varNames[cmb[2, i] + 1]
-    } else {
-      name.y <- names(X[cmb[2, i]])
-    }
-    plot(x, y, ylab = name.y, xlab = name.x, ...)
-  }
+  plt_cor <- GGally::ggpairs(dfX, progress = FALSE,
+                             lower = list(continuous = GGally::wrap("points", col = "#6464c8", alpha = 0.1, cex = 0.9)),
+                             diag = list(continuous = GGally::wrap("densityDiag",  fill = "blue", alpha = 0.1)))
+  plt_cor <- plt_cor + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
+
+  return(plt_cor)
 }
