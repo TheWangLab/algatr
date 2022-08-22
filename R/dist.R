@@ -1,23 +1,35 @@
 
-#' Calculate environmental distance between environmental vars
+
+#' Calculate distance between environmental vars
 #'
 #' @param env dataframe or vector of environmental variables for locations
+#' @param stdz if TRUE then environmental values will be standardized (defaults to TRUE)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-env_dist <- function(env){
-
-  # Standardize environmental variables
-  scalenv <- scale(env, center = TRUE, scale = TRUE)
-
-  # Create distance matrix
-  distmat <- as.matrix(dist(scalenv, diag = TRUE, upper = TRUE))
-
+env_dist <- function(env, stdz = TRUE){
+  if(!is.null(dim)) distmat <- dplyr::as_tibble(env) %>%  purrr::map(env_dist_helper, stdz = stdz)
+  if(is.null(dim)) distmat <- env_dist_helper(env, stdz)
   return(distmat)
 }
 
+#' Helper function to convert an environemntal vector to a distance matrix
+#'
+#' @inheritParams env_dist
+#'
+#' @export
+#' @noRd
+env_dist_helper <- function(env, stdz = TRUE){
+
+  # Standardize environmental variables
+  if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
+
+  distmat <- as.matrix(dist(env, diag = TRUE, upper = TRUE))
+
+  return(distmat)
+}
 
 #' Calculate geographic distance between coordinates
 #'
