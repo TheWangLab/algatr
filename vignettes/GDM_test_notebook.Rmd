@@ -1,0 +1,78 @@
+---
+title: "GDM"
+output: github_document
+---
+```{r libraries, warning = FALSE, message = FALSE}
+#library("algatr")
+library("gdm")
+library("here")
+library("tidyverse")
+library("raster")
+library("rgdal")
+
+devtools::load_all()
+```
+
+```{r data}
+# Read in genetic distance matrix
+gendist <- read_table(here("test_data","gen_dist_mat.txt"), col_names = FALSE)
+
+# Create list of points from file
+coords <- read_csv(here("test_data","LizardLocalities.csv"))
+colnames(coords) <- c("x","y")
+
+# And a set of worldclim rasters for the study area
+envlayers <- raster::stack(list.files(here("test_data","Hispaniola"), full.names = TRUE))
+
+#make env
+env <- raster::extract(envlayers, coords)
+
+```
+
+
+## Model with all variables
+```{r all vars}
+results <- gdm_doEverything(gendist, coords, env = NULL, envlayers, model = "full", alpha = 0.05, nPerm = 10, scale = TRUE)
+```
+
+
+## Model with variable selection
+```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
+results <- gdm_doEverything(gendist, coords, env = NULL, envlayers, model = "best", nPerm = 10, scale = TRUE)
+```
+
+
+```{r save results}
+writeRaster(results$rast$pcaRastRGB, here("test_data","pcaRast.tif"), overwrite = TRUE)
+```
+
+
+## Seperate functions
+```{r mod}
+<<<<<<< HEAD
+mod <- gdm_run(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 10)
+=======
+mod <- gdm_run(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 10, scale = TRUE)
+>>>>>>> main
+predictors <- gdm_coeffs(mod)
+predictors
+```
+
+```{r preds}
+# get coefficients from models
+predictors <- gdm_coeffs(mod)
+
+predictors
+```
+
+```{r map}
+# create and plot map
+gdm_map(mod, envlayers, coords)
+
+```
+
+```{r isplines, fig.width = 9, fig.height = 3}
+# plot isplines
+gdm_plot_isplines(mod)
+```
+

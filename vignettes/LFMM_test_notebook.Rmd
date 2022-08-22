@@ -5,7 +5,7 @@ output: html_document
 
 # Setup
 ```{r, warning = FALSE, message = FALSE}
-library("ccgplandgen")
+library("algatr")
 library("here")
 #to install LFMM:
 #devtools::install_github("bcm-uga/lfmm")

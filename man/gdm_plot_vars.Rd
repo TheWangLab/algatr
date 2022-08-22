@@ -11,7 +11,7 @@ gdm_plot_vars(
   coords,
   x = "PC1",
   y = "PC2",
-  scl = 0.5
+  scl = 1
 )
 }
 \arguments{
@@ -38,7 +38,7 @@ Create a PCA plot for GDM
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
-\code{\link{gdm_doEverything}()},
+\code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_run}()},

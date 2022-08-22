@@ -1,13 +1,26 @@
 
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
+<<<<<<< HEAD
 #' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
 #' @param coords dataframe with x (i.e., Longitude) and y (i.e., Latitude) coordinates
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
+=======
+#' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale = TRUE)
+#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
+>>>>>>> main
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
+#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
+<<<<<<< HEAD
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
 #' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
+=======
+#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
+#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
+#' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
+#' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
+>>>>>>> main
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
@@ -18,7 +31,8 @@
 #' @export
 #'
 #' @examples
-gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE, plot_vars = TRUE){
+gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", alpha = 0.05, nperm = 50,
+                              geodist_type = "Euclidean", dist_lyr = NULL, scale = FALSE, plot_vars = TRUE){
 
   # format coordinates
   coords <- data.frame(coords)
@@ -28,7 +42,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
 
   # Run model with all defaults
-  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, n_perm = n_perm, scale = scale)
+  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, nperm = nperm, scale = scale, geodist_type = geodist_type, dist_lyr = dist_lyr)
 
   # If mod is null, exit
   if(is.null(gdm_model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
@@ -36,11 +50,11 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   # Get coefficients from models
   predictors <- gdm_coeffs(gdm_model)
 
-  # Create and plot map
-  map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
-
   # Plot isplines
   gdm_plot_isplines(gdm_model)
+
+  # Create and plot map
+  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
 
   # Create list to store results
   results <- list()
@@ -49,7 +63,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
   # Add predictors
   results[["predictors"]] <- predictors
   # Add raster(s)
-  results[["rast"]] <- map
+  if(geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
 
   return(results)
 }
@@ -62,7 +76,7 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @param env data frame with environmental values for each coordinate
 #' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
 #' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
-#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best"
+#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best"
 #' @param scale scale genetic distance data from 0 to 1
 #'
 #' @family GDM functions
@@ -71,7 +85,8 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' @export
 #'
 #' @examples
-gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm = 50, scale = FALSE){
+gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 50, scale = FALSE,
+                    geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
@@ -97,7 +112,14 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
                         env)
 
   # Format data for GDM
-  gdmData <- gdm::formatsitepair(gdmGen, 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+  if(geodist_type == "resistance" | geodist_type == "topographic"){
+    distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+    gdmDist <- cbind(site, distmat)
+    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+  } else {
+    gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+  }
+
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -108,22 +130,28 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Run GDM with all predictors
-    gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
+    if(geodist_type == "resistance" | geodist_type == "topographic"){
+      gdm_model_final <- gdm::gdm(gdmData, geo = FALSE)
+    } else {
+      gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
+    }
   }
 
   # If model = "best", go through variable selection procedure
   if(model == "best"){
     # Add distance matrix separately
-    geodist <- geo_dist(coords[,c("x","y")])
-    gdmDist <- cbind(site, geodist)
-    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+    if(geodist_type == "Euclidean"){
+      geodist <- geo_dist(coords[,c("x","y")])
+      gdmDist <- cbind(site, geodist)
+      gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+    }
 
     # Remove any remaining incomplete cases
     cc <- stats::complete.cases(gdmData)
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Get subset of variables for final model
-    finalvars <- gdm_var_select(gdmData, alpha = alpha, n_perm = n_perm)
+    finalvars <- gdm_var_select(gdmData, alpha = alpha, nperm = nperm)
 
     # Stop if there are no significant final variables
     if(is.null(finalvars) | length(finalvars) == 0){
@@ -174,7 +202,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 #'
 #' @param gdmData data formatted using GDM package
 #' @param alpha alpha level for determining variable significance
-#' @param n_perm number of permutations to run for variable testing
+#' @param nperm number of permutations to run for variable testing
 #'
 #' @return
 #'
@@ -183,13 +211,17 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 #' @export
 #'
 #' @examples
+<<<<<<< HEAD
 gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
   # TODO [EAC]: re-run this; save RDA and send to APB (issue with gdm.varImp)
+=======
+gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
+>>>>>>> main
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     nPerm = n_perm)
+                     nPerm = nperm)
 
   # Get pvalues from variable selection model
   pvalues <- vars[[3]]
@@ -278,15 +310,11 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
   # Make PCA raster
   pcaRast <- raster::predict(rastTrans, pcaSamp, index=1:n_layers)
 
-  # Make copy of PCA raster to transform into RGB values
-  pcaRastRGB <- pcaRast
-
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
-  for(layer in 1:n_layers){
-    # If all values are 0 assign value as white (255)
-    if(pcaRastRGB[[layer]]@data@max == 0){pcaRastRGB[[layer]] <- 255; next}
-    pcaRastRGB[[layer]] <- (pcaRastRGB[[layer]]-pcaRastRGB[[layer]]@data@min) / (pcaRastRGB[[layer]]@data@max-pcaRastRGB[[layer]]@data@min)*255
-  }
+  pcaRastRGB <- raster::stack(purrr::map(1:n_layers, function(i, pcaRast){
+    x <- pcaRast[[i]]
+    if(x@data@max == 0) x[] <- 255 else x <- (x - x@data@min) / (x@data@max - x@data@min)*255
+    return(x)}, pcaRast))
 
   # If there are fewer than 3 n_layers (e.g., <3 variables), the RGB plot won't work (because there isn't an R, G, and B)
   # To get around this, create a blank raster (i.e., a white raster), and add it to the stack
@@ -334,9 +362,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 gdm_plot_isplines <- function(gdm_model){
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
-  par(mfrow=c(1,ncol(gdm_model_splineDat$x)), pty = "s")
-
-  for(i in 1:ncol(gdm_model_splineDat$x)){
+  purrr::walk(1:ncol(gdm_model_splineDat$x), function(i){
     plot(gdm_model_splineDat$x[,i],
          gdm_model_splineDat$y[,i],
          cex.lab = 1.5,
@@ -346,8 +372,7 @@ gdm_plot_isplines <- function(gdm_model){
          ylim = c(0, max(gdm_model_splineDat$y)),
          xlab = colnames(gdm_model_splineDat$x)[i],
          ylab = "Partial Regression Distance")
-
-  }
+  })
 }
 
 
@@ -403,18 +428,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   colnames(pcavalsRGB) <- colnames(xpc)
 
   # Create vector of RGB colors for plotting
-  pcacols <- c()
-  for(i in 1:nrow(pcavalsRGB)){
-    if(any(is.na(pcavalsRGB[i,]))){
-      pcacols[i] <- NA
-    }
-    else {
-      # r=1, g=2, b=3 (TODO: FIX TO MAKE THIS FLEXIBLE)
-      pcacols[i] <- rgb(pcavalsRGB[,1][i], pcavalsRGB[,2][i], pcavalsRGB[,3][i], maxColorValue = 255)
-    }
-
-  }
-
+  pcacols <- apply(pcavalsRGB, 1, create_rgb_vec)
 
   # GET RGB VALS FOR ENTIRE RASTER-------------------------------------------------------------------------------------
 
@@ -432,16 +446,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   rastvalsRGB <- rastvalsRGB[stats::complete.cases(rastvalsRGB),]
 
   # Create vector of RGB colors for plotting
-  rastpcacols <- c()
-  for(i in 1:nrow(rastvalsRGB)){
-    if(any(is.na(rastvalsRGB[i,]))){
-      rastpcacols[i] <- NA
-    } else {
-      # r=1, g=2, b=3 (TODO: FIX TO MAKE THIS FLEXIBLE)
-      rastpcacols[i] <- rgb(rastvalsRGB[,1][i], rastvalsRGB[,2][i], rastvalsRGB[,3][i], maxColorValue = 255)
-    }
-
-  }
+  rastpcacols <- apply(rastvalsRGB, 1, create_rgb_vec)
 
   # FINAL PLOT----------------------------------------------------------------------------------------------------------
 
@@ -465,13 +470,24 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     # Plot formatting
     ggplot2::coord_equal() +
     ggplot2::theme_bw() +
-    ggplot2::theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(), axis.line = element_blank(), aspect.ratio = 1)
+    ggplot2::theme(panel.border = element_blank(),
+                   panel.grid.major = element_blank(),
+                   panel.grid.minor = element_blank(),
+                   axis.line = element_blank(),
+                   aspect.ratio = 1)
 
   # Plot
   print(plot)
 }
 
+#' Helper function to create rgb vector
+#'
+#' @export
+#' @noRd
+create_rgb_vec <- function(vec){
+  if(any(is.na(vec))) x <- NA else x <- rgb(vec[1], vec[2], vec[3], maxColorValue = 255)
+  return(x)
+}
 
 #' Scale genetic distances from 0 to 1
 #'
@@ -527,8 +543,8 @@ gdm_coeffs <- function(gdm_model){
 #' @noRd
 #' @export
 stack_to_rgb <- function(s){
-  new_stack <- s
-  for(i in 1:nlayers(s)){new_stack[[i]] <- raster_to_rgb(s[[i]])}
+  stack_list <- as.list(s)
+  new_stack <- raster::stack(purrr::map(stack_list, raster_to_rgb))
   return(new_stack)
 }
 

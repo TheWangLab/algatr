@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ## Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(landgen)
+library(algatr)
 library(here)
 library(vcfR)
 library(SNPRelate)

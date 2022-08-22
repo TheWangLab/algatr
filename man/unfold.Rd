@@ -4,12 +4,12 @@
 \alias{unfold}
 \title{unfold converts the lower diagonal elements of a matrix into a vector}
 \usage{
-unfold(X, stdz = TRUE)
+unfold(X, scale = TRUE)
 }
 \arguments{
 \item{X}{is a distance matrix.}
 
-\item{stdz}{if TRUE then matrices will be standardized. Default = TRUE.}
+\item{scale}{if TRUE then matrices will be standardized. Default = TRUE.}
 }
 \description{
 unfold converts the lower diagonal elements of a matrix into a vector

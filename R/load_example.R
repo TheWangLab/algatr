@@ -8,10 +8,14 @@
 #' @examples
 load_example <- function(quiet = FALSE){
   # load all data
+<<<<<<< HEAD
   utils::data("liz_vcf")
   utils::data("liz_coords")
   utils::data("CA_env")
   utils::data("gendist")
+=======
+  utils::data(list = c("liz_vcf", "liz_coords", "CA_env"))
+>>>>>>> main
 
   if (!quiet) {
     # give message with information about objects

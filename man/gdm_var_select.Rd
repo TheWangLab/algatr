@@ -4,14 +4,14 @@
 \alias{gdm_var_select}
 \title{Get best set of variables from a GDM model}
 \usage{
-gdm_var_select(gdmData, alpha = 0.05, nPerm = 10)
+gdm_var_select(gdmData, alpha = 0.05, nperm = 10)
 }
 \arguments{
 \item{gdmData}{data formatted using GDM package}
 
 \item{alpha}{alpha level for determining variable significance}
 
-\item{nPerm}{number of permutations to run for variable testing}
+\item{nperm}{number of permutations to run for variable testing}
 }
 \description{
 Get best set of variables from a GDM model
@@ -19,7 +19,7 @@ Get best set of variables from a GDM model
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
-\code{\link{gdm_doEverything}()},
+\code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},

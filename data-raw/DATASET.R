@@ -49,6 +49,8 @@ stopifnot(colnames(liz_vcf@gt)[-1] == IDS)
 
 # load env data
 CA_env <- raster::stack(list.files("inst/extdata/PC_layers/", full.names = TRUE))
+raster::writeRaster(CA_env, "inst/extdata/CA_env.tif", overwrite = TRUE)
+CA_env <- raster::readAll(CA_env)
 usethis::use_data(CA_env, overwrite = TRUE)
 
 

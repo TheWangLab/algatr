@@ -7,11 +7,15 @@
 gdm_map(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plot = TRUE)
 }
 \arguments{
-\item{gdm_model}{gdm model}
+\item{gdm_model}{GDM model}
 
 \item{envlayers}{stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)}
 
 \item{plot_vars}{whether to create PCA plot to help in variable and map interpretation}
+
+\item{scl}{constant for rescaling variable vectors for plotting}
+
+\item{plot}{}
 }
 \value{
 GDM RGB map
@@ -22,7 +26,7 @@ Make map from model
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
-\code{\link{gdm_doEverything}()},
+\code{\link{gdm_do_everything}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
