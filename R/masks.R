@@ -55,7 +55,7 @@ range_mask <- function(coords, envlayers){
   envmask <- envlayers*0
 
   # Calculate min and max values
-  # TODO: dim(X) must have +ve length when using only PC1 envlayer
+  # TODO [EAC]: dim(X) must have +ve length when using only PC1 envlayer
   # bc we're providing vector rather than df/matrix; no error if we do:
   vals <- as.matrix(vals)
   val_max <- apply(vals, 2, max, na.rm = TRUE)
@@ -92,7 +92,7 @@ range_mask <- function(coords, envlayers){
 sd_mask <- function(coords, envlayers, nsd){
 
   vals <- raster::extract(envlayers, coords)
-  # TODO: check that this is ok
+  # TODO [EAC]: check that this is ok
   vals <- as.matrix(vals)
   envmask <- envlayers*0
 
@@ -140,7 +140,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
   raster::crs(coords) <- raster::crs(envlayers)
 
   # Add a buffer
-  # TODO: spatial object not projected, GEOS expects planar coords
+  # TODO [EAC]: spatial object not projected, GEOS expects planar coords
   buff <- rgeos::gBuffer(coords, width = buffer_width)
 
   # Create a mask (just need one of the envlayers to do this since the values don't matter)
@@ -205,7 +205,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)){
 
-  # TODO: should we edit to include options for coloring map other than RGB stuff? e.g., viridis?
+  # TODO [EAC]: should we edit to include options for coloring map other than RGB stuff? e.g., viridis?
   if(RGB_cols){raster::plotRGB(map_r, r = 1, g = 2, b = 3)} else {raster::plot(map_r)}
 
   # Plots mask as black semi-transparent layer over map
