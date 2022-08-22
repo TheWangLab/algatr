@@ -22,38 +22,47 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
   env <- dplyr::as_tibble(env)
 
   # Make env dist matrix
-  Xdist <- purrr::map(env, env_dist)
-  Xdist[["geodist"]] <- geo_dist(coords)
+  X <- purrr::map(env, env_dist)
+  X[["geodist"]] <- geo_dist(coords)
 
   # Make geodist mat
-  Ydist <- as.matrix(gendist)
+  Y <- as.matrix(gendist)
 
-  # Run MMRR with variable selection
-  if(model == "best"){
-    mod <- mmrr_var_sel(Ydist, Xdist, nperm = nperm, stdz = stdz)
+  # Run MMRR
+  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz)
 
-    # If NULL, exit with NULL
-    if(is.null(mod)) return(NULL)
+  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz)
 
-    # subset Xdist with significant variables
-    # note: the list() and names() part are necessary to ensure a named list is produced if there is only one significant variable
-    Xdist_best <- list(Xdist[[names(mod$coefficients)[-1]]])
-    names(Xdist_best) <- names(mod$coefficients)[-1]
+  return(results)
 
-    # plot results
-    plot_mmrr(Y = Ydist, X = Xdist_best, mod = mod, stdz = stdz)
+}
 
-  }
+#' Run MMRR with variable selection
+#'
+#' @param Y dependent distance matrix
+#' @param X list of independent distance matrices (with optional names)
+#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
+#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE){
 
-  if(model == "full"){
-    mod <- MMRR(Ydist, Xdist, nperm = nperm)
+  # fil model with variable selection
+  mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
 
-    # If NULL, exit with NULL
-    if(is.null(mod)) return(NULL)
+  # If NULL, exit with NULL
+  if(is.null(mod)) return(NULL)
 
-    # plot results
-    plot_mmrr(Y = Ydist, X = Xdist, mod = mod, stdz = stdz)
-    }
+  # subset X with significant variables
+  # note: the list() and names() part are necessary to ensure a named list is produced if there is only one significant variable
+  X_best <- list(X[[names(mod$coefficients)[-1]]])
+  names(X_best) <- names(mod$coefficients)[-1]
+
+  # plot results
+  plot_mmrr(Y = Y, X = X_best, mod = mod, stdz = stdz)
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
@@ -61,13 +70,44 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
   # Make results list
   results <- list(coeff_df = coeff_df,
                   mod = mod,
-                  Ydist = Ydist,
-                  Xdist = Xdist)
-
-  if(model == "best") results[["Xdist_best"]] <- Xdist_best
+                  Y = Y,
+                  X = X,
+                  X_best = X_best)
 
   return(results)
+}
 
+#' Run MMRR with all variables
+#'
+#' @param Y dependent distance matrix
+#' @param X list of independent distance matrices (with optional names)
+#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE){
+
+  # Run full model
+  mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
+
+  # If NULL, exit with NULL
+  if(is.null(mod)) return(NULL)
+
+  # plot results
+  plot_mmrr(Y = Y, X = X, mod = mod, stdz = stdz)
+
+  # Make nice data frame
+  coeff_df <- mmrr_df(mod)
+
+  # Make results list
+  results <- list(coeff_df = coeff_df,
+                  mod = mod,
+                  Y = Y,
+                  X = X)
+
+  return(results)
 }
 
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
@@ -90,7 +130,7 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
     pvals <- mmrr.model$tpvalue[-1]
   }
 
-  # Repetitive test, but just to be sure
+  # Repetitive test for no significant variables, but just to be sure
   if(length(X) == 0 | (length(pvals) == 1) & all(pvals > 0.05)){warning("No significant variable combo found, returning NULL object"); mmrr.model <- NULL}
 
   return(mmrr.model)
