@@ -7,13 +7,14 @@
 #' @param envlayers rasters for for extracting environmental values using coordinates if `env` isn't provided
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
+#' @param plot whether to plot results (defaults to TRUE)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE){
+mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE, plot = TRUE){
 
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
@@ -29,9 +30,9 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz)
+  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot)
 
-  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz)
+  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot)
 
   return(results)
 
@@ -42,13 +43,14 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
 #' @param Y dependent distance matrix
 #' @param X list of independent distance matrices (with optional names)
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
+#' @param plot whether to plot results (defaults to TRUE)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE){
+mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE){
 
   # fil model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
@@ -62,7 +64,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE){
   names(X_best) <- names(mod$coefficients)[-1]
 
   # plot results
-  plot_mmrr(Y = Y, X = X_best, mod = mod, stdz = stdz)
+  if (plot) plot_mmrr(Y = Y, X = X_best, mod = mod, stdz = stdz)
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
@@ -81,22 +83,22 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE){
 #'
 #' @param Y dependent distance matrix
 #' @param X list of independent distance matrices (with optional names)
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#' @inheritParams mmrr_do_everything
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE){
+mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE){
 
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
 
   # If NULL, exit with NULL
-  if(is.null(mod)) return(NULL)
+  if (is.null(mod)) return(NULL)
 
   # plot results
-  plot_mmrr(Y = Y, X = X, mod = mod, stdz = stdz)
+  if (plot) plot_mmrr(Y = Y, X = X, mod = mod, stdz = stdz)
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
@@ -113,8 +115,8 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE){
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
-#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
-#' @param stdz if TRUE then matrices will be standardized. Default = TRUE.
+#' @inheritParams mmrr_do_everything
+#'
 mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
   # Fit full model
   mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
