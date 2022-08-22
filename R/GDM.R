@@ -1,26 +1,15 @@
 
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
-<<<<<<< HEAD
-#' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
-#' @param coords dataframe with x (i.e., Longitude) and y (i.e., Latitude) coordinates
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
-=======
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale = TRUE)
-#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
->>>>>>> main
+#' @param coords dataframe with x (i.e., Longitude) and y (i.e., Latitude) coordinates
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-<<<<<<< HEAD
 #' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
-#' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
-=======
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
 #' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
->>>>>>> main
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #'
@@ -211,12 +200,8 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
 #' @export
 #'
 #' @examples
-<<<<<<< HEAD
 gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
   # TODO [EAC]: re-run this; save RDA and send to APB (issue with gdm.varImp)
-=======
-gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
->>>>>>> main
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
