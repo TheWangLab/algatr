@@ -107,10 +107,17 @@ We suggest that users select `rarify_n` and `rarify_nit` such that the number of
 Before running `window_gd()`, users can preview the moving window and the counts within each cell of the raster to get a sense of how big the window is and what the density of counts looks like across the landscape. Here, we provide the raster layer (`lotr_lyr`), the coordinates (`lotr_coords`), the window dimensions (5), the aggregation factor (3), and the minimum sample number (`min_n`). Min_n will be used to mask the sample count layer to show how much of the landscape will be excluded due to low sample counts (note: `min_n` is equivalent to `rarify_n` if rarefaction is used).
 
 ```{r, fig.width = 5, fig.height = 5, cache = TRUE}
-preview_gd(lotr_lyr,
-           lotr_coords,
-           wdim = 5, 
-           fact = 3, 
+# preview_gd(lotr_lyr,
+#            lotr_coords,
+#            wdim = 5, 
+#            fact = 3, 
+#            sample_count = TRUE, 
+#            min_n = 2)
+
+preview_gd(envlayers,
+           liz_coords,
+           wdim = 10, 
+           fact = 5, 
            sample_count = TRUE, 
            min_n = 2)
 ```
@@ -122,16 +129,25 @@ The L argument is used in the calculation of pi. If `L=NULL` (default), the func
 We then plot the genetic diversity layer (the first layer of the produced RasterStack) and the sample counts layer (the second stack).
 
 ```{r moving window, fig.width = 5, fig.height = 5, cache = TRUE}
-wgd <- window_gd(lotr_vcf,
-          lotr_coords,
-          lotr_lyr,
+# wgd <- window_gd(lotr_vcf,
+#           lotr_coords,
+#           lotr_lyr,
+#           stat = "pi",
+#           wdim = 5,
+#           fact = 3,
+#           rarify = TRUE,
+#           rarify_n = 2,
+#           rarify_nit = 5,
+#           L = 100)
+
+wgd <- window_gd(liz_vcf,
+          liz_coords,
+          envlayers,
           stat = "pi",
-          wdim = 5,
-          fact = 3,
-          rarify = TRUE,
-          rarify_n = 2,
-          rarify_nit = 5,
-          L = 100)
+          wdim = 10,
+          fact = 5,
+          rarify = FALSE,
+          L = 1000)
 
 # The plot_gd function plots the genetic diversity layer
 plot_gd(wgd, main = "Window pi")
@@ -151,7 +167,7 @@ To run this function, we provide the RasterStack output from `window_gd()`, the 
 
 ```{r krige results, fig.width = 5, fig.height = 5, cache = TRUE}
 # Note: this step can take a little while
-kgd <- krig_gd(wgd, index = 1:2, lotr_lyr, disagg_grd = 2)
+kgd <- krig_gd(wgd, index = 1:2, envlayers, disagg_grd = 2)
 
 plot_gd(kgd, main = "Kriged pi")
 plot_count(kgd, main = "Kriged sample counts")

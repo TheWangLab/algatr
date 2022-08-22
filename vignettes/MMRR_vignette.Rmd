@@ -30,10 +30,6 @@ The randomization aspect of MRR is that significance testing is achieved through
 
 There is one main function to perform a MMRR: `mmrr_do_everything()`. This function runs MMRR, and allows a user to run MMRR with all variables, or with model selection to choose the best-supported variables. This function outputs information on the final model, and coefficients for predictor variables.
 
-We can also use the `gdm_plot_isplines()` function to plot I-splines for each environmental variable and geographic distance, and `gdm_map()` to produce a PCA map with GDM results plotted.
-
-There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
-
 ### Read in and process data files
 
 Running MMRR requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
