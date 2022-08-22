@@ -2,11 +2,11 @@
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
 #' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
-#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
+#' @param coords dataframe with x (i.e., Longitude) and y (i.e., Latitude) coordinates
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
+#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
 #' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param scale whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
@@ -58,8 +58,8 @@ gdm_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mod
 #' Run GDM and return model object
 #'
 #' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
-#' @param coords dataframe with x and y coordinates
-#' @param env dataframe with environmental values for each coordinate
+#' @param coords data frame with x and y coordinates
+#' @param env data frame with environmental values for each coordinate
 #' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
 #' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
 #' @param n_perm number of permutations to use to calculate variable importance, only matters if model = "best"
@@ -75,7 +75,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
-    # Rename coords
+  # Rename coords
   coords <- dplyr::as_tibble(coords)
   colnames(coords) <- c("x","y")
 
@@ -184,7 +184,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, n_perm =
 #'
 #' @examples
 gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
-  # TODO: EAC re-run this; save RDA and send to APB
+  # TODO [EAC]: re-run this; save RDA and send to APB (issue with gdm.varImp)
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
@@ -231,7 +231,7 @@ gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
 #' @param gdm_model GDM model
 #' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation
-#' @param coords
+#' @param coords data frame with x and y coordinates
 #' @param scl constant for rescaling variable vectors for plotting
 #' @param plot
 #'
