@@ -1,7 +1,7 @@
 
 #' Calculate environmental distance between environmental vars
 #'
-#' @param env dataframe with environmental values for each coordinate
+#' @param env dataframe or vector of environmental variables for locations
 #'
 #' @return
 #' @export
@@ -12,13 +12,14 @@ env_dist <- function(env){
   # Standardize environmental variables
   scalenv <- scale(env, center = TRUE, scale = TRUE)
 
+  # Create distance matrix
   distmat <- as.matrix(dist(scalenv, diag = TRUE, upper = TRUE))
 
   return(distmat)
 }
 
 
-#' Calculate geographic distance between sampling coordinates
+#' Calculate geographic distance between coordinates
 #'
 #' @param coords dataframe with x and y coordinates
 #' @param type The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.
