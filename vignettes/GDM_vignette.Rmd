@@ -43,10 +43,6 @@ Running a GDM requires three data files for input: a genetic distance matrix (th
 ```{r data}
 # Load genetic dist matrix and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 # Our code assumes that the first column is longitude and second is latitude; check this:
 head(liz_coords)
 # Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!
@@ -93,13 +89,13 @@ gdm_plot_isplines(gdm_full$model)
 TODO: We will sum isplines for each significant predictor variable to determine the relative contributions of each.
 
 ```{r sum isplines}
-# TODO: add code here
+# TODO [EAC]: add code here
 ```
 
 We can also sum all environmental variables and compare to geographic distance to get the relative variation explained by IBE (enviro vars) and IBD (geo dist). A good way to visualize this is by plotting the PCs with relative contributions of predictor variables, with samples (i.e., genetic distances) overlaid on top.
 
 ```{r plot vars}
-# TODO: finish this
+# TODO [EAC]: finish this
 gdm_plot_vars()
 ```
 
@@ -109,4 +105,4 @@ Finally, we can visualize GDM results by mapping. XXXXX:
 gdm_map(mod_full$model, CA_env, liz_coords)
 ```
 
-TODO: discuss not over-interpreting GDM map?
+TODO [EAC]: discuss not over-interpreting GDM map?
