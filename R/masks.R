@@ -33,11 +33,7 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
     map_mask <- chull_mask(coords, envlayers, buffer_width = buffer_width)
   }
 
-<<<<<<< HEAD
   # Returns raster where values of 1 are areas that should be masked, and NAs are areas that should be retained
-=======
-  #returns raster where 1s are areas that should be masked and NAs are areas that should be kept
->>>>>>> main
   return(map_mask)
 
 }
@@ -55,7 +51,6 @@ range_mask <- function(coords, envlayers){
   # Extract values at all coords
   vals <- raster::extract(envlayers, coords)
 
-<<<<<<< HEAD
   # Create empty layer of zeroes
   envmask <- envlayers*0
 
@@ -67,30 +62,14 @@ range_mask <- function(coords, envlayers){
   val_min <- apply(vals, 2, min, na.rm = TRUE)
 
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-=======
-  # create empty layer of zeroes
-  envmask <- envlayers*0
-
-  # calculate min and max values
-  val_max <- apply(vals, 2, max, na.rm = TRUE)
-  val_min <- apply(vals, 2, min, na.rm = TRUE)
-
-  # loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
->>>>>>> main
   for(n in 1:nlayers(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
 
-<<<<<<< HEAD
   # Sum layers together to get all areas that should be masked
   map_mask <- raster::stackApply(envmask, 1, sum, na.rm=TRUE)
   # Assign values of 1 to any areas that should be masked (e.g. anything that is not 0)
-=======
-  # sum layers together to get all areas that should be masked
-  map_mask <- stackApply(envmask, 1, sum, na.rm=TRUE)
-  # assign values of 1 to any areas that should be masked (e.g. anything that is not 0)
->>>>>>> main
   map_mask[map_mask != 0] <- 1
   # Assign NA values to any areas that should not be masked (i.e. any zeros)
   map_mask[map_mask == 0] <- NA
@@ -123,22 +102,13 @@ sd_mask <- function(coords, envlayers, nsd){
   val_max <- val_mean + val_sd*nsd
   val_min <- val_mean - val_sd*nsd
 
-<<<<<<< HEAD
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-=======
-  # loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
->>>>>>> main
   for(n in 1:nlayers(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
 
-<<<<<<< HEAD
-
   # Sum layers together to get all areas that should be masked
-=======
-  # sum layers together to get all areas that should be masked
->>>>>>> main
   map_mask <- stackApply(envmask, 1, sum, na.rm=TRUE)
   # Assign values of 1 to any areas that should be masked (i.e., anything that is not 0)
   map_mask[map_mask != 0] <- 1
@@ -163,7 +133,6 @@ sd_mask <- function(coords, envlayers, nsd){
 #' @examples
 buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 
-<<<<<<< HEAD
   # Create proper coords and add projection
   colnames(coords) <- c("x", "y")
   sp::coordinates(coords) <- ~x+y
@@ -178,21 +147,6 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 
   # Modify mask to get values of 1 for any areas that should be masked
   # (multiplying by 0 and adding 1 will make everything but the NA values equal to 1)
-=======
-  #create proper coords and add projection
-  colnames(coords) <- c("x", "y")
-  coordinates(coords) <- ~x+y
-  crs(coords) <- crs(envlayers)
-
-  # add a buffer
-  buff <- gBuffer(coords, width = buffer_width)
-
-  # create a mask (just need one of the envlayers to do this since the values don't matter)
-  map_mask <- mask(envlayers[[1]], buff, inverse = TRUE)
-
-  # modify mask to get values of 1 for any areas that should be masked
-  # (multiply by 0 and adding 1 will make everything but the NA values equal to 1)
->>>>>>> main
   map_mask <- 0*map_mask + 1
 
   return(map_mask)
@@ -211,7 +165,6 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 #' @examples
 chull_mask <- function(coords, envlayers, buffer_width = NULL){
 
-<<<<<<< HEAD
   # Use one layer as a template
   env <- envlayers[[1]]
 
@@ -230,26 +183,6 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
   env_chull_mask <- raster::mask(env, chull, inverse=TRUE)
 
   # Convert to ones
-=======
-  # use one layer as a template
-  env <- envlayers[[1]]
-
-  # create proper coords and add projection
-  colnames(coords) <- c("x", "y")
-  coordinates(coords) <- ~x+y
-  crs(coords) <- crs(env)
-
-  # add a buffer to coords
-  if(!is.null(buffer_width)){coords <- gBuffer(coords, width = buffer_width)}
-
-  # make convex hull
-  chull <- rgeos::gConvexHull(coords)
-
-  # create mask from areas outside of hull
-  env_chull_mask <- mask(env, chull, inverse=TRUE)
-
-  # convert to ones
->>>>>>> main
   map_mask <- env_chull_mask*0 + 1
 
   return(map_mask)
@@ -259,17 +192,10 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' Plot mask on top of map
 #' @description Plots a raster with another raster "mask" on top of it
 #'
-<<<<<<< HEAD
 #' @param map_r raster you want masked
 #' @param map_mask raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
 #' @param RGB_cols whether the plot should be RGB-based or not
 #' @param mask_col color and transparency of mask (defaults to black and alpha=0.9)
-=======
-#' @param map_r raster you want to mask
-#' @param map_mask raster layer with 1s where you want to mask and NA everywhere else (i.e. what you want to keep, as produced by \code{\link{extrap_mask}})
-#' @param RGB_cols whether the plot should be RGB based or not
-#' @param mask_col color of mask (defaults to black)
->>>>>>> main
 #'
 #' @return plot \code{map} with areas masked based on \code{map_mask}
 #' @export
@@ -278,16 +204,10 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)){
 
-<<<<<<< HEAD
   # TODO [EAC]: should we edit to include options for coloring map other than RGB stuff? e.g., viridis?
   if(RGB_cols){raster::plotRGB(map_r, r = 1, g = 2, b = 3)} else {raster::plot(map_r)}
 
   # Plots mask as black semi-transparent layer over map
-=======
-  if(RGB_cols){plotRGB(map_r, r = 1, g = 2, b = 3)} else {plot(map_r)}
-
-  # plots mask as black semi-transparent layer over map
->>>>>>> main
   raster::plot(map_mask, col = mask_col, add = TRUE, legend = FALSE)
 
 }
