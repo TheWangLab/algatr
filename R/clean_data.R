@@ -85,7 +85,8 @@ vcf_to_genind <- function(x, pops = NULL){
 }
 
 #' Remove NAs from genetic data
-#' TODO: what is gen? gendist matrix? need to fill in param details
+#' TODO [EAC]: what is gen? genind? need to fill in param details
+#'
 #' @param gen
 #' @param nsd
 #'
@@ -110,7 +111,7 @@ gen_remove_na <- function(gen, nsd = 3){
     print(dim(gen_filter))
   }
 
-  # TODO: if input is gendist, it returns twice because matrix
+  # TODO [EAC]: if input is gendist, it returns twice because matrix
   message(paste("Input:", dim(gen)))
   message(paste("Output:", dim(gen_filter)))
 
@@ -118,7 +119,8 @@ gen_remove_na <- function(gen, nsd = 3){
 }
 
 #' Remove islands from mapping
-#' TODO: what's going on with shape within ms_filter_islands?
+#' TODO [EAC]: what's going on with shape within ms_filter_islands?
+#' TODO [EAC]: fill in param descriptions
 #' @param input spatial object (envlayers) to be masked
 #' @param shape
 #' @param min_vertices
