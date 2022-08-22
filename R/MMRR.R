@@ -1,6 +1,6 @@
 
 #' MMRR function to do everything ()
-#' TODO: gendist matrix must range between 0 and 1 as with GDM?
+#' TODO [EAC]: gendist matrix must range between 0 and 1 as with GDM?
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates (MUST BE CALLED X AND Y)
