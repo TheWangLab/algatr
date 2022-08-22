@@ -9,30 +9,28 @@
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
 #' @param plot whether to plot results (defaults to TRUE)
+#' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE, plot = TRUE){
+mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # If not provided, make env data frame from layers and coords
   if(is.null(env)){env <- raster::extract(envlayers, coords)}
 
-  # Convert to tibble for map function
-  env <- dplyr::as_tibble(env)
-
   # Make env dist matrix
-  X <- purrr::map(env, env_dist)
+  X <- env_dist(env)
   X[["geodist"]] <- geo_dist(coords)
 
   # Make geodist mat
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot)
+  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
 
-  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot)
+  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
 
   return(results)
 
@@ -42,15 +40,13 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
 #'
 #' @param Y dependent distance matrix
 #' @param X list of independent distance matrices (with optional names)
-#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
-#' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
-#' @param plot whether to plot results (defaults to TRUE)
+#' @inheritParams mmrr_do_everything
 #'
 #' @return
 #' @export
 #'
 #' @examples
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE){
+mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # fil model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
@@ -59,12 +55,9 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE){
   if(is.null(mod)) return(NULL)
 
   # subset X with significant variables
-  # note: the list() and names() part are necessary to ensure a named list is produced if there is only one significant variable
-  X_best <- list(X[[names(mod$coefficients)[-1]]])
-  names(X_best) <- names(mod$coefficients)[-1]
-
+  X_best <- X[names(mod$coefficients)[-1]]
   # plot results
-  if (plot) plot_mmrr(Y = Y, X = X_best, mod = mod, stdz = stdz)
+  if (plot) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
@@ -89,7 +82,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE){
 #' @export
 #'
 #' @examples
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE){
+mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
@@ -98,7 +91,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE){
   if (is.null(mod)) return(NULL)
 
   # plot results
-  if (plot) plot_mmrr(Y = Y, X = X, mod = mod, stdz = stdz)
+  if (plot) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
@@ -239,7 +232,7 @@ mmrr_df <- function(mod){
 #' @export
 #'
 #' @examples
-plot_mmrr <- function(Y, X = NULL, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL){
+mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL){
 
   # Plot single variable relationships
   if("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
@@ -249,13 +242,11 @@ plot_mmrr <- function(Y, X = NULL, mod = NULL, plot_type = "all", stdz = TRUE, v
 
   # Plot fitted relationship
   if("all" %in% plot_type | "cov" %in% plot_type) print(mmrr_plot_cov(X, stdz = TRUE))
-
-  return()
 }
 
 #' Plot single variable relationships
 #'
-#' @inheritParams plot_mmrr
+#' @inheritParams mmrr_plot
 #'
 #' @export
 #' @noRd
@@ -282,7 +273,7 @@ mmrr_plot_vars <- function(Y, X, stdz = TRUE){
 
 #' Plot fitted relationship
 #'
-#' @inheritParams plot_mmrr
+#' @inheritParams mmrr_plot
 #'
 #' @export
 #' @noRd
@@ -316,7 +307,7 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
 
 #' Plot covariances
 #'
-#' @inheritParams plot_mmrr
+#' @inheritParams mmrr_plot
 #'
 #' @export
 #' @noRd

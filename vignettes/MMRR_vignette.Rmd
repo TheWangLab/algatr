@@ -46,10 +46,49 @@ load(here("data", "CA_env.RDA"))
 ## MMRR with all variables
 
 ```{r all vars, fig.width = 5, fig.height = 5}
+set.seed(1)
 mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full")
 ```
 
 ## MMRR with model selection
 ```{r best vars, fig.width = 5, fig.height = 5}
+set.seed(2)
 mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
+# Step by Step
+
+Create distance matrix:
+
+```{r, fig.width = 5, fig.height = 5}
+# Make an dataframe with environmental data
+env <- raster::extract(CA_env, liz_coords)
+X <- env_dist(env)
+
+# Add geographic distance
+X[["geodist"]] <- geo_dist(coords)
+
+# Make a genetic distance matrix
+Y <- as.matrix(gendist)
+
+# Run MMRR with variable selection
+set.seed(3)
+results <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, plot = TRUE)
+
+# Run MMRR with all variables
+set.seed(4)
+results <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, plot = TRUE)
+```
+
+You can also produce each plot separately:
+
+```{r, fig.width = 5, fig.height = 5}
+# Covariance plot
+mmrr_plot(X = X, plot_type = "cov", stdz = TRUE)
+
+# Single variable plot
+mmrr_plot(Y, X, plot_type = "vars", stdz = TRUE)
+
+# Fitted variable plot
+mmrr_plot(Y, X, mod = results$mod, plot_type = "fitted", stdz = TRUE)
+```
+
