@@ -14,7 +14,7 @@ coords_to_raster(
 )
 }
 \arguments{
-\item{coords}{coordinates (two columns, the first should be x and the second should be y)}
+\item{coords}{x and y coordinates (two columns, the first should be x and the second should be y)}
 
 \item{buffer}{buffer to add to edge of raster (defaults to 0)}
 
@@ -30,7 +30,7 @@ coords_to_raster(
 RasterLayer
 }
 \description{
-Generate a raster layer from coordinates which can be used in \link[wingen]{window_gd} as the RasterLayer to move the window across
+Create a raster from coordinates
 }
 \examples{
 load_mini_ex()

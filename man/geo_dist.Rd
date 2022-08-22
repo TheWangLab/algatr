@@ -2,7 +2,7 @@
 % Please edit documentation in R/dist.R
 \name{geo_dist}
 \alias{geo_dist}
-\title{Calculate geographic distance between sampling coordinates}
+\title{Calculate geographic distance between coordinates}
 \usage{
 geo_dist(coords, type = "Euclidean", lyr = NULL)
 }
@@ -17,7 +17,7 @@ geo_dist(coords, type = "Euclidean", lyr = NULL)
 A distance matrix
 }
 \description{
-Calculate geographic distance between sampling coordinates
+Calculate geographic distance between coordinates
 }
 \details{
 Euclidean, or linear, distances are calculated using the geodist package: Padgham M, Sumner M (2021). geodist: Fast, Dependency-Free Geodesic Distance Calculations. R package version 0.0.7, Available: https://CRAN.R-project.org/package=geodist.
