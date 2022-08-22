@@ -92,7 +92,8 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
 }
 
 #' Plot the relationship between two distance metrics
-#' TODO: are metric names really necessary?
+#' TODO [EAC]: are metric names really necessary?
+#' TODO [EAC]: is this function necessary?
 #'
 #' @param dist_x df containing square distance matrix for x axis
 #' @param dist_y df containing square distance matrix for y axis
@@ -108,7 +109,7 @@ plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
     dplyr::rename(!!metric_name_y := dist)
 
   if (metric_name_x == "dps" || metric_name_y == "dps"){
-    # TODO: should check whether inds are the same across datasets, return something if not
+    # TODO [EAC]: should check whether inds are the same across datasets, return something if not
     joined <- dplyr::full_join(melt_x, melt_y) %>%
       dplyr::mutate(rev_dps = (1-dps))
     joined %>%
@@ -116,7 +117,7 @@ plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
       geom_abline(aes(intercept=0.0, slope=1), color="gray") +
       geom_point(color="black", size=.2, alpha = .5)
   } else {
-    # TODO: should check whether inds are the same across datasets, return something if not
+    # TODO [EAC]: should check whether inds are the same across datasets, return something if not
     joined <- dplyr::full_join(melt_x, melt_y)
     joined %>%
       ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
