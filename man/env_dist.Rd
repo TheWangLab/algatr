@@ -7,7 +7,7 @@
 env_dist(env)
 }
 \arguments{
-\item{env}{dataframe with environmental values for each coordinate}
+\item{env}{dataframe or vector of environmental variables for locations}
 }
 \description{
 Calculate environmental distance between environmental vars
