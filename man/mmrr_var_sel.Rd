@@ -11,9 +11,9 @@ mmrr_var_sel(Y, X, nperm = 999, stdz = TRUE)
 
 \item{X}{is a list of independent distance matrices (with optional names)}
 
-\item{nperm}{is the number of permutations to be used in significance tests. Default = 999.}
+\item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
-\item{stdz}{if TRUE then matrices will be standardized. Default = TRUE.}
+\item{stdz}{if TRUE then matrices will be standardized (defaults to TRUE)}
 }
 \description{
 mmrr_var_sel performs MMRR with backward elimination variable selection

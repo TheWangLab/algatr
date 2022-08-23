@@ -7,8 +7,8 @@
 load_example(quiet = FALSE)
 }
 \arguments{
-\item{quiet}{whether to load quietly or not}
+\item{quiet}{whether to load without messages}
 }
 \description{
-Load example data
+Example dataset from \href{https://doi.org/10.1111/mec.15836}{Bouzid et al. 2022}. The code used to create this dataset can be found under data-raw/DATASET
 }
