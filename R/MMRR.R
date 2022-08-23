@@ -1,5 +1,4 @@
 #' MMRR function to do everything ()
-#' TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
