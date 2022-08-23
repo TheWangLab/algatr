@@ -6,7 +6,7 @@
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR
+#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
 #' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
