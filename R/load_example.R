@@ -10,14 +10,10 @@
 #' @examples
 load_example <- function(quiet = FALSE){
   # load all data
-<<<<<<< HEAD
-  utils::data(list = c("liz_vcf", "liz_coords", "CA_env", "gendist"))
-=======
   utils::data(list = c("liz_vcf", "liz_coords", "gendist", "CA_env"))
->>>>>>> main
 
   if (!quiet) {
-    # give message with information about objects
+    # Give message with information about objects
     return(message(cat(
       crayon::cyan(crayon::bold("\n---------------- example dataset ----------------\n")),
       crayon::blue("\nObjects loaded:"),
@@ -26,12 +22,7 @@ load_example <- function(quiet = FALSE){
       crayon::yellow(crayon::bold("\n*gendist*")),
       crayon::yellow(paste0("genetic distance matrix (Plink Distance)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
-<<<<<<< HEAD
-      crayon::blue(crayon::bold("\n*CA_env*")), crayon::blue("RasterStack with PC environmental layers"),
-      crayon::magenta(crayon::bold("\n*gendist*")), crayon::magenta("Genetic distance matrix"),
-=======
       crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with PC environmental layers"),
->>>>>>> main
       crayon::cyan(crayon::bold("\n\n-------------------------------------------------\n"))
     )))
   }
