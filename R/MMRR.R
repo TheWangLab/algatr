@@ -48,7 +48,7 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
 mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # fil model with variable selection
-  mod <- mmrr_var_sel(Y, X, nperm = nperm, scale = stdz)
+  mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
 
   # If NULL, exit with NULL
   if(is.null(mod)) return(NULL)
