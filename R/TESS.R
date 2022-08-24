@@ -607,6 +607,6 @@ tess_col_default <- function(n, alpha = 1){
 #' @noRd
 algatr_col_default <- function(x){
   if(x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
-  if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
+  if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis::viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
   return(col)
 }
