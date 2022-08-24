@@ -3,31 +3,40 @@
 \name{mmrr_do_everything}
 \alias{mmrr_do_everything}
 \title{MMRR function to do everything ()
-TODO: gendist matrix must range between 0 and 1 as with GDM?}
+TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB}
 \usage{
 mmrr_do_everything(
   gendist,
   coords,
   env = NULL,
-  envlayers,
+  envlayers = NULL,
   model = "best",
-  nperm = 999
+  nperm = 999,
+  stdz = TRUE,
+  plot = TRUE,
+  plot_type = "all"
 )
 }
 \arguments{
 \item{gendist}{matrix of genetic distances}
 
-\item{coords}{dataframe with x and y coordinates (MUST BE CALLED X AND Y)}
+\item{coords}{dataframe with x and y coordinates}
 
 \item{env}{dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers}
 
-\item{envlayers}{envlayers for mapping (MUST MATCH NAMES IN ENV DATAFRAME - Should have option for leaving it NULL)}
+\item{envlayers}{rasters for for extracting environmental values using coordinates if \code{env} isn't provided}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); default = "best"}
+\item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
 
-\item{nperm}{number of permutations to use to calculate variable importance; only used if model = "best" (default = 999)}
+\item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
+
+\item{stdz}{if TRUE then matrices will be standardized (defaults to TRUE)}
+
+\item{plot}{whether to plot results (defaults to TRUE)}
+
+\item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }
 \description{
 MMRR function to do everything ()
-TODO: gendist matrix must range between 0 and 1 as with GDM?
+TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB
 }

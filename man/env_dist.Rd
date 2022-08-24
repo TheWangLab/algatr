@@ -2,13 +2,15 @@
 % Please edit documentation in R/dist.R
 \name{env_dist}
 \alias{env_dist}
-\title{Calculate environmental distance between environmental vars}
+\title{Calculate distance between environmental vars}
 \usage{
-env_dist(env)
+env_dist(env, stdz = TRUE)
 }
 \arguments{
 \item{env}{dataframe or vector of environmental variables for locations}
+
+\item{stdz}{if TRUE then environmental values will be standardized (defaults to TRUE)}
 }
 \description{
-Calculate environmental distance between environmental vars
+Calculate distance between environmental vars
 }

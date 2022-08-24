@@ -1,6 +1,8 @@
 #' Load example data
 #'
-#' @param quiet whether to load quietly or not
+#' Example dataset from [Bouzid et al. 2022](https://doi.org/10.1111/mec.15836). The code used to create this dataset can be found under data-raw/DATASET
+#'
+#' @param quiet whether to load without messages
 #'
 #' @return
 #' @export
@@ -8,18 +10,28 @@
 #' @examples
 load_example <- function(quiet = FALSE){
   # load all data
+<<<<<<< HEAD
   utils::data(list = c("liz_vcf", "liz_coords", "CA_env", "gendist"))
+=======
+  utils::data(list = c("liz_vcf", "liz_coords", "gendist", "CA_env"))
+>>>>>>> main
 
   if (!quiet) {
     # give message with information about objects
     return(message(cat(
       crayon::cyan(crayon::bold("\n---------------- example dataset ----------------\n")),
-      crayon::silver("\nObjects loaded:"),
+      crayon::blue("\nObjects loaded:"),
       crayon::yellow(crayon::bold("\n*liz_vcf*")),
       crayon::yellow(paste0("vcfR object (1000 loci x 53 samples)")),
+      crayon::yellow(crayon::bold("\n*gendist*")),
+      crayon::yellow(paste0("genetic distance matrix (Plink Distance)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
+<<<<<<< HEAD
       crayon::blue(crayon::bold("\n*CA_env*")), crayon::blue("RasterStack with PC environmental layers"),
       crayon::magenta(crayon::bold("\n*gendist*")), crayon::magenta("Genetic distance matrix"),
+=======
+      crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with PC environmental layers"),
+>>>>>>> main
       crayon::cyan(crayon::bold("\n\n-------------------------------------------------\n"))
     )))
   }
