@@ -60,7 +60,7 @@ krig_raster2 <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot = TRUE
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
 par(pty = "s", mar = rep(2,4))
-results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:3, K_selection = "auto", minQ = 0.10)
+results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:10, K_selection = "auto", minQ = 0.10)
 ```
 
 

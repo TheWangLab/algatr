@@ -22,23 +22,7 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
-# gen matrix
-# TODO: make sure to make it clear it's LFMM 2.0 (citation) not 1
-gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
-gen <- gen[,-1]
-
-# coords
-coords <- read.table(here("test_data","Scelop.coord"))
-coords <- as.matrix(coords)
-
-# And a set of worldclim rasters for the study area
-# And a set of worldclim rasters for the study area
-env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
-envstack <- raster::stack(env_files)
-
-#make env
-env <- raster::extract(envstack, coords)
-env <- data.frame(env)
+load_example()
 ```
 
 # Run LFMM
