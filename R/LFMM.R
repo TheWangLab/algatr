@@ -5,7 +5,7 @@
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
-#' @param k_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
+#' @param K_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
 #' @param sig alpha level for determining candidate loci (defaults to 0.5)
 #' @param p.adj method to use for p-value correction (defaults to "none")
 #' @inheritParams lfmm::lfmm_test
@@ -16,7 +16,7 @@
 #'
 #' @examples
 lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
-                     k_selection = "tracy.widom", Kvals = 1:10, sig = 0.05,
+                     K_selection = "tracy.widom", Kvals = 1:10, sig = 0.05,
                      p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
                      low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
                      choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
@@ -104,13 +104,13 @@ select_K <- function(gen, K_selection = "tracy.widom", coords = NULL, Kvals = 1:
                   low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
                   criterion = "diffNgroup", max.n.clust = 10){
 
-  if(k_selection == "tracy.widom") K <- select_K_tw(gen, criticalpoint)
+  if(K_selection == "tracy.widom") K <- select_K_tw(gen, criticalpoint)
 
-  if(k_selection == "quick.elbow") K <- select_K_elbow(gen, low, max.pc)
+  if(K_selection == "quick.elbow") K <- select_K_elbow(gen, low, max.pc)
 
-  if(k_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
+  if(K_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
 
-  if(k_selection == "find.clusters") K <- select_K_fc(gen,
+  if(K_selection == "find.clusters") K <- select_K_fc(gen,
                                                    pca.select = pca.select,
                                                    perc.pca = perc.pca,
                                                    choose.n.clust = choose.n.clust,
