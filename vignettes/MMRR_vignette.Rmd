@@ -48,6 +48,7 @@ load(here("data", "CA_env.RDA"))
 ```{r all vars, fig.width = 5, fig.height = 5}
 set.seed(01)
 mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full")
+  
 ```
 
 ## MMRR with model selection
