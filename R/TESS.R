@@ -44,7 +44,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
     # K is just Kvals if there is only one value
     K <- Kvals
 
-    # run tess for given K value
+    # Run tess for given K value
     tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   }
@@ -52,7 +52,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
   # KRIGE QMATRIX  -----------------------------------------------------------------------------------------------
 
   # Get Qmatrix
-  qmat <- qmatrix(tess3_obj, K = K)
+  qmat <- tess3r::qmatrix(tess3_obj, K = K)
 
   # Krige Qmatrix
   krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q)
@@ -94,7 +94,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   coords <- as.matrix(coords)
 
   # Run tess for all K values
-  tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot CV results
   plot(tess3_obj, pch = 19, col = "blue",
