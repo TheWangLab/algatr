@@ -8,18 +8,18 @@ editor_options:
 ## Setup
 
 ```{r, warning = FALSE, message = FALSE}
-library("here")
-library("tidyverse")
-library("raster")
-library("rgdal")
+library(here)
+library(tidyverse)
+library(raster)
+library(rgdal)
 # Figure out libraries later
 # to install TESS:
 # install.packages("devtools")
 # devtools::install_github("bcm-uga/TESS3_encho_sen")
-library("tess3r") 
+library(tess3r)
 
 
-#for plotting (from TESS)
+# for plotting (from TESS)
 source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
 source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
 
@@ -30,14 +30,15 @@ source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
 #library("LEA")
 
 # devtools::install_github("cran/automap")
-library("automap")
-library("spatialEco")
+library(automap)
+library(spatialEco)
 
 devtools::load_all()
 ```
 ## Load Test Data
 
 ```{r, warning = FALSE}
+# TODO [EAC]: this isn't actually loading the data?
 load_example()
 ```
 
@@ -49,13 +50,13 @@ gen <- vcf_to_dosage(liz_vcf)
 ```{r}
 # create a RasterLayer for kriging
 # here we just use one environmental layer, aggregated to increase computational speed
-krig_raster <- aggregate(CA_env[[1]], 4)
+krig_raster <- raster::aggregate(CA_env[[1]], 4)
 
 # alternatively a raster can be created from coordinates
 krig_raster2 <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot = TRUE)
 ```
 
-## Run everyhting
+## Run everything
 
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}

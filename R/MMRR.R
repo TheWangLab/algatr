@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #' MMRR function to do everything
+=======
+#' MMRR function to do everything ()
+>>>>>>> main
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
