@@ -17,16 +17,6 @@
 #'
 #'
 #'
-
-vcf = "59-Ursus_mUrsAme1.4.p_ctg.pruned.vcf.gz"
-out_name = "59-Ursus"
-out_format = "vcf"
-ld.threshold = 0.6
-slide.max.n = 100
-method=c("corr")
-seed=1234
-maf=0.05
-
 pruned_vcf <- ld_prune(vcf, out_name, out_format, save_output=FALSE)
 
 ld_prune <- function(vcf, out_name, out_format, nodes = 1, ld.threshold = 0.6, slide.max.n = 100,
