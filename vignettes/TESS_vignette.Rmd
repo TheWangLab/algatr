@@ -1,0 +1,160 @@
+---
+title: "TESS_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TESS_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(algatr)
+library(here)
+library(tidyverse)
+library(raster)
+library(rgdal)
+# Figure out libraries later
+# to install TESS:
+# install.packages("devtools")
+# devtools::install_github("bcm-uga/TESS3_encho_sen")
+library(tess3r)
+```
+
+# for plotting (from TESS)
+source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
+source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
+
+# need LEA library for cross entropy
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#install.packages("BiocManager")
+#BiocManager::install("LEA")
+#library("LEA")
+
+# devtools::install_github("cran/automap")
+library(automap)
+library(spatialEco)
+
+devtools::load_all()
+```
+## Load Test Data
+
+```{r, warning = FALSE}
+# TODO [EAC]: this isn't actually loading the data?
+load_example()
+```
+
+```{r}
+# convert vcf to genotype matrix
+gen <- vcf_to_dosage(liz_vcf)
+```
+
+```{r}
+# create a RasterLayer for kriging
+# here we just use one environmental layer, aggregated to increase computational speed
+krig_raster <- raster::aggregate(CA_env[[1]], 4)
+
+# alternatively a raster can be created from coordinates
+krig_raster2 <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot = TRUE)
+```
+
+## Run everything
+
+
+```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
+par(pty = "s", mar = rep(2,4))
+results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:10, K_selection = "auto", minQ = 0.10)
+```
+
+
+## Line by line TESS
+
+### Run TESS
+
+```{r, cache = TRUE}
+# run tess with multiple K values
+tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:10, ploidy = 2) 
+
+# look at resulting object (ANNE: provide a description of what is in this object)
+summary(tess3_result)
+
+# get tess object
+tess3_obj <- tess3_result$tess3_obj
+
+# or run with one K value
+tess3_obj <- tess3(gen, coord = as.matrix(liz_coords), K = 3, ploidy = 2) 
+
+# get best K and get Qmatrix
+qmat <- qmatrix(tess3_obj, K = 4)
+
+```
+
+### Krig Q values
+
+```{r, cache = TRUE, results = FALSE, warning = FALSE}
+# krige Qmatrix
+# TODO [EAC]: coords needs to have x and y (if long and lat returns error?)
+krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
+```
+
+## Plotting 
+
+### Basic ggplot
+
+```{r, fig.width = 5, fig.height = 5}
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ")
+tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ_poly")
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ", minQ = 0.20)
+tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
+```
+
+```{r}
+tess_barplot(qmat, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
+```
+
+## Extended base R plotting
+
+To plot individual layers and have more control over color breaks, alpha levels, legend/color scale settings, etc. use base R plotting functions
+
+```{r, fig.width = 10, fig.height = 4}
+par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
+tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
+```
+
+```{r, fig.width = 5, fig.height = 5, warning = FALSE}
+par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
+
+tess_plot(krig_admix, plot_method = "maxQ", col_breaks = 20)
+tess_plot(krig_admix, plot_method = "allQ", col_breaks = 20, minQ = 0.20, col_alpha = 0.90)
+tess_plot(krig_admix, plot_method = "maxQ_poly")
+tess_plot(krig_admix, plot_method = "allQ_poly", minQ = 0.20, col_alpha = 0.50)
+```
+
+## Plotting with default tess3r package functions
+
+```{r}
+barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
+```
+
+
+NOTE: the original tess3r package uses a different type of kriging than autoKrige, it also kriges and plots in the same function (so there isn't an easy way to get the raster output). 
+```{r, fig.width = 5, fig.height = 5}
+plot(qmat, 
+     liz_coords, 
+     method = "map.max", 
+     interpol = FieldsKrigModel(10),  
+     main = "Ancestry coefficients",
+     xlab = "Longitude", ylab = "Latitude", 
+     col.palette = CreatePalette(),
+     resolution = c(300,300), cex = .4)
+
+# comparison to algatr
+par(pty = "s", mar = rep(0,4))
+tess_plot(krig_admix, liz_coords, plot_method = "maxQ", col_pal =  tess_col_default)
+```
