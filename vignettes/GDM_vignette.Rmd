@@ -17,11 +17,13 @@ knitr::opts_chunk$set(
 # Generalized dissimilarity modeling (GDM)
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+# library(algatr)
+library(landgen)
 library(gdm)
 library(here)
 library(tidyverse)
 library(raster)
+options("rgdal_show_exportToProj4_warnings"="none")
 library(rgdal)
 library(readr)
 ```
