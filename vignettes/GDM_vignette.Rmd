@@ -65,6 +65,7 @@ gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", alpha
 Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel TODO: describe plot_vars TODO: mention that default of this is to NOT include geo dists? It is important to be aware that GDM always considers geographic distance as a variable XXX HOW IS IT CODED
 
 ```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
+# TODO [EAC]: unused argument nperm = nperm (in gdm_var_select function)
 gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale = TRUE, plot_vars = TRUE)
 ```
 
