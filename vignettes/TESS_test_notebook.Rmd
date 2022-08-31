@@ -91,6 +91,7 @@ qmat <- qmatrix(tess3_obj, K = 4)
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
 # krige Qmatrix
+# TODO [EAC]: coords needs to have x and y (if long and lat returns error?)
 krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
 ```
 

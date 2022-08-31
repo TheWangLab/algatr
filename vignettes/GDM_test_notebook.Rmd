@@ -49,11 +49,7 @@ writeRaster(results$rast$pcaRastRGB, here("test_data","pcaRast.tif"), overwrite 
 
 ## Seperate functions
 ```{r mod}
-<<<<<<< HEAD
-mod <- gdm_run(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 10)
-=======
 mod <- gdm_run(gendist, coords, env, model = "best", alpha = 0.05, nPerm = 10, scale = TRUE)
->>>>>>> main
 predictors <- gdm_coeffs(mod)
 predictors
 ```

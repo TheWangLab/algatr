@@ -83,6 +83,7 @@ gdm_full$predictors
 Now, let's plot the GDM-fitted functions for our best model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable.
 
 ```{r isplines, fig.width = 9, fig.height = 3}
+# TODO [EAC]: differs from test notebook; not GDM object
 gdm_plot_isplines(gdm_full$model)
 ```
 
