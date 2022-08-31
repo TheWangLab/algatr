@@ -1,11 +1,21 @@
 ---
-title: "LFMM"
-output: html_document
+title: "LFMM_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LFMM_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-# Setup
-```{r, warning = FALSE, message = FALSE}
-library("algatr")
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(algatr)
 library("here")
 #to install LFMM:
 #devtools::install_github("bcm-uga/lfmm")

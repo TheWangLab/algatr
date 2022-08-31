@@ -1,12 +1,21 @@
 ---
-title: "RDA"
-output: html_document
+title: "RDA_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{RDA_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-# Setup
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
-```{r, warning=FALSE, message=FALSE}
-library("algatr")
+```{r setup}
+library(algatr)
 library("here")
 library("gt")
 
@@ -51,7 +60,3 @@ lm_table(results$lm_df)
 rda_biplot(TAB_loci, TAB_var, rda_axes = c(1,2))
 rda_biplot(TAB_loci, TAB_var, rda_axes = c(2,3))
 ```
-
-
-
-
