@@ -17,8 +17,6 @@
 #'
 #'
 #'
-pruned_vcf <- ld_prune(vcf, out_name, out_format, save_output=FALSE)
-
 ld_prune <- function(vcf, out_name, out_format, nodes = 1, ld.threshold = 0.6, slide.max.n = 100,
                     maf = 0.05, seed = 1234, method = c("corr"), save_output = TRUE){
 
