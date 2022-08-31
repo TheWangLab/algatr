@@ -12,7 +12,7 @@ library("here")
 library("lfmm") 
 library("tidyverse")
 
-#libraries for k seleciton
+#libraries for k selection
 library("AssocTests")
 library("tess3r")
 
