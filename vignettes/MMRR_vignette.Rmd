@@ -50,11 +50,13 @@ mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = 
 ```
 
 ## MMRR with model selection
+
 ```{r best vars, fig.width = 5, fig.height = 5}
 set.seed(10)
 mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
-# Step by Step
+
+## Step by Step
 
 Create distance matrix:
 
@@ -64,7 +66,7 @@ env <- raster::extract(CA_env, liz_coords)
 X <- env_dist(env)
 
 # Add geographic distance
-X[["geodist"]] <- geo_dist(coords)
+X[["geodist"]] <- geo_dist(liz_coords)
 
 # Make a genetic distance matrix
 Y <- as.matrix(gendist)
@@ -88,6 +90,7 @@ mmrr_plot(X = X, plot_type = "cov", stdz = TRUE)
 mmrr_plot(Y, X, plot_type = "vars", stdz = TRUE)
 
 # Fitted variable plot
+# TODO [EAC]: needs to be fixed
 mmrr_plot(Y, X, mod = results$mod, plot_type = "fitted", stdz = TRUE)
 ```
 
