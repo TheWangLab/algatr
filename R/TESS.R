@@ -54,17 +54,20 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
   # Get Qmatrix
   qmat <- tess3r::qmatrix(tess3_obj, K = K)
 
+  # Give warning if K = 1
+  if(K == 1) warning("K = 1, skipping kriging and plotting")
+
   # Krige Qmatrix
-  krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q)
+  if(K != 1) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
 
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
   # Plot max Q-values
-  print(tess_ggplot(krig_admix, coords, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot")))
+  if(K != 1) print(tess_ggplot(krig_admix, coords, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot")))
 
   # Make barplot
-  print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
+  if(K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
 
@@ -151,6 +154,9 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   # Krige each K value
   krig_admix <- raster::stack(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
 
+  # if NULL return NULL
+  if(is.null(krig_admix)) return(NULL)
+
   # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
   if(correct_kriged_Q){
     krig_admix[krig_admix < 0] <- 0
@@ -178,8 +184,10 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 
   # Skip if all of the Q values are identical (kriging not possible)
   if(length(unique(krig_df$Q)) == 1){
-    warning(paste0("Only one unique Q value for K = ", K, ", skipping (note: may want to consider different K value)"))
-    next
+    warning(paste0("Only one unique Q value for K = ", K, ", returning NA raster (note: may want to consider different K value)")); NULL
+    blank <- raster::rasterFromXYZ(krig_grid)
+    blank[] <- NA
+    return(blank)
   }
 
   # Krige (capture output so it is not printed automatically)
