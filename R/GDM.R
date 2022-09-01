@@ -80,6 +80,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
   # Rename coords
+  # TODO [EAC]: already done within gdm_do_everything?
   coords <- dplyr::as_tibble(coords)
   colnames(coords) <- c("x","y")
 
@@ -200,7 +201,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
 #' @export
 #'
 #' @examples
-gdm_var_select <- function(gdmData, alpha = 0.05, n_perm = 10){
+gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
   # TODO [EAC]: re-run this; save RDA and send to APB (issue with gdm.varImp)
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,

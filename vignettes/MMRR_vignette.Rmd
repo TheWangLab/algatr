@@ -94,3 +94,8 @@ mmrr_plot(Y, X, plot_type = "vars", stdz = TRUE)
 mmrr_plot(Y, X, mod = results$mod, plot_type = "fitted", stdz = TRUE)
 ```
 
+Now, let's take a look at the output statistics:
+
+```{r stats}
+# TODO [EAC]: should this be built in within the function?
+```
