@@ -17,8 +17,7 @@ knitr::opts_chunk$set(
 # Generalized dissimilarity modeling (GDM)
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
-library(landgen)
+library(algatr)
 library(gdm)
 library(here)
 library(tidyverse)
