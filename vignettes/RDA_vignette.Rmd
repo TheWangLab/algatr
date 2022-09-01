@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
 library("here")
 library("gt")
@@ -149,9 +150,3 @@ rda_plot(mod, rda_loci, pvalues, biplot_axes = c(1,2), manhattan = FALSE, biplot
 rda_plot(mod, rda_loci, pvalues, biplot_axes = c(2,3), manhattan = FALSE, biplot = TRUE)
 rda_plot(mod, rda_loci, pvalues, alpha = 0.05, manhattan = TRUE, biplot = FALSE)
 ```
-<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
-=======
-
-
-
->>>>>>> main:vignettes/RDA_test_notebook.Rmd
