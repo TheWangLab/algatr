@@ -36,7 +36,7 @@ env <- raster::extract(envstack, coords)
 
 # Run RDA
 ```{r, warning = FALSE, message = FALSE}
-results <- rda_doEverything(gen, env, coords, 
+results <- rda_do_everything(gen, env, coords, 
                             correctGEO = FALSE, 
                             correctPC = FALSE,
                             alpha = 0.05, 
@@ -44,21 +44,20 @@ results <- rda_doEverything(gen, env, coords,
 ```
 
 ```{r warning = FALSE}
-lm_table(results$lm_df)
+lm_table(results$lm_df[,1:4])
 ```
 
 # Partial RDAs
 
 ## Geo correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
                             correctGEO = FALSE, 
                             correctPC = TRUE,
                             alpha = 0.05, 
                             padj_method = "fdr")
-lm_table(results$lm_df)
 ```
 
 ## PC correction
@@ -108,6 +107,7 @@ if(any(is.na(gen))){
 
 ### 2. Run RDA
 ```{r}
+env <- data.frame(raster::extract(envlayers, coords))
 mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
 ```
 
@@ -118,7 +118,7 @@ mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
 rda_sig <- rda_getloci(mod, gen, naxes = 3, padj_method = "fdr", alpha = 0.05)
 rda_loci <- rda_sig[["rda_loci"]]
 pvalues <- rda_sig[["pvalues"]]
-print(rda_loci)
+length(rda_loci)
 ```
 
 ### 4. Identify environmental associations

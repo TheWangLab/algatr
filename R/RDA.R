@@ -8,6 +8,7 @@
 #' @param correctPC whether to condition on PCs from PCA of genotypes
 #' @param alpha significance level to use to identify loci
 #' @param padj_method correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+#' @param lmtest whether to run linear models tests to identify which sites are associated with which environmental variable (warning: this can take some time)
 #' @param nPC number of PCs to use if correctPC = TRUE
 #'
 #' @inheritParams vegan::ordiR2step
@@ -17,7 +18,9 @@
 #' @export
 #'
 #' @examples
-rda_do_everything <- function(gen, env, coords = NULL, correctGEO = FALSE, correctPC = FALSE, alpha = 0.05, padj_method = "fdr", nPC = 3, Pin = 0.05, R2permutations = 1000, R2scope = T){
+rda_do_everything <- function(gen, env, coords = NULL, correctGEO = FALSE, correctPC = FALSE, alpha = 0.05, padj_method = "fdr", lmtest = FALSE, nPC = 3,
+                              # TODO: put these variables to use:
+                              Pin = 0.05, R2permutations = 1000, R2scope = T){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
@@ -25,6 +28,7 @@ rda_do_everything <- function(gen, env, coords = NULL, correctGEO = FALSE, corre
   if(inherits(env, "Raster") | inherits(env, "RasterStack")) env <- raster::extract(env, coords)
 
   # Standardize environmental variables
+  # TODO: MAKE OPTIONAL
   env <- scale(env, center = TRUE, scale = TRUE)
   env <- data.frame(env)
 
@@ -67,7 +71,7 @@ rda_do_everything <- function(gen, env, coords = NULL, correctGEO = FALSE, corre
 
   # Identify environmental associations
   rda_gen <- gen[,rda_loci]
-  lm_df <- rda_lm_test(rda_gen, env)
+  if(lmtest) lm_df <- rda_lm_test(rda_gen, env) else lm_df <- NULL
 
   # Plot results ---------------------------------------------------------------------------------------------------------------
 
@@ -360,10 +364,10 @@ rda_manhattan <- function(TAB_loci, rda_loci, pvalues, alpha = 0.05){
 #' @examples
 lm_table <- function(lm_df){
   suppressWarnings(
-    tbl <-lm_df %>%
-      mutate(across(-env, round, 3)) %>%
-      gt() %>%
-      data_color(columns = -env, colors = scales::col_numeric(
+    tbl <- lm_df %>%
+      dplyr::mutate(dplyr::across(-env, round, 3)) %>%
+      gt::gt() %>%
+      gt::data_color(columns = -env, colors = scales::col_numeric(
         palette = c("#F9A242FF"),
         domain = c(0, 0.05)
       )
