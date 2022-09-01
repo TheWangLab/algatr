@@ -6,10 +6,9 @@ output: html_document
 # Setup
 
 ```{r, warning=FALSE, message=FALSE}
-library("algatr")
+library("ccgplandgen")
 library("here")
 library("gt")
-
 # RDA
 library("vegan")
 library("raster")
@@ -17,7 +16,6 @@ library("robust")
 library("tidyverse")
 # BiocManager::install("qvalue")
 library("qvalue")
-
 devtools::load_all()
 ```
 
@@ -27,31 +25,115 @@ devtools::load_all()
 # gen matrix
 gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
 gen <- gen[,-1]
-
 # coords
 coords <- read.table(here("test_data","Scelop.coord"))
-
-# And a set of worldclim rasters for the study area
 # And a set of worldclim rasters for the study area
 env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
 envstack <- raster::stack(env_files)
-
 #make env
 env <- raster::extract(envstack, coords)
 ```
 
 # Run RDA
 ```{r, warning = FALSE, message = FALSE}
-results <- rda_run(gen, env,coords, model = "full", sig = 0.05, Pin = 0.05, R2permutations = 1000, R2scope = T, padj_method = "fdr")
+results <- rda_doEverything(gen, env, coords, 
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            alpha = 0.05, 
+                            padj_method = "fdr")
 ```
+
 ```{r warning = FALSE}
 lm_table(results$lm_df)
 ```
-```{r}
-rda_biplot(TAB_loci, TAB_var, rda_axes = c(1,2))
-rda_biplot(TAB_loci, TAB_var, rda_axes = c(2,3))
+
+# Partial RDAs
+
+## Geo correction
+```{r, warning = TRUE, message = FALSE}
+results <- rda_doEverything(gen, 
+                            env, 
+                            coords, 
+                            correctGEO = FALSE, 
+                            correctPC = TRUE,
+                            alpha = 0.05, 
+                            padj_method = "fdr")
+lm_table(results$lm_df)
 ```
 
+## PC correction
+```{r, warning = TRUE, message = FALSE}
+results <- rda_doEverything(gen, 
+                            env, 
+                            coords, 
+                            correctGEO = TRUE, 
+                            correctPC = FALSE,
+                            alpha = 0.05, 
+                            padj_method = "fdr")
+```
+
+## PC + Geo Correction
+```{r, warning = TRUE, message = FALSE}
+results <- rda_doEverything(gen, 
+                            env, 
+                            coords, 
+                            correctGEO = TRUE, 
+                            correctPC = TRUE,
+                            alpha = 0.05, 
+                            padj_method = "fdr")
+```
+
+## Separate functions
+
+### 1. Prepare data
+```{r}
+# Standardize environmental variables
+env <- scale(env, center = TRUE, scale = TRUE) 
+env <- data.frame(env)
+    
+# Remove any NA values
+if(any(is.na(env))){
+  warning("NA values found in env data, removing rows with NAs for RDA")
+  gen <- gen[complete.cases(env),]
+  coords <- coords[complete.cases(env),]
+  env <- env[complete.cases(env),]
+}
+if(any(is.na(gen))){
+  warning("NA values found in gen data, removing rows with NAs for RDA")
+  env <- env[complete.cases(gen),]
+  coords <- coords[complete.cases(gen),]
+  gen <- gen[complete.cases(gen),]
+}
+```
+
+### 2. Run RDA
+```{r}
+mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
+```
+
+
+### 3. Identify candidate loci
+```{r}
+# Running with 3 axes
+rda_sig <- rda_getloci(mod, gen, naxes = 3, padj_method = "fdr", alpha = 0.05)
+rda_loci <- rda_sig[["rda_loci"]]
+pvalues <- rda_sig[["pvalues"]]
+print(rda_loci)
+```
+
+### 4. Identify environmental associations
+```{r}
+rda_gen <- gen[,rda_loci]
+lm_df <- rda_lm_test(rda_gen, env)
+```
+
+### 5. Plot results
+
+```{r}
+rda_plot(mod, rda_loci, pvalues, biplot_axes = c(1,2), manhattan = FALSE, biplot = TRUE)
+rda_plot(mod, rda_loci, pvalues, biplot_axes = c(2,3), manhattan = FALSE, biplot = TRUE)
+rda_plot(mod, rda_loci, pvalues, alpha = 0.05, manhattan = TRUE, biplot = FALSE)
+```
 
 
 
