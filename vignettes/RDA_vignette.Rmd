@@ -33,6 +33,12 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
+# convert vcf to dosage
+vcf_to_dosage(vcf_path)
+
+# take a look at the dosage matrix
+
+
 # gen matrix
 gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
 gen <- gen[,-1]
