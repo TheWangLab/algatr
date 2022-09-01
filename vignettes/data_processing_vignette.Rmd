@@ -49,7 +49,7 @@ liz_vcf@gt[1:5,2:6]
 
 ### Converting a vcf to a dosage matrix
 
-A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (). We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
+A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (TODO [EAC]: fill in). We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
 
 ```{r dosage}
 dosage <- vcf_to_dosage(liz_vcf)
