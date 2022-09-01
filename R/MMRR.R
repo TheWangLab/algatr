@@ -290,7 +290,7 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
     dplyr::mutate(coeffX = coeff*X) %>%
     dplyr::select(Y, coeffX) %>%
     dplyr::group_by(Y) %>%
-    dplyr::summarise(Yfitted = sum(coeffX))
+    dplyr::summarise(Yfitted = sum(coeffX, na.rm=T))
 
   # Plot fitted relationship
   plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +

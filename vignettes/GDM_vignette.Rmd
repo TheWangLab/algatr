@@ -23,9 +23,9 @@ library(gdm)
 library(here)
 library(tidyverse)
 library(raster)
-options("rgdal_show_exportToProj4_warnings"="none")
 library(rgdal)
 library(readr)
+devtools::load_all()
 ```
 
 Generalized dissimilarity modeling is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). A GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data varies nonlinearly across an environmental gradient.
@@ -68,7 +68,7 @@ Now, let's run a GDM using only significant variables (i.e., a "best" model). In
 
 ```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
 # TODO [EAC]: unused argument nperm = nperm (in gdm_var_select function)
-gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale = TRUE, plot_vars = TRUE)
+# gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale = TRUE, plot_vars = TRUE)
 ```
 
 ### Results of GDM
@@ -78,7 +78,7 @@ There are three elements within the results of `gdm_do_everything()`: "model" (f
 Let's assume we want to move forward with examining the results from the model selection output. There should be coefficients for each of the significant predictor variables:
 
 ```{r preds}
-gdm_full$predictors
+# gdm_full$predictors
 ```
 
 ### Interpreting the results of GDM
@@ -87,7 +87,7 @@ Now, let's plot the GDM-fitted functions for our best model. These functions are
 
 ```{r isplines, fig.width = 9, fig.height = 3}
 # TODO [EAC]: differs from test notebook; not GDM object
-gdm_plot_isplines(gdm_full$model)
+# gdm_plot_isplines(gdm_full$model)
 ```
 
 TODO: We will sum isplines for each significant predictor variable to determine the relative contributions of each.
@@ -100,13 +100,13 @@ We can also sum all environmental variables and compare to geographic distance t
 
 ```{r plot vars}
 # TODO [EAC]: finish this
-gdm_plot_vars()
+# gdm_plot_vars()
 ```
 
 Finally, we can visualize GDM results by mapping. XXXXX:
 
 ```{r map}
-gdm_map(mod_full$model, CA_env, liz_coords)
+# gdm_map(mod_full$model, CA_env, liz_coords)
 ```
 
 TODO [EAC]: discuss not over-interpreting GDM map?
