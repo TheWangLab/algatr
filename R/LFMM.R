@@ -1,5 +1,6 @@
 
 #' Run LFMM
+#' TODO [EAC]: change function name to do_everything
 #' @param gen genotype matrix
 #' @param env dataframe with environmental data
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
