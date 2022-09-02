@@ -166,8 +166,10 @@ cor_table(cor_df, top = TRUE, nrow = 5)
 # you can display only select environmental variables
 cor_table(cor_df, env = "CA_rPCA1", nrow = 5)
 
-# putting it all together we can display the top, ordered SNPS for CA_rPCA1
+# putting it all together we can display the top 5, ordered SNPS for each variable
 cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA1", nrow = 5)
+cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA2", nrow = 5)
+cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA3", nrow = 5)
 ```
 
 ### 5. Plot results

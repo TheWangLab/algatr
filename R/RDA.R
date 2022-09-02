@@ -11,7 +11,7 @@
 #' @param sig if `outlier_method = "p"`, the significance level to use to identify snps
 #' @param padj_method if `outlier_method = "p"`, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify snps
-#' @param lmtest whether to run linear models tests to identify which sites are associated with which environmental variable (warning: this can take some time)
+#' @param cortest whether to create table of correlations for snps and environmental variable
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
 #' @param nPC number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be given
 #' @param stdz whether to center and scale environemntal data (defaults to TRUE)
@@ -27,7 +27,7 @@
 #' @examples
 rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
-                              padj_method = "fdr", lmtest = FALSE, nPC = 3, naxes = "all",
+                              padj_method = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
@@ -82,20 +82,23 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
   # Get SNPs
   rda_snps <- rda_sig$rda_snps
 
-  # Identify environmental associations
-  rda_gen <- gen[,rda_snps]
-  if(lmtest) lm_df <- rda_lm_test(rda_gen, env) else lm_df <- NULL
-
-  # Plot results ---------------------------------------------------------------------------------------------------------------
+  # Summarize results ---------------------------------------------------------------------------------------------------------------
 
   # plot all axes
   if(any("pvalues" %in% names(rda_sig))) pvalues <- rda_sig[["pvalues"]] else pvalues <- NULL
   rda_plot(mod, rda_snps = rda_snps, pvalues = pvalues,  axes = "all", biplot_axes = NULL, sig = sig)
 
+  # get correlations -----------------------------------------------------------------------------------------------------------
+  rda_gen <- gen[,rda_snps]
+  if(cortest) {
+    cor_df <- rda_cor_test(rda_gen, env)
+    print(cor_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
+  } else cor_df <- NULL
+
   # Compile results ------------------------------------------------------------------------------------------------------------
 
   results <- list(rda_snps = rda_snps,
-                  lm_df = lm_df,
+                  cor_df = cor_df,
                   rda_mod = mod,
                   pvalues = pvalues,
                   rda_sig = rda_sig,
@@ -327,17 +330,23 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
   colnames(TAB_var_sub) <- c("x", "y")
 
   ## Biplot of RDA snps and variables scores
-  ggplot() +
-    geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
-    geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
-    geom_point(data = TAB_snps_sub, aes(x=x*20, y=y*20, colour = type), size = 1.4) +
-    scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), "#F9A242FF")) +
-    geom_segment(data = TAB_var_sub, aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=arrow(length = unit(0.02, "npc"))) +
-    geom_text(data = TAB_var_sub, aes(x=1.1*x, y=1.1*y, label = row.names(TAB_var_sub)), size = 2.5) +
-    xlab(xax) + ylab(yax) +
-    guides(color=guide_legend(title="snp type")) +
-    theme_bw(base_size = 11) +
-    theme(panel.background = element_blank(), legend.background = element_blank(), panel.grid = element_blank(), plot.background = element_blank(), legend.text=element_text(size=rel(.8)), strip.text = element_text(size=11))
+  ggplot2::ggplot() +
+    ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x=x*20, y=y*20, colour = type), size = 1.4) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), "#F9A242FF")) +
+    ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
+    ggplot2::geom_text(data = TAB_var_sub, ggplot2::aes(x=1.1*x, y=1.1*y, label = row.names(TAB_var_sub)), size = 2.5) +
+    ggplot2::xlab(xax) + ggplot2::ylab(yax) +
+    ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
+
 }
 
 #' RDA manhattan plot
@@ -358,14 +367,21 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
                               type = factor(TAB_snps$type, levels = c("Neutral", "Outliers")))
   TAB_manhattan <- TAB_manhattan[order(TAB_manhattan$pos),]
 
-  ggplot(data = TAB_manhattan) +
-    geom_point(aes(x=pos, y=-log10(pvalues), col = type), size=1.4) +
-    scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF", "#6B4596FF")) +
-    xlab("snps") + ylab("-log10(p)") +
-    geom_hline(yintercept=-log10(sig), linetype="dashed", color = "black", size=0.6) +
-    guides(color=guide_legend(title="snp type")) +
-    theme_bw(base_size = 11) +
-    theme(legend.position="right", legend.background = element_blank(), panel.grid = element_blank(), legend.box.background = element_blank(), plot.background = element_blank(), panel.background = element_blank(), legend.text=element_text(size=rel(.8)), strip.text = element_text(size=11))
+  ggplot2::ggplot(data = TAB_manhattan) +
+    ggplot2::geom_point(ggplot2::aes(x=pos, y=-log10(pvalues), col = type), size=1.4) +
+    ggplot2:: scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF", "#6B4596FF")) +
+    ggplot2::xlab("snps") + ggplot2::ylab("-log10(p)") +
+    ggplot2::geom_hline(yintercept=-log10(sig), linetype="dashed", color = "black", size=0.6) +
+    ggplot2::guides(color=ggplot2::guide_legend(title="snp type")) +
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(legend.position="right",
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   legend.box.background = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
 }
 
 #' Make pretty table of p-values
@@ -419,15 +435,8 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
     return(NULL)
   }
 
-  # if a gen df is provided column names (snps names) are returned, otherwise indices are returned
-  # NOTE: if indices are returned make sure to take extra steps to confirm these align properly
-  if(!is.null(gen)){
-    rda_snps <- colnames(gen)[rda_snps]
-    names(pvalues) <- colnames(gen)
-  } else {
-    names(pvalues) <- 1:length(pvalues)
-    message("no gen object provided - returning indices of significant snps")
-  }
+  # restore SNP names
+  names(pvalues) <- rownames(vegan::scores(mod, choices = naxes, display="species"))
 
   results <- list(rda_snps = rda_snps,
                   pvalues = pvalues,
@@ -477,11 +486,18 @@ outliers <- function(x,z){
 #'
 rda_hist <- function(TAB_snps, binwidth = NULL){
   ggplot2::ggplot() +
-    ggplot2::geom_histogram(data = TAB_snps, aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
-    scale_fill_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF")) +
-    guides(fill = guide_legend(title="snp type")) +
-    xlab(colnames(TAB_snps)[2]) +
-    theme_bw() +
-    theme(legend.position="right", legend.background = element_blank(), panel.grid = element_blank(), legend.box.background = element_blank(), plot.background = element_blank(), panel.background = element_blank(), legend.text=element_text(size=rel(.8)), strip.text = element_text(size=11))
+    ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
+    ggplot2::scale_fill_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF")) +
+    ggplot2::guides(fill = ggplot2::guide_legend(title="snp type")) +
+    ggplot2::xlab(colnames(TAB_snps)[2]) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position="right",
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   legend.box.background = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
 }
 
