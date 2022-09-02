@@ -6,7 +6,6 @@ output: html_document
 # Setup
 
 ```{r, warning=FALSE, message=FALSE}
-library("ccgplandgen")
 library("here")
 library("gt")
 # RDA
@@ -22,16 +21,14 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
-# gen matrix
-gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
-gen <- gen[,-1]
-# coords
-coords <- read.table(here("test_data","Scelop.coord"))
-# And a set of worldclim rasters for the study area
-env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
-envstack <- raster::stack(env_files)
-#make env
-env <- raster::extract(envstack, coords)
+load_example()
+gen <- vcf_to_dosage(liz_vcf)
+coords <- liz_coords
+env <- CA_env
+
+# Perform simple imputation using the median
+# NOTE: We do this for our test data set, but highly discourage using this form of simplistic imputation in analyses. 
+gen <- impute_na(gen, median)
 ```
 
 # Run RDA
@@ -39,13 +36,21 @@ env <- raster::extract(envstack, coords)
 results <- rda_do_everything(gen, env, coords, 
                             correctGEO = FALSE, 
                             correctPC = FALSE,
-                            alpha = 0.05, 
+                            outlier_method = "p",
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
-```{r warning = FALSE}
-lm_table(results$lm_df[,1:4])
+```{r}
+results <- rda_do_everything(gen, env, coords, 
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            outlier_method = "z",
+                            z = 3, 
+                            padj_method = "fdr")
 ```
+
+
 
 # Partial RDAs
 
@@ -54,31 +59,47 @@ lm_table(results$lm_df[,1:4])
 results <- rda_do_everything(gen, 
                             env, 
                             coords, 
-                            correctGEO = FALSE, 
-                            correctPC = TRUE,
-                            alpha = 0.05, 
+                            model = "full",
+                            correctGEO = TRUE, 
+                            correctPC = FALSE,
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
 ## PC correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
-                            correctGEO = TRUE, 
-                            correctPC = FALSE,
-                            alpha = 0.05, 
+                            model = "full",
+                            correctGEO = FALSE, 
+                            correctPC = TRUE,
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
 ## PC + Geo Correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
+                            model = "full",
                             correctGEO = TRUE, 
                             correctPC = TRUE,
-                            alpha = 0.05, 
+                            sig = 0.05, 
+                            padj_method = "fdr")
+```
+
+## Variable selection
+
+```{r, warning = TRUE, message = FALSE}
+results <- rda_do_everything(gen, 
+                            env, 
+                            coords, 
+                            model = "best",
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
@@ -86,7 +107,8 @@ results <- rda_doEverything(gen,
 
 ### 1. Prepare data
 ```{r}
-# Standardize environmental variables
+# Extract and standardize environmental variables
+env <- raster::extract(CA_env, coords)
 env <- scale(env, center = TRUE, scale = TRUE) 
 env <- data.frame(env)
     
@@ -107,32 +129,41 @@ if(any(is.na(gen))){
 
 ### 2. Run RDA
 ```{r}
-env <- data.frame(raster::extract(envlayers, coords))
 mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
 ```
 
 
-### 3. Identify candidate loci
+### 3. Identify candidate snps
 ```{r}
-# Running with 3 axes
-rda_sig <- rda_getloci(mod, gen, naxes = 3, padj_method = "fdr", alpha = 0.05)
-rda_loci <- rda_sig[["rda_loci"]]
+
+# Running with all axes and z method
+rda_sig <- rda_getsnps(mod, naxes = "all", outlier_method = "z", z = 3)
+rda_snps <- rda_sig[["rda_snps"]]
+length(rda_snps)
+
+# Running with all axes and p method
+rda_sig <- rda_getsnps(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.05)
+rda_snps <- rda_sig[["rda_snps"]]
 pvalues <- rda_sig[["pvalues"]]
-length(rda_loci)
+length(rda_snps)
+
 ```
 
 ### 4. Identify environmental associations
 ```{r}
-rda_gen <- gen[,rda_loci]
+rda_gen <- gen[,rda_snps]
 lm_df <- rda_lm_test(rda_gen, env)
 ```
 
 ### 5. Plot results
 
 ```{r}
-rda_plot(mod, rda_loci, pvalues, biplot_axes = c(1,2), manhattan = FALSE, biplot = TRUE)
-rda_plot(mod, rda_loci, pvalues, biplot_axes = c(2,3), manhattan = FALSE, biplot = TRUE)
-rda_plot(mod, rda_loci, pvalues, alpha = 0.05, manhattan = TRUE, biplot = FALSE)
+rda_plot(mod, rda_snps, biplot_axes = c(1,3), rdaplot = TRUE)
+rda_plot(mod, rda_snps, biplot_axes = c(2,3), rdaplot = TRUE)
+rda_plot(mod, rda_snps, pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
+
+# note: if only one axis is provided, a histogram will be generated
+rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
 ```
 
 
