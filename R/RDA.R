@@ -204,15 +204,13 @@ rdadapt <- function(rda,K)
 #' @export
 #'
 #' @examples
-rda_lm_test <- function(rda_gen, env){
-  # suppress messages used because of "new names" message that is annoying
-  env_p <- suppressMessages(purrr::map_dfc(rda_gen, rda_lm_env_helper, env))
-  rda_df <- data.frame(colnames(env), env_p)
-  colnames(rda_df) <- c("env", colnames(rda_gen))
-  return(rda_df)
+rda_cor_test <- function(rda_gen, env){
+  cor_df <- map_dfr(colnames(rda_gen), rda_cor_env_helper, rda_gen, env)
+  rownames(cor_df) <- NULL
+  return(cor_df)
 }
 
-#' Helper function for rda_lm_test
+#' Helper function for rda_cor_test
 #'
 #' @param snp
 #' @param env
@@ -223,13 +221,14 @@ rda_lm_test <- function(rda_gen, env){
 #' @export
 #'
 #' @examples
-rda_lm_env_helper <- function(snp, env){
-  env_p <- purrr::map_df(env, rda_lm_helper, snp)
-  colnames(env_p) <- names(snp)
-  return(env_p)
+rda_cor_env_helper <- function(snp_name, snp_df, env){
+  cor_df <- data.frame(t(apply(env, 2, rda_cor_helper, snp_df[,snp_name])))
+  cor_df$snp <- snp_name
+  cor_df$env <- colnames(env)
+  return(cor_df)
 }
 
-#' Helper function for rda_lm_test
+#' Helper function for rda_cor_test
 #'
 #' @param envvar
 #' @param snp
@@ -240,13 +239,14 @@ rda_lm_env_helper <- function(snp, env){
 #' @export
 #'
 #' @examples
-rda_lm_helper <- function(envvar, snp){
-  mod_df <- data.frame(snp, envvar)
-  colnames(mod_df) <- c("snp", "envvar")
-  mod <- lm(snp ~ envvar, data = mod_df)
-  mod_sum <- summary(mod)
-  pvalue <- mod_sum$coefficients[,"Pr(>|t|)"]["envvar"]
-  return(pvalue)
+rda_cor_helper <- function(envvar, snp){
+  if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
+  mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "pearson", na.action = "na.omit")
+  pvalue <- mod$p.value
+  r <- mod$statistic
+  results <- c(r, pvalue)
+  names(results) <- c("r", "p")
+  return(results)
 }
 
 #' Plotting function
@@ -376,17 +376,25 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 #' @export
 #'
 #' @examples
-lm_table <- function(lm_df){
+cor_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, env = NULL, nrow = NULL){
+
+  if(!is.null(env)) cor_df <- cor_df[cor_df$env %in% env, ]
+  if(sig_only) cor_df <- cor_df[cor_df$p < sig, ]
+  if(order) cor_df <- cor_df[order(abs(cor_df$r), decreasing = TRUE),]
+  if(top) cor_df <- cor_df %>%
+      group_by(snp) %>%
+      filter(r == max(r))
+  if(!is.null(nrow)) cor_df <- cor_df[1:nrow, ]
+
   suppressWarnings(
-    tbl <- lm_df %>%
-      dplyr::mutate(dplyr::across(-env, round, 3)) %>%
+    tbl <- cor_df %>%
+      as_tibble() %>%
+      dplyr::mutate(dplyr::across(-c(env, snp), round, 2)) %>%
       gt::gt() %>%
-      gt::data_color(columns = -env, colors = scales::col_numeric(
-        palette = c("#F9A242FF"),
-        domain = c(0, 0.05)
-      )
-      )
+      gtExtras::gt_hulk_col_numeric(r, trim = TRUE)
+
   )
+
   tbl
 }
 

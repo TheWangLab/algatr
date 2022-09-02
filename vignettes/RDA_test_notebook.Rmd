@@ -152,7 +152,22 @@ length(rda_snps)
 ### 4. Identify environmental associations
 ```{r}
 rda_gen <- gen[,rda_snps]
-lm_df <- rda_lm_test(rda_gen, env)
+cor_df <- rda_cor_test(rda_gen, env)
+
+# You can make a pretty table from these results (here we are displaying only the first 5 rows):
+cor_table(cor_df, nrow = 5)
+
+# you can order by the strength of the correlation
+cor_table(cor_df, order = TRUE, nrow = 5)
+
+# you can choose to only keep the top variable for each SNP the table by the strength of the correlation
+cor_table(cor_df, top = TRUE, nrow = 5)
+
+# you can display only select environmental variables
+cor_table(cor_df, env = "CA_rPCA1", nrow = 5)
+
+# putting it all together we can display the top, ordered SNPS for CA_rPCA1
+cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA1", nrow = 5)
 ```
 
 ### 5. Plot results
