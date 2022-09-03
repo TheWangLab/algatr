@@ -79,3 +79,25 @@ rm_islands <- function(input, shape, min_vertices = 10000){
   }
 
 }
+
+
+#' Impute NA values
+#' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
+#' @param x dosage matrix
+#' @param f function to use for imputation (defaults to median)
+#'
+#' @return
+#' @export
+#'
+#' @examples
+impute_na <- function(x, FUN = median){
+  x_noNA <- apply(x, 2, impute_helper, FUN)
+  return(x_noNA)
+}
+
+#' @export
+#' @noRd
+impute_helper <- function(i, FUN = median){
+  i[which(is.na(i))] <- FUN(i[-which(is.na(i))], na.rm = TRUE)
+  return(i)
+}
