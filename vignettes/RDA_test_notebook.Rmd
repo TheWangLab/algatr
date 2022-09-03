@@ -129,7 +129,7 @@ if(any(is.na(gen))){
 
 ### 2. Run RDA
 ```{r}
-mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
+mod <- rda_run(gen, env, correctGEO = FALSE, correctPC = FALSE)
 ```
 
 
@@ -142,7 +142,7 @@ rda_snps <- rda_sig[["rda_snps"]]
 length(rda_snps)
 
 # Running with all axes and p method
-rda_sig <- rda_getsnps(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.05)
+rda_sig <- rda_getsnps(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 1e-50)
 rda_snps <- rda_sig[["rda_snps"]]
 pvalues <- rda_sig[["pvalues"]]
 length(rda_snps)
@@ -152,35 +152,117 @@ length(rda_snps)
 ### 4. Identify environmental associations
 ```{r}
 rda_gen <- gen[,rda_snps]
-cor_df <- rda_cor_test(rda_gen, env)
+cor_df <- rda_cor(rda_gen, env)
 
 # You can make a pretty table from these results (here we are displaying only the first 5 rows):
-cor_table(cor_df, nrow = 5)
+rda_table(cor_df, nrow = 5)
 
 # you can order by the strength of the correlation
-cor_table(cor_df, order = TRUE, nrow = 5)
+rda_table(cor_df, order = TRUE, nrow = 5)
 
 # you can choose to only keep the top variable for each SNP the table by the strength of the correlation
-cor_table(cor_df, top = TRUE, nrow = 5)
+rda_table(cor_df, top = TRUE, nrow = 5)
 
 # you can display only select environmental variables
-cor_table(cor_df, env = "CA_rPCA1", nrow = 5)
+rda_table(cor_df, var = "CA_rPCA1", nrow = 5)
 
 # putting it all together we can display the top 5, ordered SNPS for each variable
-cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA1", nrow = 5)
-cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA2", nrow = 5)
-cor_table(cor_df, top = TRUE, order = TRUE, env = "CA_rPCA3", nrow = 5)
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA1", nrow = 5)
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA2", nrow = 5)
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA3", nrow = 5)
 ```
 
 ### 5. Plot results
 
-```{r}
+```{r, fig.width = 6, fig.height = 5}
 rda_plot(mod, rda_snps, biplot_axes = c(1,3), rdaplot = TRUE)
 rda_plot(mod, rda_snps, biplot_axes = c(2,3), rdaplot = TRUE)
 rda_plot(mod, rda_snps, pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
 
 # note: if only one axis is provided, a histogram will be generated
 rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
+```
+```{r, fig.width = 6, fig.height = 5}
+
+  ## Biplot of RDA snps and variables scores
+  ggplot2::ggplot() +
+    ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x=x, y=y, colour = type), size = 1.4) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), "#F9A242FF")) +
+    ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
+    ggrepel::geom_text_repel(data = TAB_var_sub, ggplot2::aes(x=x, y=y, label = row.names(TAB_var_sub)), size = 4) +
+    ggplot2::xlab(xax) + ggplot2::ylab(yax) +
+    ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
+    ggplot2::theme_bw(base_size = 11) +
+  
+    xlim(-0.2, 0.2)+
+    ylim(-0.10, 0.10)+
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
+
+
+  ggplot2::ggplot() +
+    ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x=x, y=y, colour = type), size = 1.4) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), rgb(0.7,0.7,0.7,0.1))) +
+    ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
+    ggrepel::geom_text_repel(data = TAB_var_sub, ggplot2::aes(x=x, y=y, label = row.names(TAB_var_sub)), size = 4) +
+    ggplot2::xlab(xax) + ggplot2::ylab(yax) +
+    ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
+    
+    xlim(-0.2, 0.2)+
+    ylim(-0.10, 0.10)+
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
+  
+  
+  ggplot2::ggplot() +
+    ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_point(data = TAB_snps_sub[1,], ggplot2::aes(x=x, y=y, colour = type), size = 1.4) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), rgb(0.7,0.7,0.7,0.1))) +
+    ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
+    ggrepel::geom_text_repel(data = TAB_var_sub, ggplot2::aes(x=x, y=y, label = row.names(TAB_var_sub)), size = 4) +
+    ggplot2::xlab(xax) + ggplot2::ylab(yax) +
+    ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
+    
+    xlim(-0.2, 0.2)+
+    ylim(-0.10, 0.10)+
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
+  
+  ggplot2::ggplot() +
+    ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
+    ggplot2::geom_point(data = TAB_snps_sub[1,], ggplot2::aes(x=x, y=y, colour = type), size = 1.4) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), rgb(0.7,0.7,0.7,0.1))) +
+    ggplot2::xlab(xax) + ggplot2::ylab(yax) +
+    ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
+    ggplot2::theme_bw(base_size = 11) +
+    xlim(-0.2, 0.2)+
+    ylim(-0.10, 0.10)+
+    ggplot2::theme(panel.background = ggplot2::element_blank(),
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
 ```
 
 
