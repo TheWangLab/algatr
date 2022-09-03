@@ -91,8 +91,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
   # get correlations -----------------------------------------------------------------------------------------------------------
   rda_gen <- gen[,rda_snps]
   if(cortest) {
-    cor_df <- rda_cor_test(rda_gen, env)
-    print(cor_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
+    cor_df <- rda_cor(rda_gen, env)
+    print(rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
   } else cor_df <- NULL
 
   # Compile results ------------------------------------------------------------------------------------------------------------
@@ -207,9 +207,10 @@ rdadapt <- function(rda,K)
 #' @export
 #'
 #' @examples
-rda_cor_test <- function(rda_gen, env){
-  cor_df <- map_dfr(colnames(rda_gen), rda_cor_env_helper, rda_gen, env)
+rda_cor <- function(rda_gen, env){
+  cor_df <- purrr::map_dfr(colnames(rda_gen), rda_cor_env_helper, rda_gen, env)
   rownames(cor_df) <- NULL
+  colnames(cor_df) <- c("r", "p", "snp", "var")
   return(cor_df)
 }
 
@@ -246,7 +247,7 @@ rda_cor_helper <- function(envvar, snp){
   if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
   mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "pearson", na.action = "na.omit")
   pvalue <- mod$p.value
-  r <- mod$statistic
+  r <- mod$estimate
   results <- c(r, pvalue)
   names(results) <- c("r", "p")
   return(results)
@@ -329,14 +330,18 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
   TAB_var_sub <- TAB_var[,c(xax, yax)]
   colnames(TAB_var_sub) <- c("x", "y")
 
+  # scale the variable loadings for the arrows
+  TAB_var_sub$x <- TAB_var_sub$x * max(TAB_snps_sub$x)/stats::quantile(TAB_var_sub$x)[4]
+  TAB_var_sub$y <- TAB_var_sub$y * max(TAB_snps_sub$y)/stats::quantile(TAB_var_sub$y)[4]
+
   ## Biplot of RDA snps and variables scores
   ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
     ggplot2::geom_vline(xintercept=0, linetype="dashed", color = gray(.80), size=0.6) +
-    ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x=x*20, y=y*20, colour = type), size = 1.4) +
+    ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x=x, y=y, colour = type), size = 1.4) +
     ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.1), "#F9A242FF")) +
     ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend=x, yend=y, x=0, y=0), colour="black", size=0.15, linetype=1, arrow=ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
-    ggplot2::geom_text(data = TAB_var_sub, ggplot2::aes(x=1.1*x, y=1.1*y, label = row.names(TAB_var_sub)), size = 2.5) +
+    ggrepel::geom_text_repel(data = TAB_var_sub, ggplot2::aes(x=x, y=y, label = row.names(TAB_var_sub)), size = 4) +
     ggplot2::xlab(xax) + ggplot2::ylab(yax) +
     ggplot2::guides(color = ggplot2::guide_legend(title="snp type")) +
     ggplot2::theme_bw(base_size = 11) +
@@ -344,7 +349,7 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
                    legend.background = ggplot2::element_blank(),
                    panel.grid = ggplot2::element_blank(),
                    plot.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size=rel(.8)),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
                    strip.text = ggplot2::element_text(size=11))
 
 }
@@ -392,27 +397,31 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 #' @export
 #'
 #' @examples
-cor_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, env = NULL, nrow = NULL){
+rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2){
 
-  if(!is.null(env)) cor_df <- cor_df[cor_df$env %in% env, ]
+  if(!is.null(var)) cor_df <- cor_df[cor_df$var %in% var, ]
   if(sig_only) cor_df <- cor_df[cor_df$p < sig, ]
   if(order) cor_df <- cor_df[order(abs(cor_df$r), decreasing = TRUE),]
   if(top) cor_df <- cor_df %>%
-      group_by(snp) %>%
-      filter(r == max(r))
+      dplyr::group_by(snp) %>%
+      dplyr::filter(abs(r) == max(abs(r)))
   if(!is.null(nrow)) cor_df <- cor_df[1:nrow, ]
 
+  cor_df <- cor_df %>% dplyr::as_tibble()
+  if(!is.null(digits)) cor_df <- cor_df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
+
+  d <- max(abs(min(cor_df$r)), abs(max(cor_df$r)))
+
   suppressWarnings(
-    tbl <- cor_df %>%
-      as_tibble() %>%
-      dplyr::mutate(dplyr::across(-c(env, snp), round, 2)) %>%
+    tbl <- cor_df  %>%
       gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric(r, trim = TRUE)
+      gtExtras::gt_hulk_col_numeric(r, trim = TRUE, domain = c(-d,d))
 
   )
 
   tbl
 }
+
 
 #' Plotting function
 #'
@@ -424,19 +433,22 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
   # P-values threshold after FDR correction (different from Capblancq & Forester 2021)
   pvalues <- p.adjust(rdadapt_env$p.values, method = padj_method)
 
+  # get snp names
+  snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))
+
+  # restore SNP names
+  names(pvalues) <- snp_names
+
   # Capblancq include a step where they only take pvalues with highest loading for each contig to deal with LD (not applied here)
   # NOTE: I Think this filtering step should occur before (e.g. only one snps per LD block, but you know which comes from where)
 
   ## Identifying the snps that are below the p-value threshold
   #Identify rda cand snps (P)
-  rda_snps <- which(pvalues < sig)
+  rda_snps <- snp_names[which(pvalues < sig)]
   if (length(rda_snps) == 0) {
     warning("No significant snps found, returning NULL object")
     return(NULL)
   }
-
-  # restore SNP names
-  names(pvalues) <- rownames(vegan::scores(mod, choices = naxes, display="species"))
 
   results <- list(rda_snps = rda_snps,
                   pvalues = pvalues,
@@ -452,7 +464,7 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
 z_outlier_method <- function(mod, naxes, z = 3){
  load.rda <- vegan::scores(mod, choices = naxes, display="species")
 
- results <- map_dfr(data.frame(1:ncol(load.rda)), z_outlier_helper, load.rda, z)
+ results <- purrr::map_dfr(data.frame(1:ncol(load.rda)), z_outlier_helper, load.rda, z)
 
  return(results)
 }
@@ -487,7 +499,7 @@ outliers <- function(x,z){
 rda_hist <- function(TAB_snps, binwidth = NULL){
   ggplot2::ggplot() +
     ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
-    ggplot2::scale_fill_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF")) +
+    ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
     ggplot2::guides(fill = ggplot2::guide_legend(title="snp type")) +
     ggplot2::xlab(colnames(TAB_snps)[2]) +
     ggplot2::theme_bw() +
@@ -497,7 +509,7 @@ rda_hist <- function(TAB_snps, binwidth = NULL){
                    legend.box.background = ggplot2::element_blank(),
                    plot.background = ggplot2::element_blank(),
                    panel.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size=rel(.8)),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
                    strip.text = ggplot2::element_text(size=11))
 }
 
