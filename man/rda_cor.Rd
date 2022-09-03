@@ -2,15 +2,18 @@
 % Please edit documentation in R/RDA.R
 \name{rda_cor}
 \alias{rda_cor}
-\title{Test for associations}
+\title{Genotype-environement correlation test}
 \usage{
-rda_cor(rda_gen, env)
+rda_cor(gen, var)
 }
 \arguments{
-\item{rda_gen}{genotype matrix for candidate snps}
+\item{gen}{dosage matrix}
 
-\item{env}{env dataframe}
+\item{var}{dataframe with predictor variables}
+}
+\value{
+dataframe with r and p-values from correlation test
 }
 \description{
-Test for associations
+Genotype-environement correlation test
 }

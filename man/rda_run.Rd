@@ -17,6 +17,9 @@ rda_run(
   R2scope = T
 )
 }
+\value{
+RDA model
+}
 \description{
 Run RDA
 }

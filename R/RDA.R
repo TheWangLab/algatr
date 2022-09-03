@@ -12,16 +12,18 @@
 #' @param padj_method if `outlier_method = "p"`, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify snps
 #' @param cortest whether to create table of correlations for snps and environmental variable
+#' @param nPC number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be provided
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
-#' @param nPC number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be given
+#' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
+#' @param R2permurations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
+#' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
 #' @param stdz whether to center and scale environemntal data (defaults to TRUE)
 #'
 #' @inheritParams vegan::ordiR2step
-#' @inheritParams stats::p.adjust
 #'
 #' @importFrom vegan rda
 #'
-#' @return
+#' @return list contatining (1) outlier snps, (2) data frame with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[wingen]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
 #' @export
 #'
 #' @examples
@@ -77,7 +79,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
   # Identify candidate snps ----------------------------------------------------------------------------------------------------
 
   # Running with all axes
-  rda_sig <- rda_getsnps(mod, naxes = naxes, outlier_method = outlier_method, padj_method = padj_method, sig = sig)
+  rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, padj_method = padj_method, sig = sig)
 
   # Get SNPs
   rda_snps <- rda_sig$rda_snps
@@ -100,10 +102,10 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
   results <- list(rda_snps = rda_snps,
                   cor_df = cor_df,
                   rda_mod = mod,
-                  pvalues = pvalues,
-                  rda_sig = rda_sig,
+                  rda_outlier_test = rda_sig,
                   rsq = mod_rsq,
-                  anova = mod_aov)
+                  anova = mod_aov,
+                  pvalues = pvalues)
 
   return(results)
 }
@@ -113,10 +115,9 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
 #'
 #' @inheritParams rda_doEverything
 #'
-#' @return
+#' @return RDA model
 #' @export
 #'
-#' @examples
 rda_run <- function(gen, env, coords = NULL, model = "full",
                     correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T){
@@ -166,10 +167,15 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 
 
 
-#' Run get SNPs
+#' Get significant outliers from RDA model
+#'
+#' @param plot whether to produce scree plot of RDA axes (defaults to TRUE)
+#' @inheritParams rda_do_everything
+#'
+#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier snps, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
 #'
 #' @export
-rda_getsnps <- function(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.05, z = 3, plot = TRUE){
+rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.05, z = 3, plot = TRUE){
   # Running the function with all axes
   if(plot) stats::screeplot(mod, main = "Eigenvalues of constrained axes")
   if(naxes == "manual") naxes <- readline("Number of RDA axes to retain:")
@@ -182,10 +188,86 @@ rda_getsnps <- function(mod, naxes = "all", outlier_method = "p", padj_method = 
   return(results)
 }
 
+
+
+#' Determine RDA outliers based on p-values
+#' @inheritParams rda_getoutliers
+#' @export
+#' @noRd
+#'
+p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
+  rdadapt_env <- rdadapt(mod, naxes)
+
+  # P-values threshold after FDR correction (different from Capblancq & Forester 2021)
+  pvalues <- p.adjust(rdadapt_env$p.values, method = padj_method)
+
+  # get snp names
+  snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))
+
+  # restore SNP names
+  names(pvalues) <- snp_names
+
+  # Capblancq include a step where they only take pvalues with highest loading for each contig to deal with LD (not applied here)
+  # NOTE: I Think this filtering step should occur before (e.g. only one snps per LD block, but you know which comes from where)
+
+  ## Identifying the snps that are below the p-value threshold
+  #Identify rda cand snps (P)
+  rda_snps <- snp_names[which(pvalues < sig)]
+  if (length(rda_snps) == 0) {
+    warning("No significant snps found, returning NULL object")
+    return(NULL)
+  }
+
+  results <- list(rda_snps = rda_snps,
+                  pvalues = pvalues,
+                  rdadapt = rdadapt_env)
+
+  return(results)
+}
+
+#' Determine RDA outliers based on Z-scores
+#' @inheritParams rda_getoutliers
+#' @export
+#' @noRd
+#'
+z_outlier_method <- function(mod, naxes, z = 3){
+  load.rda <- vegan::scores(mod, choices = naxes, display="species")
+
+  results <- purrr::map_dfr(data.frame(1:ncol(load.rda)), z_outlier_helper, load.rda, z)
+
+  return(results)
+}
+
+#' z_outlier_method helper function
+#'
+#' @export
+#' @noRd
+#'
+z_outlier_helper <- function(axis, load.rda, z){
+  x <- load.rda[,axis]
+  out <- outliers(x, z)
+  cand <- cbind.data.frame(names(out), rep(axis, times=length(out)), unname(out))
+  colnames(cand) <- c("rda_snps", "axis", "loading")
+  cand$rda_snps <- as.character(cand$rda_snps)
+  return(cand)
+}
+
+#' Z outlier finder
+#' from https://popgen.nescent.org/2018-03-27_RDA_GEA.html
+#'
+#' @export
+#' @noRd
+#'
+outliers <- function(x,z){
+  lims <- mean(x) + c(-1, 1) * z * sd(x)     # find loadings +/-z sd from mean loading
+  x[x < lims[1] | x > lims[2]]               # snp names in these tails
+}
+
 # Function to conduct a RDA based genome scan from Capblancq & Forester 2021
 # https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd
-# NOTE: GO THROUGH THIS CODE
+# TODO[to: EAC, from: APB]: GO THROUGH THIS CODE
 #' @export
+#' @noRd
 rdadapt <- function(rda,K)
 {
   zscores<-rda$CCA$v[,1:as.numeric(K)]
@@ -195,20 +277,18 @@ rdadapt <- function(rda,K)
   reschi2test <- pchisq(resmaha/lambda,K,lower.tail=FALSE)
   qval <- qvalue::qvalue(reschi2test)
   q.values_rdadapt<-qval$qvalues
-  return(data.frame(p.values=reschi2test, q.values=q.values_rdadapt))
+  return(data.frame(p.values=reschi2test, q.values = q.values_rdadapt))
 }
 
-#' Test for associations
+#' Genotype-environement correlation test
 #'
-#' @param rda_gen genotype matrix for candidate snps
-#' @param env env dataframe
+#' @param gen dosage matrix
+#' @param var dataframe with predictor variables
 #'
-#' @return
+#' @return dataframe with r and p-values from correlation test
 #' @export
-#'
-#' @examples
-rda_cor <- function(rda_gen, env){
-  cor_df <- purrr::map_dfr(colnames(rda_gen), rda_cor_env_helper, rda_gen, env)
+rda_cor <- function(gen, var){
+  cor_df <- purrr::map_dfr(colnames(gen), rda_cor_env_helper, gen, var)
   rownames(cor_df) <- NULL
   colnames(cor_df) <- c("r", "p", "snp", "var")
   return(cor_df)
@@ -216,15 +296,8 @@ rda_cor <- function(rda_gen, env){
 
 #' Helper function for rda_cor_test
 #'
-#' @param snp
-#' @param env
-#'
-#' @keywords internal
-#'
-#' @return
 #' @export
-#'
-#' @examples
+#' @noRd
 rda_cor_env_helper <- function(snp_name, snp_df, env){
   cor_df <- data.frame(t(apply(env, 2, rda_cor_helper, snp_df[,snp_name])))
   cor_df$snp <- snp_name
@@ -234,15 +307,8 @@ rda_cor_env_helper <- function(snp_name, snp_df, env){
 
 #' Helper function for rda_cor_test
 #'
-#' @param envvar
-#' @param snp
-#'
-#' @keywords internal
-#'
-#' @return
 #' @export
-#'
-#' @examples
+#' @noRd
 rda_cor_helper <- function(envvar, snp){
   if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
   mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "pearson", na.action = "na.omit")
@@ -253,7 +319,14 @@ rda_cor_helper <- function(envvar, snp){
   return(results)
 }
 
-#' Plotting function
+#' Plot RDA results
+#' @param mod model object of class `rda`
+#' @param rda_snps vector of outlier SNPs
+#' @param pvalues if creating a manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
+#' @param axes which RDA axes to include while plotting (defaults to `all`)
+#' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
+#' @param manhattan whether to produce manhattan plot (defaults to `TRUE`)
+#' @param rdaplot whether to produce an RDA biplot (defaluts to `TRUE`). If only one axes is provided, instead of a biplot a histogram will be created
 #'
 #' @export
 #'
@@ -262,7 +335,7 @@ rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = 
   if(axes == "all") axes <- 1:ncol(mod$CCA$v)
 
   # Make and get tidy dataframes for plotting
-  tidy_list <- rda_tidy(mod, rda_snps, axes = axes)
+  tidy_list <- rda_ggtidy(mod, rda_snps, axes = axes)
   TAB_snps <- tidy_list[["TAB_snps"]]
   TAB_var <- tidy_list[["TAB_var"]]
 
@@ -288,15 +361,9 @@ rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = 
 
 #' Make dataframe for ggplot from RDA results
 #'
-#' @param rda_mod rda model
-#' @param rda_snps rda candidate snps
-#' @param axes axes to include
-#'
-#' @return
 #' @export
-#'
-#' @examples
-rda_tidy <- function(mod, rda_snps, axes){
+#' @noRd
+rda_ggtidy <- function(mod, rda_snps, axes){
   snp_scores <- vegan::scores(mod, choices = axes, display = "species", scaling = "none") # vegan references "species", here these are the snps
   TAB_snps <- data.frame(names = row.names(snp_scores), snp_scores)
 
@@ -310,16 +377,10 @@ rda_tidy <- function(mod, rda_snps, axes){
 }
 
 
-#' Plot RDA biplot
+#' Helper function to plot RDA biplot
 #'
-#' @param TAB_snps
-#' @param TAB_var
-#' @param biplot_axes
-#'
-#' @return
 #' @export
-#'
-#' @examples
+#' @noRd
 rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
 
   # Select axes for plotting
@@ -354,16 +415,10 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
 
 }
 
-#' RDA manhattan plot
+#' Helper function to plot RDA manhattan plot
 #'
-#' @param TAB_snps
-#' @param pvalues
-#' @param sig
-#'
-#' @return
 #' @export
-#'
-#' @examples
+#' @noRd
 rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 
   ## Manhattan plot
@@ -375,7 +430,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
   ggplot2::ggplot(data = TAB_manhattan) +
     ggplot2::geom_point(ggplot2::aes(x=pos, y=-log10(pvalues), col = type), size=1.4) +
     ggplot2:: scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF", "#6B4596FF")) +
-    ggplot2::xlab("snps") + ggplot2::ylab("-log10(p)") +
+    ggplot2::xlab("position") + ggplot2::ylab("-log10(p)") +
     ggplot2::geom_hline(yintercept=-log10(sig), linetype="dashed", color = "black", size=0.6) +
     ggplot2::guides(color=ggplot2::guide_legend(title="snp type")) +
     ggplot2::theme_bw(base_size = 11) +
@@ -389,14 +444,34 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
                    strip.text = ggplot2::element_text(size=11))
 }
 
-#' Make pretty table of p-values
+#' Helper function to plot RDA histogram
 #'
-#' @param lm_df
+#' @export
+#' @noRd
+rda_hist <- function(TAB_snps, binwidth = NULL){
+  ggplot2::ggplot() +
+    ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
+    ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
+    ggplot2::guides(fill = ggplot2::guide_legend(title="snp type")) +
+    ggplot2::xlab(colnames(TAB_snps)[2]) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position="right",
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   legend.box.background = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
+}
+
+#' Make publication quality table of correlation test results
 #'
-#' @return
+#' @param cor_df dataframe of correlation results output from \link[algatr]{rda_cor}
+#'
+#' @return An object of class `gt_tbl`
 #' @export
 #'
-#' @examples
 rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2){
 
   if(!is.null(var)) cor_df <- cor_df[cor_df$var %in% var, ]
@@ -423,93 +498,4 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 }
 
 
-#' Plotting function
-#'
-#' @export
-#'
-p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
-  rdadapt_env <- rdadapt(mod, naxes)
-
-  # P-values threshold after FDR correction (different from Capblancq & Forester 2021)
-  pvalues <- p.adjust(rdadapt_env$p.values, method = padj_method)
-
-  # get snp names
-  snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))
-
-  # restore SNP names
-  names(pvalues) <- snp_names
-
-  # Capblancq include a step where they only take pvalues with highest loading for each contig to deal with LD (not applied here)
-  # NOTE: I Think this filtering step should occur before (e.g. only one snps per LD block, but you know which comes from where)
-
-  ## Identifying the snps that are below the p-value threshold
-  #Identify rda cand snps (P)
-  rda_snps <- snp_names[which(pvalues < sig)]
-  if (length(rda_snps) == 0) {
-    warning("No significant snps found, returning NULL object")
-    return(NULL)
-  }
-
-  results <- list(rda_snps = rda_snps,
-                  pvalues = pvalues,
-                  rdadapt = rdadapt_env)
-
-  return(results)
-}
-
-#' Z outlier method
-#'
-#' @export
-#'
-z_outlier_method <- function(mod, naxes, z = 3){
- load.rda <- vegan::scores(mod, choices = naxes, display="species")
-
- results <- purrr::map_dfr(data.frame(1:ncol(load.rda)), z_outlier_helper, load.rda, z)
-
- return(results)
-}
-
-#' Z helper
-#'
-#' @export
-#'
-z_outlier_helper <- function(axis, load.rda, z){
-  x <- load.rda[,axis]
-  out <- outliers(x, z)
-  cand <- cbind.data.frame(names(out), rep(axis, times=length(out)), unname(out))
-  colnames(cand) <- c("rda_snps", "axis", "loading")
-  cand$rda_snps <- as.character(cand$rda_snps)
-  return(cand)
-}
-
-#' Z outlier finder
-#' from https://popgen.nescent.org/2018-03-27_RDA_GEA.html
-#'
-#' @export
-#'
-outliers <- function(x,z){
-  lims <- mean(x) + c(-1, 1) * z * sd(x)     # find loadings +/-z sd from mean loading
-  x[x < lims[1] | x > lims[2]]               # snp names in these tails
-}
-
-#' Plotting function
-#'
-#' @export
-#'
-rda_hist <- function(TAB_snps, binwidth = NULL){
-  ggplot2::ggplot() +
-    ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
-    ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
-    ggplot2::guides(fill = ggplot2::guide_legend(title="snp type")) +
-    ggplot2::xlab(colnames(TAB_snps)[2]) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position="right",
-                   legend.background = ggplot2::element_blank(),
-                   panel.grid = ggplot2::element_blank(),
-                   legend.box.background = ggplot2::element_blank(),
-                   plot.background = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
-                   strip.text = ggplot2::element_text(size=11))
-}
 

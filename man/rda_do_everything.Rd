@@ -47,21 +47,25 @@ rda_do_everything(
 
 \item{cortest}{whether to create table of correlations for snps and environmental variable}
 
-\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be given}
+\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be provided}
 
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
+
+\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordi2step})}
 
 \item{R2permutations}{Number of permutations used in the estimation of
   adjusted \eqn{R^2}{R2} for \code{\link[vegan]{cca}} using
   \code{\link[vegan]{RsquareAdj}}.
 }
 
-\item{R2scope}{
-  Use adjusted \eqn{R^2}{R2} as the stopping criterion: only models with
-  lower adjusted \eqn{R^2}{R2} than scope are accepted.
-  }
+\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})}
 
 \item{stdz}{whether to center and scale environemntal data (defaults to TRUE)}
+
+\item{R2permurations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
+}
+\value{
+list contatining (1) outlier snps, (2) data frame with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[wingen]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
 }
 \description{
 Run RDA

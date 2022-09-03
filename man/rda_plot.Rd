@@ -2,7 +2,7 @@
 % Please edit documentation in R/RDA.R
 \name{rda_plot}
 \alias{rda_plot}
-\title{Plotting function}
+\title{Plot RDA results}
 \usage{
 rda_plot(
   mod,
@@ -16,6 +16,21 @@ rda_plot(
   binwidth = NULL
 )
 }
+\arguments{
+\item{mod}{model object of class \code{rda}}
+
+\item{rda_snps}{vector of outlier SNPs}
+
+\item{pvalues}{if creating a manhattan plot (i.e., \code{manhattan = TRUE}), a matrix of p-values}
+
+\item{axes}{which RDA axes to include while plotting (defaults to \code{all})}
+
+\item{biplot_axes}{if creating an RDA biplot (i.e., \code{rdaplot = TRUE}), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))}
+
+\item{manhattan}{whether to produce manhattan plot (defaults to \code{TRUE})}
+
+\item{rdaplot}{whether to produce an RDA biplot (defaluts to \code{TRUE}). If only one axes is provided, instead of a biplot a histogram will be created}
+}
 \description{
-Plotting function
+Plot RDA results
 }

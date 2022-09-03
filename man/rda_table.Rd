@@ -2,7 +2,7 @@
 % Please edit documentation in R/RDA.R
 \name{rda_table}
 \alias{rda_table}
-\title{Make pretty table of p-values}
+\title{Make publication quality table of correlation test results}
 \usage{
 rda_table(
   cor_df,
@@ -16,8 +16,11 @@ rda_table(
 )
 }
 \arguments{
-\item{lm_df}{}
+\item{cor_df}{dataframe of correlation results output from \link[algatr]{rda_cor}}
+}
+\value{
+An object of class \code{gt_tbl}
 }
 \description{
-Make pretty table of p-values
+Make publication quality table of correlation test results
 }
