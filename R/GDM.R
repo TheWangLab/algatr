@@ -6,7 +6,7 @@
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
+#' @param sig sig level for variable selection (defaults to 0.05), only used if model = "best"
 #' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
 #' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", alpha = 0.05, nperm = 50,
+gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale = FALSE, plot_vars = TRUE){
 
   # format coordinates
@@ -28,29 +28,34 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   colnames(coords) <- c("x", "y")
 
   # If not provided, make env data frame from layers and coords
-  if(is.null(env)){env <- raster::extract(envlayers, coords)}
+  if(is.null(env)) env <- raster::extract(envlayers, coords)
 
   # Run model with all defaults
-  gdm_model <- gdm_run(gendist, coords, env, model = model, alpha = alpha, nperm = nperm, scale = scale, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  gdm_model <- gdm_run(gendist, coords, env, model = model, sig = sig, nperm = nperm, scale = scale, geodist_type = geodist_type, dist_lyr = dist_lyr)
+
+  # Get model
+  mod <- gdm_model$mod
 
   # If mod is null, exit
-  if(is.null(gdm_model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
+  if(is.null(mod)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
 
   # Get coefficients from models
-  predictors <- gdm_coeffs(gdm_model)
+  coeff_df <- gdm_df(mod)
 
   # Plot isplines
-  gdm_plot_isplines(gdm_model)
+  gdm_plot_isplines(mod)
 
   # Create and plot map
-  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_model, envlayers, coords, plot_vars = plot_vars)
+  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(mod, envlayers, coords, plot_vars = plot_vars)
 
   # Create list to store results
   results <- list()
   # Add model
-  results[["model"]] <- gdm_model
+  results[["model"]] <- mod
   # Add predictors
-  results[["predictors"]] <- predictors
+  results[["predictors"]] <- coeff_df
+  # Add variable importance
+  results[["varimp"]] <- gdm_model$varimp
   # Add raster(s)
   if(geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
 
@@ -64,7 +69,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #' @param coords dataframe with x and y coordinates
 #' @param env dataframe with environmental values for each coordinate
 #' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
-#' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
+#' @param sig sig level for variable selection (defaults to 0.05), only matters if model = "best"
 #' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best"
 #' @param scale scale genetic distance data from 0 to 1
 #'
@@ -74,7 +79,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #' @export
 #'
 #' @examples
-gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 50, scale = FALSE,
+gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50, scale = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
@@ -84,7 +89,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
   colnames(coords) <- c("x","y")
 
   # Scale genetic distance data from 0 to 1
-  if(scale){gendist <- scale01(gendist)}
+  if(scale) gendist <- scale01(gendist)
   if(!scale & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale = TRUE to rescale from 0 to 1")
   if(!scale & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale = TRUE to rescale from 0 to 1")
 
@@ -124,11 +129,15 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
     } else {
       gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
     }
+
+    # evaluate variable importance
+    gdm_varimp_ls <- gdm_varimp(gdmData, sig = sig, nperm = nperm, predSelect = FALSE)
   }
 
   # If model = "best", go through variable selection procedure
   if(model == "best"){
     # Add distance matrix separately
+    # TODO: add topodist stuff
     if(geodist_type == "Euclidean"){
       geodist <- geo_dist(coords[,c("x","y")])
       gdmDist <- cbind(site, geodist)
@@ -140,7 +149,11 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
     if(!all(cc)){gdmData <- gdmData[cc, ]; warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))}
 
     # Get subset of variables for final model
-    finalvars <- gdm_var_select(gdmData, alpha = alpha, nperm = nperm)
+    gdm_varimp_ls <- gdm_varimp(gdmData, sig = sig, nperm = nperm, predSelect = TRUE)
+
+    # Get final set of variables
+    pvalues <- gdm_varimp_ls$`Predictor p-values`
+    finalvars <- rownames(pvalues)[complete.cases(pvalues)]
 
     # Stop if there are no significant final variables
     if(is.null(finalvars) | length(finalvars) == 0){
@@ -178,11 +191,9 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
     # Run final model
     gdm_model_final <- gdm::gdm(gdmData_final, geo = geo)
 
-    return(gdm_model_final)
-
   }
 
-  return(gdm_model_final)
+  return(list(mod = gdm_model_final, varimp = gdm_varimp_ls))
 }
 
 
@@ -190,7 +201,7 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
 #' Get best set of variables from a GDM model
 #'
 #' @param gdmData data formatted using GDM package
-#' @param alpha alpha level for determining variable significance
+#' @param sig sig level for determining variable significance
 #' @param nperm number of permutations to run for variable testing
 #'
 #' @return
@@ -200,44 +211,16 @@ gdm_run <- function(gendist, coords, env, model = "best", alpha = 0.05, nperm = 
 #' @export
 #'
 #' @examples
-gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
+gdm_varimp <- function(gdmData, sig = 0.05, nperm = 10, predSelect = TRUE){
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
+  #vars <- gdm::gdm.varImp(gdmData,
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     nPerm = nperm)
-
-  # Get pvalues from variable selection model
-  pvalues <- vars[[3]]
-
-  # Identify which cells have p-values lower than alpha and not NA
-  # NB: NA occurs when variables are removed during model testing
-  cond <- (pvalues < alpha) | is.na(pvalues)
-
-  # Identify which columns (i.e., models) have all significant p-values (or NA)
-  mods <- apply(cond, 2, all)
-
-  # Stop if there are no models with all sig p-values
-  if(all(!mods)) {warning("No significant model variable set found, returning NULL"); return(NULL)}
-
-  # Identify the first model (i.e., minimum) that has all significant p-values
-  finalmod <- min(which(mods))
-
-  # Subset out final mod variables
-  finalmod <- pvalues[,finalmod]
-
-  # Get final variable names (i.e., names that are not NA)
-  finalvars <- rownames(pvalues)[which(!is.na(finalmod))]
-
-  # If the geodist matrix (matrix_1) is a significant variable, add geo to the list of vars
-  if("matrix_1" %in% finalvars) {
-    # Remove matrix
-    finalvars <- finalvars[which(finalvars != "matrix_1")]
-    # Add geo
-    finalvars <- c("geo", finalvars)
-  }
-
-  return(finalvars)
+                     nPerm = nperm,
+                     predSelect = predSelect,
+                     pValue = sig)
+  return(vars)
 }
 
 
@@ -498,7 +481,7 @@ scale01 <- function(x){(x-min(x))/(max(x)-min(x))}
 #' @export
 #'
 #' @examples
-gdm_coeffs <- function(gdm_model){
+gdm_df <- function(gdm_model){
   # Vector to store coefficient sums
   coefSums <- c()
 

@@ -57,7 +57,7 @@ Given that GDM is a regression, the full model (i.e., including all predictor va
 Let's first run a full GDM model (i.e., including all four variables), specified using the `model` argument. If you have extracted environmental values for each sampling coordinate, this must be specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale` argument. Keep in mind that the `nPerm` argument is only for model selection (see below) and so will not be used in this case.
 
 ```{r all vars, fig.width = 5, fig.height = 5}
-gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", alpha = 0.05, scale = TRUE)
+gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", sig = 0.05, scale = TRUE)
 ```
 
 ### GDM with model selection
@@ -65,7 +65,7 @@ gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", alpha
 Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel TODO: describe plot_vars TODO: mention that default of this is to NOT include geo dists? It is important to be aware that GDM always considers geographic distance as a variable XXX HOW IS IT CODED
 
 ```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
-gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale = TRUE, plot_vars = TRUE)
+gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 100, scale = TRUE, plot_vars = TRUE)
 ```
 
 ### Results of GDM
