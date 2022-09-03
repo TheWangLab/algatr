@@ -10,7 +10,7 @@ lfmm_run(
   coords = NULL,
   K = NULL,
   lfmm_method = "ridge",
-  k_selection = "tracy.widom",
+  K_selection = "tracy.widom",
   Kvals = 1:10,
   sig = 0.05,
   p.adj = "none",
@@ -36,7 +36,7 @@ lfmm_run(
 
 \item{lfmm_method}{lfmm method (either \code{"ridge"} (default) or \code{"lasso"})}
 
-\item{k_selection}{method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")}
+\item{K_selection}{method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")}
 
 \item{Kvals}{values of K to test for "tess"}
 

@@ -7,39 +7,15 @@
 rda_run(
   gen,
   env,
-  coords,
+  coords = NULL,
   model = "full",
-  sig = 0.05,
-  sig_method = "p",
-  padj_method = "fdr",
+  correctGEO = FALSE,
+  correctPC = FALSE,
+  nPC = 3,
   Pin = 0.05,
   R2permutations = 1000,
-  R2scope = TRUE,
-  lm_test = FALSE
+  R2scope = T
 )
-}
-\arguments{
-\item{gen}{genotype matrix}
-
-\item{env}{dataframe with environmental data}
-
-\item{coords}{dataframe with coordinates (only needed if K selection is performed with TESS)}
-
-\item{model}{whether to use all variables ("full") or perform variable selection ("best")}
-
-\item{sig}{alpha level}
-
-\item{padj_method}{correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
-
-\item{R2permutations}{Number of permutations used in the estimation of
-  adjusted \eqn{R^2}{R2} for \code{\link[vegan]{cca}} using
-  \code{\link[vegan]{RsquareAdj}}.
-}
-
-\item{R2scope}{
-  Use adjusted \eqn{R^2}{R2} as the stopping criterion: only models with
-  lower adjusted \eqn{R^2}{R2} than scope are accepted.
-  }
 }
 \description{
 Run RDA

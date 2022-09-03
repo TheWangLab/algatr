@@ -4,14 +4,14 @@
 \alias{rda_tidy}
 \title{Make dataframe for ggplot from RDA results}
 \usage{
-rda_tidy(rda_mod, rda_loci, naxes)
+rda_tidy(mod, rda_snps, axes)
 }
 \arguments{
+\item{rda_snps}{rda candidate snps}
+
+\item{axes}{axes to include}
+
 \item{rda_mod}{rda model}
-
-\item{rda_loci}{rda candidate loci}
-
-\item{naxes}{number of axes to include}
 }
 \description{
 Make dataframe for ggplot from RDA results

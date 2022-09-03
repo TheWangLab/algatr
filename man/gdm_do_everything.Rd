@@ -29,7 +29,7 @@ gdm_do_everything(
 
 \item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"}
 
-\item{alpha}{alpha level for variable selection (defaults to 0.05), only used if model = "best" TODO: ADD BETTER DESCRIPTOR}
+\item{alpha}{alpha level for variable selection (defaults to 0.05), only used if model = "best"}
 
 \item{nperm}{number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)}
 
@@ -49,12 +49,12 @@ GDM function to do everything (fit model, get coefficients, make and save raster
 }
 \seealso{
 Other GDM functions: 
-\code{\link{gdm_coeffs}()},
+\code{\link{gdm_df}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_varimp}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

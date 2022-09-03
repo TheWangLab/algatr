@@ -4,13 +4,9 @@
 \alias{rda_manhattan}
 \title{RDA manhattan plot}
 \usage{
-rda_manhattan(TAB_loci, pvalues, sig)
+rda_manhattan(TAB_snps, rda_snps, pvalues, sig = 0.05)
 }
 \arguments{
-\item{TAB_loci}{}
-
-\item{pvalues}{}
-
 \item{sig}{}
 }
 \description{

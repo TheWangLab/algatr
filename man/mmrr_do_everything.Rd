@@ -2,8 +2,7 @@
 % Please edit documentation in R/MMRR.R
 \name{mmrr_do_everything}
 \alias{mmrr_do_everything}
-\title{MMRR function to do everything ()
-TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB}
+\title{MMRR function to do everything ()}
 \usage{
 mmrr_do_everything(
   gendist,
@@ -38,5 +37,4 @@ mmrr_do_everything(
 }
 \description{
 MMRR function to do everything ()
-TODO: gendist matrix must range between 0 and 1 as with GDM? I don't think so - APB
 }

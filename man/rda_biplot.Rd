@@ -4,14 +4,10 @@
 \alias{rda_biplot}
 \title{Plot RDA biplot}
 \usage{
-rda_biplot(TAB_loci, TAB_var, rda_axes = c(1, 2))
+rda_biplot(TAB_snps, TAB_var, biplot_axes = c(1, 2))
 }
 \arguments{
-\item{TAB_loci}{}
-
-\item{TAB_var}{}
-
-\item{rda_axes}{}
+\item{biplot_axes}{}
 }
 \description{
 Plot RDA biplot
