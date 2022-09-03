@@ -60,6 +60,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
+  print(mmrr_table(coeff_df))
 
   # Make results list
   results <- list(coeff_df = coeff_df,
@@ -94,6 +95,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
+  print(mmrr_table(coeff_df))
 
   # Make results list
   results <- list(coeff_df = coeff_df,
@@ -195,7 +197,7 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
 unfold <- function(X, scale = TRUE){
   x <- vector()
   for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
-  if(scale == TRUE) x <- raster::scale(x, center = TRUE, scale = TRUE)
+  if(scale == TRUE) x <- scale(x, center = TRUE, scale = TRUE)
   return(x)
 }
 
@@ -215,6 +217,7 @@ mmrr_df <- function(mod){
   ci_df$var <- rownames(ci_df)
   coeff_df <- merge(coeff_df, ci_df, by = "var")
   rownames(coeff_df) <- NULL
+  colnames(coeff_df) <- c("var", "estimate", "p", "95% Lower", "95% Upper")
   return(coeff_df)
 }
 
@@ -261,9 +264,11 @@ mmrr_plot_vars <- function(Y, X, stdz = TRUE){
 
   # Plot single variable relationships
   plt_lm <- ggplot2::ggplot(df, ggplot2::aes(X, Y)) +
-    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_point(alpha = 0.3, pch = 16) +
     ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
     ggplot2::facet_wrap(~var, scales = "free") +
+    ggplot2::xlab("Variable Distance") +
+    ggplot2::ylab("Genetic Distance") +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
 
@@ -287,14 +292,14 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
     dplyr::mutate(Y = unfold(Y, scale = stdz)) %>%
     tidyr::gather("var", "X", -Y) %>%
     dplyr::left_join(coeff_df, by = "var") %>%
-    dplyr::mutate(coeffX = coeff*X) %>%
+    dplyr::mutate(coeffX = estimate*X) %>%
     dplyr::select(Y, coeffX) %>%
     dplyr::group_by(Y) %>%
     dplyr::summarise(Yfitted = sum(coeffX))
 
   # Plot fitted relationship
   plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +
-    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_point(alpha = 0.3, pch = 16) +
     ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
     ggplot2::theme_bw() +
     ggplot2::ylab("Observed Genetic Distance") +
@@ -322,4 +327,20 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
   plt_cor <- plt_cor + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
 
   return(plt_cor)
+}
+
+mmrr_table <- function(coeff_df, digits = 2){
+
+  if(!is.null(digits)) coeff_df <- coeff_df %>% dplyr::mutate(dplyr::across(-var, round, digits))
+
+  d <- max(abs(min(coeff_df$estimate)), abs(max(coeff_df$estimate)))
+
+  suppressWarnings(
+    tbl <- coeff_df  %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d))
+
+  )
+
+  tbl
 }
