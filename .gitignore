@@ -39,3 +39,4 @@ vignettes/*.pdf
 .Renviron
 .Rproj.user
 inst/doc
+IGNORE_test.R
