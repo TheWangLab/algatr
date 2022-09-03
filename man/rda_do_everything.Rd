@@ -65,7 +65,7 @@ rda_do_everything(
 \item{R2permurations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
 }
 \value{
-list contatining (1) outlier snps, (2) data frame with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[wingen]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
+list contatining (1) outlier snps, (2) data frame with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
 }
 \description{
 Run RDA
