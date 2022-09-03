@@ -23,7 +23,7 @@
 #'
 #' @importFrom vegan rda
 #'
-#' @return list contatining (1) outlier snps, (2) data frame with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[wingen]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
+#' @return list contatining (1) outlier snps, (2) data frame with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
 #' @export
 #'
 #' @examples
