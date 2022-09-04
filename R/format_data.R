@@ -90,11 +90,12 @@ rm_islands <- function(input, shape, min_vertices = 10000){
 #' @export
 #'
 #' @examples
-impute_na <- function(x, FUN = median){
+simple_impute <- function(x, FUN = median){
   x_noNA <- apply(x, 2, impute_helper, FUN)
   return(x_noNA)
 }
 
+#' Helper function for imputation
 #' @export
 #' @noRd
 impute_helper <- function(i, FUN = median){
