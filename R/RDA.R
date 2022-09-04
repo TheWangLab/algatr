@@ -1,7 +1,7 @@
 
 #' Run RDA
 #'
-#' @param gen genotype dosage matrix (rows = individuals & columns = snps)
+#' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param coords dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
@@ -18,6 +18,7 @@
 #' @param R2permurations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
 #' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
 #' @param stdz whether to center and scale environemntal data (defaults to TRUE)
+#' @param impute function to use for imputation (defaults to `median`). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
 #'
 #' @inheritParams vegan::ordiR2step
 #'
@@ -30,12 +31,21 @@
 rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
                               padj_method = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
-                              Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE){
+                              Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, impute = "median"){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
   # extract environmental data if env is a RasterStack
-  if(inherits(env, "Raster") | inherits(env, "RasterStack")) env <- raster::extract(env, coords)
+  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
+
+  # convert vcf to dosage
+  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # perform imputation with warning
+  if(any(is.na(gen))){
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
 
   # Standardize environmental variables
   if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
