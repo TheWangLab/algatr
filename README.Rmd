@@ -32,9 +32,48 @@ devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 
 ## Example
 
+```{r, echo = FALSE}
+devtools::load_all()
+```
 
 ```{r example}
 library(algatr)
-## basic example code
+load_example()
+```
+
+### MMRR
+```{r, warning = FALSE, cache = TRUE, results = FALSE}
+mmrr <- mmrr_do_everything(gendist, liz_coords, CA_env, model = "full")
+```
+```{r, echo = FALSE}
+gt::as_raw_html(mmrr_table(mmrr$coeff_df))
+```
+
+
+### GDM
+```{r, warning = FALSE, cache = TRUE, results = FALSE}
+gdm <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE)
+```
+
+```{r, echo = FALSE}
+gt::as_raw_html(gdm_table(gdm$coeff_df))
+```
+
+### RDA
+```{r, warning = FALSE, cache = TRUE, results = FALSE}
+rda <- rda_do_everything(liz_vcf, CA_env, liz_coords)
+```
+
+```{r, echo = FALSE}
+gt::as_raw_html(rda_table(rda$cor_df, top = TRUE, order = TRUE, nrow = 5))
+```
+
+### LFMM
+```{r, warning = FALSE, cache = TRUE, results = FALSE}
+lfmm <- lfmm_do_everything(liz_vcf, CA_env, liz_coords)
+```
+
+```{r, echo = FALSE}
+gt::as_raw_html(lfmm_table(lfmm$cand_snps, top = TRUE, order = TRUE, nrow = 5))
 ```
 
