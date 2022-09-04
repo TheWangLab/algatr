@@ -2,8 +2,7 @@
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
-#' @param env dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers
-#' @param envlayers rasters for for extracting environmental values using coordinates if `env` isn't provided
+#' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
@@ -14,10 +13,10 @@
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # If not provided, make env data frame from layers and coords
-  if(is.null(env)){env <- raster::extract(envlayers, coords)}
+  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
 
   # Make env dist matrix
   X <- env_dist(env)
@@ -30,6 +29,9 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
   if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
 
   if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
+
+  # Print dataframe
+  print(mmrr_table(results$coeff_df))
 
   return(results)
 
@@ -60,7 +62,6 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
-  print(mmrr_table(coeff_df))
 
   # Make results list
   results <- list(coeff_df = coeff_df,
@@ -95,7 +96,6 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
 
   # Make nice data frame
   coeff_df <- mmrr_df(mod)
-  print(mmrr_table(coeff_df))
 
   # Make results list
   results <- list(coeff_df = coeff_df,
@@ -344,3 +344,4 @@ mmrr_table <- function(coeff_df, digits = 2){
 
   tbl
 }
+
