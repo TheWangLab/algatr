@@ -23,42 +23,31 @@ devtools::load_all()
 
 ```{r, warning = FALSE}
 load_example()
+gen <- vcf_to_dosage(liz_vcf)
 ```
 
 # Run LFMM
 
 ## Comparing different LFMM methods
 
-```{r, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE}
-results <- lfmm_run(gen, env, lfmm_method = "ridge")
-```
-```{r}
-results
+```{r, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
+results <- lfmm_do_everything(gen, env, lfmm_method = "ridge", K_selection = "tracy.widom")
 ```
 
-
-```{r, results = FALSE, message = FALSE, warning = FALSE}
-results <- lfmm_run(gen, env, lfmm_method = "lasso")
-```
 
 ## Comparing different K selection methods
 
 ```{r, warning = FALSE,  results=FALSE, warning = FALSE}
-results_tw <- lfmm_run(gen, env, k_selection = "tracy.widom")
+results_tw <- lfmm_do_everything(gen, env, K_selection = "tracy.widom")
 ```
 
-
 ```{r, results = FALSE, warning = FALSE}
-results_qe <- lfmm_run(gen, env, k_selection = "quick.elbow")
+results_qe <- lfmm_do_everything(gen, env = env, K_selection = "quick.elbow")
 ```
 
 ```{r, results = FALSE, cache = TRUE, warning = FALSE}
-results_tess <- lfmm_run(gen, env, coords, k_selection = "tess", Kvals = 1:20)
+results_tess <- lfmm_do_everything(gen, env, coords, K_selection = "tess", Kvals = 1:20)
 ```
 
-```{r}
-results_tw
-results_qe
-results_tess
-```
+
 

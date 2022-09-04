@@ -25,10 +25,6 @@ load_example()
 gen <- vcf_to_dosage(liz_vcf)
 coords <- liz_coords
 env <- CA_env
-
-# Perform simple imputation using the median
-# NOTE: We do this for our test data set, but highly discourage using this form of simplistic imputation in analyses. 
-gen <- impute_na(gen, median)
 ```
 
 # Run RDA
