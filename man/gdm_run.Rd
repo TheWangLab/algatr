@@ -9,28 +9,30 @@ gdm_run(
   coords,
   env,
   model = "best",
-  alpha = 0.05,
+  sig = 0.05,
   nperm = 50,
-  scale = FALSE,
+  scale_gendist = FALSE,
   geodist_type = "Euclidean",
   distPreds = NULL,
   dist_lyr = NULL
 )
 }
 \arguments{
-\item{gendist}{matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)}
+\item{gendist}{matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates}
 
-\item{env}{dataframe with environmental values for each coordinate}
+\item{env}{dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers}
 
-\item{model}{whether to compute the full model ("full") or the best model based on variable selection steps ("best")}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"}
 
-\item{alpha}{alpha level for variable selection (defaults to 0.05), only matters if model = "best"}
+\item{nperm}{number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)}
 
-\item{nperm}{number of permutations to use to calculate variable importance, only matters if model = "best"}
+\item{scale_gendist}{whether to scale genetic distance data from 0 to 1 (defaults to FALSE)}
 
-\item{scale}{scale genetic distance data from 0 to 1}
+\item{geodist_type}{The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances}
+
+\item{dist_lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances}
 }
 \value{
 GDM model
@@ -40,12 +42,12 @@ Run GDM and return model object
 }
 \seealso{
 Other GDM functions: 
-\code{\link{gdm_df}()},
+\code{\link{gdm_coeffs}()},
 \code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
-\code{\link{gdm_varimp}()},
+\code{\link{gdm_var_select}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

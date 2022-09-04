@@ -4,12 +4,12 @@
 \alias{lfmm_manhattanplot}
 \title{LFMM Manhattan Plot}
 \usage{
-lfmm_manhattanplot(pvalues, sig)
+lfmm_manhattanplot(df, sig, group = NULL, var = NULL)
 }
 \arguments{
-\item{pvalues}{pvalue dataframe}
+\item{df}{dataframe of lfmm test results produced by \link[wingen]{lfmm_df}}
 
-\item{sig}{alpha level}
+\item{sig}{significance cutoff}
 }
 \description{
 LFMM Manhattan Plot

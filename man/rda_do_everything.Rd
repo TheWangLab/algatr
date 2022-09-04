@@ -21,11 +21,12 @@ rda_do_everything(
   Pin = 0.05,
   R2permutations = 1000,
   R2scope = T,
-  stdz = TRUE
+  stdz = TRUE,
+  impute = "median"
 )
 }
 \arguments{
-\item{gen}{genotype dosage matrix (rows = individuals & columns = snps)}
+\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
@@ -61,6 +62,8 @@ rda_do_everything(
 \item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})}
 
 \item{stdz}{whether to center and scale environemntal data (defaults to TRUE)}
+
+\item{impute}{function to use for imputation (defaults to \code{median}). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.}
 
 \item{R2permurations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
 }

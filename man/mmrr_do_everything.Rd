@@ -7,8 +7,7 @@
 mmrr_do_everything(
   gendist,
   coords,
-  env = NULL,
-  envlayers = NULL,
+  env,
   model = "best",
   nperm = 999,
   stdz = TRUE,
@@ -21,9 +20,7 @@ mmrr_do_everything(
 
 \item{coords}{dataframe with x and y coordinates}
 
-\item{env}{dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers}
-
-\item{envlayers}{rasters for for extracting environmental values using coordinates if \code{env} isn't provided}
+\item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
 \item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
 

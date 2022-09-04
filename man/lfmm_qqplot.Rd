@@ -4,10 +4,10 @@
 \alias{lfmm_qqplot}
 \title{LFMM QQplot}
 \usage{
-lfmm_qqplot(pvalues)
+lfmm_qqplot(df)
 }
 \arguments{
-\item{pvalues}{pvalue dataframe}
+\item{df}{dataframe of lfmm test results produced by \link[wingen]{lfmm_df}}
 }
 \description{
 LFMM QQplot
