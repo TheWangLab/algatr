@@ -9,8 +9,6 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-\[ADD DESCRIPTION\]
-
 ## Installation
 
 You can install the development version of algatr from
