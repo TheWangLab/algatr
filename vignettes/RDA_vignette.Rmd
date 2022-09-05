@@ -41,6 +41,8 @@ Running an RDA requires three data files for input: a genotype dosage matrix (th
 ```{r, warning = FALSE}
 # Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
+# Convert from vcf to dosage matrix:
+gen <- vcf_to_dosage(liz_vcf)
 # Also, our code assumes that sample IDs from gen and coords are the same order; be sure to check this before moving forward!
 ```
 
@@ -51,7 +53,7 @@ The RDA analysis in algatr can be done using two different methods to detect out
 Let's start with using the p-value method to detect outlier loci:
 
 ```{r, warning = FALSE, message = FALSE}
-results <- rda_do_everything(gen, env, coords, 
+results <- rda_do_everything(gen, CA_env, liz_coords, 
                             correctGEO = FALSE, 
                             correctPC = FALSE,
                             outlier_method = "p",
@@ -88,7 +90,7 @@ The results from `rda_do_everything()` contain:
 
 7. List of all p-values: `pvalues`
 
-In our case, we can see that TODO XXX
+In our case, we can see that there were 138 outlier SNPs detected.
 
 ```{r simple results}
 summary(results)
