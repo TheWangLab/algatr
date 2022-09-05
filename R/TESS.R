@@ -6,7 +6,7 @@
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
-#' @param correct_kriged_Q whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
+#' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
 #' @family TESS functions
@@ -191,7 +191,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
   }
 
   # Krige (capture output so it is not printed automatically)
-  co <- capture.output(krig_res <- autoKrige(Q ~ 1, krig_df, krig_grid))
+  co <- capture.output(krig_res <- automap::autoKrige(Q ~ 1, krig_df, krig_grid))
 
   # Get Krige output
   krig_spdf <- krig_res$krige_output
@@ -374,7 +374,7 @@ tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = 
 #' @inheritParams tess_plot
 #' @param K K value
 #' @param pop_df SpatialPointsDataFrame with K and Q-values
-#' @param poly whether to plot as polygon instead of continous Q values
+#' @param poly whether to plot as polygon instead of continuous Q values
 #' @param col single color code
 #'
 #' @export
@@ -462,7 +462,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 #'
 #' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
-#' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot.
+#' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot
 #' @inheritParams tess_full
 #'
 #' @return
