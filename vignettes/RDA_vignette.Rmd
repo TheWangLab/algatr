@@ -17,9 +17,6 @@ knitr::opts_chunk$set(
 <<<<<<< HEAD:vignettes/RDA_vignette.Rmd
 ```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
-=======
-```{r, warning=FALSE, message=FALSE}
->>>>>>> main:vignettes/RDA_test_notebook.Rmd
 library("here")
 library("gt")
 # RDA

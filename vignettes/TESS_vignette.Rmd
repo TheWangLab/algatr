@@ -122,24 +122,28 @@ summary(results)
 
 ### Run TESS3 line-by-line
 
-To understand what the above `tess_do_everything()` function is doing internally, we can run TESS3 line-by-line. First, let's test out different K values using the `tess_ktest()` function. The resulting object, `XX`, tells us the cross-validation scores for the different K values that were tested.
+## Automatic K selection
+
+To understand what the above `tess_do_everything()` function is doing internally, we can run TESS3 line-by-line. First, let's test out different K values using the `tess_ktest()` function. The resulting object contains `tess3_obj`, which provides the cross-validation scores for the different K values that were tested.
+
+The default K selection within this function is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
 
 ```{r test Ks}
-tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:3, ploidy = 2)
-
-
-# get tess object
+tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:20, ploidy = 2, K_selection = "auto")
+# Get tess object
 tess3_obj <- tess3_result$tess3_obj
-
-# or run with one K value
-tess3_obj <- tess3(gen, coord = as.matrix(liz_coords), K = 3, ploidy = 2) 
 
 # get best K and get Qmatrix
 qmat <- qmatrix(tess3_obj, K = 4)
-
 ```
 
-### Krig Q values
+## AA
+
+### Building maps in TESS3
+
+Let's continue on with our line-by-line walkthrough of the `tess_do_everything()` function, but now exploring how Q values (ancestry coefficients) are mapped. We'll move forward with the automatic K selection results (so, a K value of TODO XXX).
+
+## Krig Q values
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
 # krige Qmatrix
