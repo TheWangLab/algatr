@@ -14,8 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
+<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
 ```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
+=======
+```{r, warning=FALSE, message=FALSE}
+>>>>>>> main:vignettes/RDA_test_notebook.Rmd
 library("here")
 library("gt")
 # RDA
@@ -31,6 +35,7 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
+<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
 # convert vcf to dosage
 vcf_to_dosage(vcf_path)
 
@@ -47,54 +52,83 @@ env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
 envstack <- raster::stack(env_files)
 #make env
 env <- raster::extract(envstack, coords)
+=======
+load_example()
+gen <- vcf_to_dosage(liz_vcf)
+coords <- liz_coords
+env <- CA_env
+>>>>>>> main:vignettes/RDA_test_notebook.Rmd
 ```
 
 # Run RDA
 ```{r, warning = FALSE, message = FALSE}
-results <- rda_doEverything(gen, env, coords, 
+results <- rda_do_everything(gen, env, coords, 
                             correctGEO = FALSE, 
                             correctPC = FALSE,
-                            alpha = 0.05, 
+                            outlier_method = "p",
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
-```{r warning = FALSE}
-lm_table(results$lm_df)
+```{r}
+results <- rda_do_everything(gen, env, coords, 
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            outlier_method = "z",
+                            z = 3, 
+                            padj_method = "fdr")
 ```
+
+
 
 # Partial RDAs
 
 ## Geo correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
-                            correctGEO = FALSE, 
-                            correctPC = TRUE,
-                            alpha = 0.05, 
+                            model = "full",
+                            correctGEO = TRUE, 
+                            correctPC = FALSE,
+                            sig = 0.05, 
                             padj_method = "fdr")
-lm_table(results$lm_df)
 ```
 
 ## PC correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
-                            correctGEO = TRUE, 
-                            correctPC = FALSE,
-                            alpha = 0.05, 
+                            model = "full",
+                            correctGEO = FALSE, 
+                            correctPC = TRUE,
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
 ## PC + Geo Correction
 ```{r, warning = TRUE, message = FALSE}
-results <- rda_doEverything(gen, 
+results <- rda_do_everything(gen, 
                             env, 
                             coords, 
+                            model = "full",
                             correctGEO = TRUE, 
                             correctPC = TRUE,
-                            alpha = 0.05, 
+                            sig = 0.05, 
+                            padj_method = "fdr")
+```
+
+## Variable selection
+
+```{r, warning = TRUE, message = FALSE}
+results <- rda_do_everything(gen, 
+                            env, 
+                            coords, 
+                            model = "best",
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            sig = 0.05, 
                             padj_method = "fdr")
 ```
 
@@ -102,7 +136,8 @@ results <- rda_doEverything(gen,
 
 ### 1. Prepare data
 ```{r}
-# Standardize environmental variables
+# Extract and standardize environmental variables
+env <- raster::extract(CA_env, coords)
 env <- scale(env, center = TRUE, scale = TRUE) 
 env <- data.frame(env)
     
@@ -123,29 +158,63 @@ if(any(is.na(gen))){
 
 ### 2. Run RDA
 ```{r}
-mod <- rda_run(gen, env, coords, correctGEO = FALSE, correctPC = FALSE)
+mod <- rda_run(gen, env, correctGEO = FALSE, correctPC = FALSE)
 ```
 
 
-### 3. Identify candidate loci
+### 3. Identify candidate snps
 ```{r}
-# Running with 3 axes
-rda_sig <- rda_getloci(mod, gen, naxes = 3, padj_method = "fdr", alpha = 0.05)
-rda_loci <- rda_sig[["rda_loci"]]
+
+# Running with all axes and z method
+rda_sig <- rda_getoutliers(mod, naxes = "all", outlier_method = "z", z = 3)
+rda_snps <- rda_sig[["rda_snps"]]
+length(rda_snps)
+
+# Running with all axes and p method
+rda_sig <- rda_getoutliers(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.01)
+rda_snps <- rda_sig[["rda_snps"]]
 pvalues <- rda_sig[["pvalues"]]
-print(rda_loci)
+length(rda_snps)
+
 ```
 
 ### 4. Identify environmental associations
 ```{r}
-rda_gen <- gen[,rda_loci]
-lm_df <- rda_lm_test(rda_gen, env)
+rda_gen <- gen[,rda_snps]
+cor_df <- rda_cor(rda_gen, env)
+
+# You can make a pretty table from these results (here we are displaying only the first 5 rows):
+rda_table(cor_df, nrow = 5)
+
+# you can order by the strength of the correlation
+rda_table(cor_df, order = TRUE, nrow = 5)
+
+# you can choose to only keep the top variable for each SNP the table by the strength of the correlation
+rda_table(cor_df, top = TRUE, nrow = 5)
+
+# you can display only select environmental variables
+rda_table(cor_df, var = "CA_rPCA1", nrow = 5)
+
+# putting it all together we can display the top 5, ordered SNPS for each variable
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA1", nrow = 5)
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA2", nrow = 5)
+rda_table(cor_df, top = TRUE, order = TRUE, var = "CA_rPCA3", nrow = 5)
 ```
 
 ### 5. Plot results
 
-```{r}
-rda_plot(mod, rda_loci, pvalues, biplot_axes = c(1,2), manhattan = FALSE, biplot = TRUE)
-rda_plot(mod, rda_loci, pvalues, biplot_axes = c(2,3), manhattan = FALSE, biplot = TRUE)
-rda_plot(mod, rda_loci, pvalues, alpha = 0.05, manhattan = TRUE, biplot = FALSE)
+```{r, fig.width = 6, fig.height = 5}
+rda_plot(mod, rda_snps, biplot_axes = c(1,3), rdaplot = TRUE)
+rda_plot(mod, rda_snps, biplot_axes = c(2,3), rdaplot = TRUE)
+rda_plot(mod, rda_snps, pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
+
+# note: if only one axis is provided, a histogram will be generated
+rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
 ```
+<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
+=======
+
+
+
+
+>>>>>>> main:vignettes/RDA_test_notebook.Rmd

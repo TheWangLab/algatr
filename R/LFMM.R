@@ -1,13 +1,18 @@
 
 #' Run LFMM
+<<<<<<< HEAD
 #' TODO [EAC]: change function name to do_everything
 #' @param gen genotype matrix
 #' @param env dataframe with environmental data
+=======
+#' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
+#' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
+>>>>>>> main
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
-#' @param sig alpha level for determining candidate loci (defaults to 0.5)
+#' @param sig alpha level for determining candidate snps (defaults to 0.5)
 #' @param p.adj method to use for p-value correction (defaults to "none")
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
@@ -16,20 +21,56 @@
 #' @export
 #'
 #' @examples
-lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
+lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
                      K_selection = "tracy.widom", Kvals = 1:10, sig = 0.05,
                      p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
                      low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
                      choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
+
+  # get env data
+  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
+
+  # convert vcf to dosage
+  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # perform imputation with warning
+  if(any(is.na(gen))){
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
 
   # PCA to determine number of latent factors
   # if K is not specified it is calculated based on given K selection method
   if(is.null(K)){
     K <- select_K(gen, K_selection = K_selection, coords = coords,
                Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-               max.pc = max.pc)
+               max.pc = max.pc, pca.select = pca.select,  perc.pca = perc.pca,
+               choose.n.clust = choose.n.clust, criterion = criterion, max.n.clust = max.n.clust)
   }
 
+  # Run LFMM
+  results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p.adj = p.adj, sig = sig, calibrate = calibrate)
+
+  # Check qqplots
+  print(lfmm_qqplot(results$df))
+
+  # Make Manhattan plots
+  print(lfmm_manhattanplot(results$df, sig))
+
+  # Make table
+  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10))
+
+  return(results)
+}
+
+
+#' Run LFMM
+#'
+#' @inheritParams lfmm_do_everything
+#'
+#' @export
+#'
+lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p.adj = "fdr", sig = 0.05, calibrate = "gif"){
   # gen matrix
   genmat <- as.matrix(gen)
   # env matrix
@@ -43,43 +84,110 @@ lfmm_run <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
   }
 
   # run model
-  if(lfmm_method == "ridge"){lfmm_mod <- lfmm_ridge(genmat, envmat, K = K)}
-  if(lfmm_method == "lasso"){lfmm_mod <- lfmm_lasso(genmat, envmat, K = K)}
+  if(lfmm_method == "ridge"){lfmm_mod <- lfmm::lfmm_ridge(genmat, envmat, K = K)}
+  if(lfmm_method == "lasso"){lfmm_mod <- lfmm::lfmm_lasso(genmat, envmat, K = K)}
 
   # performs association testing using the fitted model:
-  pv <- lfmm_test(Y = genmat,
+  lfmm_test_result <- lfmm::lfmm_test(Y = genmat,
                   X = envmat,
                   lfmm = lfmm_mod,
                   calibrate = calibrate)
 
-  # adjust pvalues
-  pval_df <- as_tibble(pv$calibrated.pvalue)
   # if p.adj method is specified, perform p-value correction by column (by env variable)
-  pvalues <- map_df(pval_df, p.adjust, method = p.adj)
+  lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, p.adjust, method = p.adj)
 
   # stop if all pvalues are na
-  if(all(is.na(pvalues))) stop("all p-values are NA")
+  if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("all p-values are NA")
 
-  # check qqplots
-  par(mfrow = c(1, ncol(pvalues)))
-  print(lfmm_qqplot(pvalues))
+  # transfer column names
+  colnames(lfmm_test_result$adjusted.pvalue) <- colnames(envmat)
+  # transfer rownames
+  rownames(lfmm_test_result$adjusted.pvalue) <- colnames(genmat)
 
-  # make Manhattan plots
-  colnames(pvalues) <- colnames(envmat)
-  print(lfmm_manhattanplot(pvalues, sig))
+  # make tidy dataframe of results
+  result_df <- lfmm_df(lfmm_test_result)
 
-  # get list of candidate loci
-  cand_loci <- map(pvalues, get_loci, sig = sig)
+  # subset out candidate snps
+  cand_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
 
-  # make list of results
-  results <- list(K = K,
-                  loci = cand_loci,
-                  pvalues = pvalues,
-                  mod = lfmm_mod)
-
-  return(results)
+  return(list(cand_snps = cand_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }
 
+
+#' Title
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
+lfmm_df <- function(x){
+  df_names <- names(x)[purrr::map_lgl(x, function(x) !is.null(rownames(x)))]
+  df <- purrr::map(df_names, lfmm_test_tidy, x) %>% purrr::reduce(dplyr::left_join, by = c("snp", "var"))
+  return(df)
+}
+
+#' Title
+#'
+#' @param colname
+#' @param lfmm_test_result
+#'
+#' @return
+#' @export
+#'
+#' @examples
+lfmm_test_tidy <- function(colname, lfmm_test_result){
+  x <- lfmm_test_result[[colname]]
+  df <- x %>%
+    dplyr::as_tibble() %>%
+    dplyr::mutate(snp = rownames(x)) %>%
+    tidyr::gather(var, stat, -snp)
+
+  colnames(df) <- c("snp", "var", colname)
+
+  return(df)
+}
+
+#' Title
+#'
+#' @param df
+#' @param sig
+#' @param sig_only
+#' @param top
+#' @param order
+#' @param var
+#' @param nrow
+#' @param digits
+#'
+#' @return
+#' @export
+#'
+#' @examples
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2){
+
+  if(!is.null(var)) df <- df[df$var %in% var, ]
+  if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
+  if(order) df <- df[order(abs(df$B), decreasing = TRUE),]
+  if(top) df <- df %>%
+      dplyr::group_by(snp) %>%
+      dplyr::filter(abs(B) == max(abs(B)))
+  if(!is.null(nrow)) df <- df[1:nrow, ]
+
+  df <- df %>% dplyr::as_tibble() %>% dplyr::filter(dplyr::if_any(dplyr::everything(), ~ !is.na(.)))
+  if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
+
+  d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
+
+  suppressWarnings(
+    tbl <- df  %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric(B, trim = TRUE, domain = c(-d,d))
+
+  )
+
+  tbl
+}
 
 
 #' K selection
@@ -146,6 +254,9 @@ select_K_tw <- function(gen, criticalpoint = 2.0234){
   # get K based on number of significant eigenvalues
   K <- tw_result$SigntEigenL
 
+  # if K is zero, return 1
+  if(K == 0) K <- 1
+
   return(K)
 }
 
@@ -188,7 +299,7 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 #' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
   # run tess for all K values
-  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = as.matrix(coords), K = Kvals, method = tess_method, ploidy = ploidy)
 
   # plot CV results and mark the K-value automatically selected
   plot(tess3_obj, pch = 19, col = "blue",
@@ -213,7 +324,7 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
                         criterion = "diffNgroup", max.n.clust = 10){
 
-  fc <- adegenet::find.clusters(x,
+  fc <- adegenet::find.clusters(gen,
                                 pca.select = pca.select,
                                 perc.pca = perc.pca,
                                 choose.n.clust = choose.n.clust,
@@ -319,70 +430,65 @@ bestK <- function(tess3_obj, Kvals){
 
 #' LFMM QQplot
 #'
-#' @param pvalues pvalue dataframe
+#' @param df dataframe of lfmm test results produced by \link[wingen]{lfmm_df}
 #'
 #' @return
 #' @export
 #'
 #' @examples
-lfmm_qqplot <- function(pvalues){
+lfmm_qqplot <- function(df){
 
-  pvalues <- -log10(pvalues)
-  pvalues$loci <- 1:nrow(pvalues)
-  pvalues_tidy <- pvalues %>% gather(env, p, -loci)
-
-  plt <- ggplot(pvalues_tidy, aes(sample = p)) +
-    stat_qq() +
-    geom_abline(intercept = 0, slope = 1) +
-    facet_wrap( ~ env, nrow = 1) +
-    labs(x = NULL,
+  plt <- ggplot2::ggplot(df, ggplot2::aes(sample = -log10(adjusted.pvalue))) +
+    ggplot2::stat_qq() +
+    ggplot2::geom_abline(intercept = 0, slope = 1) +
+    ggplot2::facet_wrap( ~ var, nrow = 1) +
+    ggplot2::labs(x = NULL,
          y = "-log10(p)") +
-    theme_bw() +
-    theme(line = element_blank())
+    ggplot2::theme_bw() +
+    ggplot2::theme(line = ggplot2::element_blank())
 
   return(plt)
 }
 
 #' LFMM Manhattan Plot
 #'
-#' @param pvalues pvalue dataframe
-#' @param sig alpha level
+#' @param df dataframe of lfmm test results produced by \link[wingen]{lfmm_df}
+#' @param sig significance cutoff
 #'
 #' @return
 #' @export
 #'
 #' @examples
-lfmm_manhattanplot <- function(pvalues, sig){
-  pvalues10 <- -log10(pvalues)
-  pvalues10$loci <- 1:nrow(pvalues10)
-  pvalues_tidy <- pvalues10 %>% gather(env, p, colnames(pvalues))
+lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
+
+  # subset variables
+  if(!is.null(var)) df <- df[df$var %in% var, ]
+
+  # conver to df to not get tidy warnings about uninitializd columns
+  df <- data.frame(df)
+  df$type[df$adjusted.pvalue < sig] <- "Outlier"
+  df$type[!(df$adjusted.pvalue < sig)] <- "Neutral"
+  df$index <- 1:length(unique(df$snp))
 
   plt <-
-    ggplot2::ggplot(pvalues_tidy, aes(x = loci, y = p)) +
-    geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
-    geom_point(alpha = 0.75) +
-    facet_wrap( ~ env, nrow = ncol(pvalues)) +
-    labs(x = NULL,
-         y = "-log10(p)") +
-    theme_bw() +
-    theme(
-      legend.position = "none",
-      panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank())
-
+    ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
+    ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
+    ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
+    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF"), na.translate = F) +
+    ggplot2::xlab("snps") + ggplot2::ylab("-log10(p)") +
+    ggplot2::geom_hline(yintercept=-log10(sig), linetype="dashed", color = "black", size=0.6) +
+    ggplot2::guides(color=ggplot2::guide_legend(title="snp type")) +
+    ggplot2::facet_wrap( ~ var, nrow = length(unique(df$var))) +
+    ggplot2::xlab("position") + ggplot2::ylab("-log10(p)") +
+    ggplot2::theme_bw(base_size = 11) +
+    ggplot2::theme(legend.position="right",
+                   legend.background = ggplot2::element_blank(),
+                   panel.grid = ggplot2::element_blank(),
+                   legend.box.background = ggplot2::element_blank(),
+                   plot.background = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank(),
+                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size=11))
   return(plt)
 }
 
-#' Get candidate loci row numbers
-#'
-#' @param pvec vector of pvalues
-#' @param sig alpha level
-#'
-#' @return
-#' @export
-#'
-#' @examples
-get_loci <- function(pvec, sig){
-  loci <- which(pvec < sig)
-  return(loci)
-}

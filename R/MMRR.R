@@ -2,8 +2,7 @@
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
-#' @param env dataframe with environmental values for each coordinate; if not provided it will be calculated based on coords/envlayers
-#' @param envlayers rasters for for extracting environmental values using coordinates if `env` isn't provided
+#' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
@@ -14,10 +13,10 @@
 #' @export
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
   # If not provided, make env data frame from layers and coords
-  if(is.null(env)){env <- raster::extract(envlayers, coords)}
+  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
 
   # Make env dist matrix
   X <- env_dist(env)
@@ -30,6 +29,9 @@ mmrr_do_everything <- function(gendist, coords, env = NULL, envlayers = NULL, mo
   if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
 
   if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
+
+  # Print dataframe
+  print(mmrr_table(results$coeff_df))
 
   return(results)
 
@@ -195,7 +197,7 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
 unfold <- function(X, scale = TRUE){
   x <- vector()
   for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
-  if(scale == TRUE) x <- raster::scale(x, center = TRUE, scale = TRUE)
+  if(scale == TRUE) x <- scale(x, center = TRUE, scale = TRUE)
   return(x)
 }
 
@@ -215,6 +217,7 @@ mmrr_df <- function(mod){
   ci_df$var <- rownames(ci_df)
   coeff_df <- merge(coeff_df, ci_df, by = "var")
   rownames(coeff_df) <- NULL
+  colnames(coeff_df) <- c("var", "estimate", "p", "95% Lower", "95% Upper")
   return(coeff_df)
 }
 
@@ -261,9 +264,11 @@ mmrr_plot_vars <- function(Y, X, stdz = TRUE){
 
   # Plot single variable relationships
   plt_lm <- ggplot2::ggplot(df, ggplot2::aes(X, Y)) +
-    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_point(alpha = 0.3, pch = 16) +
     ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
     ggplot2::facet_wrap(~var, scales = "free") +
+    ggplot2::xlab("Variable Distance") +
+    ggplot2::ylab("Genetic Distance") +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
 
@@ -287,14 +292,14 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
     dplyr::mutate(Y = unfold(Y, scale = stdz)) %>%
     tidyr::gather("var", "X", -Y) %>%
     dplyr::left_join(coeff_df, by = "var") %>%
-    dplyr::mutate(coeffX = coeff*X) %>%
+    dplyr::mutate(coeffX = estimate*X) %>%
     dplyr::select(Y, coeffX) %>%
     dplyr::group_by(Y) %>%
     dplyr::summarise(Yfitted = sum(coeffX, na.rm=T))
 
   # Plot fitted relationship
   plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +
-    ggplot2::geom_point(alpha = 0.3) +
+    ggplot2::geom_point(alpha = 0.3, pch = 16) +
     ggplot2::geom_smooth(method = "lm", formula = y ~ x) +
     ggplot2::theme_bw() +
     ggplot2::ylab("Observed Genetic Distance") +
@@ -323,3 +328,20 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
 
   return(plt_cor)
 }
+
+mmrr_table <- function(coeff_df, digits = 2){
+
+  if(!is.null(digits)) coeff_df <- coeff_df %>% dplyr::mutate(dplyr::across(-var, round, digits))
+
+  d <- max(abs(min(coeff_df$estimate)), abs(max(coeff_df$estimate)))
+
+  suppressWarnings(
+    tbl <- coeff_df  %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d))
+
+  )
+
+  tbl
+}
+

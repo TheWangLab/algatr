@@ -4,12 +4,12 @@
 \alias{gdm_var_select}
 \title{Get best set of variables from a GDM model}
 \usage{
-gdm_var_select(gdmData, alpha = 0.05, nperm = 10)
+gdm_var_select(gdmData, sig = 0.05, nperm = 10)
 }
 \arguments{
 \item{gdmData}{data formatted using GDM package}
 
-\item{alpha}{alpha level for determining variable significance}
+\item{sig}{sig level for determining variable significance}
 
 \item{nperm}{number of permutations to run for variable testing}
 }
