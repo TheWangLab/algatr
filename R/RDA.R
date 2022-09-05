@@ -292,7 +292,7 @@ rdadapt <- function(rda,K)
   return(data.frame(p.values=reschi2test, q.values = q.values_rdadapt))
 }
 
-#' Genotype-environement correlation test
+#' Genotype-environment correlation test
 #'
 #' @param gen dosage matrix
 #' @param var dataframe with predictor variables
@@ -338,7 +338,7 @@ rda_cor_helper <- function(envvar, snp){
 #' @param axes which RDA axes to include while plotting (defaults to `all`)
 #' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
 #' @param manhattan whether to produce manhattan plot (defaults to `TRUE`)
-#' @param rdaplot whether to produce an RDA biplot (defaluts to `TRUE`). If only one axes is provided, instead of a biplot a histogram will be created
+#' @param rdaplot whether to produce an RDA biplot (defaluts to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
 #'
 #' @export
 #'
