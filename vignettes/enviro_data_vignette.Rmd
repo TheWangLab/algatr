@@ -23,7 +23,12 @@ library(here)
 library(viridis)
 ```
 
-For landscape genomic analyses, environmental data layers must be processed. In particular, often environmental distances must be used as input for various analyses, or XXX
+For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore TODO XXX ways to process environmental data:
+
+1. Perform a raster PCA on a stack of environmental layers to reduce dimensionality
+2. Detect collinearity between environmental layers
+3. Calculate geographic distances between coordinates
+4. Calculate environmental distances
 
 For our test dataset, and TODO [EAC], we will be using PC-based processing of environmental layers
 

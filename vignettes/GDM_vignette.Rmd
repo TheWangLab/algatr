@@ -37,12 +37,12 @@ We can also use the `gdm_plot_isplines()` function to plot I-splines for each en
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
 
-### Read in and process data files
+### Read in and process input data
 
-Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which to run the GDM (the `envlayers` argument).
+Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
 ```{r data}
-# Load genetic dist matrix and coordinates for 53 inds, and three environmental layers for test dataset
+# Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
 # Our code assumes that the first column is longitude and second is latitude; check this:
 head(liz_coords)
@@ -51,7 +51,7 @@ head(liz_coords)
 
 ## Run GDM
 
-Given that GDM is a regression, the full model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance).
+Given that GDM is a regression method, the full model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance).
 
 ### GDM with all variables
 
