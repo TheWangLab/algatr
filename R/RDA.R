@@ -35,17 +35,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
-  # extract environmental data if env is a RasterStack
+  # Extract environmental data if env is a RasterStack
   if(inherits(env, "Raster")) env <- raster::extract(env, coords)
-
-  # convert vcf to dosage
-  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
-
-  # perform imputation with warning
-  if(any(is.na(gen))){
-    gen <- simple_impute(gen, median)
-    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-  }
 
   # Standardize environmental variables
   if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
@@ -53,6 +44,17 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # Rename coords
   colnames(coords) <- c("x", "y")
+
+  # Modify genetic data -----------------------------------------------------
+
+  # Convert vcf to dosage
+  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # Perform imputation with warning
+  if(any(is.na(gen))){
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
 
   # Check for NAs
   if(any(is.na(gen))){
