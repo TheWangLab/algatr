@@ -88,21 +88,45 @@ krig_raster_coords <- coords_to_raster(liz_coords, res = 0.01, buffer = 1, plot 
 
 ### Run TESS3
 
+## Automatic K-value selection
+
+Let's start with an automatic K-value testing procedure for K values 1-3. All K selection is specified by the `K_selection` argument. The `tess_do_everything()` function will output (1) a plot with cross-entropy scores for specified K values with a vertical dashed line indicating the best-supported K value; (2) a map with ancestry coefficients plotted and colorized based on corresponding Q values for the best-supported K; and (3) a standard STRUCTURE-style bar plot in which vertical bars represent individuals and the proportion of color of the stacked bars corresponds to the ancestry coefficients of each individual (i.e,. their assignment into each K) for the best-supported K.
+
 ```{r, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
+# TODO [EAC]: autoKrige duplicate observations in input_data?
+# TODO [EAC]: printed order?
 par(pty = "s", mar = rep(2,4))
-results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:3, K_selection = "auto", minQ = 0.10)
+# results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:3, K_selection = "auto", minQ = 0.10)
+results_krige <- tess_do_everything(gen, liz_coords, krig_raster, Kvals = 1:3, K_selection = "auto", minQ = 0.10)
 ```
 
-## Line by line TESS
+The `results` object contains results for the best-supported K value, including:
 
-### Run TESS
+1.  The value of the best-supported K (2, in this case): `K`
+
+2.  The matrix of individual ancestry coefficients, or Q values: `Qmatrix`
+
+3.  A RasterBrick containing the kriged ancestry coefficient values for mapping: `krig_admix`
+
+4.  Results from the cross-validation analysis of all values of K: `tess_results`
+
+5.  Sampling coordinates: `coords`
+
+6.  The range of K values that were tested: `Kvals`
+
+7.  The RasterLayer upon which ancestry coefficients are mapped: `grid`
 
 ```{r, cache = TRUE}
-# run tess with multiple K values
-tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:10, ploidy = 2) 
+summary(results)
+```
 
-# look at resulting object (ANNE: provide a description of what is in this object)
-summary(tess3_result)
+### Run TESS3 line-by-line
+
+To understand what the above `tess_do_everything()` function is doing internally, we can run TESS3 line-by-line. First, let's test out different K values using the `tess_ktest()` function. The resulting object, `XX`, tells us the cross-validation scores for the different K values that were tested.
+
+```{r test Ks}
+tess3_result <- tess_ktest(gen, liz_coords, Kvals = 1:3, ploidy = 2)
+
 
 # get tess object
 tess3_obj <- tess3_result$tess3_obj

@@ -86,7 +86,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
 
 #' Test multiple K values
 #'
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #' @return
 #' @export
 #'
@@ -124,7 +124,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #' Krige admixture values
 #'
 #' @param qmat qmatrix
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #'
 #' @return
 #' @export
@@ -231,7 +231,7 @@ raster_to_grid <- function(x) {
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #'
 #' @return
 #' @export
@@ -306,7 +306,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @param col_alpha if using the \code{"allQ"} plot method, an alpha-transparency level in the range [0,1] (0 means transparent and 1 means opaque) provided to \code{col_pal} function
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} is used (defaults to 0.10)
 #' @param legend whether to include legend (defaults to TRUE)
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #'
 #' @return
 #' @export
@@ -463,7 +463,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 #' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #'
 #' @return
 #' @export
@@ -533,7 +533,7 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 #' @param sort_by_Q whether to sort bars by Q value (equivalent to \link[tess3r]{barplot} sort.by.Q)
 #' @param legend whether to display legend (defaults to TRUE)
 #' @param legend_position the x and y coordinates or keyword to determine legend position (defaults to bottom right)
-#' @inheritParams tess_full
+#' @inheritParams tess_do_everything
 #' @inheritParams graphics::barplot
 #' @param ... other parameters of the function \code{\link{barplot.default}}.
 #'
