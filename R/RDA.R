@@ -332,13 +332,16 @@ rda_cor_helper <- function(envvar, snp){
 }
 
 #' Plot RDA results
+#'
 #' @param mod model object of class `rda`
 #' @param rda_snps vector of outlier SNPs
 #' @param pvalues if creating a manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
 #' @param axes which RDA axes to include while plotting (defaults to `all`)
 #' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
 #' @param manhattan whether to produce manhattan plot (defaults to `TRUE`)
-#' @param rdaplot whether to produce an RDA biplot (defaluts to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
+#' @param rdaplot whether to produce an RDA biplot (defaults to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
+#' @param sig
+#' @param binwidth
 #'
 #' @export
 #'

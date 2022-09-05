@@ -76,7 +76,7 @@ results <- rda_do_everything(gen, env, coords,
 
 The results from `rda_do_everything()` contain:
 
-1. Outlier SNPs significantly associated with environmental variables: `rda_snps`
+1. Candidate SNPs: `rda_snps`
 
 2. Data frame of environmental associations with outlier SNPs: `cor_df`
 
@@ -100,14 +100,18 @@ summary(results)
 
 ## Biplot
 
+Let's build a biplot with RDA axes 1 and 2. The default of `rda_plot()` is to plot all variables.
+
 ```{r biplot simple}
-# TODO [EAC] fill in
+rda_plot(results$rda_mod, results$rda_snps, biplot_axes = c(1,2), rdaplot = TRUE, manhattan = FALSE)
 ```
 
 ## Manhattan plot
 
+Let's now build a Manhattan plot with a significance level of 0.05.
+
 ```{r Manhattan simple}
-# TODO [EAC] fill in
+rda_plot(results$rda_mod, results$rda_snps, results$pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
 ```
 
 ### Run a partial RDA
