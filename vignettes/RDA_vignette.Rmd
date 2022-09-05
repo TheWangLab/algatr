@@ -14,7 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
+### Redundancy analysis (RDA)
+
 ```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
 library("here")
@@ -29,16 +30,24 @@ library("qvalue")
 devtools::load_all()
 ```
 
-### Load Test Data
+RDA is a method to detect outlier loci that are significantly associated with environmental variables.
+
+### Read in and process input data
+
+Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental values extracted for sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `rda_do_everything()` will extract values for us.
 
 ```{r, warning = FALSE}
+# Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
-gen <- vcf_to_dosage(liz_vcf)
-coords <- liz_coords
-env <- CA_env
+# Also, our code assumes that sample IDs from gen and coords are the same order; be sure to check this before moving forward!
 ```
 
-# Run RDA
+## Run a simple RDA
+
+The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can e found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
+
+Let's start with using the p-value method to detect outlier loci:
+
 ```{r, warning = FALSE, message = FALSE}
 results <- rda_do_everything(gen, env, coords, 
                             correctGEO = FALSE, 
@@ -47,6 +56,8 @@ results <- rda_do_everything(gen, env, coords,
                             sig = 0.05, 
                             padj_method = "fdr")
 ```
+
+Now, let's run the same analysis but instead using the z-scores method to detect outlier loci:
 
 ```{r}
 results <- rda_do_everything(gen, env, coords, 
@@ -58,8 +69,9 @@ results <- rda_do_everything(gen, env, coords,
 ```
 
 
+# Run a partial RDA
 
-# Partial RDAs
+A partial RDA describes incorporating covariables into a redundancy analysis. For more information, there is an excellent description of the difference between a simple and partial RDA in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722).
 
 ## Geo correction
 ```{r, warning = TRUE, message = FALSE}
