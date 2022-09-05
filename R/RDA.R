@@ -12,19 +12,19 @@
 #' @param padj_method if `outlier_method = "p"`, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify snps
 #' @param cortest whether to create table of correlations for snps and environmental variable
-#' @param nPC number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be provided
+#' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3), if set to "manual" a selection option with a terminal prompt will be provided
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
 #' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
 #' @param R2permurations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
 #' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
-#' @param stdz whether to center and scale environemntal data (defaults to TRUE)
+#' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param impute function to use for imputation (defaults to `median`). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
 #'
 #' @inheritParams vegan::ordiR2step
 #'
 #' @importFrom vegan rda
 #'
-#' @return list contatining (1) outlier snps, (2) data frame with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
+#' @return list containing (1) outlier SNPs, (2) data frame with correlation test results; if `cortest = TRUE`: (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
 #' @export
 #'
 #' @examples

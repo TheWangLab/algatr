@@ -1,13 +1,8 @@
 
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
-<<<<<<< HEAD
-#' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale = TRUE)
-#' @param coords dataframe with x (i.e., Longitude) and y (i.e., Latitude) coordinates
-=======
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
->>>>>>> main
 #' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
@@ -68,17 +63,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 
 #' Run GDM and return model object
 #'
-<<<<<<< HEAD
-#' @param gendist matrix of genetic distances (MUST RANGE BETWEEN 0 AND 1)
-#' @param coords data frame with x and y coordinates
-#' @param env data frame with environmental values for each coordinate
-#' @param model whether to compute the full model ("full") or the best model based on variable selection steps ("best")
-#' @param alpha alpha level for variable selection (defaults to 0.05), only matters if model = "best"
-#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best"
-#' @param scale scale genetic distance data from 0 to 1
-=======
 #' @inheritParams gdm_do_everything
->>>>>>> main
 #'
 #' @family GDM functions
 #'
@@ -216,12 +201,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 #' @export
 #'
 #' @examples
-<<<<<<< HEAD
-gdm_var_select <- function(gdmData, alpha = 0.05, nperm = 10){
-  # TODO [EAC]: re-run this; save RDA and send to APB (issue with gdm.varImp)
-=======
 gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
->>>>>>> main
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,

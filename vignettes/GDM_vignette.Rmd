@@ -68,12 +68,7 @@ Now, let's run a GDM using only significant variables (i.e., a "best" model). In
 TODO [EAC] need to mention that if model is null, increasing nperm will help
 
 ```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
-<<<<<<< HEAD
-# TODO [EAC]: unused argument nperm = nperm (in gdm_var_select function)
-# gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale = TRUE, plot_vars = TRUE)
-=======
 gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale_gendist = TRUE, plot_vars = TRUE)
->>>>>>> main
 ```
 
 ### Results of GDM

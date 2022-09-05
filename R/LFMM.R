@@ -1,13 +1,7 @@
 
 #' Run LFMM
-<<<<<<< HEAD
-#' TODO [EAC]: change function name to do_everything
-#' @param gen genotype matrix
-#' @param env dataframe with environmental data
-=======
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
->>>>>>> main
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})

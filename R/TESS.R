@@ -1,7 +1,7 @@
 
 #' TESS function to do everything
 #'
-#' @param gen genotype matrix
+#' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test

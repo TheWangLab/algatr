@@ -46,7 +46,6 @@ devtools::load_all()
 ## Load Test Data
 
 ```{r, warning = FALSE}
-# TODO [EAC]: this isn't actually loading the data?
 load_example()
 ```
 

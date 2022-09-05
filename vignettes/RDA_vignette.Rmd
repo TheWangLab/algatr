@@ -35,29 +35,10 @@ devtools::load_all()
 ### Load Test Data
 
 ```{r, warning = FALSE}
-<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
-# convert vcf to dosage
-vcf_to_dosage(vcf_path)
-
-# take a look at the dosage matrix
-
-
-# gen matrix
-gen <- read.csv(here("test_data","gen_dosage_mat.csv"))
-gen <- gen[,-1]
-# coords
-coords <- read.table(here("test_data","Scelop.coord"))
-# And a set of worldclim rasters for the study area
-env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
-envstack <- raster::stack(env_files)
-#make env
-env <- raster::extract(envstack, coords)
-=======
 load_example()
 gen <- vcf_to_dosage(liz_vcf)
 coords <- liz_coords
 env <- CA_env
->>>>>>> main:vignettes/RDA_test_notebook.Rmd
 ```
 
 # Run RDA
@@ -211,10 +192,4 @@ rda_plot(mod, rda_snps, pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
 # note: if only one axis is provided, a histogram will be generated
 rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
 ```
-<<<<<<< HEAD:vignettes/RDA_vignette.Rmd
-=======
 
-
-
-
->>>>>>> main:vignettes/RDA_test_notebook.Rmd
