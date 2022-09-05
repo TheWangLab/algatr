@@ -477,9 +477,9 @@ rda_hist <- function(TAB_snps, binwidth = NULL){
                    strip.text = ggplot2::element_text(size=11))
 }
 
-#' Make publication quality table of correlation test results
+#' Make table of correlation test results
 #'
-#' @param cor_df dataframe of correlation results output from \link[algatr]{rda_cor}
+#' @param cor_df datafram of correlation results output from \link[algatr]{rda_cor}
 #'
 #' @return An object of class `gt_tbl`
 #' @export

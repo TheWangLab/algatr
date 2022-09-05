@@ -32,6 +32,8 @@ devtools::load_all()
 
 RDA is a method to detect outlier loci that are significantly associated with environmental variables.
 
+Importantly, RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+
 ### Read in and process input data
 
 Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental values extracted for sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `rda_do_everything()` will extract values for us.
@@ -42,7 +44,7 @@ load_example()
 # Also, our code assumes that sample IDs from gen and coords are the same order; be sure to check this before moving forward!
 ```
 
-## Run a simple RDA
+### Run a simple RDA
 
 The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can e found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
 
@@ -68,12 +70,36 @@ results <- rda_do_everything(gen, env, coords,
                             padj_method = "fdr")
 ```
 
+## Look at simple RDA results
 
-# Run a partial RDA
+The results from `rda_do_everything()` contain:
 
-A partial RDA describes incorporating covariables into a redundancy analysis. For more information, there is an excellent description of the difference between a simple and partial RDA in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722).
+1. Outlier SNPs significantly associated with environmental variables: `rda_snps`
 
-## Geo correction
+2. Data frame of environmental associations with outlier SNPs: `cor_df`
+
+3. RDA model specifics: `rda_mod`
+
+4. Outlier test results: `rda_outlier_test`
+
+5. Relevant R-squared values: `rsq`
+
+6. ANOVA results: `anova`
+
+7. List of all p-values: `pvalues`
+
+In our case, we can see that TODO XXX
+
+```{r simple results}
+summary(results)
+```
+
+### Run a partial RDA
+
+A partial RDA describes incorporating covariables into a redundancy analysis. For more information, there is an excellent description of the difference between a simple and partial RDA in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). Built within the `rda_do_everything()` function is the option to account for geographic distance and XXX as possible covariables (or the combination of the two).
+
+To condition on geographic sampling coordinates, use the `correctGEO` argument:
+
 ```{r, warning = TRUE, message = FALSE}
 results <- rda_do_everything(gen, 
                             env, 
@@ -85,7 +111,8 @@ results <- rda_do_everything(gen,
                             padj_method = "fdr")
 ```
 
-## PC correction
+To condition on PCs built using a PCA of all genotypes, use the `correctPC` argument:
+
 ```{r, warning = TRUE, message = FALSE}
 results <- rda_do_everything(gen, 
                             env, 
@@ -97,7 +124,8 @@ results <- rda_do_everything(gen,
                             padj_method = "fdr")
 ```
 
-## PC + Geo Correction
+To condition both on PCs and geographic coordinates:
+
 ```{r, warning = TRUE, message = FALSE}
 results <- rda_do_everything(gen, 
                             env, 
@@ -107,6 +135,12 @@ results <- rda_do_everything(gen,
                             correctPC = TRUE,
                             sig = 0.05, 
                             padj_method = "fdr")
+```
+
+Let's look at how these results compare.
+
+```{r}
+# TODO [EAC] fill in 
 ```
 
 ## Variable selection
