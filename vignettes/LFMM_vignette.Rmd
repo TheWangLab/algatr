@@ -18,15 +18,15 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(algatr)
-library("here")
+library(here)
 #to install LFMM:
 #devtools::install_github("bcm-uga/lfmm")
-library("lfmm") 
-library("tidyverse")
-
+library(lfmm) 
+library(tidyverse)
+library(raster)
 #libraries for k selection
-library("AssocTests")
-library("tess3r")
+library(AssocTests)
+library(tess3r)
 
 devtools::load_all()
 ```
@@ -37,6 +37,8 @@ Latent factor mixed models (LFMM; [TODO](TODO REFER)) describe
 Similar to RDA, LFMM is a genotype-environment association (GEA) method in which mixed models are used to determine loci that are significantly associated with environmental variables. Importantly, LFMM takes into account -- and corrects for -- unobserved variables that may confound results (known as latent factors). A good example of a latent factor that we may want to correct for prior to examining environment-associated loci is population structure.
 
 As with TESS3 (TODO link vignette?), there are a variety of ways to determine the best number of latent factors (also called K values); algatr provides the option to test three of these methods: (1) Tracy Widom test; (2) quick elbow test; and (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure). We will explore all of these, and compare results, in this vignette.
+
+Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
 The main function to perform an LFMM analysis is `lfmm_do_everything()`, which primarily uses the `lfmm2()` function [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100) within the LEA package [TODO](TODO). lfmm2 builds off the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details), but is computationally faster.
 
@@ -56,8 +58,10 @@ gen <- vcf_to_dosage(liz_vcf)
 
 ## Comparing different LFMM methods
 
+Because the `CA_env` object doesn't have extracted environmental values for each of our coordinates, we also need to add the `coords` argument into `lfmm_do_everything()`. The function will automatically extract relevant values from our environmental layers given the coordinate data.
+
 ```{r, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
-results <- lfmm_do_everything(gen, CA_env, lfmm_method = "ridge", K_selection = "tracy.widom")
+results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "ridge", K_selection = "tracy.widom")
 ```
 
 
