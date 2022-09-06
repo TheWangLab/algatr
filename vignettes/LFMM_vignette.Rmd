@@ -57,7 +57,7 @@ gen <- vcf_to_dosage(liz_vcf)
 ## Comparing different LFMM methods
 
 ```{r, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
-results <- lfmm_do_everything(gen, env, lfmm_method = "ridge", K_selection = "tracy.widom")
+results <- lfmm_do_everything(gen, CA_env, lfmm_method = "ridge", K_selection = "tracy.widom")
 ```
 
 
