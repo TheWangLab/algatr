@@ -36,7 +36,7 @@ Importantly, RDA cannot take in missing values. Imputation based on the per-site
 
 ### Read in and process input data
 
-Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental values extracted for sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `rda_do_everything()` will extract values for us.
+Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `lfmm_do_everything()` will extract values for us. For clarity's sake here, we'll do the conversion from a vcf to dosage matrix using the `vcf_to_dosage()` function. 
 
 ```{r, warning = FALSE}
 # Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
