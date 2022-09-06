@@ -458,7 +458,7 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
   # subset variables
   if(!is.null(var)) df <- df[df$var %in% var, ]
 
-  # Convert to df to not get tidy warnings about uninitializd columns
+  # Convert to df to not get tidy warnings about uninitialized columns
   df <- data.frame(df)
   df$type[df$adjusted.pvalue < sig] <- "Outlier"
   df$type[!(df$adjusted.pvalue < sig)] <- "Neutral"
