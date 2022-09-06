@@ -329,6 +329,15 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
   return(plt_cor)
 }
 
+#' Make table with results
+#'
+#' @param coeff_df coefficients from MMRR run
+#' @param digits significant digits to round values to (defaults to 2)
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mmrr_table <- function(coeff_df, digits = 2){
 
   if(!is.null(digits)) coeff_df <- coeff_df %>% dplyr::mutate(dplyr::across(-var, round, digits))
