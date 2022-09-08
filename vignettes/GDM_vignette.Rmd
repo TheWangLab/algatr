@@ -55,7 +55,7 @@ Given that GDM is a regression method, the full model (i.e., including all predi
 
 ### GDM with all variables
 
-Let's first run a full GDM model (i.e., including all four variables), specified using the `model` argument. If you have extracted environmental values for each sampling coordinate, this must be specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that the `nPerm` argument is only for model selection (see below) and so will not be used in this case.
+Let's first run a full GDM model (i.e., including all four variables), specified using the `model` argument. If you have extracted environmental values for each sampling coordinate, this must be specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection (see below) and so will not be used in this case.
 
 ```{r all vars, fig.width = 5, fig.height = 5}
 gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE)

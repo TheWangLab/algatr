@@ -2,16 +2,16 @@
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
-#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
-#' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
-#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
-#' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
+#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order
+#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
+#' @param env dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
+#' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)
+#' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
 #'
 #' @return list with final model, predictor coefficients, and PCA RGB map
 #'
@@ -23,11 +23,11 @@
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE){
 
-  # format coordinates
+  # Format coordinates
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
-  # If not provided, make env data frame from layers and coords
+  # If not provided, make env dataframe from layers and coords
   if(is.null(env)) env <- raster::extract(envlayers, coords)
 
   # Run model with all defaults
@@ -40,7 +40,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   coeff_df <- gdm_df(gdm_result)
   print(gdm_table(coeff_df))
 
-  # Plot isplines
+  # Plot I-splines
   gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
@@ -76,11 +76,6 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
-  # Rename coords
-  # TODO [EAC]: already done within gdm_do_everything?
-  coords <- dplyr::as_tibble(coords)
-  colnames(coords) <- c("x","y")
-
   # Scale genetic distance data from 0 to 1
   if(scale_gendist){gendist <- scale01(gendist)}
   if(!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale = TRUE to rescale from 0 to 1")
@@ -92,7 +87,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   # Bind vector of sites with gen distances
   gdmGen <- cbind(site, gendist)
 
-  # Create data frame of predictor variables
+  # Create dataframe of predictor variables
   gdmPred <- data.frame(site = site,
                         x = coords$x,
                         y = coords$y,
@@ -124,7 +119,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     }
   }
 
-  # If model = "best", go through variable selection procedure
+  # If model = "best", conduct variable selection procedure
   if(model == "best"){
     # Add distance matrix separately
     if(geodist_type == "Euclidean"){
