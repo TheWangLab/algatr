@@ -10,7 +10,7 @@
 #' @examples
 load_example <- function(quiet = FALSE){
   # load all data
-  utils::data(list = c("liz_vcf", "liz_coords", "gendist", "CA_env"))
+  utils::data(list = c("liz_vcf", "liz_coords", "liz_gendist", "CA_env"))
 
   if (!quiet) {
     # Give message with information about objects
@@ -19,7 +19,7 @@ load_example <- function(quiet = FALSE){
       crayon::blue("\nObjects loaded:"),
       crayon::yellow(crayon::bold("\n*liz_vcf*")),
       crayon::yellow(paste0("vcfR object (1000 loci x 53 samples)")),
-      crayon::yellow(crayon::bold("\n*gendist*")),
+      crayon::yellow(crayon::bold("\n*liz_gendist*")),
       crayon::yellow(paste0("genetic distance matrix (Plink Distance)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
       crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with PC environmental layers"),
