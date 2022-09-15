@@ -27,17 +27,31 @@ library(readr)
 devtools::load_all()
 ```
 
-Generalized dissimilarity modeling is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). A GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data varies nonlinearly across an environmental gradient.
+Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). A GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data vary nonlinearly across an environmental gradient.
 
-For additional information on GDMs, please see [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x) for a description of its basic use in estimating patterns of beta diversity, [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x) for a classic example of its use, and [Fitzpatrick & Keller 2015](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376#:~:text=Community%2Dlevel%20modelling%20of%20genomic,assessments%20of%20climate%20change%20vulnerability.) for a perspective piece on its applications. Finally, our code primarily uses the gdm package which has excellent documentation (see [here](https://cran.r-project.org/web/packages/gdm/gdm.pdf)).
+For additional information on GDMs, please see [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x) for a description of its basic use in estimating patterns of beta diversity, [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x) for a classic example of its use, and [Fitzpatrick & Keller 2015](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376#:~:text=Community%2Dlevel%20modelling%20of%20genomic,assessments%20of%20climate%20change%20vulnerability.) for a perspective piece on its applications. Finally, our code primarily uses the gdm package which has excellent documentation (see [here](https://cran.r-project.org/web/packages/gdm/gdm.pdf)) including a thorough [vignette](https://cran.microsoft.com/snapshot/2018-01-13/web/packages/gdm/vignettes/gdmVignette.pdf) that describes some of the theory behind GDM.
 
-There is one main function to perform a GDM analysis: `gdm_do_everything()`. This function runs the GDM (using the `gdm()` function within the gdm package), and allows a user to run a GDM with all variables, or with model selection to choose the best-supported variables. This function produces information on the final model, and coefficients for predictor variables.
+Within algatr, there is one main function to perform a GDM analysis: `gdm_do_everything()`. This function runs the GDM (using the `gdm()` function within the gdm package) and allows a user to run a GDM with all variables, or with model selection to choose the best-supported variables.
 
-We can also use the `gdm_plot_isplines()` function to plot I-splines for each environmental variable and geographic distance, and `gdm_map()` to produce a PCA map with GDM results plotted.
+Contained within `gdm_do_everything()` are the following functions, which we'll walk through here:
 
-There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
+-   `gdm_run()` runs the GDM itself
 
-### Read in and process input data
+-   `gdm_df()` generates statistics and coefficients for predictor variables
+
+-   `gdm_plot_isplines()` plots fitted I-splines for each variable
+
+-   `gdm_map()` generates a PCA map of compositional dissimilarity based on GDM results
+
+### *Assumptions*
+
+There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
+
+### *Test dataset*
+
+For this vignette, we'll be using a subset of the *Sceloporus occidentalis* RADseq dataset from [Bouzid et al. 2022](REFER) which contains 1,000 SNPs for 53 individuals.
+
+## Read in and process input data
 
 Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
@@ -46,67 +60,107 @@ Running a GDM requires three data files for input: a genetic distance matrix (th
 load_example()
 # Our code assumes that the first column is longitude and second is latitude; check this:
 head(liz_coords)
-# Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!
 ```
 
-## Run GDM
+## Extract environmental variables
 
-Given that GDM is a regression method, the full model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance).
+To run GDM, we need to generate a site-pair table in which variables are extracted for each site. Because we only have environmental layers for our test dataset, we need to extract environmental variables from these layers for each sampling locality in which lizards were collected. This is done simply using the `raster::extract()` function.
+
+```{r extract enviro vars}
+env <- raster::extract(CA_env, liz_coords)
+```
+
+## Run GDM with `gdm_run()`
 
 ### GDM with all variables
 
-Let's first run a full GDM model (i.e., including all four variables), specified using the `model` argument. If you have extracted environmental values for each sampling coordinate, this must be specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection (see below) and so will not be used in this case.
+Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We'll specify a full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
 
-```{r all vars, fig.width = 5, fig.height = 5}
-gdm_full <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE)
+```{r all stats, fig.width = 5, fig.height = 5}
+gdm_full <- gdm_run(gendist = gendist, coords = liz_coords, env = env, model = "full", scale_gendist = TRUE)
+
+# Predictors that were considered in the full model
+gdm_full$model$predictors
+
+# There are three splines for each variable
+gdm_full$model$splines
+
+# Coefficients are provided for each of the predictor I-splines (i.e., 12 total)
+gdm_full$model$coefficients
 ```
 
 ### GDM with model selection
 
-Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel TODO: describe plot_vars TODO: mention that default of this is to NOT include geo dists? It is important to be aware that GDM always considers geographic distance as a variable TODO XXX HOW IS IT CODED
+Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel . It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection with geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
 
-TODO [EAC] need to mention that if model is null, increasing nperm will help
+There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
-```{r best vars, fig.height=5, fig.width=20, cache = TRUE}
-gdm_best <- gdm_do_everything(gendist, liz_coords, CA_env, model = "best", nperm = 10, scale_gendist = TRUE, plot_vars = TRUE)
+*N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
+
+```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
+gdm_best <- gdm_run(gendist = gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
+
+# Which predictors were considered significant?
+# TODO fill in
+gdm_best$model$predictors
+
+# There are three I-splines for each variable
+gdm_best$model$splines
+
+# Let's look at coefficients for each I-spline for each variable
+gdm_best$model$coefficients
 ```
 
-### Results of GDM
+Let's now look at the other elements within our `gdm_best` object that provide information on variable selection.
 
-There are three elements within the results of `gdm_do_everything()`: "model" (final model), "predictors" (coefficients for predictor variables), and "rast" (PCA RGB map). First, we'll want to see the coefficients from the models obtained.
+```{r best preds}
+# Look at p-values
+gdm_best$pvalues
 
-Let's assume we want to move forward with examining the results from the model selection output. There should be coefficients for each of the significant predictor variables:
+# TODO describe gdm_var_select function
+gdm_best$varimp
+```
+
+## GDM results
+
+Let's assume we want to move forward with examining the results from the full model.
+
+TODO: more in-depth discussion of interpreting statistics, compare between full and best.
 
 ```{r preds}
-# gdm_full$predictors
+gdm_full$predictors
 ```
 
-### Interpreting the results of GDM
+### Plotting fitted I-splines for variables
 
-Now, let's plot the GDM-fitted functions for our best model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable.
+Let's first plot the GDM-fitted functions for our TODO best model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable. The y-axis ("partial regression distance") relates the genetic distances to the variable when all other variables are held constant. We can look at these I-splines using the `gdm_plot_isplines()` function.
 
 ```{r isplines, fig.width = 9, fig.height = 3}
-# TODO [EAC]: differs from test notebook; not GDM object
-# gdm_plot_isplines(gdm_full$model)
+gdm_plot_isplines(gdm_full$model)
 ```
 
-TODO: We will sum isplines for each significant predictor variable to determine the relative contributions of each.
+### Table of GDM statistics
 
-```{r sum isplines}
-# TODO [EAC]: add code here
+We can generate a nice table with relevant GDM statistics to report using the `gdm_df()` function to extract from our GDM results object, and then build the table itself with the `gdm_table()` function. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
+
+```{r GDM table}
+# Extract coefficients for each predictor
+gdm_df <- gdm_df(gdm_full)
+
+# Build the table
+gdm_table(gdm_df)
 ```
 
-We can also sum all environmental variables and compare to geographic distance to get the relative variation explained by IBE (enviro vars) and IBD (geo dist). A good way to visualize this is by plotting the PCs with relative contributions of predictor variables, with samples (i.e., genetic distances) overlaid on top.
+## Visualizing GDM results
 
-```{r plot vars}
-# TODO [EAC]: finish this
-# gdm_plot_vars()
+There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a PCA, and use the first three PC axes to assign to red, green, or blue scales. In this way, more similar colors on the map correspond to more similar genetic composition of our samples.
+
+Secondly, to understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. We can visualize how genetic composition is associated with each of these variables by plotting each as a vector.
+
+```{r GDM plots}
+gdm_map(gdm_full$model, CA_env, liz_coords)
 ```
 
-Finally, we can visualize GDM results by mapping. XXXXX:
+## Interpreting GDM results
 
-```{r map}
-# gdm_map(mod_full$model, CA_env, liz_coords)
-```
-
-TODO [EAC]: discuss not over-interpreting GDM map?
+TODO [EAC]: discuss not over-interpreting GDM map? what about masking?

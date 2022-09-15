@@ -27,7 +27,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
-  # If not provided, make env dataframe from layers and coords
+  # If coords not provided, make env dataframe from layers and coords
   if(is.null(env)) env <- raster::extract(envlayers, coords)
 
   # Run model with all defaults
@@ -75,6 +75,10 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
+
+  # Rename coords
+  coords <- dplyr::as_tibble(coords)
+  colnames(coords) <- c("x","y")
 
   # Scale genetic distance data from 0 to 1
   if(scale_gendist){gendist <- scale01(gendist)}
@@ -247,6 +251,7 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @param coords data frame with x and y coordinates
 #' @param scl constant for rescaling variable vectors for plotting
 #' @param plot
+#' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
 #'
 #' @return GDM RGB map
 #'
@@ -255,7 +260,7 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @export
 #'
 #' @examples
-gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plot = TRUE){
+gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, plot = TRUE){
 
   # CHECK that all of the model variables are included in the stack of environmental layers
   # Create list of environmental predictors (everything but Geographic)
@@ -307,6 +312,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 
   # If n_layers = 2, you end up making a bivariate map
   if(n_layers == 2){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster)}
+
   # If n_layers = 1, you end up making a univariate map
   if(n_layers == 1){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster, white_raster)}
 
@@ -316,7 +322,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 
   # Plot variable vectors
   if(plot_vars & (n_layers == 3)){
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl)
+    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
   }
   if(plot_vars & (n_layers != 3)){
     warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
@@ -333,7 +339,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 #'
 #' @param gdm_model GDM model
 #'
-#' @return plot for each ispline
+#' @return plot for each I-spline
 #'
 #' @family GDM functions
 #'
@@ -344,17 +350,15 @@ gdm_plot_isplines <- function(gdm_model){
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
   purrr::walk(1:ncol(gdm_model_splineDat$x), function(i){
-    plot(gdm_model_splineDat$x[,i],
-         gdm_model_splineDat$y[,i],
-         cex.lab = 1.5,
-         lwd = 2,
-         type = "l",
-         col = "black",
-         ylim = c(0, max(gdm_model_splineDat$y)),
-         xlab = colnames(gdm_model_splineDat$x)[i],
-         ylab = "Partial Regression Distance")
-  })
-}
+    dat <- cbind(as.data.frame(gdm_model_splineDat$x[,i]), as.data.frame(gdm_model_splineDat$y[,i]))
+    plot <- ggplot2::ggplot(dat) +
+      geom_line(ggplot2::aes(x = gdm_model_splineDat$x[,i], y = gdm_model_splineDat$y[,i])) +
+      ggplot2::theme_bw() +
+      xlab(colnames(gdm_model_splineDat$x)[i]) +
+      ylab("Partial Regression Distance")
+
+    print(plot)})
+  }
 
 
 #' Create a PCA plot for GDM
@@ -374,7 +378,7 @@ gdm_plot_isplines <- function(gdm_model){
 #' @export
 #'
 #' @examples
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1){
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE){
 
   # Confirm there are exactly 3 axes
   if(nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
@@ -431,12 +435,13 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
 
   # FINAL PLOT----------------------------------------------------------------------------------------------------------
 
+  # Build base plot
   # Plot points colored by RGB with variable vectors
   plot <- ggplot2::ggplot() +
 
     # Create axes that cross through origin
-    ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray") +
-    ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray") +
+    {if(display_axes)ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray")} +
+    {if(display_axes)ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray")} +
 
     # Plot points from entire raster
     ggplot2::geom_point(data = rastvals, ggplot2::aes_string(x = x, y = y), col = rastpcacols, size = 4, alpha = 0.02) +
@@ -445,8 +450,8 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     ggplot2::geom_point(data = pcavals, ggplot2::aes_string(x = x, y = y), fill = pcacols, col = "black", pch = 21, size = 3) +
 
     # Plot variable vectors
-    ggplot2::geom_text(data = varpc, ggplot2::aes(x = v1, y = v2, label = varnames), size = 4, vjust=1) +
-    ggplot2::geom_segment(data = varpc, ggplot2::aes(x = 0, y = 0, xend = v1, yend=v2), arrow = ggplot2::arrow(length = ggplot2::unit(0.2,"cm"))) +
+    ggplot2::geom_text(data = varpc, ggplot2::aes(x = v1, y = v2, label = varnames), size = 4, vjust = 1) +
+    ggplot2::geom_segment(data = varpc, ggplot2::aes(x = 0, y = 0, xend = v1, yend = v2), arrow = ggplot2::arrow(length = ggplot2::unit(0.2,"cm"))) +
 
     # Plot formatting
     ggplot2::coord_equal() +
@@ -456,6 +461,15 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
                    panel.grid.minor = ggplot2::element_blank(),
                    axis.line = ggplot2::element_blank(),
                    aspect.ratio = 1)
+
+  # Build plot without PC axes displayed
+  if(display_axes == FALSE){
+    plot <- plot +
+      # Remove axes
+      ggplot2::theme(axis.title = element_blank(),
+                     axis.text = element_blank(),
+                     axis.ticks = element_blank())
+  }
 
   # Plot
   print(plot)
@@ -541,7 +555,7 @@ raster_to_rgb <- function(r){
 
 
 
-#' Make publication quality table of GDM results
+#' Make table of GDM results
 #'
 #' @param gdm_df dataframe output from \link[algatr]{gdm_df}
 #' @param digits number of digits to include (defaults to 2)
