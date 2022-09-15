@@ -72,6 +72,8 @@ env <- raster::extract(CA_env, liz_coords)
 
 ## Run GDM with `gdm_run()`
 
+------------------------------------------------------------------------
+
 ### GDM with all variables
 
 Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We'll specify a full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
@@ -123,6 +125,8 @@ gdm_best$varimp
 
 ## GDM results
 
+------------------------------------------------------------------------
+
 Let's assume we want to move forward with examining the results from the full model.
 
 TODO: more in-depth discussion of interpreting statistics, compare between full and best.
@@ -141,7 +145,9 @@ gdm_plot_isplines(gdm_full$model)
 
 ### Table of GDM statistics
 
-We can generate a nice table with relevant GDM statistics to report using the `gdm_df()` function to extract from our GDM results object, and then build the table itself with the `gdm_table()` function. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
+We can generate a nice table with relevant GDM statistics to report using the `gdm_df()` function to extract from our GDM results object, and then build the table itself with the `gdm_table()` function.
+
+To understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
 
 ```{r GDM table}
 # Extract coefficients for each predictor
@@ -153,14 +159,16 @@ gdm_table(gdm_df)
 
 ## Visualizing GDM results
 
-There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a PCA, and use the first three PC axes to assign to red, green, or blue scales. In this way, more similar colors on the map correspond to more similar genetic composition of our samples.
+------------------------------------------------------------------------
 
-Secondly, to understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. We can visualize how genetic composition is associated with each of these variables by plotting each as a vector.
+There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a PCA, and use the first three PC axes to assign to red, green, or blue scales. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector.
 
 ```{r GDM plots}
 gdm_map(gdm_full$model, CA_env, liz_coords)
 ```
 
 ## Interpreting GDM results
+
+------------------------------------------------------------------------
 
 TODO [EAC]: discuss not over-interpreting GDM map? what about masking?
