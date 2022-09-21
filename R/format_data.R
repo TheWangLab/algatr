@@ -1,5 +1,4 @@
 
-
 #' Convert a vcf to a dosage matrix
 #'
 #' @param x can either be an object of class 'vcfR' or a path to a .vcf file
@@ -9,13 +8,13 @@
 #'
 #'
 vcf_to_dosage <- function(x) {
-  # check vcf
+  # Check vcf
   vcf <- vcf_check(x)
 
-  # convert to genlight
+  # Convert to genlight
   genlight <- vcfR::vcfR2genlight(vcf)
 
-  # convert to dosage matrix
+  # Convert to dosage matrix
   gen <- as.matrix(genlight)
 
   return(gen)
@@ -50,10 +49,10 @@ vcf_check <- function(x) {
 
 
 #' Remove islands from mapping
-#' TODO: fill in param details
-#' @param input
-#' @param shape
-#' @param min_vertices
+#' TODO [EAC]: fill in param details
+#' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
+#' @param shape spatial object to filter TODO [EAC]: needs more detail
+#' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)
 #'
 #' @return
 #' @export
