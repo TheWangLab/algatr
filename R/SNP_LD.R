@@ -20,8 +20,8 @@
 ld_prune <- function(vcf, out_name, out_format, nodes = 1, ld.threshold = 0.6, slide.max.n = 100,
                     maf = 0.05, seed = 1234, method = c("corr"), save_output = TRUE){
 
-  dir.create(here(paste(out_name, "_LDpruned")))
-  dir_name <- here(paste(out_name, "_LDpruned/"))
+  dir.create(here(paste(out_name, "_LDpruned", sep = "")))
+  dir_name <- here(paste(out_name, "_LDpruned/", sep = ""))
 
   # Specify output file name
   outfile_name <- paste(out_name, "_LDpruned_r", ld.threshold, "_n", slide.max.n, sep="")
