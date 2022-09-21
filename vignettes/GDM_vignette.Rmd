@@ -175,7 +175,7 @@ TODO [EAC]: discuss not over-interpreting GDM map? what about masking?
 
 ## Running GDM with `gdm_do_everything()`
 
-***
+------------------------------------------------------------------------
 
 The algatr package also has an option to run all of the above functionality in a single function, `gdm_do_everything()`. This function will output the fitted I-splines, map, table, and PCA. The resulting object looks identical to the output object from `gdm_run()`.
 
