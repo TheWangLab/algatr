@@ -9,7 +9,7 @@
 #'
 #' @examples
 load_example <- function(quiet = FALSE){
-  # load all data
+  # Load all data
   utils::data(list = c("liz_vcf", "liz_coords", "liz_gendist", "CA_env"))
 
   if (!quiet) {
