@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Processing environmental data
+# Processing environmental data
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
@@ -23,12 +23,27 @@ library(here)
 library(viridis)
 ```
 
-For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore TODO XXX ways to process environmental data:
+For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
 
-1. Perform a raster PCA on a stack of environmental layers to reduce dimensionality
-2. Detect collinearity between environmental layers
-3. Calculate geographic distances between coordinates
-4. Calculate environmental distances
+-   `get_worldclim()` to pull environmental layers remotely from the WorldClim database
+
+-   `TODO` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
+
+-   `TODO` to detect collinearity between environmental layers
+
+-   `coords_to_raster()` to create a raster layer from coordinate data
+
+-   `geo_dist()` to calculate geographic distances between coordinates
+
+-   `env_dist()` to calculate environmental distances
+
+### Gather environmental data using `get_worldclim()`
+
+------------------------------------------------------------------------
+
+### Raster PCA on environmental layers with \`\`
+
+------------------------------------------------------------------------
 
 For our test dataset, and TODO [EAC], we will be using PC-based processing of environmental layers
 

@@ -100,8 +100,8 @@ There are a few additional considerations to make if running GDM with model sele
 *N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
 
 ```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
-# gdm_best <- gdm_run(gendist = gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
-
+gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
+install_github("DeveloperName/PackageName")
 # Which predictors were considered significant?
 # TODO fill in
 # gdm_best$model$predictors
