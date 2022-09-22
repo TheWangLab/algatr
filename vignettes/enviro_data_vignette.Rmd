@@ -23,6 +23,9 @@ library(raster)
 library(geodata)
 library(here)
 library(viridis)
+library(tibble)
+library(ggplot2)
+library(tidyr)
 ```
 
 For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
@@ -53,7 +56,6 @@ There are two main packages algatr uses to process and manipulate environmental 
 
 Each of these packages has their own classes to represent rasters. Within the terra package, the `SpatRaster` class is used to represent rasters, while the raster package uses `RasterLayer` (single-layer raster data), `RasterBrick` and `RasterStack` (both are multi-variable raster data but differ in how many files can be linked to them) classes. No matter which class is used to represent rasters, the fundamental parameters that describe these rasters is always the same: numbers of rows, columns, the spatial extent, and the coordinate reference system (CRS) for proper projection.
 
-
 ### Gather environmental data using `get_worldclim()`
 
 ------------------------------------------------------------------------
@@ -82,7 +84,6 @@ Now, let's plot one of the variables and overlay our sampling coordinates on top
 terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
 points(liz_coords, pch = 19)
 ```
-
 
 ### Detect collinearity among environmental layers with `TODO`
 
@@ -124,7 +125,6 @@ terra::plotRGB(envstack, r = 1, g = 2, b = 3)
 
 Within the example dataset, the object `CA_env` is a PCA raster stack.
 
-
 ### Create raster from coordinates with `coords_to_raster()`
 
 ------------------------------------------------------------------------
@@ -132,18 +132,74 @@ Within the example dataset, the object `CA_env` is a PCA raster stack.
 In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument).
 
 ```{r coords to raster}
-
+raster <- coords_to_raster(liz_coords, res = 1)
+plot(raster, axes = FALSE)
+points(liz_coords, pch = 19)
 ```
 
 ### Calculate environmental distances using `env_dist()`
 
 ------------------------------------------------------------------------
 
+Some of the analyses within algatr, such as GDM and MMRR, require comparing genetic distances to environmental distances. We can calculate environmental distances using the `env_dist()` function, which allows users to calculate environmental distances between variables for given sampling locations. We first need to extract environmental variables at sampling coordinates.
+
+```{r extract enviro vars}
+env <- raster::extract(CA_env, liz_coords)
+
+# You can there are extracted values (n=53) for each environmental layer
+head(env)
+```
+
+Now, we're ready to calculate environmental distances.
+
+```{r env dist}
+env_dist <- env_dist(env)
+
+plot(env_dist$CA_rPCA1)
+
+# Make a fun heat map with the pairwise distances
+as.data.frame(env_dist$CA_rPCA1) %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
+```
+
 ### Calculate geographic distances using `geo_dist()`
 
 ------------------------------------------------------------------------
-(1) Import environmental layers
-(2) Calculate environmental distance
 
+The `geo_dist()` function allows users to choose from five environmental distance metrics using the `type` argument:
 
+-   Geodesic distances (`"euclidean"` or `"linear"`) using the geodist package ([Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist))
 
+-   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model raster specified with the `lyr` argument
+
+-   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a digital elevation model raster specified with the `lyr` argument
+
+```{r geo dist}
+geo_dist <- geo_dist(liz_coords, type = "Euclidean")
+
+# Make a fun heat map with the pairwise distances
+geo_dist <- as.data.frame(geo_dist)
+colnames(geo_dist) <- rownames(geo_dist)
+geo_dist %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
+```
+
+TODO: topographic distances?
+
+```{r}
+dem <- geodata::elevation_30s(country = "USA", path=here())
+```

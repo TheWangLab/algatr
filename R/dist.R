@@ -1,9 +1,8 @@
 
-
 #' Calculate distance between environmental vars
 #'
 #' @param env dataframe or vector of environmental variables for locations
-#' @param stdz if TRUE then environmental values will be standardized (defaults to TRUE)
+#' @param stdz if TRUE then environmental values will be standardized (default = TRUE)
 #'
 #' @return
 #' @export
@@ -15,7 +14,7 @@ env_dist <- function(env, stdz = TRUE){
   return(distmat)
 }
 
-#' Helper function to convert an environemntal vector to a distance matrix
+#' Helper function to convert an environmental vector to a distance matrix
 #'
 #' @inheritParams env_dist
 #'
@@ -52,11 +51,13 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   else if(type == "topo" | type == "topographic"){
     if(is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
     message("Calculating topo distances... This can be time consuming with many points and large rasters.")
+
     distmat <- topoDistance::topoDist(lyr, coords, paths = FALSE)
   }
   else if(type == "resistance" | type == "cost" | type == "res"){
     if(is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
     message("Calculating resistance distances... This can be time consuming with many points and large rasters.")
+
     # Convert resistance surface to conductance surface
     cond.r <- 1 / lyr
     trSurface <- gdistance::transition(cond.r, transitionFunction = mean, directions = 8) # Create transition surface
@@ -64,5 +65,6 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
     sp <- sp::SpatialPoints(coords = coords)
     distmat <- as.matrix(gdistance::commuteDistance(trSurface, sp)) # Calculate circuit distances
   }
+
   return(distmat)
 }
