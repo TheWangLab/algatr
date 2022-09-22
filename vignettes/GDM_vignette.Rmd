@@ -49,7 +49,7 @@ There are a few assumptions built within this function that the user must be awa
 
 ### *Test dataset*
 
-For this vignette, we'll be using a subset of the *Sceloporus occidentalis* RADseq dataset from [Bouzid et al. 2022](REFER) which contains 1,000 SNPs for 53 individuals.
+For this vignette, we'll be using a subset of the *Sceloporus occidentalis* RADseq dataset from [Bouzid et al. 2022](https://onlinelibrary.wiley.com/doi/10.1111/mec.15836) which contains 1,000 SNPs for 53 individuals.
 
 ## Read in and process input data
 
