@@ -64,8 +64,9 @@ We want to prune any linked sites from our data to not bias results. To do so, w
 -   `maf` specifies the minor allele frequency (defaults to 0.05)
 
 ```{r LD-pruning int files}
-# ld_prune() takes in the path to the vcf file, not the vcf object
+# ld_prune() takes in the path to the vcf file, not the vcf object. The vcf used to generate the test dataset is in the extdata directory
 # Leave the ld.threshold default (0.6), but change slide.max.n:
+# vcf <- system.file("extdata", "liz_test.vcf", mustWork = TRUE)
 ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", slide.max.n=10)
 
 # The above should have generated a new directory (liz_LDpruned) containing several files
