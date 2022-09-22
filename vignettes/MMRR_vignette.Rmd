@@ -99,3 +99,13 @@ Now, let's take a look at the output statistics:
 ```{r stats}
 # TODO [EAC]: should this be built in within the function?
 ```
+
+## Running MMRR with `mmrr_do_everything()`
+
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```
