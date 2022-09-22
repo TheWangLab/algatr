@@ -79,5 +79,13 @@ results_qe <- lfmm_do_everything(gen, env = env, K_selection = "quick.elbow")
 results_tess <- lfmm_do_everything(gen, env, coords, K_selection = "tess", Kvals = 1:20)
 ```
 
+## Running LFMM with `lfmm_do_everything()`
 
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```
 
