@@ -27,39 +27,60 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
 -   `get_worldclim()` to pull environmental layers remotely from the WorldClim database
 
--   `TODO` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
-
 -   `TODO` to detect collinearity between environmental layers
+
+-   `TODO` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
 -   `coords_to_raster()` to create a raster layer from coordinate data
 
+-   `env_dist()` to calculate environmental distances
+
 -   `geo_dist()` to calculate geographic distances between coordinates
 
--   `env_dist()` to calculate environmental distances
+### Load example data
+
+```{r test data}
+load_example()
+```
+
+### Introduction to environmental data files and object types
+
+TODO: discussion of SpatRaster, raster stack, layers, etc.
+
+The terra package ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) has some excellent resources and walkthroughs [here](https://rspatial.org/terra/) that explain in depth environmental data processing and manipulation in R.
+
+Background on the raster package 
 
 ### Gather environmental data using `get_worldclim()`
 
 ------------------------------------------------------------------------
 
-### Raster PCA on environmental layers with \`\`
+### Detect collinearity among environmental layers with `TODO`
+
+------------------------------------------------------------------------
+
+### Perform a raster PCA on environmental layers with `TODO`
 
 ------------------------------------------------------------------------
 
 For our test dataset, and TODO [EAC], we will be using PC-based processing of environmental layers
 
-(1) Import environmental layers
-(2) Calculate environmental distance
+Now, let's plot the resulting environmental PCs to see how they look.
 
 ```{r data}
+# Gather the files corresponding to the three PCs
 env_files <- list.files(here("inst", "extdata", "PC_layers"), full.names = TRUE)
+# Stack into a spatial raster object
 envstack <- terra::rast(env_files)
 ```
 
 Take a look at the rasters:
 
-```{r plot rasters, fig.width = 5, fig.height = 5}
+```{r plot rasters, warning = FALSE, message = FALSE, fig.width = 5, fig.height = 5}
 terra::plot(envstack, col = turbo(100), axes = FALSE)
 ```
+
+We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B.
 
 ```{r, RGB plot, fig.width = 5, fig.height = 6}
 for(layer in 1:3){
@@ -72,19 +93,25 @@ for(layer in 1:3){
 terra::plotRGB(envstack, r = 1, g = 2, b = 3)
 ```
 
-```{r}
-env_files <- list.files(here("data","PC_layers"), full.names = TRUE)
-envstack <- raster::stack(env_files)
+Within the test dataset, the object `CA_env` is a raster stack. Let's see what it looks like.
 
-# Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
-for(layer in 1:3){
-    minval <- envstack[[layer]]@data@min
-    maxval <- envstack[[layer]]@data@max
-  
-    envstack[[layer]] <- ((envstack[[layer]] - minval) / (maxval - minval))*255
-  }
+### Create raster from coordinates with `coords_to_raster()`
 
-plotRGB(envstack, r = 1, g = 2, b = 3)
+------------------------------------------------------------------------
 
-writeRaster(envstack, here("data",  "RGB_PC_stack.tif"), overwrite = TRUE)
+```{r coords to raster}
+
 ```
+
+### Calculate environmental distances using `env_dist()`
+
+------------------------------------------------------------------------
+
+### Calculate geographic distances using `geo_dist()`
+
+------------------------------------------------------------------------
+(1) Import environmental layers
+(2) Calculate environmental distance
+
+
+
