@@ -3,8 +3,9 @@
 #'
 #' @param coords Dataframe with x and y sample coordinates.
 #' @param res The resolution of WorldClim data to download; options are 0.5, 2.5, 5, and 10 arc-minutes (default = 0.5).
+#' @param save_output Whether to save downloaded worldclim data in a tmp folder in the working directory (default = FALSE).
 #' @param buff A buffer area around sample points for cropping the data layers, expressed as a proportion of the spatial extent for the coordinates (default = 0.01).
-#' @param folder A directory in which to place downloaded worldclim data; if NULL then files will be downloaded to a tmp folder in the working directory (default = NULL).
+#'
 #' @details
 #' If res = 0.5 then the individual WorldClim tiles that cover the sample coordinates are downloaded and merged. If res > 2.5 then global layers are downloaded.
 #' The buffer area maintains a large extent for the final cropped data layers around the sample coordinates. e.g. buff = 0.01 creates a 1% buffer area around the coordinates.
@@ -12,7 +13,7 @@
 #' @export
 #'
 #' @examples
-get_worldclim <- function(coords, res = 0.5, buff = 0.01, folder = NULL){
+get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE){
   # Raster of worldclim tiles
   r <- raster::raster(vals = 1:60, nrows = 5, ncols = 12, ext = raster::extent(c(-180, 180, -90, 90)))
 
@@ -67,5 +68,9 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, folder = NULL){
   wclim <- raster::crop(wclim, buff_ext)
 
   return(wclim)
+
+  if (save_output == FALSE) {
+    unlink(dir_name, recursive=TRUE)
+  }
 }
 
