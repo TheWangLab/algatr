@@ -29,7 +29,7 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE){
 
   # Download and merge tiles
   message("Downloading WorldClim tile 1...")
-  if(is.null(folder)) folder <- paste0(getwd(), "/tmp")
+  folder <- paste0(getwd(), "/tmp")
   wclim <- geodata::worldclim_tile(var = "bio", lon = r_xy[1, 1], lat = r_xy[1, 2], path = folder)
   if(length(r_nums[[1]]) > 1){
     for(i in 2:length(r_nums[[1]])){
@@ -67,10 +67,10 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE){
   # Crop raster stack to buffered area
   wclim <- raster::crop(wclim, buff_ext)
 
-  return(wclim)
-
   if (save_output == FALSE) {
-    unlink(dir_name, recursive=TRUE)
+    unlink(folder, recursive=TRUE)
   }
+
+  return(wclim)
 }
 

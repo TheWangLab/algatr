@@ -63,7 +63,7 @@ WorldClim is a database that provides environmental layers for the entire globe 
 Users can add a buffer around sampling coordinates using the `buff` argument, and tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
 
 ```{r get worldclim}
-get_worldclim(coords = liz_coords)
+wclim <- get_worldclim(coords = liz_coords)
 ```
 
 Let's take a look at what the object can tell us about the data contained therein.
