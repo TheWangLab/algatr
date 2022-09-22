@@ -264,4 +264,12 @@ plot_gd(het_wgd, bkg = range_map, main = "Heterozygosity")
 plot_gd(AR_wgd, bkg = range_map, main = "Allelic Richness")
 ```
 
-### For additional information, see our paper found here: [LINK]
+## Running wingen with `wingen_do_everything()`
+
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `wingen_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```
