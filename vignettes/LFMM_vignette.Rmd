@@ -40,7 +40,7 @@ As with TESS3 (TODO link vignette?), there are a variety of ways to determine th
 
 Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
-The main function to perform an LFMM analysis is `lfmm_do_everything()`, which primarily uses the `lfmm2()` function [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100) within the LEA package [TODO](TODO). lfmm2 builds off the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details), but is computationally faster.
+The main function to perform an LFMM analysis is `lfmm_do_everything()`, which primarily uses the `lfmm2()` function [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100) within the LEA package [Frichot & Francois 2015](https://rdrr.io/bioc/LEA/). The `lfmm2()` function builds off the `lfmm()` function within the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details), but is computationally faster.
 
 ## Read in and process data files
 

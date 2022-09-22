@@ -34,6 +34,8 @@ RDA is a method to detect outlier loci that are significantly associated with en
 
 Importantly, RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
+CITATION FOR METHOD?
+
 ### Read in and process input data
 
 Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `lfmm_do_everything()` will extract values for us. For clarity's sake here, we'll do the conversion from a vcf to dosage matrix using the `vcf_to_dosage()` function. 
@@ -48,7 +50,7 @@ gen <- vcf_to_dosage(liz_vcf)
 
 ### Run a simple RDA
 
-The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can e found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
+The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
 
 Let's start with using the p-value method to detect outlier loci:
 
@@ -256,3 +258,12 @@ rda_plot(mod, rda_snps, pvalues, sig = 0.05, manhattan = TRUE, rdaplot = FALSE)
 rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
 ```
 
+## Running RDA with `rda_do_everything()`
+
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```
