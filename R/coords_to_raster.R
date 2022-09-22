@@ -1,11 +1,12 @@
+
 #' Create a raster from coordinates
 #'
 #' @param coords x and y coordinates (two columns, the first should be x and the second should be y)
-#' @param buffer buffer to add to edge of raster (defaults to 0)
-#' @param res desired resolution of raster (defaults to NULL). Can be a single value for square cells or a vector with two values representing x and y resolutions.
-#' @param agg aggregation factor to apply to raster (defaults to NULL)
-#' @param disagg disaggregation factor to apply to raster (defaults to NULL)
-#' @param plot whether to plot resulting raster with coords (defaults to FALSE)
+#' @param buff buffer to add to edge of raster (default = 0)
+#' @param res desired resolution of raster (default = NULL). Can be a single value for square cells or a vector with two values representing x and y resolutions.
+#' @param agg aggregation factor to apply to raster (default = NULL)
+#' @param disagg disaggregation factor to apply to raster (default = NULL)
+#' @param plot whether to plot resulting raster with coords (default = FALSE)
 #'
 #' @return RasterLayer
 #' @export
@@ -13,10 +14,10 @@
 #' @examples
 #' load_mini_ex()
 #' coords_to_raster(mini_coords, buffer = 1, plot = TRUE)
-coords_to_raster <- function(coords, buffer = 0, res = NULL, agg = NULL, disagg = NULL, plot = FALSE) {
+coords_to_raster <- function(coords, buff = 0, res = NULL, agg = NULL, disagg = NULL, plot = FALSE) {
 
   # make a matrix
-  r <- make_raster(coords, buffer = buffer, res = res)
+  r <- make_raster(coords, buff = buff, res = res)
 
   # aggregate or disaggregate
   if (!is.null(agg) & !is.null(disagg)) {
@@ -44,17 +45,17 @@ coords_to_raster <- function(coords, buffer = 0, res = NULL, agg = NULL, disagg 
 #'
 #' @export
 #' @noRd
-make_raster <- function(coords, buffer = 0, res = NULL){
+make_raster <- function(coords, buff = 0, res = NULL){
   # format coords
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
   # get x and y min and max and round up to nearest integer
   # (note: must be an integer for assigning nrow and ncol of a matrix)
-  xmin <- ceiling(min(coords$x, na.rm = TRUE) - buffer)
-  xmax <- ceiling(max(coords$x, na.rm = TRUE) + buffer)
-  ymin <- ceiling(min(coords$y, na.rm = TRUE) - buffer)
-  ymax <- ceiling(max(coords$y, na.rm = TRUE) + buffer)
+  xmin <- ceiling(min(coords$x, na.rm = TRUE) - buff)
+  xmax <- ceiling(max(coords$x, na.rm = TRUE) + buff)
+  ymin <- ceiling(min(coords$y, na.rm = TRUE) - buff)
+  ymax <- ceiling(max(coords$y, na.rm = TRUE) + buff)
 
   # make matrix
   m <- matrix(nrow = (ymax - ymin), ncol = (xmax - xmin))

@@ -58,19 +58,30 @@ Each of these packages has their own classes to represent rasters. Within the te
 
 ------------------------------------------------------------------------
 
-WorldClim is a database that provides environmental layers for the entire globe (excluding Antarctica); the data contained are four monthly variables and 18 bioclimatic variables, which are provided in tiles. The `get_worldclim()` function retrieves and extracts WorldClim data (using the `worldclim_tile()` function in the geodata package) from relevant tiles based on your sampling coordinates.
+WorldClim is a database that provides environmental layers for the entire globe (excluding Antarctica); the data contained are four monthly variables and 18 bioclimatic variables, which are provided in tiles. The `get_worldclim()` function retrieves and extracts WorldClim data (using the `worldclim_tile()` function in the geodata package) from relevant tiles based on your sampling coordinates, drawing a convex hull shape to connect all data points.
 
-Users can add a buffer around sampling coordinates using the `buff` argument, and tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
+Users can add a buffer around sampling coordinates using the `buff` argument, which corresponds to the proportion of the spatial extent for the coordinates. Tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
 
 ```{r get worldclim}
-wclim <- get_worldclim(coords = liz_coords)
+wclim <- get_worldclim(coords = liz_coords) # can set save_output = TRUE if you want a directory with files made
 ```
 
-Let's take a look at what the object can tell us about the data contained therein.
+Notice that `wclim` is a terra `SpatRaster` object. Let's take a look at what this object looks like.
 
+```{r wclim}
+# See how many layers are contained within the object
+nlyr(wclim)
 
-Plot one of the variables and overlay the sampling coordinates on top.
+# Look at one of the layers, which corresponds to tile_15_wc2.1_30s_bio_1
+wclim[[1]]
+```
 
+Now, let's plot one of the variables and overlay our sampling coordinates on top.
+
+```{r wclim plot, warning = FALSE}
+terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
+points(liz_coords, pch = 19)
+```
 
 
 ### Detect collinearity among environmental layers with `TODO`
@@ -81,7 +92,7 @@ Plot one of the variables and overlay the sampling coordinates on top.
 
 ------------------------------------------------------------------------
 
-For our test dataset, and TODO [EAC], we will be using PC-based processing of environmental layers
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `XXX` function.
 
 Now, let's plot the resulting environmental PCs to see how they look.
 
@@ -111,11 +122,14 @@ for(layer in 1:3){
 terra::plotRGB(envstack, r = 1, g = 2, b = 3)
 ```
 
-Within the test dataset, the object `CA_env` is a raster stack. Let's see what it looks like.
+Within the example dataset, the object `CA_env` is a PCA raster stack.
+
 
 ### Create raster from coordinates with `coords_to_raster()`
 
 ------------------------------------------------------------------------
+
+In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument).
 
 ```{r coords to raster}
 
