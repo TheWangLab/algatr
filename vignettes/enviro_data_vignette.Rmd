@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(terra)
+library(raster)
+library(geodata)
 library(here)
 library(viridis)
 ```
@@ -45,15 +47,31 @@ load_example()
 
 ### Introduction to environmental data files and object types
 
-TODO: discussion of SpatRaster, raster stack, layers, etc.
+Briefly, in R, any (geo)spatial data can be represented using vectors or rasters. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, vectors are used to represent data points (e.g., sampling coordinates) or polygons (e.g., the state of California); rasters are used for storing environmental attributes of California.
 
-The terra package ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) has some excellent resources and walkthroughs [here](https://rspatial.org/terra/) that explain in depth environmental data processing and manipulation in R.
+There are two main packages algatr uses to process and manipulate environmental data: terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)). Both of these packages have excellent resources and walkthroughs (see [here](https://rspatial.org/terra/) for terra; see [here](https://rspatial.org/raster/pkg/index.html) for raster) that explain in depth environmental data processing and manipulation in R.
 
-Background on the raster package 
+Each of these packages has their own classes to represent rasters. Within the terra package, the `SpatRaster` class is used to represent rasters, while the raster package uses `RasterLayer` (single-layer raster data), `RasterBrick` and `RasterStack` (both are multi-variable raster data but differ in how many files can be linked to them) classes. No matter which class is used to represent rasters, the fundamental parameters that describe these rasters is always the same: numbers of rows, columns, the spatial extent, and the coordinate reference system (CRS) for proper projection.
+
 
 ### Gather environmental data using `get_worldclim()`
 
 ------------------------------------------------------------------------
+
+WorldClim is a database that provides environmental layers for the entire globe (excluding Antarctica); the data contained are four monthly variables and 18 bioclimatic variables, which are provided in tiles. The `get_worldclim()` function retrieves and extracts WorldClim data (using the `worldclim_tile()` function in the geodata package) from relevant tiles based on your sampling coordinates.
+
+Users can add a buffer around sampling coordinates using the `buff` argument, and tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
+
+```{r get worldclim}
+get_worldclim(coords = liz_coords)
+```
+
+Let's take a look at what the object can tell us about the data contained therein.
+
+
+Plot one of the variables and overlay the sampling coordinates on top.
+
+
 
 ### Detect collinearity among environmental layers with `TODO`
 

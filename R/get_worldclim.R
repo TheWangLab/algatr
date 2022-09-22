@@ -1,3 +1,4 @@
+
 #' Download and merge WorldClim data for study area
 #'
 #' @param coords Dataframe with x and y sample coordinates.
@@ -13,10 +14,10 @@
 #' @examples
 get_worldclim <- function(coords, res = 0.5, buff = 0.01, folder = NULL){
   # Raster of worldclim tiles
-  r <- raster::raster(vals = 1:60, nrows = 5, ncols = 12, ext = extent(c(-180, 180, -90, 90)))
+  r <- raster::raster(vals = 1:60, nrows = 5, ncols = 12, ext = raster::extent(c(-180, 180, -90, 90)))
 
   # Make SpatialPolygons object with convex hull of coords
-  ch_pts <- chull(coords)
+  ch_pts <- grDevices::chull(coords)
   ch_poly <- sp::Polygon(coords[ch_pts,])
   ch_polys <- sp::Polygons(list(ch_poly), ID = "chull")
   ch_spolys <- sp::SpatialPolygons(list(ch_polys))
