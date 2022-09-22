@@ -206,3 +206,13 @@ plot(qmat,
 par(pty = "s", mar = rep(0,4))
 tess_plot(krig_admix, liz_coords, plot_method = "maxQ", col_pal =  tess_col_default)
 ```
+
+## Running TESS with `tess_do_everything()`
+
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```
