@@ -156,8 +156,11 @@ Now, we're ready to calculate environmental distances.
 env_dist <- env_dist(env)
 
 plot(env_dist$CA_rPCA1)
+```
 
-# Make a fun heat map with the pairwise distances
+We can make a heat map in ggplot with the pairwise distances.
+
+```{r env dist heatmap}
 as.data.frame(env_dist$CA_rPCA1) %>% 
   tibble::rownames_to_column("sample") %>% 
   tidyr::gather("sample_comp", "dist", -"sample") %>% 
@@ -177,13 +180,21 @@ The `geo_dist()` function allows users to choose from five environmental distanc
 
 -   Geodesic distances (`"euclidean"` or `"linear"`) using the geodist package ([Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist))
 
--   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model raster specified with the `lyr` argument
+-   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model (DEM) raster specified with the `lyr` argument
 
 -   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a digital elevation model raster specified with the `lyr` argument
+
+### Euclidean distances
 
 ```{r geo dist}
 geo_dist <- geo_dist(liz_coords, type = "Euclidean")
 
+plot(geo_dist)
+```
+
+We can make a heat map in ggplot with the pairwise distances.
+
+```{r geo dist heatmap}
 # Make a fun heat map with the pairwise distances
 geo_dist <- as.data.frame(geo_dist)
 colnames(geo_dist) <- rownames(geo_dist)
@@ -198,8 +209,49 @@ geo_dist %>%
   ylab("Sample")
 ```
 
-TODO: topographic distances?
+### Topographic distances
 
-```{r}
+We can also calculate topographic distances, but need to provide a digital elevation model (DEM) raster to do so. We can retrieve a DEM using the geodata package, cropping to California using the `CA_env` object in our example dataset.
+
+```{r download DEM}
+# Download the DEM raster using the elevation_30s function
 dem <- geodata::elevation_30s(country = "USA", path=here())
+
+# Crop to California limits
+CA_dem <- crop(dem, CA_env)
+
+# Convert CA_dem from SpatRaster object to RasterLayer object
+CA_dem <- raster::raster(CA_dem)
+```
+
+Take a look at what the DEM looks like, with samples plotted on top.
+
+```{r plot dem}
+plot(CA_dem, axes = FALSE)
+points(liz_coords, pch = 19)
+```
+
+Now, let's calculate topographic distances using the `CA_dem` object as our layer with the `lyr` argument.
+
+```{r topo dists}
+topo_dist <- geo_dist(liz_coords, type = "topo", lyr = CA_dem)
+```
+
+Plot the resulting topographic distances as a heatmap.
+
+```{r topo dist heatmap}
+# Make a fun heat map with the pairwise distances
+topo_dist <- as.data.frame(topo_dist)
+colnames(topo_dist) <- 1:53
+rownames(topo_dist) <- 1:53
+
+topo_dist %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
 ```
