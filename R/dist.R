@@ -15,7 +15,7 @@ env_dist <- function(env, stdz = TRUE){
   return(distmat)
 }
 
-#' Helper function to convert an environemntal vector to a distance matrix
+#' Helper function to convert an environmental vector to a distance matrix
 #'
 #' @inheritParams env_dist
 #'
