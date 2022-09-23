@@ -215,13 +215,11 @@ We can also calculate topographic distances, but need to provide a digital eleva
 
 ```{r download DEM}
 # Download the DEM raster using the elevation_30s function
+# This will save a .tif file in your current dir
 dem <- geodata::elevation_30s(country = "USA", path=here())
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)
-
-# Convert CA_dem from SpatRaster object to RasterLayer object
-CA_dem <- raster::raster(CA_dem)
 ```
 
 Take a look at what the DEM looks like, with samples plotted on top.
