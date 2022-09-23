@@ -61,6 +61,9 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
     if(is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
     message("Calculating resistance distances... This can be time consuming with many points and large rasters.")
 
+    # Convert to RasterLayer if SpatRaster object
+    if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
+
     # Convert resistance surface to conductance surface
     cond.r <- 1 / lyr
     trSurface <- gdistance::transition(cond.r, transitionFunction = mean, directions = 8) # Create transition surface
