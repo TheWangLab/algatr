@@ -13,7 +13,7 @@
 #' @examples
 get_worldclim <- function(coords, res = 0.5, buff = 0.01, folder = NULL){
   # Raster of worldclim tiles
-  r <- raster::raster(vals = 1:60, nrows = 5, ncols = 12, ext = extent(c(-180, 180, -90, 90)))
+  r <- raster::raster(vals = 1:60, nrows = 5, ncols = 12, ext = raster::extent(c(-180, 180, -90, 90)))
 
   # Make SpatialPolygons object with convex hull of coords
   ch_pts <- chull(coords)
@@ -64,7 +64,9 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, folder = NULL){
 
   # Crop raster stack to buffered area
   wclim <- raster::crop(wclim, buff_ext)
-
+  names(wclim) <- c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio8", "bio9", "bio10",
+                    "bio11", "bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19")
+  wclim <- raster::stack(wclim)
   return(wclim)
 }
 
