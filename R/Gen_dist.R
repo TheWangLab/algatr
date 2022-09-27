@@ -7,6 +7,10 @@
 #' @param plink_file path to plink distance file (typically ".dist")
 #' @param plink_id_file path to plink id file (typically ".dist.id")
 #'
+#' @details
+#' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
+#' Proportions of shared alleles calculated using the adegenet package: Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi:10.1093/bioinformatics/btr521.
+#'
 #' @return pairwise distance matrix for given distance metric
 #'
 gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, criticalpoint = 2.0234){
