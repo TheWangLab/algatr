@@ -1,27 +1,28 @@
 
 #' Calculate genetic distances
 #'
-#' @param dist_type is the type of genetic distance to calculate
-#' @param criticalpoint is the critical point for the significance threshold for the TW test within the PCA
-#' @param vcf_file path to vcf file
+#' @param vcf path to vcf file or a `vcfR` type object
 #' @param plink_file path to plink distance file (typically ".dist")
 #' @param plink_id_file path to plink id file (typically ".dist.id")
+#' @param dist_type the type of genetic distance to calculate
+#' @param criticalpoint the critical point for the significance threshold for the TW test within the PCA
 #'
 #' @details
 #' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
 #' Proportions of shared alleles calculated using the adegenet package: Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi:10.1093/bioinformatics/btr521.
 #' For PC-based distances, mean-based imputation calculated using the dartR package: Gruber, B, Unmack, PJ, Berry, OF, Georges, A. dartr: An r package to facilitate analysis of SNP data generated from reduced representation genome sequencing. Mol Ecol Resour. 2018; 18: 691-699. https://doi.org/10.1111/1755-0998.12745
 
-#'
 #' @return pairwise distance matrix for given distance metric
 #'
-gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
+gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
+
+  # Import vcf if provided --------------------------------------------------
+
+  if(!is.null(vcf)) if(!inherits(vcf, "vcfR")) vcf <- vcfR::read.vcfR(vcf)
 
   # Calculate Euclidean distances -------------------------------------------
 
   if (dist_type == "euclidean") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
@@ -45,8 +46,6 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # Calculate Bray-Curtis distances -----------------------------------------
 
   if (dist_type == "bray-curtis") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
@@ -70,14 +69,11 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # Calculate proportion of shared alleles ----------------------------------
 
   if (dist_type == "dps") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genind
     genind <- vcfR::vcfR2genind(vcf)
     dists <- adegenet::propShared(genind)
     return(as.data.frame(dists))
   }
-
 
   # Process Plink distance output files -------------------------------------
 
@@ -95,8 +91,6 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # PC-based dist -----------------------------------------------------------
 
   if (dist_type == "pc"){
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl) # to check for NAs
