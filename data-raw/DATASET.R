@@ -1,9 +1,20 @@
+
 # Code to create example data -------------------------------------------------------------
+
+# Raw Sceloporus data files from:
+# Bouzid N, Archie JW, Anderson RA, Grummer JA, Leaché AD (2022)
+# Evidence for ephemeral ring species formation during the diversification history of western fence lizards (Sceloporus occidentalis)
+# Molecular Ecology, 31: 620-631. doi: https://doi.org/10.1111/mec.15836
+
+# liz_vcf -----------------------------------------------------------------
 
 # Load and save vcf subset
 liz_vcf <- vcfR::read.vcfR("inst/extdata/populations_r20.haplotypes.filtered_m70_randomSNP.vcf")
 # Subsample 1000 SNPs
 liz_vcf <- liz_vcf[1:1000,]
+
+
+# CA shapefile ------------------------------------------------------------
 
 # Get CA shapefile
 # Download states from tigris
@@ -14,6 +25,9 @@ states <- sf::st_transform(states, 4326)
 states <- sf::as_Spatial(states)
 # Subset out CA
 CA <- states[which(states$NAME == "California"), "STUSPS"]
+
+
+# liz_coords --------------------------------------------------------------
 
 # Load and save coords
 liz_coords <- read.table("inst/extdata/Scelop.coord")
@@ -47,6 +61,8 @@ usethis::use_data(liz_vcf, overwrite = TRUE)
 stopifnot(colnames(liz_vcf@gt)[-1] == IDS)
 
 
+# CA_env ------------------------------------------------------------------
+
 # Load env data
 CA_env <- raster::stack(list.files("inst/extdata/PC_layers/", full.names = TRUE))
 raster::writeRaster(CA_env, "inst/extdata/CA_env.tif", overwrite = TRUE)
@@ -56,6 +72,9 @@ usethis::use_data(CA_env, overwrite = TRUE)
 
 dos <- dos[complete.cases(dos),]
 prcomp(~., data.frame(dos))
+
+
+# liz_gendist -------------------------------------------------------------
 
 # Process plink genetic distances
 liz_gendist <- as.data.frame(readr::read_tsv("inst/extdata/liz_test.dist", col_names = FALSE))
