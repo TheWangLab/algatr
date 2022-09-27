@@ -1,4 +1,4 @@
-#' MMRR function to do everything ()
+#' MMRR function to do everything
 #'
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
@@ -329,18 +329,55 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
   return(plt_cor)
 }
 
-mmrr_table <- function(coeff_df, digits = 2){
+#' Create `gt` table of MMRR results
+#'
+#' @param mmrr_results
+#' @param digits
+#'
+#' @return An object of class `gt_tbl`
+#' @export
+#'
+mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
 
-  if(!is.null(digits)) coeff_df <- coeff_df %>% dplyr::mutate(dplyr::across(-var, round, digits))
+  mmrr_df <- mmrr_results$coeff_df
+  mod <- mmrr_results$mod
 
-  d <- max(abs(min(coeff_df$estimate)), abs(max(coeff_df$estimate)))
+  if(digits) mmrr_df$estimate <- round(mmrr_df$estimate, digits)
+  d <- max(abs(min(mmrr_df$estimate)), abs(max(mmrr_df$estimate)))
 
-  suppressWarnings(
-    tbl <- coeff_df  %>%
+  suppressWarnings({
+    tbl <- mmrr_df  %>%
       gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d))
+      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d)) %>%
+      gt::sub_missing(missing_text = "")
 
-  )
+    if (summary_stats) {
+
+      stat_names <- c("R-Squared:", "F-Statistic:", "F p-value:")
+      stats <- c(mod$r.squared, mod$Fstatistic, mod$Fpvalue)
+      mmrr_df <- mmrr_df %>%
+        rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, mmrr_df)) %>%
+        dplyr::mutate(dplyr::across(-c(var), as.numeric))
+
+
+      tbl <- mmrr_df %>%
+        gt::gt() %>%
+        gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d)) %>%
+        gt::sub_missing(missing_text = "") %>%
+        gt::tab_row_group(label = NA, id = "model", rows = which(!(mmrr_df$var %in% stat_names))) %>%
+        gtExtras::gt_highlight_rows(rows = which(mmrr_df$var %in% stat_names), fill = "white") %>%
+        gt::tab_style(
+          style = list(gt::cell_borders(sides = "top", color = "white"),
+                       gt::cell_text(align = "left"),
+                       "padding-top:2px;padding-bottom:2px;"),
+          locations = gt::cells_body(rows = which(mmrr_df$var %in% stat_names))
+        )
+    }
+
+    if(!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -var, decimals = 2)
+
+  })
+
 
   tbl
 }

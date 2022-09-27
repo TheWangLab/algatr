@@ -1,20 +1,23 @@
 #' Calculate genetic distances
 #'
-#' @param dist_type is the type of genetic distance to calculate
-#' @param criticalpoint is the critical point for the significance threshold for the TW test within the PCA
-#' @param vcf_file path to vcf file
+#' @param vcf path to vcf file or a `vcfR` type object
 #' @param plink_file path to plink distance file (typically ".dist")
 #' @param plink_id_file path to plink id file (typically ".dist.id")
+#' @param dist_type is the type of genetic distance to calculate
+#' @param criticalpoint is the critical point for the significance threshold for the TW test within the PCA
 #'
 #' @return pairwise distance matrix for given distance metric
 #'
-gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
+gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
+
+
+  # Import vcf data if provided  --------------------------------------------
+
+  if(!is.null(vcf)) if(!inherits(vcf, "vcfR")) vcf <- vcfR::read.vcfR(vcf)
 
   # Calculate Euclidean distances -------------------------------------------
 
   if (dist_type == "euclidean") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
@@ -26,8 +29,6 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # Calculate Bray-Curtis distances -----------------------------------------
 
   if (dist_type == "bray-curtis") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
@@ -39,8 +40,6 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # Calculate proportion of shared alleles ----------------------------------
 
   if (dist_type == "dps") {
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genind
     genind <- vcfR::vcfR2genind(vcf)
     dists <- adegenet::propShared(genind)
@@ -64,8 +63,6 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
   # PC-based dist -----------------------------------------------------------
 
   if (dist_type == "pc"){
-    # Read in vcf file
-    vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight
     gl <- vcfR::vcfR2genlight(vcf)
     # Perform PCA
@@ -89,38 +86,4 @@ gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NU
     return(as.data.frame(dists))
   }
 
-}
-
-#' Plot the relationship between two distance metrics
-#' TODO: are metric names really necessary?
-#'
-#' @param dist_x df containing square distance matrix for x axis
-#' @param dist_y df containing square distance matrix for y axis
-#' @param metric_name_x name of distance metric for x axis
-#' @param metric_name_y name of distance metric for y axis
-#'
-plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
-
-  # Melt from square to long
-  melt_x = harrietr::melt_dist(as.matrix(dist_x)) %>%
-    dplyr::rename(!!metric_name_x := dist)
-  melt_y = harrietr::melt_dist(as.matrix(dist_y)) %>%
-    dplyr::rename(!!metric_name_y := dist)
-
-  if (metric_name_x == "dps" || metric_name_y == "dps"){
-    # TODO: should check whether inds are the same across datasets, return something if not
-    joined <- dplyr::full_join(melt_x, melt_y) %>%
-      dplyr::mutate(rev_dps = (1-dps))
-    joined %>%
-      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
-      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
-      geom_point(color="black", size=.2, alpha = .5)
-  } else {
-    # TODO: should check whether inds are the same across datasets, return something if not
-    joined <- dplyr::full_join(melt_x, melt_y)
-    joined %>%
-      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
-      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
-      geom_point(color="black", size=.2, alpha = .5)
-  }
 }

@@ -21,6 +21,9 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
+  # convert vcf to dosage
+  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
   # Convert coords to matrix
   coords <- as.matrix(coords)
 
@@ -45,14 +48,14 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
     K <- Kvals
 
     # run tess for given K value
-    tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   }
 
   # KRIGE QMATRIX  -----------------------------------------------------------------------------------------------
 
   # Get Qmatrix
-  qmat <- qmatrix(tess3_obj, K = K)
+  qmat <- tess3r::qmatrix(tess3_obj, K = K)
 
   # Give warning if K = 1
   if(K == 1) warning("K = 1, skipping kriging and plotting")
@@ -97,7 +100,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   coords <- as.matrix(coords)
 
   # Run tess for all K values
-  tess3_obj <- tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot CV results
   plot(tess3_obj, pch = 19, col = "blue",
@@ -191,7 +194,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
   }
 
   # Krige (capture output so it is not printed automatically)
-  co <- capture.output(krig_res <- autoKrige(Q ~ 1, krig_df, krig_grid))
+  co <- capture.output(krig_res <- automap::autoKrige(Q ~ 1, krig_df, krig_grid))
 
   # Get Krige output
   krig_spdf <- krig_res$krige_output
@@ -256,12 +259,12 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 
   # plot as polygon or continuous Q
   if(plot_method == "maxQ_poly" | plot_method == "allQ_poly"){
-    plt <- plt + ggplot2::geom_tile(data = gg_df, aes(x = x, y = y, fill = K), alpha = 0.5)
+    plt <- plt + ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K), alpha = 0.5)
   } else {
     plt <- plt +
-      ggplot2::geom_tile(data = gg_df, aes(x = x, y = y, fill = K, alpha = Q)) +
+      ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K, alpha = Q)) +
       ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1),
-                                guide = guide_legend())
+                                guide = ggplot2::guide_legend())
   }
 
   # add color
@@ -271,27 +274,27 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   plt <-  plt + ggplot2::coord_equal() + ggplot2::theme_bw()
 
   # add axes
-  if(plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = element_blank(),
-                                            panel.grid.major.y = element_blank(),
-                                            panel.grid.minor.x = element_blank(),
-                                            panel.grid.major.x = element_blank(),
+  if(plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank(),
+                                            panel.grid.major.y = ggplot2::element_blank(),
+                                            panel.grid.minor.x = ggplot2::element_blank(),
+                                            panel.grid.major.x = ggplot2::element_blank(),
                                             aspect.ratio = 1)
 
-  if(!plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = element_blank(),
-                                            panel.grid.major.y = element_blank(),
-                                            panel.grid.minor.x = element_blank(),
-                                            panel.grid.major.x = element_blank(),
-                                            axis.title.x = element_blank(),
-                                            axis.text.x = element_blank(),
-                                            axis.ticks.x = element_blank(),
-                                            axis.title.y = element_blank(),
-                                            axis.text.y = element_blank(),
-                                            axis.ticks.y = element_blank(),
-                                            panel.border = element_blank(),
+  if(!plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank(),
+                                            panel.grid.major.y = ggplot2::element_blank(),
+                                            panel.grid.minor.x = ggplot2::element_blank(),
+                                            panel.grid.major.x = ggplot2::element_blank(),
+                                            axis.title.x = ggplot2::element_blank(),
+                                            axis.text.x = ggplot2::element_blank(),
+                                            axis.ticks.x = ggplot2::element_blank(),
+                                            axis.title.y = ggplot2::element_blank(),
+                                            axis.text.y = ggplot2::element_blank(),
+                                            axis.ticks.y = ggplot2::element_blank(),
+                                            panel.border = ggplot2::element_blank(),
                                             aspect.ratio = 1)
 
   # add coords
-  if(!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), aes(x = x, y = y))
+  if(!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
 
   return(plt)
 }

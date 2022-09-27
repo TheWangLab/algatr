@@ -38,7 +38,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 
   # Get coefficients from models
   coeff_df <- gdm_df(gdm_result)
-  print(gdm_table(coeff_df))
+  print(gdm_table(gdm_result))
 
   # Plot isplines
   gdm_plot_isplines(gdm_result$model)
@@ -315,7 +315,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
   if(n_layers == 1){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster, white_raster)}
 
   # Plot raster
-  if(plot){plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)}
+  if(plot) raster::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
   if(!is.null(coords)) points(coords, cex = 1.5)
 
   # Plot variable vectors
@@ -381,8 +381,8 @@ gdm_plot_isplines <- function(gdm_model){
 gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1){
 
   # Confirm there are exactly 3 axes
-  if(nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
-  if(nlayers(pcaRastRGB) < 3){stop("Need exactly three PC layers (RGB) for creating the variable plot (too few provided)")}
+  if(raster::nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
+  if(raster::nlayers(pcaRastRGB) < 3){stop("Need exactly three PC layers (RGB) for creating the variable plot (too few provided)")}
 
   # GET PCA DATA ----------------------------------------------------------------------------------------------------
 
@@ -418,7 +418,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   # GET RGB VALS FOR ENTIRE RASTER-------------------------------------------------------------------------------------
 
   # Get sample
-  s <- sample(1:ncell(pcaRast), 10000)
+  s <- sample(1:raster::ncell(pcaRast), 10000)
 
   # Get all PC values from raster and remove NAs
   rastvals <- data.frame(values(pcaRast))[s,]
@@ -474,23 +474,32 @@ create_rgb_vec <- function(vec){
   return(x)
 }
 
-#' Scale genetic distances from 0 to 1
+#' Scale a raster stack from 0 to 255
 #'
-#' @param x genetic distance matrix
+#' @param s RasterStack
 #'
-#' @return genetic distance matrix scaled from 0 to 1
-#'
-#' @family GDM functions
-#'
+#' @noRd
 #' @export
+stack_to_rgb <- function(s){
+  stack_list <- as.list(s)
+  new_stack <- raster::stack(purrr::map(stack_list, raster_to_rgb))
+  return(new_stack)
+}
+
+#' Scale raster form 0 to 255
 #'
-#' @examples
-scale01 <- function(x){(x-min(x))/(max(x)-min(x))}
+#' @param r RasterLayer
+#'
+#' @noRd
+#' @export
+raster_to_rgb <- function(r){
+  if(r@data@max == 0){r <- 255} else {r <- (r-r@data@min) / (r@data@max-r@data@min)*255}
+}
 
 
 #' Get coefficients for each predictor
 #'
-#' @param gdm_model - model of type gdm
+#' @param gdm_model model of type `gdm`
 #'
 #' @return data frame of coefficients for GDM
 #'
@@ -520,54 +529,6 @@ gdm_coeffs <- function(gdm_model){
   return(coeffs)
 }
 
-
-#' Scale a raster stack from 0 to 255
-#'
-#' @param s RasterStack
-#'
-#' @noRd
-#' @export
-stack_to_rgb <- function(s){
-  stack_list <- as.list(s)
-  new_stack <- raster::stack(purrr::map(stack_list, raster_to_rgb))
-  return(new_stack)
-}
-
-#' Scale raster form 0 to 255
-#'
-#' @param r RasterLayer
-#'
-#' @noRd
-#' @export
-raster_to_rgb <- function(r){
-  if(r@data@max == 0){r <- 255} else {r <- (r-r@data@min) / (r@data@max-r@data@min)*255}
-}
-
-
-
-#' Make publication quality table of GDM results
-#'
-#' @param gdm_df dataframe output from \link[algatr]{gdm_df}
-#' @param digits number of digits to include (defaults to 2)
-#'
-#' @return An object of class `gt_tbl`
-#' @export
-gdm_table <- function(gdm_df, digits = 2){
-
-  if(!is.null(digits)) gdm_df <- gdm_df %>% dplyr::mutate(dplyr::across(-predictor, round, digits))
-
-  d <- max(abs(min(gdm_df$coefficient)), abs(max(gdm_df$coefficient)))
-
-  suppressWarnings(
-    tbl <- gdm_df  %>%
-      gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric(coefficient, trim = TRUE, domain = c(-d,d))
-
-  )
-
-  tbl
-}
-
 #' Create dataframe of GDM results
 #'
 #' @param gdm_result output of \link[algatr]{gdm_run}
@@ -581,4 +542,70 @@ gdm_df <- function(gdm_result){
   if(!is.null(gdm_result$pvalues)) coeff_df$p <- gdm_result$pvalues
   return(coeff_df)
 }
+
+#' Create `gt` table of GDM results
+#'
+#' @param gdm_result output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything}
+#' @param digits number of digits to include (defaults to 2)
+#'
+#' @return An object of class `gt_tbl`
+#' @export
+gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = TRUE){
+
+  gdm_df <- gdm_df(gdm_result)
+
+  d <- max(abs(min(gdm_df$coefficient, na.rm = TRUE)), abs(max(gdm_df$coefficient)))
+
+  suppressWarnings({
+    tbl <- gdm_df  %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric(coefficient, trim = TRUE, domain = c(-d,d)) %>%
+      gt::sub_missing(missing_text = "")
+
+    if (summary_stats) {
+
+      stat_names <- c("% Explained:")
+      stats <- as.numeric(gdm_result$model$explained)
+      gdm_df <- gdm_df %>%
+        rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, gdm_df)) %>%
+        dplyr::mutate(dplyr::across(-c(predictor), as.numeric))
+
+
+      tbl <- gdm_df %>%
+        gt::gt() %>%
+        gtExtras::gt_hulk_col_numeric(coefficient, trim = TRUE, domain = c(-d,d)) %>%
+        gt::sub_missing(missing_text = "") %>%
+        gt::tab_row_group(label = NA, id = "model", rows = which(!(gdm_df$predictor %in% stat_names))) %>%
+        gtExtras::gt_highlight_rows(rows = which(gdm_df$predictor %in% stat_names), fill = "white") %>%
+        gt::tab_style(
+          style = list(gt::cell_borders(sides = "top", color = "white"),
+                       gt::cell_text(align = "left")),
+          locations = gt::cells_body(rows = which(gdm_df$var %in% stat_names))
+        )
+    }
+
+    if (footnote & summary_stats) tbl <- tbl %>% gt::tab_footnote(footnote = "The percentage of null deviance explained by the fitted GDM model.",
+                                                                  locations = gt::cells_body(rows = which(gdm_df$predictor == "% Explained:"), columns = coefficient),
+                                                                  placement = "right")
+
+
+    if(!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -predictor, decimals = 2)
+
+  })
+
+  tbl
+}
+
+#' Scale genetic distances from 0 to 1
+#'
+#' @param x genetic distance matrix
+#'
+#' @return genetic distance matrix scaled from 0 to 1
+#'
+#' @family GDM functions
+#'
+#' @export
+#'
+#' @examples
+scale01 <- function(x){(x-min(x))/(max(x)-min(x))}
 
