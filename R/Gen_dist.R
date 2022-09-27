@@ -23,7 +23,7 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
-    dists <- ecodist::distance(mat, method="euclidean")
+    dists <- ecodist::distance(mat, method = "euclidean")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
   }
@@ -36,7 +36,7 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
-    dists <- ecodist::distance(mat, method="bray-curtis")
+    dists <- ecodist::distance(mat, method = "bray-curtis")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
   }
