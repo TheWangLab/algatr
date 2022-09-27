@@ -37,11 +37,7 @@ For several landscape genomics analyses, a pairwise genetic distance matrix is r
 
 A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
 
-This package also allows a user to look at the relationship between distance metrics using the `plot_dist()` function.
-
-## Example
-
-As an example, we'll be using the *Sceloporus* RADseq dataset from [Bouzid et al., 2022](https://onlinelibrary.wiley.com/doi/10.1111/mec.15836). Although the original dataset contains >6K SNPs, we've pruned the dataset down to 1,000 SNPs and 53 individuals to make all vignettes run faster. For distances 1-4 above, a vcf is used as input. However, for formatting Plink distances, two files are required as output from Plink: the plink.dist file and the plink.dist.id file, the latter of which contains sample names.
+This package also allows a user to look at the relationship between distance metrics using the `plot_dist()` function, and to visualize one genetic distance metric with a heatmap using the `gen_dist_hm()` function.
 
 ## Calculate genetic distances
 
@@ -51,7 +47,8 @@ To calculate Euclidean distances between our samples:
 
 ```{r}
 # Calculate Euclidean distance matrix
-euc_dists <- gen_dist_calc(vcf_file = here("liz_test.vcf"), dist_type = "euclidean")
+euc_dists <- gen_dist_calc(vcf_file = here("inst", "extdata", "liz_test.vcf"), dist_type = "euclidean")
+# TODO: switch above to system.file
 
 head(euc_dists)
 ```
@@ -60,13 +57,15 @@ Now, let's process Plink distances:
 
 ```{r}
 # TODO: code in a check here that plink files are in correct format?
-plink_dists <- gen_dist_calc(plink_file = here("liz_test.dist"), plink_id_file = here("liz_test.dist.id"), dist_type = "plink")
+plink_dists <- gen_dist_calc(plink_file = here("inst", "extdata", "liz_test.dist"), plink_id_file = here("inst", "extdata", "liz_test.dist.id"), dist_type = "plink")
+# TODO: switch above to system.file for raw plink dist files
 ```
 
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
 
 ```{r}
-pc_dists <- gen_dist_calc(vcf_file = here("liz_test.vcf"), dist_type = "pc")
+pc_dists <- gen_dist_calc(vcf_file = here("inst", "extdata", "liz_test.vcf"), dist_type = "pc")
+# TODO: switch above to system.file
 ```
 
 ### Compare genetic distance results

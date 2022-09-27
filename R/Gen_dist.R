@@ -99,7 +99,7 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
 #' @param metric_name_x name of distance metric for x axis
 #' @param metric_name_y name of distance metric for y axis
 #'
-plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
+gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 
   # Melt from square to long
   melt_x = harrietr::melt_dist(as.matrix(dist_x)) %>%
