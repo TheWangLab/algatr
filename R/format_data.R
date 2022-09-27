@@ -49,7 +49,7 @@ vcf_check <- function(x) {
 
 
 #' Remove islands from mapping
-#' TODO [EAC]: fill in param details
+#'
 #' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
 #' @param shape spatial object to filter TODO [EAC]: needs more detail
 #' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)

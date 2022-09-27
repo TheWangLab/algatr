@@ -1,3 +1,4 @@
+
 #' Calculate genetic distances
 #'
 #' @param dist_type is the type of genetic distance to calculate
@@ -92,8 +93,6 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
 }
 
 #' Plot the relationship between two distance metrics
-#' TODO [EAC]: are metric names really necessary?
-#' TODO [EAC]: is this function necessary?
 #'
 #' @param dist_x df containing square distance matrix for x axis
 #' @param dist_y df containing square distance matrix for y axis
@@ -125,3 +124,24 @@ plot_dist <- function(dist_x, dist_y, metric_name_x, metric_name_y){
       geom_point(color="black", size=.2, alpha = .5)
   }
 }
+
+#' Make heatmap of genetic distances
+#'
+#' @param dist Matrix of genetic distances
+#'
+#' @return
+#' @export
+#'
+#' @examples
+gen_dist_hm <- function(dist){
+
+}
+as.data.frame(env_dist$CA_rPCA1) %>%
+  tibble::rownames_to_column("sample") %>%
+  tidyr::gather("sample_comp", "dist", -"sample") %>%
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
