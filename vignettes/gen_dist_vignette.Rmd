@@ -43,7 +43,7 @@ This package also allows a user to look at the relationship between distance met
 
 ------------------------------------------------------------------------
 
-Euclidean, Bray-Curtis, and PC-based genetic distance metrics ***require no missing data***. A simple imputation (on the median) is built into the `gen_dist_calc()` function mostly for creating test datasets; we ***highly discourage*** using this form of imputation in any of your analyses.
+Euclidean, Bray-Curtis, and PC-based genetic distance metrics ***require no missing data***. A simple imputation (to the median or mean, depending on the distance metric) is built into the `gen_dist_calc()` function mostly for creating test datasets; we ***highly discourage*** using this form of imputation in any of your analyses.
 
 To calculate Euclidean distances between our samples:
 
