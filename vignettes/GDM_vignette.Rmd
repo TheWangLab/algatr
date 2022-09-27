@@ -47,10 +47,6 @@ Contained within `gdm_do_everything()` are the following functions, which we'll 
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
 
-### *Test dataset*
-
-For this vignette, we'll be using a subset of the *Sceloporus occidentalis* RADseq dataset from [Bouzid et al. 2022](https://onlinelibrary.wiley.com/doi/10.1111/mec.15836) which contains 1,000 SNPs for 53 individuals.
-
 ## Read in and process input data
 
 Running a GDM requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
