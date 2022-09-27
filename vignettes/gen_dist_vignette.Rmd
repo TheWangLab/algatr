@@ -37,7 +37,7 @@ For several landscape genomics analyses, a pairwise genetic distance matrix is r
 
 A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
 
-This package also allows a user to look at the relationship between distance metrics using the `plot_dist()` function, and to visualize one genetic distance metric with a heatmap using the `gen_dist_hm()` function.
+This package also allows a user to look at the relationship between distance metrics using the `gen_dist_corr()` function, and to visualize one genetic distance metric with a heatmap using the `gen_dist_hm()` function.
 
 ## Calculate genetic distances
 
@@ -74,8 +74,8 @@ To compare between the genetic distances you just produced, we can plot them:
 
 ```{r}
 # Plot some pairwise comparisons
-p_euc_plink <- plot_dist(euc_dists, plink_dists)
-p_pc_plink <- plot_dist(pc_dists, plink_dists)
+p_euc_plink <- gen_dist_corr(euc_dists, plink_dists)
+p_pc_plink <- gen_dist_corr(pc_dists, plink_dists)
 
 # Show all plots as panels on a single plot
 plot_grid(p_euc_plink, p_pc_plink, nrow=1)
