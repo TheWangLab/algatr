@@ -82,8 +82,8 @@ rm_islands <- function(input, shape, min_vertices = 10000){
 
 #' Impute NA values
 #' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
-#' @param x dosage matrix
-#' @param f function to use for imputation (defaults to median)
+#' @param x Matrix
+#' @param f Function to use for imputation (defaults to median)
 #'
 #' @return
 #' @export

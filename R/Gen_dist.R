@@ -10,6 +10,8 @@
 #' @details
 #' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
 #' Proportions of shared alleles calculated using the adegenet package: Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi:10.1093/bioinformatics/btr521.
+#' For PC-based distances, mean-based imputation calculated using the dartR package: Gruber, B, Unmack, PJ, Berry, OF, Georges, A. dartr: An r package to facilitate analysis of SNP data generated from reduced representation genome sequencing. Mol Ecol Resour. 2018; 18: 691-699. https://doi.org/10.1111/1755-0998.12745
+
 #'
 #' @return pairwise distance matrix for given distance metric
 #'
@@ -23,6 +25,18 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
+
+    # Perform imputation with warning
+    if(any(is.na(mat))){
+      mat <- simple_impute(mat, median)
+      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+
+    # Check for NAs
+    if(any(is.na(mat))){
+      stop("NA values found in genetic data")
+    }
+
     dists <- ecodist::distance(mat, method = "euclidean")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
@@ -36,6 +50,18 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
+
+    # Perform imputation with warning
+    if(any(is.na(mat))){
+      mat <- simple_impute(mat, median)
+      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+
+    # Check for NAs
+    if(any(is.na(mat))){
+      stop("NA values found in genetic data")
+    }
+
     dists <- ecodist::distance(mat, method = "bray-curtis")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
@@ -73,6 +99,23 @@ gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, critic
     vcf <- vcfR::read.vcfR(vcf_file)
     # Convert to genlight
     gl <- vcfR::vcfR2genlight(vcf)
+    mat <- as.matrix(gl) # to check for NAs
+
+    # Perform imputation with warning
+    if(any(is.na(mat))){
+      length <- rep(1, length(gl$ind.names))
+      strata(gl) <- as.data.frame(length)
+      setPop(gl) <- ~length
+      gl <- dartR::gl.impute(gl, method = "frequency")
+      mat <- as.matrix(gl)
+      warning("NAs found in genetic data, imputing to mean (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+
+    # Check for NAs
+    if(any(is.na(mat))){
+      stop("NA values found in genetic data")
+    }
+
     # Perform PCA
     pc <- stats::prcomp(gl)
 
