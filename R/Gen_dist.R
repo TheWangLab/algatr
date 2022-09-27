@@ -180,14 +180,13 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 #'
 #' @examples
 gen_dist_hm <- function(dist){
-
+  as.data.frame(env_dist$CA_rPCA1) %>%
+    tibble::rownames_to_column("sample") %>%
+    tidyr::gather("sample_comp", "dist", -"sample") %>%
+    ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+    ggplot2::geom_tile() +
+    ggplot2::coord_equal() +
+    viridis::scale_fill_viridis() +
+    xlab("Sample") +
+    ylab("Sample")
 }
-as.data.frame(env_dist$CA_rPCA1) %>%
-  tibble::rownames_to_column("sample") %>%
-  tidyr::gather("sample_comp", "dist", -"sample") %>%
-  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
-  ggplot2::geom_tile() +
-  ggplot2::coord_equal() +
-  viridis::scale_fill_viridis() +
-  xlab("Sample") +
-  ylab("Sample")
