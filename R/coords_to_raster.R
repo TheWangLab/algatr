@@ -16,21 +16,21 @@
 #' coords_to_raster(mini_coords, buffer = 1, plot = TRUE)
 coords_to_raster <- function(coords, buff = 0, res = NULL, agg = NULL, disagg = NULL, plot = FALSE) {
 
-  # make a matrix
+  # Make a matrix
   r <- make_raster(coords, buff = buff, res = res)
 
-  # aggregate or disaggregate
+  # Aggregate or disaggregate
   if (!is.null(agg) & !is.null(disagg)) {
     warning("both agg and disagg were provided. Did you mean to do this? (if so, note that aggregation will occur first and then disaggregation second")
   }
   if (!is.null(agg)) r <- raster::aggregate(r, agg)
   if (!is.null(disagg)) r <- raster::disaggregate(r, disagg)
 
-  # assign values to make it easier to visualize the resolution
+  # Assign values to make it easier to visualize the resolution
   r <- raster::init(r)
   r[] <- 1:raster::ncell(r)
 
-  # plot raster
+  # Plot raster
   if (plot) {
     raster::plot(r, legend = FALSE, col = viridis::mako(raster::ncell(r)))
     graphics::points(coords, col = viridis::magma(1, begin = 0.7), pch = 3, lwd = 2)
@@ -46,31 +46,29 @@ coords_to_raster <- function(coords, buff = 0, res = NULL, agg = NULL, disagg = 
 #' @export
 #' @noRd
 make_raster <- function(coords, buff = 0, res = NULL){
-  # format coords
+  # Format coords
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
-  # get x and y min and max and round up to nearest integer
-  # (note: must be an integer for assigning nrow and ncol of a matrix)
+  # Get x and y min and max and round up to nearest integer
+  # (Note: must be an integer for assigning nrow and ncol of a matrix)
   xmin <- ceiling(min(coords$x, na.rm = TRUE) - buff)
   xmax <- ceiling(max(coords$x, na.rm = TRUE) + buff)
   ymin <- ceiling(min(coords$y, na.rm = TRUE) - buff)
   ymax <- ceiling(max(coords$y, na.rm = TRUE) + buff)
 
-  # make matrix
+  # Make matrix
   m <- matrix(nrow = (ymax - ymin), ncol = (xmax - xmin))
 
-  # turn into raster
+  # Turn into raster
   r <- raster::raster(m)
 
-  # set extent
+  # Set extent
   raster::extent(r) <- c(xmin, xmax, ymin, ymax)
 
-  # set resolution
+  # Set resolution
   if(length(res) > 2) stop("invalid res provided")
   if(!is.null(res)) raster::res(r) <- res
 
-
   return(r)
-
 }
