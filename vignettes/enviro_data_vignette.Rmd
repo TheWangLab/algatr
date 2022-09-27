@@ -33,11 +33,13 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
 -   `get_worldclim()` to pull environmental layers remotely from the WorldClim database
 
--   `check_env()` to detect collinearity between environmental layers
+-   Detect collinearity:
 
--   `check_vals()` to detect collinearity between extracted values
+    -   `check_env()` to detect collinearity between environmental layers
 
--   `check_dists()` to detect collinearity between geographic and environmental distances
+    -   `check_vals()` to detect collinearity between extracted values
+
+    -   `check_dists()` to detect collinearity between geographic and environmental distances
 
 -   Perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
