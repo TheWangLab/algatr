@@ -12,40 +12,31 @@
 #' @param padj_method if `outlier_method = "p"`, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify snps
 #' @param cortest whether to create table of correlations for snps and environmental variable
-#' @param nPC number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be provided
+#' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3), if set to "manual" a selection option with a terminal prompt will be provided
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
 #' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
 #' @param R2permurations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
 #' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
-#' @param stdz whether to center and scale environemntal data (defaults to TRUE)
+#' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param impute function to use for imputation (defaults to `median`). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
 #'
 #' @inheritParams vegan::ordiR2step
 #'
 #' @importFrom vegan rda
 #'
-#' @return list containing (1) outlier snps, (2) data frame with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
+#' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
 #' @export
 #'
 #' @examples
-rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE,
+rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
                               padj_method = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, impute = "median"){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
-  # extract environmental data if env is a RasterStack
+  # Extract environmental data if env is a RasterStack
   if(inherits(env, "Raster")) env <- raster::extract(env, coords)
-
-  # convert vcf to dosage
-  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
-
-  # perform imputation with warning
-  if(any(is.na(gen))){
-    gen <- simple_impute(gen, median)
-    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-  }
 
   # Standardize environmental variables
   if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
@@ -53,6 +44,17 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
 
   # Rename coords
   colnames(coords) <- c("x", "y")
+
+  # Modify genetic data -----------------------------------------------------
+
+  # Convert vcf to dosage
+  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # Perform imputation with warning
+  if(any(is.na(gen))){
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
 
   # Check for NAs
   if(any(is.na(gen))){
@@ -290,7 +292,7 @@ rdadapt <- function(rda,K)
   return(data.frame(p.values=reschi2test, q.values = q.values_rdadapt))
 }
 
-#' Genotype-environement correlation test
+#' Genotype-environment correlation test
 #'
 #' @param gen dosage matrix
 #' @param var dataframe with predictor variables
@@ -330,13 +332,16 @@ rda_cor_helper <- function(envvar, snp){
 }
 
 #' Plot RDA results
+#'
 #' @param mod model object of class `rda`
 #' @param rda_snps vector of outlier SNPs
 #' @param pvalues if creating a manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
 #' @param axes which RDA axes to include while plotting (defaults to `all`)
 #' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
 #' @param manhattan whether to produce manhattan plot (defaults to `TRUE`)
-#' @param rdaplot whether to produce an RDA biplot (defaluts to `TRUE`). If only one axes is provided, instead of a biplot a histogram will be created
+#' @param rdaplot whether to produce an RDA biplot (defaults to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
+#' @param sig
+#' @param binwidth
 #'
 #' @export
 #'

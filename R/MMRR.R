@@ -1,3 +1,4 @@
+
 #' MMRR function to do everything
 #'
 #' @param gendist matrix of genetic distances
@@ -5,8 +6,8 @@
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
-#' @param stdz if TRUE then matrices will be standardized (defaults to TRUE)
-#' @param plot whether to plot results (defaults to TRUE)
+#' @param stdz if TRUE then matrices will be standardized (default = TRUE)
+#' @param plot whether to plot results (default = TRUE)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @return
@@ -49,18 +50,19 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999
 #' @examples
 mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
-  # fil model with variable selection
+  # Fit model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
 
   # If NULL, exit with NULL
   if(is.null(mod)) return(NULL)
 
-  # subset X with significant variables
+  # Subset X with significant variables
   X_best <- X[names(mod$coefficients)[-1]]
-  # plot results
+
+  # Plot results
   if (plot) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
 
-  # Make nice data frame
+  # Make nice dataframe
   coeff_df <- mmrr_df(mod)
 
   # Make results list
@@ -91,10 +93,10 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
   # If NULL, exit with NULL
   if (is.null(mod)) return(NULL)
 
-  # plot results
+  # Plot results
   if (plot) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
 
-  # Make nice data frame
+  # Make nice dataframe
   coeff_df <- mmrr_df(mod)
 
   # Make results list
@@ -137,6 +139,7 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
 #' @param X is a list of independent distance matrices (with optional names)
 #' @param nperm is the number of permutations to be used in significance tests. Default = 999.
 #' @param scale if TRUE then matrices will be standardized. Default = TRUE.
+#' 
 #' @details
 #' When using MMRR, please cite the original citation:
 #' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
@@ -295,7 +298,7 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
     dplyr::mutate(coeffX = estimate*X) %>%
     dplyr::select(Y, coeffX) %>%
     dplyr::group_by(Y) %>%
-    dplyr::summarise(Yfitted = sum(coeffX))
+    dplyr::summarise(Yfitted = sum(coeffX, na.rm=T))
 
   # Plot fitted relationship
   plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +
@@ -358,7 +361,6 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
       mmrr_df <- mmrr_df %>%
         rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, mmrr_df)) %>%
         dplyr::mutate(dplyr::across(-c(var), as.numeric))
-
 
       tbl <- mmrr_df %>%
         gt::gt() %>%

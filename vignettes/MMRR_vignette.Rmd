@@ -14,14 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Multiple matrix regression with randomization (MMRR)
+# Multiple matrix regression with randomization (MMRR)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 ```
 
-Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to disentangle isolation by distance (i.e., an association between genetic and geographic distances) from isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environmental and geographic distances).
+Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to determine the relative contributions of isolation by distance (i.e., an association between genetic and geographic distances) and isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environmental and geographic distances).
 
 The randomization aspect of MMRR is that significance testing is performed through random permutations of the rows and columns of the dependent matrix (the genetic distances), which is necessary because of the non-independence of values in pairwise distance matrices. Once significance testing is completed, MMRR provides individual regression coefficients and p-values for each dependent variable and a "coefficient ratio," which is the ratio between regression coefficients, which thus provides an idea of the relative contributions of IBD and IBE in explaining variation in the genetic distances in your data.
 
@@ -35,14 +35,13 @@ Running MMRR_do_everything() requires three data files for input: a genetic dist
 [# Need to be careful of the wording here, because this isn't true for MMRR, sensu strictu; this is true for mmmrr_do_everything.]
 
 ```{r data}
-load(here("data", "gendist.RDA"))
-load(here("data", "liz_coords.RDA"))
-load(here("data", "CA_env.RDA"))
+# Load vcf, coords, and CA enviro layers
+load_example()
 ```
 
-### Run MMRR
+## Run MMRR
 
-## MMRR with all variables
+### MMRR with all variables
 
 ```{r all vars, fig.width = 5, fig.height = 5}
 set.seed(01)
@@ -51,11 +50,13 @@ mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = 
 ```
 
 ## MMRR with model selection
+
 ```{r best vars, fig.width = 5, fig.height = 5}
 set.seed(10)
 mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
-# Step by Step
+
+## Step by Step
 
 Create distance matrix:
 
@@ -65,7 +66,7 @@ env <- raster::extract(CA_env, liz_coords)
 X <- env_dist(env)
 
 # Add geographic distance
-X[["geodist"]] <- geo_dist(coords)
+X[["geodist"]] <- geo_dist(liz_coords)
 
 # Make a genetic distance matrix
 Y <- as.matrix(gendist)
@@ -89,6 +90,22 @@ mmrr_plot(X = X, plot_type = "cov", stdz = TRUE)
 mmrr_plot(Y, X, plot_type = "vars", stdz = TRUE)
 
 # Fitted variable plot
+# TODO [EAC]: needs to be fixed
 mmrr_plot(Y, X, mod = results$mod, plot_type = "fitted", stdz = TRUE)
 ```
 
+Now, let's take a look at the output statistics:
+
+```{r stats}
+# TODO [EAC]: should this be built in within the function?
+```
+
+## Running MMRR with `mmrr_do_everything()`
+
+------------------------------------------------------------------------
+
+The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+
+```{r do everything}
+
+```

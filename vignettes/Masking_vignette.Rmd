@@ -1,0 +1,115 @@
+---
+title: "Masking_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Masking_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+### Masking maps for landscape genomics
+
+```{r setup}
+library(landgen)
+library(raster)
+library(rgeos)
+library(here)
+library(tidyverse)
+library(viridis)
+# devtools::load_all()
+```
+
+Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled at all). This allows users to avoid over-interpreting results from several analyses where mapping is a useful visualization tool (e.g., generalized dissimilarity modeling).
+
+This vignette goes through two main masking functions:
+
+1.  The `extrap_mask()` function extrapolates environmental values from enviro layers that will be masked.
+
+2.  The `plot_extrap_mask()` function generates a map with masked areas.
+
+## Read in data
+
+```{r data}
+# Load test data, including CA_env which are the envlayers we'll be using
+load_example()
+
+# For the purposes of simplicity, let's just use one of the PCs for mapping:
+envlayers <- CA_env$CA_rPCA1
+
+# Let's take a look at the map with no masking:
+plot(envlayers, col = viridis(100), axes = FALSE, box = FALSE)
+```
+
+## Making masked maps
+
+------------------------------------------------------------------------
+
+### Make a range-based based
+
+We can use the `extrap_mask()` function to mask all areas outside range of environmental values included in data (the `"range"` argument). This argument masks conservatively, meaning that if any area falls outside the range of the data for any variable, the area is masked.
+
+```{r range mask}
+# Extrapolate env values for given coordinates
+map_mask <- extrap_mask(liz_coords, envlayers, method = "range")
+
+# Now, plot the map with masked areas
+plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE)
+
+# Let's make the masked areas white with no transparency
+plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE, mask_col = rgb(1, 1, 1, alpha = 1))
+```
+
+### Standard deviation-based mask
+
+We can also mask using the `"sd"` argument, which masks all areas outside of the mean, +/- some number of standard deviations outside the environmental values included in data (normalized using the `nsd` parameter). This method is still as conservative as the `"range"` argument from above.
+
+```{r sd mask}
+# Let's start with nsd=2
+map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 2)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+
+# Now, increase nsd to 3 and see how the map masking changes:
+map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 3)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+```
+
+### Buffer-based mask
+
+We can mask all areas outside of a circular buffer of a fixed width around the coordinates provided using the `"buffer"` argument. Given how the buffer is calculated, this masking is agnostic to environment. We can adjust the size of the circular buffer using the `buffer_width` option.
+
+```{r buffer mask}
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 0.25)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+
+# Increase buffer size
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 0.5)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+
+# Increase buffer size and change masking color and transparency
+map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 1)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE, mask_col = rgb(1, 1, 1, alpha = 1))
+```
+
+### Convex hull-based mask
+
+We can also mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument. As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` option.
+
+```{r chull mask}
+map_mask <- extrap_mask(liz_coords, envlayers, method = "chull")
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+
+# Increase the buffer size
+map_mask <- extrap_mask(liz_coords, envlayers, method = "chull", buffer_width = 0.5)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+
+# Increase the buffer size again
+map_mask <- extrap_mask(liz_coords, envlayers, method = "chull", buffer_width = 1)
+plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
+```

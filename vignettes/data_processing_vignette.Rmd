@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Processing genomic data files
+# Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
@@ -26,65 +26,64 @@ library(SeqArray)
 
 For landscape genomic analyses, we need to process our input data files in various ways, which are used throughout the analyses in this package. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
 
-1.    Converting a vcf file to a dosage matrix (the `vcf_to_dosage()` function) and to a genind object (the `vcf_to_genind()` function)
+-   `vcf_to_dosage()` to convert a vcf file to a dosage matrix
 
-2.    Pruning variants that are in linkage disequilibrium with one another (the `ld_prune()` function)  
+-   `ld_prune()` to prune variants that are in linkage disequilibrium with one another; this primarily uses the `snpgdsLDpruning()` function within the SNPRelate package ([Zheng et al. 2012](10.1093/bioinformatics/bts606); see [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) for further information)
 
-3.    Remove NAs (the `gen_remove_na()` function)
+### Converting a vcf to a dosage matrix with `vcf_to_dosage()`
 
-## Examples
+------------------------------------------------------------------------
 
-Recall the way genotypes are encoded within a vcf: `"0/0"` denotes individual is homozygous for the reference allele, `"0/1"` for heterozygote, and `"1/1"` for a homozygote for the alternate allele; `"./."` is missing data.
+Recall the way genotypes are encoded within a vcf: `"0/0"` denotes individual is homozygous for the reference allele, `"0/1"` for heterozygote, and `"1/1"` for a homozygote for the alternate allele; `NA` is missing data.
 
 ```{r vcf}
-# Load the vcf
-load(here("data", "liz_vcf.rda"))
+# Load the example data
+load_example()
 
-# Look at genotypes for five individuals at five sites:
-liz_vcf@gt[1:5,2:6]
+# Look at genotypes for five individuals at eight sites:
+liz_vcf@gt[1:8,2:6]
 ```
 
-### Converting a vcf to a dosage matrix
-
-A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (). We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
+A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (corresponding to 0/0, 1/1, and 0/1 from the vcf, respectively). `NA` still represents missing data. We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
 
 ```{r dosage}
 dosage <- vcf_to_dosage(liz_vcf)
 
 # Look at genotypes for five individuals at five sites:
-dosage[1:5,1:5]
+dosage[1:5,1:8]
 ```
 
-### Converting a vcf to a genind object
+## Removing sites that are in linkage disequilibrium using `ld_prune()`
 
-A genind object is a commonly used format for processing genotype data in R. We can convert a vcf to genind object using the `vcf_to_genind()` function, which largely uses `vcfR2genind()` within the vcfR package, but also has added functionality for assigning individuals to populations. Keep in mind that a genind object splits up alleles such that each allele is assigned its own column, and alleles are encoded with a single number (0, 1, or 2 for a diploid). In this case, one can see that each locus name is appended with .0 or .1 for each allele at a given locus (because these data are from a diploid organism):
+------------------------------------------------------------------------
 
-```{r genind}
-# Can also assign populations but default is NULL
-genind <- vcf_to_genind(liz_vcf)
+We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur  below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. The main arguments within this function are as follows:
 
-# Look at genotypes for five individuals at five sites:
-genind@tab[1:5,1:5]
-```
+-   `ld.threshold` specifies the LD pruning threshold (the default is the correlation coefficient value; thus, the higher the `ld.threshold` value, fewer variants will be pruned)
+-   `slide.max.n` specifies the maximum number of SNPs in the sliding window (defaults to 100)
+-   `maf` specifies the minor allele frequency (defaults to 0.05)
 
-### Removing sites that are in linkage disequilibrium
+```{r LD-pruning int files}
+# ld_prune() takes in the path to the vcf file, not the vcf object. The vcf used to generate the test dataset is in the extdata directory
+# Leave the ld.threshold default (0.6), but change slide.max.n:
+# vcf <- system.file("extdata", "liz_test.vcf", mustWork = TRUE)
+ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", slide.max.n=10)
 
-We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpggdsLDpruning()` function within the SNPRelate package).
-TODO: describe temp files created within ld_prune function and that they'll be removed
-
-```{r LD-pruning}
-# Stick with ld.threshold default which is 0.6 but change slide.max.n given how small dataset is:
-ld_prune(vcf = here("data", "liz_test.vcf"), outname = "liz_test", out_format = "vcf", slide.max.n=10)
-
+# The above should have generated a new directory (liz_LDpruned) containing several files
 # Let's take a look at the LD-pruned vcf:
-vcf_ldpruned <- read.vcfR("liz_test_LDpruned_r0.6_n10.vcf")
+vcf_ldpruned <- vcfR::read.vcfR(here("liz_LDpruned", "liz_LDpruned_r0.6_n10.vcf"))
 
 # How many SNPs were retained after LD-pruning?
 nrow(vcf_ldpruned@gt)
 ```
 
-### Removing missing values from genomic data
+You'll notice that a number of intermediate files (contained within a new directory, liz_LDpruned), were created. This is because within the `ld_prune()` function, several file conversions are occurring, and any intermediate files produced from this conversion are stored in the new directory. There is also a logfile that is produced that provides output from the LD pruning.
 
-TODO: deal with this section
-Some landscape genomic methods cannot take in missing data. There are several ways to deal with this, including imputation of missing values or simply removing sites with any missing values, the latter of which is what the `gen_remove_na()` function does.
+We can specify not to create these intermediate files, but rather to just produce the end vcf, using the `save_output` argument. If we do this, the function will simply return the vcf object. Let's also change the `ld.threshold` argument for this run.
 
+```{r LD-pruning no int files}
+vcf_ldpruned <- ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n=10, save_output = FALSE)
+
+# How many sites were retained from this run, with a higher LD threshold correlation value?
+nrow(vcf_ldpruned@gt)
+```

@@ -1,9 +1,8 @@
 
-
 #' Calculate distance between environmental vars
 #'
 #' @param env dataframe or vector of environmental variables for locations
-#' @param stdz if TRUE then environmental values will be standardized (defaults to TRUE)
+#' @param stdz if TRUE then environmental values will be standardized (default = TRUE)
 #'
 #' @return
 #' @export
@@ -35,7 +34,7 @@ env_dist_helper <- function(env, stdz = TRUE){
 #'
 #' @param coords dataframe with x and y coordinates
 #' @param type The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.
-#' @param lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
+#' @param lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)
 #' @details
 #' Euclidean, or linear, distances are calculated using the geodist package: Padgham M, Sumner M (2021). geodist: Fast, Dependency-Free Geodesic Distance Calculations. R package version 0.0.7, Available: https://CRAN.R-project.org/package=geodist.
 #' Topographic distances are calculated using the topoDistance package: Wang I.J. (2020) Topographic path analysis for modeling dispersal and functional connectivity: calculating topographic distances using the TOPODISTANCE R package. Methods in Ecology and Evolution, 11: 265-272.
@@ -52,11 +51,19 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   else if(type == "topo" | type == "topographic"){
     if(is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
     message("Calculating topo distances... This can be time consuming with many points and large rasters.")
+
+    # Convert to RasterLayer if SpatRaster object
+    if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
+
     distmat <- topoDistance::topoDist(lyr, coords, paths = FALSE)
   }
   else if(type == "resistance" | type == "cost" | type == "res"){
     if(is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
     message("Calculating resistance distances... This can be time consuming with many points and large rasters.")
+
+    # Convert to RasterLayer if SpatRaster object
+    if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
+
     # Convert resistance surface to conductance surface
     cond.r <- 1 / lyr
     trSurface <- gdistance::transition(cond.r, transitionFunction = mean, directions = 8) # Create transition surface
@@ -64,5 +71,6 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
     sp <- sp::SpatialPoints(coords = coords)
     distmat <- as.matrix(gdistance::commuteDistance(trSurface, sp)) # Calculate circuit distances
   }
+
   return(distmat)
 }

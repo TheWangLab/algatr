@@ -1,0 +1,293 @@
+---
+title: "Environmental_data_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Environmental_data_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Processing environmental data
+
+```{r setup, warning = FALSE, message = FALSE}
+library(algatr)
+library(terra)
+library(raster)
+library(geodata)
+library(here)
+library(viridis)
+library(tibble)
+library(ggplot2)
+library(tidyr)
+library(RStoolbox)
+```
+
+For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
+
+-   `get_worldclim()` to pull environmental layers remotely from the WorldClim database
+
+-   Detect collinearity:
+
+    -   `check_env()` to detect collinearity between environmental layers
+
+    -   `check_vals()` to detect collinearity between extracted values
+
+    -   `check_dists()` to detect collinearity between geographic and environmental distances
+
+-   Perform a raster PCA on a stack of environmental layers to reduce dimensionality
+
+-   `coords_to_raster()` to create a raster layer from coordinate data
+
+-   `env_dist()` to calculate environmental distances
+
+-   `geo_dist()` to calculate geographic distances between coordinates
+
+### Load example data
+
+```{r test data}
+load_example()
+```
+
+### Introduction to environmental data files and object types
+
+Briefly, in R, any (geo)spatial data can be represented using vectors or rasters. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, vectors are used to represent data points (e.g., sampling coordinates) or polygons (e.g., the state of California); rasters are used for storing environmental attributes of California.
+
+There are two main packages algatr uses to process and manipulate environmental data: terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)). Both of these packages have excellent resources and walkthroughs (see [here](https://rspatial.org/terra/) for terra; see [here](https://rspatial.org/raster/pkg/index.html) for raster) that explain in depth environmental data processing and manipulation in R.
+
+Each of these packages has their own classes to represent rasters. Within the terra package, the `SpatRaster` class is used to represent rasters, while the raster package uses `RasterLayer` (single-layer raster data), `RasterBrick` and `RasterStack` (both are multi-variable raster data but differ in how many files can be linked to them) classes. No matter which class is used to represent rasters, the fundamental parameters that describe these rasters is always the same: numbers of rows, columns, the spatial extent, and the coordinate reference system (CRS) for proper projection.
+
+### Gather environmental data using `get_worldclim()`
+
+------------------------------------------------------------------------
+
+WorldClim is a database that provides environmental layers for the entire globe (excluding Antarctica); the data contained are four monthly variables and 18 bioclimatic variables, which are provided in tiles. The `get_worldclim()` function retrieves and extracts WorldClim data (using the `worldclim_tile()` function in the geodata package) from relevant tiles based on your sampling coordinates, drawing a convex hull shape to connect all data points.
+
+Users can add a buffer around sampling coordinates using the `buff` argument, which corresponds to the proportion of the spatial extent for the coordinates. Tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
+
+```{r get worldclim}
+wclim <- get_worldclim(coords = liz_coords) # can set save_output = TRUE if you want a directory with files made
+```
+
+Notice that `wclim` is a terra `SpatRaster` object. Let's take a look at what this object looks like.
+
+```{r wclim}
+# See how many layers are contained within the object
+nlyr(wclim)
+
+# Look at one of the layers, which corresponds to tile_15_wc2.1_30s_bio_1
+wclim[[1]]
+```
+
+Now, let's plot one of the variables and overlay our sampling coordinates on top.
+
+```{r wclim plot, warning = FALSE}
+terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
+points(liz_coords, pch = 19)
+```
+
+### Detect collinearity
+
+------------------------------------------------------------------------
+
+An important first check for any landscape genomics analysis is to discount collinearity between sets of variables. Specifically, we always want to verify that there is no collinearity (within a given threshold) between environmental layers (using `check_env()`), extracted values from environmental layers (using `check_vals()`), and geographic and environmental distances (using `check_dists()`).
+
+### Collinearity among environmental layers
+
+The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.5.
+
+```{r collin env}
+# Convert wclim from SpatRaster to RasterStack
+wclim_stack <- raster::stack(wclim)
+
+# Check for collinearity; the result is a matrix with pairwise correlation coefficients
+cors_env <- check_env(wclim_stack)
+# There are many pairs of layers that have correlation coefficients > 0.5.
+```
+
+```{r collin env CA}
+# For the sake of argument, we can also run this function on the CA_env object:
+check_env(CA_env)
+# None of the pairwise comparisons exceed the threshold value
+```
+
+### Collinearity among extracted environmental values
+
+Similar to the above, the `check_vals()` function determines collinearity using Pearson's correlation coefficients, but it does so on extracted environmental variables at each of the sampling coordinates.
+
+```{r collin vals}
+# Once again, we can see that there are many pairs of variables that exceed the threshold.
+check_vals(wclim_stack, liz_coords)
+```
+
+```{r collin vals CA}
+# Check using the CA_env object; note that these values are quite different from those from check_env()
+check_vals(CA_env, liz_coords)
+```
+
+### Collinearity between distances
+
+The `check_dists()` function determines collinearity between geographic and environmental distances. It does so by extracting values at sampling coordinates, and then calculating geographic and environmental distances (of a user-specified metric; the default is Euclidean) and runs a Mantel test on resulting distances. It will output the p-value and Mantel's r and indicate which distances are significantly correlated.
+
+```{r collin dists}
+check_dists(wclim_stack, liz_coords)
+```
+
+```{r collin dists CA}
+# We can see that PC2 from CA_env and geo dists are significantly correlated!
+check_dists(CA_env, liz_coords)
+```
+
+### Perform a raster PCA on environmental layers
+
+------------------------------------------------------------------------
+
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables.
+
+```{r raster PCA}
+env_pcs <- RStoolbox::rasterPCA(wclim, spca = TRUE)
+
+# Let's take a look at the results for the top three PCs
+plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
+grid.arrange(plots[[1]],plots[[2]], plots[[3]], ncol=1)
+```
+
+```{r comp raster}
+# We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
+ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
+```
+
+### Create raster from coordinates with `coords_to_raster()`
+
+------------------------------------------------------------------------
+
+In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument).
+
+```{r coords to raster}
+raster <- coords_to_raster(liz_coords, res = 1)
+plot(raster, axes = FALSE)
+points(liz_coords, pch = 19)
+```
+
+### Calculate environmental distances using `env_dist()`
+
+------------------------------------------------------------------------
+
+Some of the analyses within algatr, such as GDM and MMRR, require comparing genetic distances to environmental distances. We can calculate environmental distances using the `env_dist()` function, which allows users to calculate environmental distances between variables for given sampling locations. We first need to extract environmental variables at sampling coordinates.
+
+```{r extract enviro vars}
+env <- raster::extract(CA_env, liz_coords)
+
+# You can there are extracted values (n=53) for each environmental layer
+head(env)
+```
+
+Now, we're ready to calculate environmental distances.
+
+```{r env dist}
+env_dist <- env_dist(env)
+
+plot(env_dist$CA_rPCA1)
+```
+
+We can make a heat map in ggplot with the pairwise distances.
+
+```{r env dist heatmap}
+as.data.frame(env_dist$CA_rPCA1) %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
+```
+
+### Calculate geographic distances using `geo_dist()`
+
+------------------------------------------------------------------------
+
+The `geo_dist()` function allows users to choose from five environmental distance metrics using the `type` argument:
+
+-   Geodesic distances (`"euclidean"` or `"linear"`) using the geodist package ([Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist))
+
+-   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model (DEM) raster specified with the `lyr` argument
+
+-   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a digital elevation model raster specified with the `lyr` argument
+
+### Euclidean distances
+
+```{r geo dist}
+geo_dist <- geo_dist(liz_coords, type = "Euclidean")
+
+plot(geo_dist)
+```
+
+We can make a heat map in ggplot with the pairwise distances.
+
+```{r geo dist heatmap}
+# Make a fun heat map with the pairwise distances
+geo_dist <- as.data.frame(geo_dist)
+colnames(geo_dist) <- rownames(geo_dist)
+geo_dist %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
+```
+
+### Topographic distances
+
+We can also calculate topographic distances, but need to provide a digital elevation model (DEM) raster to do so. We can retrieve a DEM using the geodata package, cropping to California using the `CA_env` object in our example dataset.
+
+```{r download DEM}
+# Download the DEM raster using the elevation_30s function
+# This will save a .tif file in your current dir
+dem <- geodata::elevation_30s(country = "USA", path=here())
+
+# Crop to California limits
+CA_dem <- crop(dem, CA_env)
+```
+
+Take a look at what the DEM looks like, with samples plotted on top.
+
+```{r plot dem}
+plot(CA_dem, axes = FALSE)
+points(liz_coords, pch = 19)
+```
+
+Now, let's calculate topographic distances using the `CA_dem` object as our layer with the `lyr` argument.
+
+```{r topo dists}
+topo_dist <- geo_dist(liz_coords, type = "topo", lyr = CA_dem)
+```
+
+Plot the resulting topographic distances as a heatmap.
+
+```{r topo dist heatmap}
+# Make a fun heat map with the pairwise distances
+topo_dist <- as.data.frame(topo_dist)
+colnames(topo_dist) <- 1:53
+rownames(topo_dist) <- 1:53
+
+topo_dist %>% 
+  tibble::rownames_to_column("sample") %>% 
+  tidyr::gather("sample_comp", "dist", -"sample") %>% 
+  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  ggplot2::geom_tile() +
+  ggplot2::coord_equal() +
+  viridis::scale_fill_viridis() +
+  xlab("Sample") +
+  ylab("Sample")
+```

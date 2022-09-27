@@ -2,16 +2,16 @@
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
-#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates
-#' @param envlayers envlayers for mapping (if env is provided the dataframe column names and envlayers layer names should be the same)
-#' @param env dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
-#' @param alpha alpha level for variable selection (defaults to 0.05), only used if model = "best"
-#' @param nperm number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)
-#' @param geodist_type The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
+#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order
+#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
+#' @param env dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
+#' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)
+#' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
 #'
 #' @return list with final model, predictor coefficients, and PCA RGB map
 #'
@@ -23,11 +23,11 @@
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE){
 
-  # format coordinates
+  # Format coordinates
   coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
 
-  # If not provided, make env data frame from layers and coords
+  # If coords not provided, make env dataframe from layers and coords
   if(is.null(env)) env <- raster::extract(envlayers, coords)
 
   # Run model with all defaults
@@ -40,7 +40,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   coeff_df <- gdm_df(gdm_result)
   print(gdm_table(gdm_result))
 
-  # Plot isplines
+  # Plot I-splines
   gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
@@ -76,7 +76,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
-    # Rename coords
+  # Rename coords
   coords <- dplyr::as_tibble(coords)
   colnames(coords) <- c("x","y")
 
@@ -91,7 +91,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   # Bind vector of sites with gen distances
   gdmGen <- cbind(site, gendist)
 
-  # Create data frame of predictor variables
+  # Create dataframe of predictor variables
   gdmPred <- data.frame(site = site,
                         x = coords$x,
                         y = coords$y,
@@ -123,7 +123,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     }
   }
 
-  # If model = "best", go through variable selection procedure
+  # If model = "best", conduct variable selection procedure
   if(model == "best"){
     # Add distance matrix separately
     if(geodist_type == "Euclidean"){
@@ -248,9 +248,10 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @param gdm_model GDM model
 #' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation
-#' @param coords
+#' @param coords data frame with x and y coordinates
 #' @param scl constant for rescaling variable vectors for plotting
 #' @param plot
+#' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
 #'
 #' @return GDM RGB map
 #'
@@ -259,7 +260,7 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @export
 #'
 #' @examples
-gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plot = TRUE){
+gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, plot = TRUE){
 
   # CHECK that all of the model variables are included in the stack of environmental layers
   # Create list of environmental predictors (everything but Geographic)
@@ -311,6 +312,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 
   # If n_layers = 2, you end up making a bivariate map
   if(n_layers == 2){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster)}
+
   # If n_layers = 1, you end up making a univariate map
   if(n_layers == 1){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster, white_raster)}
 
@@ -320,7 +322,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 
   # Plot variable vectors
   if(plot_vars & (n_layers == 3)){
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl)
+    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
   }
   if(plot_vars & (n_layers != 3)){
     warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
@@ -337,7 +339,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plo
 #'
 #' @param gdm_model GDM model
 #'
-#' @return plot for each ispline
+#' @return plot for each I-spline
 #'
 #' @family GDM functions
 #'
@@ -348,17 +350,15 @@ gdm_plot_isplines <- function(gdm_model){
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
   purrr::walk(1:ncol(gdm_model_splineDat$x), function(i){
-    plot(gdm_model_splineDat$x[,i],
-         gdm_model_splineDat$y[,i],
-         cex.lab = 1.5,
-         lwd = 2,
-         type = "l",
-         col = "black",
-         ylim = c(0, max(gdm_model_splineDat$y)),
-         xlab = colnames(gdm_model_splineDat$x)[i],
-         ylab = "Partial Regression Distance")
-  })
-}
+    dat <- cbind(as.data.frame(gdm_model_splineDat$x[,i]), as.data.frame(gdm_model_splineDat$y[,i]))
+    plot <- ggplot2::ggplot(dat) +
+      geom_line(ggplot2::aes(x = gdm_model_splineDat$x[,i], y = gdm_model_splineDat$y[,i])) +
+      ggplot2::theme_bw() +
+      xlab(colnames(gdm_model_splineDat$x)[i]) +
+      ylab("Partial Regression Distance")
+
+    print(plot)})
+  }
 
 
 #' Create a PCA plot for GDM
@@ -378,7 +378,7 @@ gdm_plot_isplines <- function(gdm_model){
 #' @export
 #'
 #' @examples
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1){
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE){
 
   # Confirm there are exactly 3 axes
   if(raster::nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
@@ -435,12 +435,13 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
 
   # FINAL PLOT----------------------------------------------------------------------------------------------------------
 
+  # Build base plot
   # Plot points colored by RGB with variable vectors
   plot <- ggplot2::ggplot() +
 
     # Create axes that cross through origin
-    ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray") +
-    ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray") +
+    {if(display_axes)ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray")} +
+    {if(display_axes)ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray")} +
 
     # Plot points from entire raster
     ggplot2::geom_point(data = rastvals, ggplot2::aes_string(x = x, y = y), col = rastpcacols, size = 4, alpha = 0.02) +
@@ -449,8 +450,8 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     ggplot2::geom_point(data = pcavals, ggplot2::aes_string(x = x, y = y), fill = pcacols, col = "black", pch = 21, size = 3) +
 
     # Plot variable vectors
-    ggplot2::geom_text(data = varpc, ggplot2::aes(x = v1, y = v2, label = varnames), size = 4, vjust=1) +
-    ggplot2::geom_segment(data = varpc, ggplot2::aes(x = 0, y = 0, xend = v1, yend=v2), arrow = ggplot2::arrow(length = ggplot2::unit(0.2,"cm"))) +
+    ggplot2::geom_text(data = varpc, ggplot2::aes(x = v1, y = v2, label = varnames), size = 4, vjust = 1) +
+    ggplot2::geom_segment(data = varpc, ggplot2::aes(x = 0, y = 0, xend = v1, yend = v2), arrow = ggplot2::arrow(length = ggplot2::unit(0.2,"cm"))) +
 
     # Plot formatting
     ggplot2::coord_equal() +
@@ -460,6 +461,15 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
                    panel.grid.minor = ggplot2::element_blank(),
                    axis.line = ggplot2::element_blank(),
                    aspect.ratio = 1)
+
+  # Build plot without PC axes displayed
+  if(display_axes == FALSE){
+    plot <- plot +
+      # Remove axes
+      ggplot2::theme(axis.title = element_blank(),
+                     axis.text = element_blank(),
+                     axis.ticks = element_blank())
+  }
 
   # Plot
   print(plot)
@@ -486,7 +496,7 @@ stack_to_rgb <- function(s){
   return(new_stack)
 }
 
-#' Scale raster form 0 to 255
+#' Scale raster from 0 to 255
 #'
 #' @param r RasterLayer
 #'
@@ -501,7 +511,7 @@ raster_to_rgb <- function(r){
 #'
 #' @param gdm_model model of type `gdm`
 #'
-#' @return data frame of coefficients for GDM
+#' @return dataframe of coefficients for GDM
 #'
 #' @family GDM functions
 #'
@@ -523,7 +533,7 @@ gdm_coeffs <- function(gdm_model){
 
   }
 
-  # Add those values to a simple data frame
+  # Add those values to a simple dataframe
   coeffs <- data.frame(predictor = gdm_model$predictors, coefficient = coefSums)
 
   return(coeffs)
