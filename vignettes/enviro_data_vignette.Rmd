@@ -26,15 +26,20 @@ library(viridis)
 library(tibble)
 library(ggplot2)
 library(tidyr)
+library(RStoolbox)
 ```
 
 For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
 
 -   `get_worldclim()` to pull environmental layers remotely from the WorldClim database
 
--   `TODO` to detect collinearity between environmental layers
+-   `check_env()` to detect collinearity between environmental layers
 
--   `TODO` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
+-   `check_vals()` to detect collinearity between extracted values
+
+-   `check_dists()` to detect collinearity between geographic and environmental distances
+
+-   Perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
 -   `coords_to_raster()` to create a raster layer from coordinate data
 
@@ -85,45 +90,76 @@ terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
 points(liz_coords, pch = 19)
 ```
 
-### Detect collinearity among environmental layers with `TODO`
+### Detect collinearity
 
 ------------------------------------------------------------------------
 
-### Perform a raster PCA on environmental layers with `TODO`
+An important first check for any landscape genomics analysis is to discount collinearity between sets of variables. Specifically, we always want to verify that there is no collinearity (within a given threshold) between environmental layers (using `check_env()`), extracted values from environmental layers (using `check_vals()`), and geographic and environmental distances (using `check_dists()`).
+
+### Collinearity among environmental layers
+
+The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.5.
+
+```{r collin env}
+# Convert wclim from SpatRaster to RasterStack
+wclim_stack <- raster::stack(wclim)
+
+# Check for collinearity; the result is a matrix with pairwise correlation coefficients
+cors_env <- check_env(wclim_stack)
+# There are many pairs of layers that have correlation coefficients > 0.5.
+```
+
+```{r collin env CA}
+# For the sake of argument, we can also run this function on the CA_env object:
+check_env(CA_env)
+# None of the pairwise comparisons exceed the threshold value
+```
+
+### Collinearity among extracted environmental values
+
+Similar to the above, the `check_vals()` function determines collinearity using Pearson's correlation coefficients, but it does so on extracted environmental variables at each of the sampling coordinates.
+
+```{r collin vals}
+# Once again, we can see that there are many pairs of variables that exceed the threshold.
+check_vals(wclim_stack, liz_coords)
+```
+
+```{r collin vals CA}
+# Check using the CA_env object; note that these values are quite different from those from check_env()
+check_vals(CA_env, liz_coords)
+```
+
+### Collinearity between distances
+
+The `check_dists()` function determines collinearity between geographic and environmental distances. It does so by extracting values at sampling coordinates, and then calculating geographic and environmental distances (of a user-specified metric; the default is Euclidean) and runs a Mantel test on resulting distances. It will output the p-value and Mantel's r and indicate which distances are significantly correlated.
+
+```{r collin dists}
+check_dists(wclim_stack, liz_coords)
+```
+
+```{r collin dists CA}
+# We can see that PC2 from CA_env and geo dists are significantly correlated!
+check_dists(CA_env, liz_coords)
+```
+
+### Perform a raster PCA on environmental layers
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `XXX` function.
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables.
 
-Now, let's plot the resulting environmental PCs to see how they look.
+```{r raster PCA}
+env_pcs <- RStoolbox::rasterPCA(wclim, spca = TRUE)
 
-```{r data}
-# Gather the files corresponding to the three PCs
-env_files <- list.files(here("inst", "extdata", "PC_layers"), full.names = TRUE)
-# Stack into a spatial raster object
-envstack <- terra::rast(env_files)
+# Let's take a look at the results for the top three PCs
+plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
+grid.arrange(plots[[1]],plots[[2]], plots[[3]], ncol=1)
 ```
 
-Take a look at the rasters:
-
-```{r plot rasters, warning = FALSE, message = FALSE, fig.width = 5, fig.height = 5}
-terra::plot(envstack, col = turbo(100), axes = FALSE)
+```{r comp raster}
+# We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
+ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
 ```
-
-We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B.
-
-```{r, RGB plot, fig.width = 5, fig.height = 6}
-for(layer in 1:3){
-  minval <- minmax(envstack[[layer]])[1,]
-  maxval <- minmax(envstack[[layer]])[2,]
-  
-  envstack[[layer]] <- ((envstack[[layer]] - minval) / (maxval - minval))*255
-}
-
-terra::plotRGB(envstack, r = 1, g = 2, b = 3)
-```
-
-Within the example dataset, the object `CA_env` is a PCA raster stack.
 
 ### Create raster from coordinates with `coords_to_raster()`
 
