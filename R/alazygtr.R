@@ -1,10 +1,11 @@
+
 #' Lazy run of all landscape genomic analyses contained within `algatr`
 #'
 #' Disclaimer: this is probably a bad idea...
 #'
-#' @param vcf
-#' @param coords
-#' @param envlayers
+#' @param vcf path to vcf file or a `vcfR` type object
+#' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
+#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #'
 #' @return
 #' @export
