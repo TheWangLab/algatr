@@ -13,14 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# algatr <img src="man/figures/logo.png" align="right" height="120" />
+# algatr <img src="man/figures/logo.png" align="right" height="120"/>
 
-**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to...
-
-<!-- badges: start -->
-<!-- badges: end -->
+**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data. The algatr package is described in [Chambers, Bishop, & Wang 2022](REFER).
 
 ## Installation
+
+------------------------------------------------------------------------
 
 You can install the development version of algatr from [GitHub](https://github.com/) with:
 
@@ -29,50 +28,152 @@ You can install the development version of algatr from [GitHub](https://github.c
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
-## Example
+## Introduction
 
-```{r, echo = FALSE, results = FALSE}
-devtools::load_all()
-```
+------------------------------------------------------------------------
 
-```{r example}
-library(algatr)
+Landscape genetics (or genomics) combines the fields of landscape ecology and population genetics in an effort to understand how environmental variation affects spatial genetic variation. Thus, at its most basic, any landscape genetics method requires genetic and environmental data as input.
+
+The methods contained within algatr will perform analyses on:
+
+-   Genomic-scale datasets (i.e., those generated using reduced representation or whole genome sequencing)
+
+-   Datasets with individual-based sampling (*it will also work on population-based sampling schemes*)
+
+algatr makes use of several existing packages and methods, and we provide citations to these packages (and corresponding publications) whenever possible. Many of these packages have extensive documentation and excellent additional resources, which we provide links to in the corresponding vignettes.
+
+We have added functionality to each of these methods within algatr which we discuss in each of the methods' vignettes (and in our paper: [Chambers et al. 2022](REFER)).
+
+Other than input data processing functions, the main functions within algatr are named `method_do_everything()`. As the name implies, these functions will take you from your raw input data through to generating results, tables, and figures from the analysis. For example, `gdm_do_everything()` will run generalized dissimilarity modeling, while also generating a GDM map, a table with results, and several other outputs. However, to better understand what's going on under the hood of these `method_do_everything()` functions, the algatr vignettes provide a line-by-line breakdown of the individual functions contained within the `method_do_everything()` function to (a) increase a user's understanding of how the method actually works, and (b) allow users with more customizability in how they run their own analysis, if so desired.
+
+When deciding on methods to have within algatr, we found it best to first identify the questions that these methods seek to answer, and we think this is a good framework for anyone (particularly beginner landscape genomicists) to think about landscape genomics methods. These questions fall into four broad categories of analyses.
+
++-------------------------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| Question                                                                      | Category                                                 | Method                                                                                                         | Vignette            | algatr function          |
++===============================================================================+==========================================================+================================================================================================================+=====================+==========================+
+| How is genetic variation structured spatially?                                | Structure                                                | TESS (Caye et al. 2016)                                                                                        | TESS_vignette.Rmd   | `tess_do_everything()`   |
++-------------------------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| What are the effects of geography and environment on genetic differentiation? | Isolation by distance/isolation by environment (IBD/IBE) | Multiple matrix regression with randomization; MMRR (Wang 2013)                                                | MMRR_vignette.Rmd   | `mmrr_do_everything()`   |
+|                                                                               |                                                          |                                                                                                                |                     |                          |
+|                                                                               |                                                          | Generalized dissimilarity modeling; GDM (Ferrier et al. 2007; Freedman et al. 2010; Fitzpatrick & Keller 2015) | GDM_vignette.Rmd    | `gdm_do_everything()`    |
++-------------------------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| What regions of the genome show evidence of climate associations?             | Genotype-environment associations (GEA)                  | Redundancy analysis; RDA (Capblancq & Forester 2021)                                                           | RDA_vignette.Rmd    | `rda_do_everything()`    |
+|                                                                               |                                                          |                                                                                                                |                     |                          |
+|                                                                               |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | LFMM_vignette.Rmd   | `lfmm_do_everything()`   |
++-------------------------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| How is intraspecific genetic diversity distributed spatially?                 | Genetic diversity                                        | Moving windows of genetic diversity; wingen (Bishop et al. 2022)                                               | wingen_vignette.Rmd | `wingen_do_everything()` |
++-------------------------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+
+### The example dataset
+
+------------------------------------------------------------------------
+
+As an example for the algatr vignettes, we'll be using the *Sceloporus* RADseq dataset from [Bouzid et al. 2022](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.15836). Although the original dataset contains \>6K SNPs and 108 individuals across Western North America, we've pruned the dataset down to 1,000 SNPs and only those individuals collected in California (53 individuals) to make all analyses run a bit faster. This dataset also makes for a nice test dataset because the 53 individuals were collected from 53 separate localities (i.e., individual-based sampling was used) across the state the California.
+
+There are four objects loaded within the example dataset:
+
+-   `liz_coords`: sampling coordinates for 53 individuals (from 53 localities)
+
+-   `liz_vcf`: the vcfR object containing variant information
+
+-   `liz_gendist`: a matrix of genetic distances generated from the vcf file (*distances were calculated using Plink*)
+
+-   `CA_env`: a RasterStack object with three PC environmental layers
+
+Load the example dataset to take a look:
+
+```{r example dataset}
 load_example()
 ```
 
-### MMRR
-```{r, warning = FALSE, cache = TRUE, results = FALSE}
-mmrr <- mmrr_do_everything(gendist, liz_coords, CA_env, model = "full")
-```
-```{r, echo = FALSE}
-gt::as_raw_html(mmrr_table(mmrr$coeff_df))
+Let's take a look at the environmental layers included in the example dataset. These were generated by performing a raster PCA on 19 bioclimatic variables (obtained from the World Clim database) and retaining the top 3 PCs. Let's take a look at the rasters:
+
+```{r plot rasters, warning = FALSE, message = FALSE, fig.width = 5, fig.height = 5}
+terra::plot(CA_env, col = turbo(100), axes = FALSE)
 ```
 
+We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B.
 
-### GDM
-```{r, warning = FALSE, cache = TRUE, results = FALSE}
-gdm <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE)
+```{r, RGB plot, fig.width = 5, fig.height = 6}
+# Convert from RasterStack to SpatRaster for terra functionality
+CA_env_sp <- terra::rast(CA_env)
+
+for(layer in 1:3){
+  minval <- terra::minmax(CA_env_sp[[layer]])[1,]
+  maxval <- terra::minmax(CA_env_sp[[layer]])[2,]
+  
+  CA_env_sp[[layer]] <- ((CA_env_sp[[layer]] - minval) / (maxval - minval))*255
+}
+
+terra::plotRGB(CA_env_sp, r = 1, g = 2, b = 3)
+
+# Add sampling localities on top of this
+points(liz_coords, pch = 19)
 ```
 
-```{r, echo = FALSE}
-gt::as_raw_html(gdm_table(gdm$coeff_df))
+### Your NGS data
+
+------------------------------------------------------------------------
+
+To generate the above files for your own dataset, you'll need the following:
+
+-   Sampling coordinates (*always in longitude, latitude [x,y] order; refer to `liz_coords` for formatting*)
+
+-   Genetic data in vcf file format (*this is the most standard file format for reduced representation or whole genome sequencing data*)
+
+-   Environmental data layers of your choice
+
+**Be sure that the ordering of your individuals across your coordinate and genetic data files are consistent!**
+
+### Next steps
+
+Read in your vcf file using the `read.vcfR()` function in the vcfR package. To see how this works, we can load the example dataset vcf like so:
+
+```{r load vcf}
+library(vcfR)
+vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
-### RDA
-```{r, warning = FALSE, cache = TRUE, results = FALSE}
-rda <- rda_do_everything(liz_vcf, CA_env, liz_coords)
-```
+You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the [**data processing vignette**](REFER)) and calculating genetic distances (see the [**genetic distances vignette**](REFER)).
 
-```{r, echo = FALSE}
-gt::as_raw_html(rda_table(rda$cor_df, top = TRUE, order = TRUE, nrow = 5))
-```
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+|          | R package                                                      | algatr function          | Input files                               | Required args |
++==========+================================================================+==========================+===========================================+===============+
+| TESS     | [tess3r](https://bcm-uga.github.io/TESS3_encho_sen/index.html) | `tess_do_everything()`   | -   Genotype dosage matrix                |               |
+|          |                                                                |                          | -   Environmental layers                  |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| MMRR     | algatr                                                         | `mmrr_do_everything()`   | -   Genetic distance matrix               |               |
+|          |                                                                |                          |                                           |               |
+|          |                                                                |                          | -   Environmental layers                  |               |
+|          |                                                                |                          |                                           |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| GDM      | [gdm](https://cran.r-project.org/web/packages/gdm/index.html)  | `gdm_do_everything()`    | -   Genetic distance matrix               |               |
+|          |                                                                |                          | -   Environmental layers                  |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| RDA      | TODO                                                           | `rda_do_everything()`    | -   Genotype dosage matrix                |               |
+|          |                                                                |                          |                                           |               |
+|          |                                                                |                          | -   Environmental layers                  |               |
+|          |                                                                |                          |                                           |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| LFMM     | [LEA](https://rdrr.io/bioc/LEA/)                               | `lfmm_do_everything()`   | -   Genotype dosage matrix                |               |
+|          |                                                                |                          | -   Environmental layers                  |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| wingen   | wingen                                                         | `wingen_do_everything()` | -   VCF file                              |               |
+|          |                                                                |                          | -   Raster layer (*though not necessary*) |               |
+|          |                                                                |                          | -   Sampling coordinates                  |               |
++----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
 
-### LFMM
-```{r, warning = FALSE, cache = TRUE, results = FALSE}
-lfmm <- lfmm_do_everything(liz_vcf, CA_env, liz_coords)
-```
+### Example
 
-```{r, echo = FALSE}
-gt::as_raw_html(lfmm_table(lfmm$cand_snps, top = TRUE, order = TRUE, nrow = 5))
-```
+------------------------------------------------------------------------
 
+As an example of algatr, let's run through all of its functionality which we've coded up into a single function, `do_everything_for_me()`. For obvious reasons, we ***strongly*** advise against actually using this function for your analyses.
+
+```{r do everything, warning = FALSE, message = FALSE}
+# do_everything_for_me(liz_vcf, liz_coords, CA_env)
+```
