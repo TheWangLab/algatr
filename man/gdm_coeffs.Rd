@@ -7,12 +7,10 @@
 gdm_coeffs(gdm_model)
 }
 \arguments{
-\item{gdm_model}{\itemize{
-\item model of type gdm
-}}
+\item{gdm_model}{model of type \code{gdm}}
 }
 \value{
-data frame of coefficients for GDM
+dataframe of coefficients for GDM
 }
 \description{
 Get coefficients for each predictor

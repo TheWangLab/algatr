@@ -12,13 +12,13 @@ plot_extrap_mask(
 )
 }
 \arguments{
-\item{map_r}{raster you want to mask}
+\item{map_r}{raster you want masked}
 
-\item{map_mask}{raster layer with 1s where you want to mask and NA everywhere else (i.e. what you want to keep, as produced by \code{\link{extrap_mask}})}
+\item{map_mask}{raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})}
 
-\item{RGB_cols}{whether the plot should be RGB based or not}
+\item{RGB_cols}{whether the plot should be RGB-based or not}
 
-\item{mask_col}{color of mask (defaults to black)}
+\item{mask_col}{color and transparency of mask (defaults to black and alpha=0.9)}
 }
 \value{
 plot \code{map} with areas masked based on \code{map_mask}

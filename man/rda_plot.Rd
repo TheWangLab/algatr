@@ -29,7 +29,9 @@ rda_plot(
 
 \item{manhattan}{whether to produce manhattan plot (defaults to \code{TRUE})}
 
-\item{rdaplot}{whether to produce an RDA biplot (defaluts to \code{TRUE}). If only one axes is provided, instead of a biplot a histogram will be created}
+\item{rdaplot}{whether to produce an RDA biplot (defaults to \code{TRUE}). If only one axis is provided, instead of a biplot, a histogram will be created}
+
+\item{binwidth}{}
 }
 \description{
 Plot RDA results

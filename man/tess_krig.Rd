@@ -8,6 +8,12 @@ tess_krig(qmat, coords, grid, correct_kriged_Q = TRUE)
 }
 \arguments{
 \item{qmat}{qmatrix}
+
+\item{coords}{dataframe with x and y coordinates}
+
+\item{grid}{RasterLayer or other gridded spatial object for kriging}
+
+\item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
 \description{
 Krige admixture values

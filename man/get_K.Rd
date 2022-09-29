@@ -33,10 +33,10 @@ Function to Select K value
 }
 \section{Functions}{
 \itemize{
-\item \code{get_K_tw}: Determine K using Tracy-Widom Test
+\item \code{get_K_tw()}: Determine K using Tracy-Widom Test
 
-\item \code{get_K_elbow}: Determine K using PCA and \code{quick.elbow}
+\item \code{get_K_elbow()}: Determine K using PCA and \code{quick.elbow}
 
-\item \code{get_K_tess}: Determine K using TESS and \code{bestK}
+\item \code{get_K_tess()}: Determine K using TESS and \code{bestK}
+
 }}
-

@@ -15,7 +15,7 @@ allK_plot_helper(K, krig_admix, coords = NULL, col, col_breaks, ...)
 
 \item{col}{single color code}
 
-\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot.}
+\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot}
 }
 \description{
 Helper function for all K plotting

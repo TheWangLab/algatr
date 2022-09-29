@@ -13,7 +13,7 @@ mmrr_var_sel(Y, X, nperm = 999, stdz = TRUE)
 
 \item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
-\item{stdz}{if TRUE then matrices will be standardized (defaults to TRUE)}
+\item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 }
 \description{
 mmrr_var_sel performs MMRR with backward elimination variable selection

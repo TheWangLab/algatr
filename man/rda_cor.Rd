@@ -2,7 +2,7 @@
 % Please edit documentation in R/RDA.R
 \name{rda_cor}
 \alias{rda_cor}
-\title{Genotype-environement correlation test}
+\title{Genotype-environment correlation test}
 \usage{
 rda_cor(gen, var)
 }
@@ -15,5 +15,5 @@ rda_cor(gen, var)
 dataframe with r and p-values from correlation test
 }
 \description{
-Genotype-environement correlation test
+Genotype-environment correlation test
 }

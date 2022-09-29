@@ -4,7 +4,7 @@
 \alias{get_worldclim}
 \title{Download and merge WorldClim data for study area}
 \usage{
-get_worldclim(coords, res = 0.5, buff = 0.01, folder = NULL)
+get_worldclim(coords, res = 0.5, buff = 0.01, save_output = FALSE)
 }
 \arguments{
 \item{coords}{Dataframe with x and y sample coordinates.}
@@ -13,7 +13,7 @@ get_worldclim(coords, res = 0.5, buff = 0.01, folder = NULL)
 
 \item{buff}{A buffer area around sample points for cropping the data layers, expressed as a proportion of the spatial extent for the coordinates (default = 0.01).}
 
-\item{folder}{A directory in which to place downloaded worldclim data; if NULL then files will be downloaded to a tmp folder in the working directory (default = NULL).}
+\item{save_output}{Whether to save downloaded worldclim data in a tmp folder in the working directory (default = FALSE).}
 }
 \value{
 A SpatRaster of WorldClim layers.

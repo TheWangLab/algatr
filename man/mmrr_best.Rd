@@ -13,9 +13,9 @@ mmrr_best(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all")
 
 \item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
-\item{stdz}{if TRUE then matrices will be standardized (defaults to TRUE)}
+\item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{plot}{whether to plot results (defaults to TRUE)}
+\item{plot}{whether to plot results (default = TRUE)}
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }

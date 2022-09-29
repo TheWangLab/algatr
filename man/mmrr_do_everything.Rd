@@ -2,7 +2,7 @@
 % Please edit documentation in R/MMRR.R
 \name{mmrr_do_everything}
 \alias{mmrr_do_everything}
-\title{MMRR function to do everything ()}
+\title{MMRR function to do everything}
 \usage{
 mmrr_do_everything(
   gendist,
@@ -26,12 +26,12 @@ mmrr_do_everything(
 
 \item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
-\item{stdz}{if TRUE then matrices will be standardized (defaults to TRUE)}
+\item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{plot}{whether to plot results (defaults to TRUE)}
+\item{plot}{whether to plot results (default = TRUE)}
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }
 \description{
-MMRR function to do everything ()
+MMRR function to do everything
 }

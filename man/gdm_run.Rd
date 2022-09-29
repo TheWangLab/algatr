@@ -20,17 +20,19 @@ gdm_run(
 \arguments{
 \item{gendist}{matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)}
 
-\item{coords}{dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates}
+\item{coords}{dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order}
 
-\item{env}{dataframe with environmental values for each coordinate, if not provided it will be calculated based on coords/envlayers}
+\item{env}{dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
 
-\item{nperm}{number of permutations to use to calculate variable importance, only matters if model = "best" (defaults to 50)}
+\item{sig}{alpha value for significance threshold (defaults to 0.05); only used if model = "best"}
+
+\item{nperm}{number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)}
 
 \item{scale_gendist}{whether to scale genetic distance data from 0 to 1 (defaults to FALSE)}
 
-\item{geodist_type}{The type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances}
+\item{geodist_type}{the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances}
 
 \item{dist_lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances}
 }

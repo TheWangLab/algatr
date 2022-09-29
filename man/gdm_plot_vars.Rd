@@ -11,7 +11,8 @@ gdm_plot_vars(
   coords,
   x = "PC1",
   y = "PC2",
-  scl = 1
+  scl = 1,
+  display_axes = FALSE
 )
 }
 \arguments{

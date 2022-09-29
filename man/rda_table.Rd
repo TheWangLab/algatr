@@ -2,7 +2,7 @@
 % Please edit documentation in R/RDA.R
 \name{rda_table}
 \alias{rda_table}
-\title{Make publication quality table of correlation test results}
+\title{Create \code{gt} table of RDA results}
 \usage{
 rda_table(
   cor_df,
@@ -17,10 +17,24 @@ rda_table(
 }
 \arguments{
 \item{cor_df}{dataframe of correlation results output from \link[algatr]{rda_cor}}
+
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+
+\item{sig_only}{whether to only include loci with p-values less than \code{sig} (defaults to TRUE)}
+
+\item{top}{whether to only include only keep the top variable for each snp in the table by the strength of the correlation (defaults to FALSE)}
+
+\item{order}{whether to order by the magnitude of the correlation (defaults to FALSE)}
+
+\item{var}{which variables to include (defaults to including all variables)}
+
+\item{nrow}{number of rows to display (defaults to displaying all rows)}
+
+\item{digits}{number of digist to include (defaults to 2)}
 }
 \value{
 An object of class \code{gt_tbl}
 }
 \description{
-Make publication quality table of correlation test results
+Create \code{gt} table of RDA results
 }

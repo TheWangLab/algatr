@@ -14,6 +14,20 @@ tess_ktest(
   ploidy = 2
 )
 }
+\arguments{
+\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
+
+\item{coords}{dataframe with x and y coordinates}
+
+\item{Kvals}{vector of K values to test}
+
+\item{grid}{RasterLayer or other gridded spatial object for kriging}
+
+\item{K_selection}{how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)}
+
+\item{ploidy}{an integer corresponding to ploidy of the studied
+organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
+}
 \description{
 Test multiple K values
 }

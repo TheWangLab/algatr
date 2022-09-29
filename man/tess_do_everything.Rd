@@ -20,7 +20,7 @@ tess_do_everything(
 )
 }
 \arguments{
-\item{gen}{genotype matrix}
+\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
 \item{coords}{dataframe with x and y coordinates}
 
@@ -33,7 +33,7 @@ tess_do_everything(
 \item{ploidy}{an integer corresponding to ploidy of the studied
 organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
 
-\item{correct_kriged_Q}{whether to correct krged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
+\item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
 \value{
 list with all TESS results, final K value, and final kriged raster

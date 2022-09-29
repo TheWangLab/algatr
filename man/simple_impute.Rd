@@ -8,9 +8,9 @@ NOTE: use extreme caution when using this form of simplistic imputation. We main
 simple_impute(x, FUN = median)
 }
 \arguments{
-\item{x}{dosage matrix}
+\item{x}{Matrix}
 
-\item{f}{function to use for imputation (defaults to median)}
+\item{f}{Function to use for imputation (defaults to median)}
 }
 \description{
 Impute NA values

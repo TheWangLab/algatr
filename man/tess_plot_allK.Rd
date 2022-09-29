@@ -17,7 +17,7 @@ tess_plot_allK(
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
-\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot.}
+\item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot}
 }
 \description{
 Plot all kriged Q values for each K

@@ -2,12 +2,12 @@
 % Please edit documentation in R/GDM.R
 \name{gdm_table}
 \alias{gdm_table}
-\title{Make publication quality table of GDM results}
+\title{Create \code{gt} table of GDM results}
 \usage{
-gdm_table(gdm_df, digits = 2)
+gdm_table(gdm_result, digits = 2, summary_stats = TRUE, footnote = TRUE)
 }
 \arguments{
-\item{gdm_df}{dataframe output from \link[algatr]{gdm_df}}
+\item{gdm_result}{output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything}}
 
 \item{digits}{number of digits to include (defaults to 2)}
 }
@@ -15,5 +15,5 @@ gdm_table(gdm_df, digits = 2)
 An object of class \code{gt_tbl}
 }
 \description{
-Make publication quality table of GDM results
+Create \code{gt} table of GDM results
 }

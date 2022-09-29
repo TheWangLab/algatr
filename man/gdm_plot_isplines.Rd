@@ -10,7 +10,7 @@ gdm_plot_isplines(gdm_model)
 \item{gdm_model}{GDM model}
 }
 \value{
-plot for each ispline
+plot for each I-spline
 }
 \description{
 Plot isplines for each variable

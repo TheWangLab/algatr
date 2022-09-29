@@ -2,13 +2,13 @@
 % Please edit documentation in R/RDA.R
 \name{rda_do_everything}
 \alias{rda_do_everything}
-\title{Run RDA}
+\title{RDA function to do everything}
 \usage{
 rda_do_everything(
   gen,
   env,
   coords = NULL,
-  model = "full",
+  model = "best",
   correctGEO = FALSE,
   correctPC = FALSE,
   outlier_method = "p",
@@ -48,7 +48,7 @@ rda_do_everything(
 
 \item{cortest}{whether to create table of correlations for snps and environmental variable}
 
-\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to three), if set to "manual" a selection option with a terminal prompt will be provided}
+\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3), if set to "manual" a selection option with a terminal prompt will be provided}
 
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
@@ -61,15 +61,15 @@ rda_do_everything(
 
 \item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})}
 
-\item{stdz}{whether to center and scale environemntal data (defaults to TRUE)}
+\item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
 
 \item{impute}{function to use for imputation (defaults to \code{median}). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.}
 
 \item{R2permurations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
 }
 \value{
-list contatining (1) outlier snps, (2) data frame with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
+list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
 }
 \description{
-Run RDA
+RDA function to do everything
 }

@@ -4,18 +4,28 @@
 \alias{gdm_map}
 \title{Make map from model}
 \usage{
-gdm_map(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, plot = TRUE)
+gdm_map(
+  gdm_model,
+  envlayers,
+  coords,
+  plot_vars = TRUE,
+  scl = 1,
+  display_axes = FALSE,
+  plot = TRUE
+)
 }
 \arguments{
 \item{gdm_model}{GDM model}
 
 \item{envlayers}{stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)}
 
+\item{coords}{data frame with x and y coordinates}
+
 \item{plot_vars}{whether to create PCA plot to help in variable and map interpretation}
 
 \item{scl}{constant for rescaling variable vectors for plotting}
 
-\item{plot}{}
+\item{display_axes}{display PC axes text, labels, and ticks (defaults to FALSE)}
 }
 \value{
 GDM RGB map

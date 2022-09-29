@@ -78,12 +78,12 @@ K selection
 }
 \section{Functions}{
 \itemize{
-\item \code{select_K_tw}: select K using Tracy-Widom Test
+\item \code{select_K_tw()}: select K using Tracy-Widom Test
 
-\item \code{select_K_elbow}: select K using PCA and \code{quick.elbow} method
+\item \code{select_K_elbow()}: select K using PCA and \code{quick.elbow} method
 
-\item \code{select_K_tess}: select K using  TESS and \code{bestK} method
+\item \code{select_K_tess()}: select K using  TESS and \code{bestK} method
 
-\item \code{select_K_fc}: select K using find.clusters method
+\item \code{select_K_fc()}: select K using find.clusters method
+
 }}
-

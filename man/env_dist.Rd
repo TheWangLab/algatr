@@ -9,7 +9,7 @@ env_dist(env, stdz = TRUE)
 \arguments{
 \item{env}{dataframe or vector of environmental variables for locations}
 
-\item{stdz}{if TRUE then environmental values will be standardized (defaults to TRUE)}
+\item{stdz}{if TRUE then environmental values will be standardized (default = TRUE)}
 }
 \description{
 Calculate distance between environmental vars

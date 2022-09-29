@@ -2,7 +2,7 @@
 % Please edit documentation in R/LFMM.R
 \name{lfmm_table}
 \alias{lfmm_table}
-\title{Title}
+\title{Create \code{gt} table of LFMM results}
 \usage{
 lfmm_table(
   df,
@@ -11,13 +11,14 @@ lfmm_table(
   top = FALSE,
   order = FALSE,
   var = NULL,
-  nrow = NULL,
-  digits = 2
+  rows = NULL,
+  digits = 2,
+  footnotes = TRUE
 )
 }
 \arguments{
 \item{digits}{}
 }
 \description{
-Title
+Create \code{gt} table of LFMM results
 }

@@ -2,30 +2,28 @@
 % Please edit documentation in R/SNP_LD.R
 \name{ld_prune}
 \alias{ld_prune}
-\title{ld_prune prunes SNPs based on linkage disequilibrium using \code{snpggdsLDpruning()} in SNPRelate package.
-TODO: if vcf is path convert, otherwise no need to convert (does functionality exist within snpgdsVCF2GDS?)
-TODO: should intermediate gds files be deleted? set to temp and overwrite?
-TODO: print number of SNPs to be retained after LD-pruning}
+\title{ld_prune prunes SNPs based on linkage disequilibrium using \code{SNPRelate} and \code{SeqArray} packages
+TODO \link{EAC}: LOGFILE produced no matter what; do we want to keep this?}
 \usage{
 ld_prune(
   vcf,
-  outname,
+  out_name,
   out_format,
   nodes = 1,
   ld.threshold = 0.6,
   slide.max.n = 100,
   maf = 0.05,
   seed = 1234,
-  method = c("corr")
+  method = c("corr"),
+  save_output = TRUE
 )
 }
 \arguments{
 \item{vcf}{is the path to the vcf file containing all SNPs}
 
-\item{outname}{prefix name of output files (will append with param settings)}
+\item{out_name}{prefix name of output files (will append with param settings)}
 
-\item{out_format}{output file format ("plink" will produce ped and map files while "vcf" will produce a vcf and a GDS)
-Saves SNP GDS and ped (plink) files with retained SNPs}
+\item{out_format}{output file format ("plink" will produce ped and map files while "vcf" will produce a vcf and a GDS)}
 
 \item{nodes}{is the number of parallel processors (numeric)}
 
@@ -39,11 +37,8 @@ Saves SNP GDS and ped (plink) files with retained SNPs}
 
 \item{method}{is the LD threshold method; default to corr which is r2 correlation coefficient}
 
-\item{output_dir}{is the output file directory (default is here)}
+\item{save_output}{if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)}
 }
 \description{
-ld_prune prunes SNPs based on linkage disequilibrium using \code{snpggdsLDpruning()} in SNPRelate package.
-TODO: if vcf is path convert, otherwise no need to convert (does functionality exist within snpgdsVCF2GDS?)
-TODO: should intermediate gds files be deleted? set to temp and overwrite?
-TODO: print number of SNPs to be retained after LD-pruning
+\code{SNPRelate} package citation: Zheng et al. (2012): https://doi.org/10.1093/bioinformatics/bts606
 }

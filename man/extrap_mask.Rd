@@ -19,39 +19,39 @@ buffer_mask(coords, envlayers, buffer_width = 0.8)
 chull_mask(coords, envlayers, buffer_width = NULL)
 }
 \arguments{
-\item{coords}{dataframe of coordinates (first column should be x and second should be y)}
+\item{coords}{data frame of coordinates (first column should be x and second should be y)}
 
 \item{envlayers}{stack of rasters with environmental values to base mask on}
 
-\item{method}{method to use to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.}
+\item{method}{method to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.}
 
 \item{nsd}{number of standard deviations to use if using the "sd" method}
 
 \item{buffer_width}{buffer width to supply to \code{gBuffer} if using "buffer" method}
 }
 \value{
-raster mask where 1 values indicate areas that fall outside of observation range
+raster mask where values of 1 indicate areas that fall outside of observation range
 }
 \description{
-Creates a raster that can be used to mask areas falling outside the observation range of a dataset defined by coordinates and corresponding raster values
+Creates a raster that can be used to mask areas falling outside the observation range of a dataset, as defined by coordinates and corresponding raster values
 }
 \details{
 method can either be:
 \enumerate{
 \item range - uses \code{\link{range_mask}}, mask all areas with values outside of the range of any of the values of the coords
-\item sd - uses \code{\link{sd_mask}}, mask all areas outside the mean +/- stddev*nsd of any of the values of the coords (\code{nsd} defaults to 2)
+\item sd - uses \code{\link{sd_mask}}, mask all areas outside the mean +/- stdev*nsd of any of the values of the coords (\code{nsd} defaults to 2)
 \item buffer - uses \code{\link{buffer_mask}}, mask all areas outside of the buffer_width around the coords (\code{buffer_width} defaults to 0.8)
 \item chull - uses \code{\link{chull_mask}}, mask all areas outside a convex hull of the points
 }
 }
 \section{Functions}{
 \itemize{
-\item \code{range_mask}: mask based on range of data
+\item \code{range_mask()}: mask based on range of data
 
-\item \code{sd_mask}: mask based on mean and standard deviation of data
+\item \code{sd_mask()}: mask based on mean and standard deviation of data
 
-\item \code{buffer_mask}: mask based on buffers around points
+\item \code{buffer_mask()}: mask based on buffers around points
 
-\item \code{chull_mask}: mask based on range of data
+\item \code{chull_mask()}: mask based on range of data
+
 }}
-

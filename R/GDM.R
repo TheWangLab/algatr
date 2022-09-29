@@ -2,7 +2,7 @@
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
-#' @param coords dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order
+#' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
