@@ -71,7 +71,7 @@ plink_dists <- gen_dist(plink_file = here("inst", "extdata", "liz_test.dist"), p
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
 
 ```{r pc dists}
-pc_dists <- gen_dist(vcf = here("inst", "extdata", "liz_test.vcf"), dist_type = "pc")
+pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
 # TODO: switch above to system.file
 ```
 

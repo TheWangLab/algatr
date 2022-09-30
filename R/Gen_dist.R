@@ -98,8 +98,8 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
     # Perform imputation with warning
     if(any(is.na(mat))){
       length <- rep(1, length(gl$ind.names))
-      strata(gl) <- as.data.frame(length)
-      setPop(gl) <- ~length
+      adegenet::strata(gl) <- as.data.frame(length)
+      adegenet::setPop(gl) <- ~length
       gl <- dartR::gl.impute(gl, method = "frequency")
       mat <- as.matrix(gl)
       warning("NAs found in genetic data, imputing to mean (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
