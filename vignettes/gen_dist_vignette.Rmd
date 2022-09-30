@@ -22,6 +22,7 @@ library(here)
 library(vcfR)
 library(ecodist)
 library(adegenet)
+library(cowplot)
 ```
 
 For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are as follows:
@@ -83,9 +84,9 @@ pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
 To compare between the genetic distances you just produced, we can plot them:
 
 ```{r gendist corr}
-# Plot some pairwise comparisons
+# Plot some pairwise comparisons, providing names for the metrics
 p_euc_plink <- gen_dist_corr(euc_dists, plink_dists, "Euclidean", "Plink")
-p_pc_plink <- gen_dist_corr(pc_dists, plink_dists)
+p_pc_plink <- gen_dist_corr(pc_dists, plink_dists, "PC_based", "Plink")
 
 # Show all plots as panels on a single plot
 plot_grid(p_euc_plink, p_pc_plink, nrow=1)
@@ -96,5 +97,5 @@ plot_grid(p_euc_plink, p_pc_plink, nrow=1)
 Let's look at a heatmap scaled to one of the genetic distance metrics we calculated.
 
 ```{r gendist hm}
-
+gen_dist_hm(euc_dists)
 ```

@@ -137,18 +137,28 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
 #'
 #' @param dist_x df containing square distance matrix for x axis
 #' @param dist_y df containing square distance matrix for y axis
-#' @param metric_name_x name of distance metric for x axis
-#' @param metric_name_y name of distance metric for y axis
+#' @param metric_name_x name of distance metric for x axis; if DPS used, must be `"dps"`
+#' @param metric_name_y name of distance metric for y axis; if DPS used, must be `"dps"`
 #'
 gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
-  # Melt from square to long
+
+  # Check to ensure sample IDs match ----------------------------------------
+
+  if (all(rownames(dist_x) == rownames(dist_y)) == FALSE) {
+    stop("Sample IDs do not match")
+  }
+
+  # Melt data from square to long -------------------------------------------
+
   melt_x = harrietr::melt_dist(as.matrix(dist_x)) %>%
     dplyr::rename(!!metric_name_x := dist)
   melt_y = harrietr::melt_dist(as.matrix(dist_y)) %>%
     dplyr::rename(!!metric_name_y := dist)
 
-  if (metric_name_x == "dps" || metric_name_y == "dps"){
-    # TODO [EAC]: should check whether inds are the same across datasets, return something if not
+
+  # Build plots -------------------------------------------------------------
+
+  if (metric_name_x == "dps" || metric_name_y == "dps") {
     joined <- dplyr::full_join(melt_x, melt_y) %>%
       dplyr::mutate(rev_dps = (1-dps))
     joined %>%
@@ -156,7 +166,6 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
       ggplot2::geom_abline(ggplot2::aes(intercept=0.0, slope=1), color="gray") +
       ggplot2::geom_point(color="black", size=.2, alpha = .5)
   } else {
-    # TODO [EAC]: should check whether inds are the same across datasets, return something if not
     joined <- dplyr::full_join(melt_x, melt_y)
     joined %>%
       ggplot2::ggplot(ggplot2::aes_string(x=metric_name_x, y=metric_name_y)) +
@@ -174,13 +183,17 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 #'
 #' @examples
 gen_dist_hm <- function(dist){
-  as.data.frame(env_dist$CA_rPCA1) %>%
+
+  if(!is.null(dist)) if(!inherits(dist, "data.frame")) dist <- as.data.frame(dist)
+
+  dist %>%
     tibble::rownames_to_column("sample") %>%
     tidyr::gather("sample_comp", "dist", -"sample") %>%
-    ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+    ggplot2::ggplot(ggplot2::aes(x = sample, y = sample_comp, fill = dist)) +
     ggplot2::geom_tile() +
     ggplot2::coord_equal() +
-    viridis::scale_fill_viridis() +
+    viridis::scale_fill_viridis(option = "inferno") +
     xlab("Sample") +
-    ylab("Sample")
+    ylab("Sample") +
+    theme(axis.text.x = element_text(angle = 90))
 }
