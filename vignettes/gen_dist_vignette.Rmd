@@ -72,7 +72,6 @@ Finally, let's calculate PC-based distances using a significance threshold of 0.
 
 ```{r pc dists}
 pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
-# TODO: switch above to system.file
 ```
 
 ## Compare genetic distance results
@@ -85,7 +84,7 @@ To compare between the genetic distances you just produced, we can plot them:
 
 ```{r gendist corr}
 # Plot some pairwise comparisons
-p_euc_plink <- gen_dist_corr(euc_dists, plink_dists)
+p_euc_plink <- gen_dist_corr(euc_dists, plink_dists, "Euclidean", "Plink")
 p_pc_plink <- gen_dist_corr(pc_dists, plink_dists)
 
 # Show all plots as panels on a single plot

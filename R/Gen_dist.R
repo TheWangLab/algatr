@@ -152,16 +152,16 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
     joined <- dplyr::full_join(melt_x, melt_y) %>%
       dplyr::mutate(rev_dps = (1-dps))
     joined %>%
-      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
-      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
-      geom_point(color="black", size=.2, alpha = .5)
+      ggplot2::ggplot(ggplot2::aes_string(x=metric_name_x, y=metric_name_y)) +
+      ggplot2::geom_abline(ggplot2::aes(intercept=0.0, slope=1), color="gray") +
+      ggplot2::geom_point(color="black", size=.2, alpha = .5)
   } else {
     # TODO [EAC]: should check whether inds are the same across datasets, return something if not
     joined <- dplyr::full_join(melt_x, melt_y)
     joined %>%
-      ggplot(aes_string(x=metric_name_x, y=metric_name_y)) +
-      geom_abline(aes(intercept=0.0, slope=1), color="gray") +
-      geom_point(color="black", size=.2, alpha = .5)
+      ggplot2::ggplot(ggplot2::aes_string(x=metric_name_x, y=metric_name_y)) +
+      ggplot2::geom_abline(ggplot2::aes(intercept=0.0, slope=1), color="gray") +
+      ggplot2::geom_point(color="black", size=.2, alpha = .5)
   }
 }
 
