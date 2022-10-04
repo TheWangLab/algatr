@@ -52,7 +52,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10))
+  print(lfmm_table(results$df, top = TRUE, order = TRUE, rows = 1:10))
 
   return(results)
 }
@@ -143,7 +143,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
   return(df)
 }
 
-#' Title
+#' Create `gt` table of LFMM results
 #'
 #' @param df
 #' @param sig
@@ -151,14 +151,14 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #' @param top
 #' @param order
 #' @param var
-#' @param nrow
+#' @param rows
 #' @param digits
 #'
 #' @return
 #' @export
 #'
 #' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2){
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, rows = NULL, digits = 2, footnotes = TRUE){
 
   if(!is.null(var)) df <- df[df$var %in% var, ]
   if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
@@ -166,19 +166,24 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   if(top) df <- df %>%
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(B) == max(abs(B)))
-  if(!is.null(nrow)) df <- df[1:nrow, ]
+  if(!is.null(nrow)) df <- df[rows, ]
 
   df <- df %>% dplyr::as_tibble() %>% dplyr::filter(dplyr::if_any(dplyr::everything(), ~ !is.na(.)))
   if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
 
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
+  # TODO: come back and remove adjusted p-value if no correction is applied
+  colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
+
   suppressWarnings(
     tbl <- df  %>%
       gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric(B, trim = TRUE, domain = c(-d,d))
+      gtExtras::gt_hulk_col_numeric("B", trim = TRUE, domain = c(-d,d))
 
   )
+
+  if(footnotes) tbl <- tbl %>% gt::tab_footnote(footnote = "LFMM effect size", locations = gt::cells_column_labels(columns = B))
 
   tbl
 }

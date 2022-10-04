@@ -1,5 +1,5 @@
 
-#' Run RDA
+#' RDA function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
@@ -24,7 +24,7 @@
 #'
 #' @importFrom vegan rda
 #'
-#' @return list containing (1) outlier SNPs, (2) data frame with correlation test results; if `cortest = TRUE`: (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
+#' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
 #' @export
 #'
 #' @examples
@@ -436,7 +436,6 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
 #' @noRd
 rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 
-  ## Manhattan plot
   TAB_manhattan <- data.frame(pos = 1:nrow(TAB_snps),
                               pvalues = pvalues,
                               type = factor(TAB_snps$type, levels = c("Neutral", "Outliers")))
@@ -480,9 +479,16 @@ rda_hist <- function(TAB_snps, binwidth = NULL){
                    strip.text = ggplot2::element_text(size=11))
 }
 
-#' Make table of correlation test results
+#' Create `gt` table of RDA results
 #'
-#' @param cor_df datafram of correlation results output from \link[algatr]{rda_cor}
+#' @param cor_df dataframe of correlation results output from \link[algatr]{rda_cor}
+#' @param sig_only whether to only include loci with p-values less than `sig` (defaults to TRUE)
+#' @param top whether to only include only keep the top variable for each snp in the table by the strength of the correlation (defaults to FALSE)
+#' @param order whether to order by the magnitude of the correlation (defaults to FALSE)
+#' @param var which variables to include (defaults to including all variables)
+#' @param nrow number of rows to display (defaults to displaying all rows)
+#' @param digits number of digist to include (defaults to 2)
+#' @inheritParams rda_do_everything
 #'
 #' @return An object of class `gt_tbl`
 #' @export

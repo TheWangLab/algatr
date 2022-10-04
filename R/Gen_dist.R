@@ -15,7 +15,7 @@
 #'
 #' @return pairwise distance matrix for given distance metric
 #'
-gen_dist_calc <- function(vcf_file, plink_file, plink_id_file, dist_type, criticalpoint = 2.0234){
+gen_dist_calc <- function(vcf_file = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
 
   # Calculate Euclidean distances -------------------------------------------
 

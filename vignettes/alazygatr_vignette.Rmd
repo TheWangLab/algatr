@@ -1,0 +1,24 @@
+---
+title: "do_everything_for_me"
+output: html_document
+---
+```{r color, echo = FALSE, results = FALSE}
+options(crayon.enabled = TRUE)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks, 
+                                   which = c("output", "message", "error"))
+```
+
+```{r, include = FALSE}
+library(algatr)
+devtools::load_all()
+vcf <- liz_vcf[,1:21]
+coords <- liz_coords[1:20,]
+envlayers <- CA_env
+```
+
+```{r, warning = FALSE}
+res <- do_everything_for_me(vcf, coords, envlayers)
+```
+`
+
