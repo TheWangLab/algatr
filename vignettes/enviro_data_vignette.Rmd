@@ -88,7 +88,7 @@ wclim[[1]]
 Now, let's plot one of the variables and overlay our sampling coordinates on top.
 
 ```{r wclim plot, warning = FALSE}
-terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
+plot(wclim[[1]], col = turbo(100), axes = FALSE)
 points(liz_coords, pch = 19)
 ```
 
@@ -104,7 +104,7 @@ The `check_env()` function calculates the Pearson correlation coefficient for pa
 
 ```{r collin env}
 # Convert wclim from SpatRaster to RasterStack
-wclim_stack <- raster::stack(wclim)
+wclim_stack <- stack(wclim)
 
 # Check for collinearity; the result is a matrix with pairwise correlation coefficients
 cors_env <- check_env(wclim_stack)
@@ -151,7 +151,7 @@ check_dists(CA_env, liz_coords)
 Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables.
 
 ```{r raster PCA}
-env_pcs <- RStoolbox::rasterPCA(wclim, spca = TRUE)
+env_pcs <- rasterPCA(wclim, spca = TRUE)
 
 # Let's take a look at the results for the top three PCs
 plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
@@ -182,7 +182,7 @@ points(liz_coords, pch = 19)
 Some of the analyses within algatr, such as GDM and MMRR, require comparing genetic distances to environmental distances. We can calculate environmental distances using the `env_dist()` function, which allows users to calculate environmental distances between variables for given sampling locations. We first need to extract environmental variables at sampling coordinates.
 
 ```{r extract enviro vars}
-env <- raster::extract(CA_env, liz_coords)
+env <- extract(CA_env, liz_coords)
 
 # You can there are extracted values (n=53) for each environmental layer
 head(env)
@@ -200,12 +200,12 @@ We can make a heat map in ggplot with the pairwise distances.
 
 ```{r env dist heatmap}
 as.data.frame(env_dist$CA_rPCA1) %>% 
-  tibble::rownames_to_column("sample") %>% 
-  tidyr::gather("sample_comp", "dist", -"sample") %>% 
-  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
-  ggplot2::geom_tile() +
-  ggplot2::coord_equal() +
-  viridis::scale_fill_viridis() +
+  rownames_to_column("sample") %>% 
+  gather("sample_comp", "dist", -"sample") %>% 
+  ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  geom_tile() +
+  coord_equal() +
+  scale_fill_viridis() +
   xlab("Sample") +
   ylab("Sample")
 ```
@@ -237,12 +237,12 @@ We can make a heat map in ggplot with the pairwise distances.
 geo_dist <- as.data.frame(geo_dist)
 colnames(geo_dist) <- rownames(geo_dist)
 geo_dist %>% 
-  tibble::rownames_to_column("sample") %>% 
-  tidyr::gather("sample_comp", "dist", -"sample") %>% 
-  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
-  ggplot2::geom_tile() +
-  ggplot2::coord_equal() +
-  viridis::scale_fill_viridis() +
+  rownames_to_column("sample") %>% 
+  gather("sample_comp", "dist", -"sample") %>% 
+  ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  geom_tile() +
+  coord_equal() +
+  scale_fill_viridis() +
   xlab("Sample") +
   ylab("Sample")
 ```
@@ -254,7 +254,7 @@ We can also calculate topographic distances, but need to provide a digital eleva
 ```{r download DEM}
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
-dem <- geodata::elevation_30s(country = "USA", path=here())
+dem <- elevation_30s(country = "USA", path=here())
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)
@@ -282,12 +282,12 @@ colnames(topo_dist) <- 1:53
 rownames(topo_dist) <- 1:53
 
 topo_dist %>% 
-  tibble::rownames_to_column("sample") %>% 
-  tidyr::gather("sample_comp", "dist", -"sample") %>% 
-  ggplot2::ggplot(ggplot2::aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
-  ggplot2::geom_tile() +
-  ggplot2::coord_equal() +
-  viridis::scale_fill_viridis() +
+  rownames_to_column("sample") %>% 
+  gather("sample_comp", "dist", -"sample") %>% 
+  ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
+  geom_tile() +
+  coord_equal() +
+  scale_fill_viridis() +
   xlab("Sample") +
   ylab("Sample")
 ```
