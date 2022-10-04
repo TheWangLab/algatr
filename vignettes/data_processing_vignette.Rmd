@@ -30,7 +30,7 @@ For landscape genomic analyses, we need to process our input data files in vario
 
 -   `ld_prune()` to prune variants that are in linkage disequilibrium with one another; this primarily uses the `snpgdsLDpruning()` function within the SNPRelate package ([Zheng et al. 2012](10.1093/bioinformatics/bts606); see [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) for further information)
 
-### Converting a vcf to a dosage matrix with `vcf_to_dosage()`
+## Converting a vcf to a dosage matrix with `vcf_to_dosage()`
 
 ------------------------------------------------------------------------
 

@@ -55,7 +55,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 load_example()
 ```
 
-### Introduction to environmental data files and object types
+## Introduction to environmental data files and object types
 
 Briefly, in R, any (geo)spatial data can be represented using vectors or rasters. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, vectors are used to represent data points (e.g., sampling coordinates) or polygons (e.g., the state of California); rasters are used for storing environmental attributes of California.
 
@@ -63,7 +63,7 @@ There are two main packages algatr uses to process and manipulate environmental 
 
 Each of these packages has their own classes to represent rasters. Within the terra package, the `SpatRaster` class is used to represent rasters, while the raster package uses `RasterLayer` (single-layer raster data), `RasterBrick` and `RasterStack` (both are multi-variable raster data but differ in how many files can be linked to them) classes. No matter which class is used to represent rasters, the fundamental parameters that describe these rasters is always the same: numbers of rows, columns, the spatial extent, and the coordinate reference system (CRS) for proper projection.
 
-### Gather environmental data using `get_worldclim()`
+## Gather environmental data using `get_worldclim()`
 
 ------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ terra::plot(wclim[[1]], col = turbo(100), axes = FALSE)
 points(liz_coords, pch = 19)
 ```
 
-### Detect collinearity
+## Detect collinearity
 
 ------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ check_dists(wclim_stack, liz_coords)
 check_dists(CA_env, liz_coords)
 ```
 
-### Perform a raster PCA on environmental layers
+## Perform a raster PCA on environmental layers
 
 ------------------------------------------------------------------------
 
@@ -163,7 +163,7 @@ grid.arrange(plots[[1]],plots[[2]], plots[[3]], ncol=1)
 ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
 ```
 
-### Create raster from coordinates with `coords_to_raster()`
+## Create raster from coordinates with `coords_to_raster()`
 
 ------------------------------------------------------------------------
 
@@ -175,7 +175,7 @@ plot(raster, axes = FALSE)
 points(liz_coords, pch = 19)
 ```
 
-### Calculate environmental distances using `env_dist()`
+## Calculate environmental distances using `env_dist()`
 
 ------------------------------------------------------------------------
 
@@ -210,7 +210,7 @@ as.data.frame(env_dist$CA_rPCA1) %>%
   ylab("Sample")
 ```
 
-### Calculate geographic distances using `geo_dist()`
+## Calculate geographic distances using `geo_dist()`
 
 ------------------------------------------------------------------------
 

@@ -21,7 +21,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
-  # convert vcf to dosage
+  # Convert vcf to dosage
   if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Convert coords to matrix
@@ -588,10 +588,11 @@ bestK <- function(tess3_obj, Kvals){
   ce <- list()
   for(k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
   ce.K <- c()
+  # TODO [EAC]: there is only one XEnt per k value (minimizing per k value applies if you have replicate runs); no replicates done so is the following line necessary?
   for(k in Kvals) ce.K[k] <- min(ce[[k]])
   diff <- ce.K[-1] - ce.K[-max(Kvals)]
   slope <- exp(-diff) - 1
-  #K is selected based on the smallest slope value in the upper quartile
+  # K is selected based on the smallest slope value in the upper quartile
   K <- min(which(slope <= quantile(slope)[4]))
   return(K)
 }

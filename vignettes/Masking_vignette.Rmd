@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Masking maps for landscape genomics
+# Masking maps for landscape genomics
 
 ```{r setup}
 library(algatr)
@@ -33,7 +33,7 @@ This vignette goes through two main masking functions:
 
 2.  The `plot_extrap_mask()` function generates a map with masked areas.
 
-## Read in data
+### Read in data
 
 ```{r data}
 # Load test data, including CA_env which are the envlayers we'll be using
