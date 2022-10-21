@@ -5,3 +5,4 @@
 ^package_setup\.qmd$
 ^data-raw$
 ^README\.Rmd$
+^LICENSE\.md$
