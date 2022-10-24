@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # TESS population structure analysis
 
-```{r setup}
+```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 library(tidyverse)
@@ -40,6 +40,7 @@ source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
 # devtools::install_github("cran/automap")
 library(automap)
 library(spatialEco)
+library(rworldmap)
 
 devtools::load_all()
 ```
@@ -55,7 +56,6 @@ For additional information on the original development and implementation of the
 Running TESS3 requires three data files for input: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function to convert a vcf to a dosage matrix.
 
 ```{r data}
-# Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
 # Our code assumes that the first column is longitude and second is latitude; check this:
 head(liz_coords)
@@ -69,9 +69,9 @@ liz_dosage <- vcf_to_dosage(liz_vcf)
 
 ### Process environmental data
 
-TESS provides the ability to map ancestry coefficient estimates, and smooths the resulting surface using a method of spatial interpolation called kriging. We have extended the existing kriging of Q values TODO XXX
+TESS provides the ability to map ancestry coefficient estimates, and smooths the resulting surface using a method of spatial interpolation called kriging. We need to download a raster onto which we can map Q values.
 
-```{r}
+```{r raster}
 # First, create a RasterLayer for kriging
 # We can use one environmental layer (PC1), aggregated (i.e., increased cell size) to increase computational speed
 krig_raster <- raster::aggregate(CA_env[[1]], fact = 6)
@@ -87,92 +87,113 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but often this over-simplifies the data. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
 
+### Manual K selection
+
+Let's run TESS on a set of K values ranging from 1-10, and select the "best" K value manually based on cross-validation scores. To do so, we'll specify `"manual"` within the `K_selection` argument. Typically, researchers will select the "best" K value by minimizing cross-validation scores.
+
+```{r manual K selection, message = FALSE}
+# In this case, we can see that the "best" K (minimizing xval score) is also the max value, 10
+tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_selection = "manual")
+```
+
 ### Automatic K selection
 
 The default K selection (`"auto"`) within the `tess_ktest()` function is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
 
-The resulting object contains `tess3_obj`, which provides the cross-validation scores for the different K values that were tested. Let's start with an automatic K-value testing procedure for K values 1-3.
+The resulting object contains `tess3_obj`, which provides the cross-validation scores for the different K values that were tested. Let's do the automatic K-value testing procedure once again for K values 1-10. As you can see, the `tess_ktest()` function outputs a plot with cross-validation scores for each K value, with a red dashed line indicating the best K value obtained from the automatic K selection procedure described above.
 
-```{r auto test Ks}
-tess3_result_auto <- tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_selection = "auto")
-# Get tess object
+```{r auto K selection, message = FALSE}
+# Best K is 3; this provides a more reasonable estimate for the "best" K compared to manual selection above
+tess3_result <- tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_selection = "auto")
+```
+
+### K selection results from `test_ktest()`
+
+The `tess3_result` object contains results for the best-supported K value, including:
+
+1.  `K`: The value of the best-supported K (3, in this case); this is assigned a value of NA if manual selection is done
+
+2.  `tess3_obj`: Results from the cross-validation analysis of all values of K
+
+3.  `coords`: Sampling coordinates
+
+4.  `Kvals`: The range of K values that were tested
+
+5.  `grid`: The RasterLayer upon which ancestry coefficients are mapped; NULL in this case
+
+### Running TESS with no K selection
+
+If you want to run TESS without any K selection, you could just run TESS as normal, doing the following:
+
+```{r no K selection, message = FALSE}
+tess3_obj_noK <- tess3(liz_dosage, coord = as.matrix(liz_coords), K = 3, method = "projected.ls", ploidy = 2)
+```
+
+The resulting object from the above run is a typical TESS output format (it is also contained within the above `tess3_obj` object); see tess3r vignette for details [here](https://bcm-uga.github.io/TESS3_encho_sen/articles/main-vignette.html) to read more.
+
+## Extracting TESS results
+
+------------------------------------------------------------------------
+
+Now that we know which K value we want to use (K=3) from our automatic K selection results, we can move forward with TESS. We need to extract the tess3 object from our results, and create a Q-matrix with ancestry coefficient values from K=3 using the `qmatrix()` function with which we can visualize results.
+
+```{r qmatrix}
+# Get TESS object and best K from results
 tess3_obj <- tess3_result$tess3_obj
+bestK <- tess3_result[["K"]]
 
-# get best K and get Qmatrix
-qmat <- qmatrix(tess3_obj, K = 4)
+# Get Qmatrix with ancestry coefficients
+qmat <- qmatrix(tess3_obj, K = bestK)
+# qmat contains ancestry coefficient values for each individual (row) and each K value (column)
+head(qmat)
 ```
 
-### Manual K selection
+## Krig Q values
 
-Now, let's run the same range of K values (1-10) but this time specify the manual K selection (`"manual"` argument).
+------------------------------------------------------------------------
 
-```{r manual test Ks}
-tess3_result_man <- tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_selection = "manual")
-```
-
-### Krig Q values
+The `tess_krig()` function will take in ancestry coefficient values (in the Q-matrix) and will krige the values based on the raster provided (`krig_raster` from above). This will produce a RasterBrick object.
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
-# krige Qmatrix
-# TODO [EAC]: coords needs to have x and y (if long and lat returns error?)
 krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
 ```
 
-## Interpreting results
+## Visualizing TESS results
 
 ------------------------------------------------------------------------
 
-The `results` object contains results for the best-supported K value, including:
+### Barplot of Q values
 
-1.  The value of the best-supported K (2, in this case): `K`
+A typical representation for population structure results is a STRUCTURE-style barplot, in which each stacked bar represents an individual and the proportion of stacked color represents the proportion of ancestry assigned to that individual for each cluster (or K value). In our case, we have K=3, so there will be three colors representing each of these K values.
 
-2.  The matrix of individual ancestry coefficients, or Q values: `Qmatrix`
+algatr has a custom function, `tess_barplot()`, to generate these plots from our TESS results. This automatically sort individuals based on their Q values (although this can be modified using the `sort_by_Q` argument, if so desired).
 
-3.  A RasterBrick containing the kriged ancestry coefficient values for mapping: `krig_admix`
-
-4.  Results from the cross-validation analysis of all values of K: `tess_results`
-
-5.  Sampling coordinates: `coords`
-
-6.  The range of K values that were tested: `Kvals`
-
-7.  The RasterLayer upon which ancestry coefficients are mapped: `grid`
-
-```{r, cache = TRUE}
-summary(results)
+```{r barplot}
+tess_barplot(qmat)
 ```
 
-## Plotting
+### Building maps in TESS3 using `tess_ggplot()`
 
-------------------------------------------------------------------------
+Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggplot()` function will take in the kriged admixture values and sampling coordinates, and provides several options for the plot method (with the `plot_method` argument):
 
-### Building maps in TESS3
+-   `"maxQ"` plots only the maximum Q value for each cell (this is the default)
 
-Now let's exploring how Q values (ancestry coefficients) are mapped. We'll move forward with the automatic K selection results (so, a K value of TODO XXX).
+-   `"allQ"` plots all Q-values that are greater than a user-specified `minQ` value
 
-### Basic ggplot
+-   `"maxQ_poly"` plots maxQ as polygons for each K-value instead of continuous Q values
 
-```{r, fig.width = 5, fig.height = 5}
+-   `"allQ_poly"` plots allQ as polygons for each K-value instead of continuous Q values
+
+```{r basic ggplot, fig.width = 5, fig.height = 5}
 tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ")
-tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ_poly")
-tess_ggplot(krig_admix, liz_coords, plot_method = "allQ", minQ = 0.20)
 tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
 ```
 
-```{r}
-tess_barplot(qmat, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
-```
+### Extended plotting
 
-## Extended base R plotting
+In many cases, a user may want more customizability in mapping their TESS results. For example, users may want to have more control over color breaks, alpha levels, legend/color scale settings. In this case, we can use base R plotting functions with the `tess_plot()` function.
 
-To plot individual layers and have more control over color breaks, alpha levels, legend/color scale settings, etc. use base R plotting functions
-
-```{r, fig.width = 10, fig.height = 4}
-par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
-tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
-```
-
-```{r, fig.width = 5, fig.height = 5, warning = FALSE}
+```{r extended mapping, fig.width = 5, fig.height = 5, warning = FALSE}
 par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
 
 tess_plot(krig_admix, plot_method = "maxQ", col_breaks = 20)
@@ -181,13 +202,22 @@ tess_plot(krig_admix, plot_method = "maxQ_poly")
 tess_plot(krig_admix, plot_method = "allQ_poly", minQ = 0.20, col_alpha = 0.50)
 ```
 
+We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.
+
+```{r plot all K, fig.width = 10, fig.height = 4}
+par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
+tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
+```
+
 ## Plotting with default tess3r package functions
 
-```{r}
+You can, of course, also plot TESS results using the tess3r package defaults and not those provided with algatr. The TESS function for a barplot is `barplot()`. 
+
+```{r tess default barplot}
 barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", ylab = "Ancestry coefficients")
 ```
 
-NOTE: the original tess3r package uses a different type of kriging than autoKrige, it also kriges and plots in the same function (so there isn't an easy way to get the raster output).
+You can also map kriged Q-values using tess3r with the `plot()` function. *NOTE: Be aware that the original tess3r package uses a different type of kriging than autoKrige. tess3r also kriges and plots in the same function, so there isn't an easy way to get the raster output.*
 
 ```{r, fig.width = 5, fig.height = 5}
 plot(qmat, 
@@ -198,24 +228,37 @@ plot(qmat,
      xlab = "Longitude", ylab = "Latitude", 
      col.palette = CreatePalette(),
      resolution = c(300,300), cex = .4)
-
-# comparison to algatr
-par(pty = "s", mar = rep(0,4))
-tess_plot(krig_admix, liz_coords, plot_method = "maxQ", col_pal =  tess_col_default)
 ```
 
 ## Running TESS with `tess_do_everything()`
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.  *(N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided)*.
+The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *(N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided)*.
 
-The `tess_do_everything()` function will output (1) a plot with cross-entropy scores for specified K values with a vertical dashed line indicating the best-supported K value; (2) a map with ancestry coefficients plotted and colorized based on corresponding Q values for the best-supported K; and (3) a standard STRUCTURE-style bar plot in which vertical bars represent individuals and the proportion of color of the stacked bars corresponds to the ancestry coefficients of each individual (i.e,. their assignment into each K) for the best-supported K.
+The `tess_do_everything()` function will print out the barplot, the cross-validation scores for the range of K values tested, and the kriged map. It will also print the order in which individuals are ordered in the barplot. The resulting object from this function contains:
+
+-   `K`: The best K value based on user-specified K selection
+
+-   `Qmatrix`: The matrix of individual ancestry coefficients, or Q values
+
+-   `krig_admix`: A RasterBrick object containing the kriged ancestry coefficient values for mapping
+
+-   `tess_results`: The tess3r object containing cross-entropy scores for each K value tested
+
+-   `coords`: Sampling coordinates
+
+-   `Kvals`: Range of K values that were tested
+
+-   `grid`: The RasterLayer upon which Q values will be mapped
 
 ```{r do everything, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5}
-# TODO [EAC]: autoKrige duplicate observations in input_data?
-# TODO [EAC]: printed order?
-par(pty = "s", mar = rep(2,4))
-# results <- tess_do_everything(gen, liz_coords, CA_env[[1]], Kvals = 1:3, K_selection = "auto", minQ = 0.10)
-results_krige <- tess_do_everything(gen, liz_coords, krig_raster, Kvals = 1:3, K_selection = "auto", minQ = 0.10)
+# One could also use krig_raster as the grid object
+# TODO [EAC]: fix par so they're not stacked
+# TODO [EAC]: best K is now 2 vs 3 as above?
+results <- tess_do_everything(liz_vcf, liz_coords, CA_env[[1]], Kvals = 1:3, K_selection = "auto", minQ = 0.10)
 ```
+
+2.  `Qmatrix`: 
+
+3.  

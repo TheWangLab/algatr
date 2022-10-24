@@ -101,5 +101,5 @@ Kriging is a type of spatial interpolation to allow for smoother maps of genetic
 The algatr package also has an option to run all of the above functionality in a single function, `wingen_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
 
 ```{r do everything}
-
+# wingen_do_everything()
 ```

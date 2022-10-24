@@ -157,7 +157,7 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   # Krige each K value
   krig_admix <- raster::stack(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
 
-  # if NULL return NULL
+  # If NULL, return NULL
   if(is.null(krig_admix)) return(NULL)
 
   # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
@@ -242,7 +242,7 @@ raster_to_grid <- function(x) {
 #' @examples
 tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE){
 
-  # set up ggplot df
+  # Set up ggplot df
   gg_df <- krig_admix %>%
     raster::rasterToPoints() %>%
     tidyr::as_tibble() %>%
@@ -250,14 +250,14 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
     dplyr::group_by(x, y)
 
-  # use max or all Q
+  # Use max or all Q
   if(plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
   if(plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > 0.20)
 
-  # set up base plot
+  # Set up base plot
   plt <- ggplot2::ggplot()
 
-  # plot as polygon or continuous Q
+  # Plot as polygon or continuous Q
   if(plot_method == "maxQ_poly" | plot_method == "allQ_poly"){
     plt <- plt + ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K), alpha = 0.5)
   } else {
@@ -267,13 +267,13 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
                                 guide = ggplot2::guide_legend())
   }
 
-  # add color
+  # Add color
   plt <- plt + ggplot_fill
 
-  # add themes and coord controls
+  # Add themes and coord controls
   plt <-  plt + ggplot2::coord_equal() + ggplot2::theme_bw()
 
-  # add axes
+  # Add axes
   if(plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank(),
                                             panel.grid.major.y = ggplot2::element_blank(),
                                             panel.grid.minor.x = ggplot2::element_blank(),
@@ -293,7 +293,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
                                             panel.border = ggplot2::element_blank(),
                                             aspect.ratio = 1)
 
-  # add coords
+  # Add coords
   if(!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
 
   return(plt)
@@ -320,8 +320,7 @@ tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal =
   # Get K based on the number of layers
   K <- raster::nlayers(krig_admix)
 
-  # Select method and options
-  # suppress irrelevant plot warnings
+  # Select method and options and suppress irrelevant plot warnings
   suppressWarnings({
   if(plot_method == "maxQ") tess_plot_max(krig_admix, K = K, coords = coords, poly = FALSE, col_pal = col_pal, col_breaks = col_breaks, legend = TRUE)
   if(plot_method == "allQ") tess_plot_all(krig_admix, K = K, coords = coords, poly = FALSE, col_pal = col_pal, col_breaks = col_breaks, col_alpha = col_alpha, minQ = minQ, legend = TRUE)
@@ -329,7 +328,7 @@ tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal =
   if(plot_method == "allQ_poly") tess_plot_all(krig_admix, K = K, coords = coords, poly = TRUE, col_pal = col_pal, col_alpha = col_alpha, minQ = minQ, legend = TRUE)
   })
 
-  # add coordinates if given
+  # Add coordinates, if provided
   if(!is.null(coords)) points(coords, pch = 3)
 }
 
@@ -338,13 +337,13 @@ tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal =
 #'
 #' @inheritParams tess_plot
 #' @param K K value
-#' @param poly whether to plot as polygon instead of continous Q values
+#' @param poly whether to plot as polygon instead of continuous Q values
 #'
 #' @export
 #' @noRd
 tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, legend = TRUE){
 
-   # make and summarize dataframe by only retaining highest Q values for each point
+  # Make and summarize dataframe by only retaining highest Q values for each point
   pop_df <-  krig_admix %>%
     raster::rasterToPoints() %>%
     tidyr::as_tibble() %>%
@@ -364,7 +363,7 @@ tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = 
   # Plot each kriged admixture layer one by one on top of each other
   purrr::walk(1:K, max_plot_helper, pop_df, poly = poly, col = col_pal(K), col_breaks = col_breaks)
 
-  # add legend
+  # Add legend
   if(legend) legend("topright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K), bty = "n")
 
   # Add coordinates
@@ -397,7 +396,7 @@ max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
   sp::coordinates(pop_spdf) <- ~x+y
   rl <- raster::rasterFromXYZ(pop_spdf[, "Q"])
 
-  # if not poly plot, set zlim to range of all Q values
+  # If not poly plot, set zlim to range of all Q values
   if(!poly) zlim <- range(pop_df$Q)
 
   # Plot raster
@@ -432,7 +431,7 @@ tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pa
   # Plot kriged admixture layers while masking values < minQ
   purrr::walk(1:K, all_plot_helper, krig_admix, poly = poly, col = col_pal(K, alpha = col_alpha), col_breaks = col_breaks, zlim = c(minQ, maxr))
 
-  # add legend
+  # Add legend
   if(legend) legend("topright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K), bty = "n")
 
   # Add coordinates
@@ -474,10 +473,10 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 #' @examples
 tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
 
-  # get K
+  # Get K
   K <- raster::nlayers(krig_admix)
 
-  # plot kriged admixture maps while masking small values (e.g. < minQ)
+  # Plot kriged admixture maps while masking small values (e.g. < minQ)
   purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords,  col = col_pal(K), col_breaks = col_breaks, ...)
 
   }
@@ -492,7 +491,7 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 #'
 allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...){
 
-  # suppress irrelevant plot warnings
+  # Suppress irrelevant plot warnings
   suppressWarnings({raster::plot(krig_admix[[K]],
                col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
                zlim = c(0, max(maxValue(krig_admix))),
@@ -501,7 +500,7 @@ allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...)
                main = paste0("K = ",K),
                ...)})
 
-  # add coordinates if given
+  # Add coordinates, if provided
   if(!is.null(coords)) points(coords, pch = 3)
 }
 
@@ -547,7 +546,7 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
   # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 
-  # get K
+  # Get K
   K <- ncol(qmat)
 
   if (sort_by_Q) {
@@ -573,7 +572,6 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 }
 
 
-# TODO: ANNE CHECK THIS
 #' Best K Selection based on cross entropy
 #'
 #' @param tess3_obj list produced by \code{\link{tess3}}
