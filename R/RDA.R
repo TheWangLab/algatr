@@ -497,11 +497,20 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 
   if(!is.null(var)) cor_df <- cor_df[cor_df$var %in% var, ]
   if(sig_only) cor_df <- cor_df[cor_df$p < sig, ]
+
+  if(nrow(cor_df) == 0) {
+    warning("no significant variants found, returning NULL object")
+    return(NULL)
+  }
+
   if(order) cor_df <- cor_df[order(abs(cor_df$r), decreasing = TRUE),]
   if(top) cor_df <- cor_df %>%
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(r) == max(abs(r)))
-  if(!is.null(nrow)) cor_df <- cor_df[1:nrow, ]
+  if(!is.null(nrow)) {
+    if(nrow > nrow(cor_df)) nrow <- nrow(cor_df)
+    cor_df <- cor_df[1:nrow, ]
+  }
 
   cor_df <- cor_df %>% dplyr::as_tibble()
   if(!is.null(digits)) cor_df <- cor_df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))

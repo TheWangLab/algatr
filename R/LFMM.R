@@ -2,7 +2,7 @@
 #' Run LFMM
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
-#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS)
+#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
@@ -52,7 +52,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  print(lfmm_table(results$df, top = TRUE, order = TRUE, rows = 1:10))
+  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10))
 
   return(results)
 }
@@ -133,6 +133,7 @@ lfmm_df <- function(x){
 #' @examples
 lfmm_test_tidy <- function(colname, lfmm_test_result){
   x <- lfmm_test_result[[colname]]
+  if(is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
   df <- x %>%
     dplyr::as_tibble() %>%
     dplyr::mutate(snp = rownames(x)) %>%
@@ -158,7 +159,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #' @export
 #'
 #' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, rows = NULL, digits = 2, footnotes = TRUE){
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE){
 
   if(!is.null(var)) df <- df[df$var %in% var, ]
   if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
@@ -166,10 +167,18 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   if(top) df <- df %>%
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(B) == max(abs(B)))
-  if(!is.null(nrow)) df <- df[rows, ]
+  if(!is.null(nrow)) {
+    if(nrow > nrow(df)) nrow <- nrow(df)
+    df <- df[1:nrow, ]
+  }
 
   df <- df %>% dplyr::as_tibble() %>% dplyr::filter(dplyr::if_any(dplyr::everything(), ~ !is.na(.)))
   if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
+
+  if(nrow(df) == 0) {
+    warning("no significant variants found, returning NULL object")
+    return(NULL)
+  }
 
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
