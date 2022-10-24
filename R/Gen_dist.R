@@ -2,10 +2,10 @@
 #' Calculate genetic distances
 #'
 #' @param vcf path to vcf file or a `vcfR` type object
-#' @param plink_file path to plink distance file (typically ".dist")
-#' @param plink_id_file path to plink id file (typically ".dist.id")
-#' @param dist_type the type of genetic distance to calculate
-#' @param criticalpoint the critical point for the significance threshold for the TW test within the PCA
+#' @param plink_file path to plink distance file (typically ".dist"; required only for calculating plink distance)
+#' @param plink_id_file path to plink id file (typically ".dist.id"; required only for calculating plink distance)
+#' @param dist_type the type of genetic distance to calculate (TODO[EAC]: Switch the order so that dist_type comes before the plink files since dist_type is always required but plink files are not)
+#' @param criticalpoint the critical point for the significance threshold for the Tracy Widom test within the PCA used to determine the number of PCs automatically (TODO[EAC]: add argument for automatic vs manual selection of PCs (e.g. have the function print a scree plot and then users can select a number of PCs and also have an argument for this function that is nPC ( i think I have this added in TESS)))
 #'
 #' @details
 #' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
@@ -34,6 +34,7 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
     }
 
     # Check for NAs
+    # TODO[EAC]: this code is repetitive with the above expression
     if(any(is.na(mat))){
       stop("NA values found in genetic data")
     }
@@ -71,6 +72,7 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
   if (dist_type == "dps") {
     # Convert to genind
     genind <- vcfR::vcfR2genind(vcf)
+    # TODO[EAC]: include in function description how adegent deals with NAs?
     dists <- adegenet::propShared(genind)
     return(as.data.frame(dists))
   }
@@ -102,6 +104,7 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
       adegenet::setPop(gl) <- ~length
       gl <- dartR::gl.impute(gl, method = "frequency")
       mat <- as.matrix(gl)
+      # TODO[EAC]: why is imputation to the mean performed for PC and then imputation to the median performed for other measures? Probably should make consistent or give an explanation or make the choice of summarizing function an argument
       warning("NAs found in genetic data, imputing to mean (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
 
@@ -123,6 +126,7 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
     # The default is 2.0234.
     tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
 
+    # TODO: see note above about adding automatic vs manual seleciton options as in TESS
     # Get K based on number of significant eigenvalues
     K <- tw_result$SigntEigenL
 
