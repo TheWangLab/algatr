@@ -1,8 +1,9 @@
+
 #' Function to Select K value
 #'
 #' @param gen genotype matrix
-#' @param k_selection method for performing k selection (can either by "tracy.widom", "quick.elbow", or "tess")
-#' @param coords coordinates for TESS based K selection
+#' @param k_selection method for performing K selection: "tracy.widom", "quick.elbow", or "tess"
+#' @param coords coordinates for TESS-based K selection
 #'
 #' @return
 #' @export
@@ -27,21 +28,21 @@ get_K <- function(gen, coords = NULL, k_selection = "tracy.widom", Kvals = Kvals
 #'
 #' @examples
 get_K_tw <- function(gen){
-  # run pca
+  # Run PCA
   pc <- prcomp(gen)
 
-  # get eig
+  # Get eig
   eig <- pc$sdev^2
 
-  # run tracy widom test
+  # Run Tracy-Widom test
   # NOTE:
-  # the critical point is a numeric value corresponding to the significance level.
+  # The critical point is a numeric value corresponding to the significance level.
   # If the significance level is 0.05, 0.01, 0.005, or 0.001,
   # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly.
   # The default is 2.0234.
   tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = 0.9793)
 
-  # get K based on number of significant eigenvalues
+  # Get K based on the number of significant eigenvalues
   K <- tw_result$SigntEigenL
 
   return(K)
@@ -56,13 +57,13 @@ get_K_tw <- function(gen){
 #'
 #' @examples
 get_K_elbow <- function(gen){
-  # run pca
+  # Run PCA
   pc <- prcomp(gen)
 
-  # get eig
+  # Get eig
   eig <- pc$sdev^2
-  # estimate number of latent factors using quick.elbow (see general functions for description of how this function works)
-  # this is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
+  # Estimate number of latent factors using quick.elbow (see general functions for description of how this function works)
+  # This is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
   K <- quick.elbow(eig, low = 0.08, max.pc = 0.9)
 
   par(pty = "s",mfrow = c(1,1))
@@ -86,15 +87,15 @@ get_K_elbow <- function(gen){
 #'
 #' @examples
 get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
-  # run tess for all K values
+  # Run tess for all K values
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
-  # plot CV results and mark the K-value automatically selected
+  # Plot CV results and mark the K-value that is automatically selected
   plot(tess3_obj, pch = 19, col = "blue",
        xlab = "Number of ancestral populations",
        ylab = "Cross-validation score")
 
-  # get best K value
+  # Get best K value
   K <-  bestK(tess3_obj, Kvals)
 
   return(K)
