@@ -108,26 +108,31 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 }
 
 
-#' Make LFMM results into a tidy dataframe for downstream processing
+#' Convert LFMM results into a tidy dataframe for downstream processing
 #'
-#' @param x
+#' @param x df with LFMM test result (`lfmm_test_result` element)
 #'
-#' @return tidy dataframe with TODO XXX
+#' @return tidy dataframe with LFMM results with each SNP, its p-value, association with env var and other relevant statistics
 #' @export
 #'
 #' @examples
 lfmm_df <- function(x){
+  # Extract names of elements from lfmm_test_result
   df_names <- names(x)[purrr::map_lgl(x, function(x) !is.null(rownames(x)))]
-  df <- purrr::map(df_names, lfmm_test_tidy, x) %>% purrr::reduce(dplyr::left_join, by = c("snp", "var"))
+
+  # Apply helper function lfmm_test_tidy to extract stats for each SNP
+  df <- purrr::map(df_names, lfmm_test_tidy, x) %>%
+    purrr::reduce(dplyr::left_join, by = c("snp", "var"))
+
   return(df)
 }
 
-#' Title TODO FILL IN
+#' Helper function to tidy LFMM test results
 #'
-#' @param colname
-#' @param lfmm_test_result
+#' @param colname names of elements within lfmm_test_result
+#' @param lfmm_test_result LFMM test results
 #'
-#' @return TODO FILL IN
+#' @return
 #' @export
 #'
 #' @examples
@@ -438,9 +443,9 @@ bestK <- function(tess3_obj, Kvals){
 
 #' LFMM QQplot
 #'
-#' @param df dataframe of lfmm test results produced by \code{lfmm_df}
+#' @param df dataframe of LFMM test results produced by \code{lfmm_df}
 #'
-#' @return TODO [EAC] fill in details
+#' @return a QQ-plot
 #' @export
 #'
 #' @examples

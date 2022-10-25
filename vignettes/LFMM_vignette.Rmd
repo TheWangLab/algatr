@@ -98,7 +98,7 @@ As you can see, the K selection method has quite an effect on the best number of
 
 ------------------------------------------------------------------------
 
-The main function in algatr that runs LFMM is `lfmm_run()`. This function requires that users provide TODO [EAC]: FILL IN. The output from this function is XXX matrices B, U, and V. which correspond to TODO [EAC]: FILL IN ADJUSTED p-VALUES???
+The main function in algatr that runs LFMM is `lfmm_run()`. This function requires that users provide the dosage matrix (`gen`), the extracted environmental variables (`env`), the number of latent factors (`K`), and the LFMM method (`lfmm_method`). TODO [EAC]: FILL IN ADJUSTED p-VALUES???
 
 Importantly, LFMM can be performed using two main methods (`"lasso"` or `"ridge"`), which primarily differ in the penalized loss functions that are incorporated into the least-squares minimization and are specified using the `lfmm_method` argument. The least-squares minimization is how statistical significance is determined for SNPs being associated with environmental variables. The primary difference between the two methods is that the ridge method minimizes the problem with an L\^2 penalty, whereas the lasso method minimizes with an L\^1 penalty. According to [Caye & François 2017](https://bcm-uga.github.io/lfmm/articles/lfmm#starting-with-lfmm), a user would want to select the lasso method (i.e., L\^1-norm) to induce "sparsity on the fixed effects, and corresponds to prior info that not all response vars may be associated with vars of interest. Specifically, prior implies that a limited \# of rows of the effect size matrix B are effectively non-zero." The ridge penalty is further described in [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100).
 
@@ -107,6 +107,7 @@ Now that we've identified the number of latent factors to provide in our model, 
 ```{r lfmm run, warning = FALSE, message = FALSE}
 ridge_results <- lfmm_run(gen, env, K = 6, lfmm_method = "ridge")
 lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
+lasso_results_fdr <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso", p_adj = "fdr")
 ```
 
 The results object from `lfmm_run()` contains 5 elements:
@@ -117,7 +118,7 @@ The results object from `lfmm_run()` contains 5 elements:
 
 -   `model`: parameters of the LFMM model, including matrices ***B***, ***U***, and ***V***
 
--   `lfmm_test_result`: TODO [EAC]: FILL IN
+-   `lfmm_test_result`: results from association testing
 
 -   `K`: the number of latent factors that LFMM was run using (in our case, 6)
 
@@ -145,9 +146,9 @@ There are three main ways we can visualize the results from our LFMM analysis. E
     
     -   `footnotes`: whether to include footnotes describing the variables displayed
 
--   `lfmm_qqplot()`: TODO [EAC]: FILL IN
+-   `lfmm_qqplot()`: Build a QQ-plot (quantile-quantile plot) which plots expected quantiles (percentiles) against p-values.
 
--   `lfmm_manhattanplot()`: Build a Manhattan plot with defined significance threshold TODO [EAC]: FILL IN
+-   `lfmm_manhattanplot()`: Build a Manhattan plot with defined significance threshold.
 
 ### Building a table of SNP associations with `lfmm_table()`
 
@@ -157,6 +158,8 @@ Let's see what the top candidate SNPs were for each of our LFMM runs:
 # Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)
 lfmm_table(lasso_results$df, order = TRUE)
 lfmm_table(ridge_results$df, order = TRUE)
+
+lfmm_table(lasso_results_fdr$df, order = TRUE)
 ```
 
 As you can see from the above, the penalty chosen makes quite a bit of difference in terms of how many significant SNPs are found (only 6 with the lasso method, but 35 with the ridge method). However, the three SNPs with the largest effect size are the same between the two methods (loci 2338, 125, and 859), and the effect sizes and p-values are comparable.
@@ -175,11 +178,10 @@ lfmm_table(lasso_results$df, order = TRUE, var = "CA_rPCA2")
 
 ### Building a QQplot with `lfmm_qqplot()`
 
-A QQplot is TODO [EAC] FILL IN
+A QQplot is TODO [EAC] FILL IN  This is a good way of visualizing the significance of our outlier SNPs. The line runs through the intercept and has a slope of 1.
 
 ```{r qqplot}
 lfmm_qqplot(lasso_results$df)
-lfmm_qqplot(ridge_results$df)
 ```
 
 ### Building a Manhattan plot using `lfmm_manhattanplot()`
