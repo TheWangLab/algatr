@@ -336,8 +336,8 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
 #' Create `gt` table of MMRR results
 #'
 #' @param mmrr_results results from MMRR
-#' @param digits TODO FILL IN
-#' @param summary_stats TODO FILL IN
+#' @param digits the number of decimal places to round to
+#' @param summary_stats whether to add summary statistics (R-squared, F-statistic, F p-value) to bottom of table (defaults to TRUE)
 #'
 #' @return An object of class `gt_tbl`
 #' @export
@@ -347,15 +347,18 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
   mmrr_df <- mmrr_results$coeff_df
   mod <- mmrr_results$mod
 
+  # Round decimal places based on digits
   if(digits) mmrr_df$estimate <- round(mmrr_df$estimate, digits)
   d <- max(abs(min(mmrr_df$estimate)), abs(max(mmrr_df$estimate)))
 
+  # Build table
   suppressWarnings({
     tbl <- mmrr_df  %>%
       gt::gt() %>%
       gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d)) %>%
       gt::sub_missing(missing_text = "")
 
+    # Add summary stats to bottom of table
     if (summary_stats) {
 
       stat_names <- c("R-Squared:", "F-Statistic:", "F p-value:")
