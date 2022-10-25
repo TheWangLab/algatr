@@ -5,9 +5,9 @@
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
-#' @param K_selection method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")
+#' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
 #' @param sig alpha level for determining candidate snps (defaults to 0.5)
-#' @param p.adj method to use for p-value correction (defaults to "none")
+#' @param p_adj method to use for p-value correction (defaults to "none")
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #'
@@ -16,25 +16,25 @@
 #'
 #' @examples
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
-                     K_selection = "tracy.widom", Kvals = 1:10, sig = 0.05,
-                     p.adj = "none", calibrate = "gif", criticalpoint = 2.0234,
+                     K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
+                     p_adj = "none", calibrate = "gif", criticalpoint = 2.0234,
                      low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
                      choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
 
-  # get env data
+  # Get environmental data
   if(inherits(env, "Raster")) env <- raster::extract(env, coords)
 
-  # convert vcf to dosage
+  # Convert vcf to dosage matrix
   if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
-  # perform imputation with warning
+  # Perform imputation with warning
   if(any(is.na(gen))){
     gen <- simple_impute(gen, median)
     warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
   }
 
   # PCA to determine number of latent factors
-  # if K is not specified it is calculated based on given K selection method
+  # If K is not specified, it is calculated based on given K selection method
   if(is.null(K)){
     K <- select_K(gen, K_selection = K_selection, coords = coords,
                Kvals = Kvals, criticalpoint = criticalpoint, low = low,
@@ -43,7 +43,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   }
 
   # Run LFMM
-  results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p.adj = p.adj, sig = sig, calibrate = calibrate)
+  results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
 
   # Check qqplots
   print(lfmm_qqplot(results$df))
@@ -64,55 +64,56 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 #'
 #' @export
 #'
-lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p.adj = "fdr", sig = 0.05, calibrate = "gif"){
+lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif"){
   # gen matrix
   genmat <- as.matrix(gen)
   # env matrix
   envmat <- as.matrix(env)
 
-  # remove NAs
+  # Remove NAs
   if(any(is.na(envmat))){
     warning("missing values found in environmental data, removing rows with NAs")
     genmat <- genmat[complete.cases(envmat),]
     envmat <- envmat[complete.cases(envmat),]
   }
 
-  # run model
+  # Run model
   if(lfmm_method == "ridge"){lfmm_mod <- lfmm::lfmm_ridge(genmat, envmat, K = K)}
   if(lfmm_method == "lasso"){lfmm_mod <- lfmm::lfmm_lasso(genmat, envmat, K = K)}
 
-  # performs association testing using the fitted model:
+  # Perform association testing using the fitted model:
   lfmm_test_result <- lfmm::lfmm_test(Y = genmat,
                   X = envmat,
                   lfmm = lfmm_mod,
                   calibrate = calibrate)
 
-  # if p.adj method is specified, perform p-value correction by column (by env variable)
-  lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, p.adjust, method = p.adj)
+  # If p_adj method is specified, perform p-value correction by column (by env variable)
+  lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, p.adjust, method = p_adj)
 
-  # stop if all pvalues are na
+  # Stop if all p-values are NA
   if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("all p-values are NA")
 
-  # transfer column names
+  # Transfer column names
   colnames(lfmm_test_result$adjusted.pvalue) <- colnames(envmat)
-  # transfer rownames
+  # Transfer rownames
   rownames(lfmm_test_result$adjusted.pvalue) <- colnames(genmat)
 
-  # make tidy dataframe of results
+  # Make tidy dataframe of results
   result_df <- lfmm_df(lfmm_test_result)
 
-  # subset out candidate snps
+  # Subset out candidate SNPs
   cand_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
 
   return(list(cand_snps = cand_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }
 
 
-#' Title
+#' Make LFMM results into a tidy dataframe for downstream processing
 #'
 #' @param x
+#' TODO [EAC]: this is already defined in wingen?
 #'
-#' @return
+#' @return tidy dataframe with TODO XXX
 #' @export
 #'
 #' @examples
@@ -122,12 +123,12 @@ lfmm_df <- function(x){
   return(df)
 }
 
-#' Title
+#' Title TODO FILL IN
 #'
 #' @param colname
 #' @param lfmm_test_result
 #'
-#' @return
+#' @return TODO FILL IN
 #' @export
 #'
 #' @examples
@@ -146,16 +147,16 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 
 #' Create `gt` table of LFMM results
 #'
-#' @param df
-#' @param sig
+#' @param df TODO FILL IN
+#' @param sig alpha level for determining candidate snps (defaults to 0.5)
 #' @param sig_only
 #' @param top
 #' @param order
 #' @param var
 #' @param rows
-#' @param digits
+#' @param digits number of significant digits to use within table (defaults to 2)
 #'
-#' @return
+#' @return TODO FILL IN
 #' @export
 #'
 #' @examples
@@ -176,7 +177,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
 
   if(nrow(df) == 0) {
-    warning("no significant variants found, returning NULL object")
+    warning("No significant variants found, returning NULL object")
     return(NULL)
   }
 
@@ -201,33 +202,35 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #' K selection
 #'
 #' @param gen genotype matrix
-#' @param K_selection method for performing K selection (can either by "tracy.widom" (default), "quick.elbow", or "tess")
+#' @param K_selection method for performing K selection (can either by "tracy_widom" (default), "quick_elbow", or "tess")
 #' @param coords if "tess" method is used, coordinates for TESS based K selection (defaults to NULL)
 #' @param Kvals values of K to test if using "tess" method of K selection (defaults to 1:10)
-#' @param criticalpoint if "tracy.widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly (defaults to 2.0234)
-#' @param low if "quick.elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance' (defaults to 0.08)
-#' @param max.pc if "quick.elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90)
-#' @param pca.select if "find.clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).
-#' @param perc.pca if "find.clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90)
-#' @param choose.n.clust if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
-#' @param criterion if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
-#' @param max.n.clust if "find.clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
+#' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
+#' @param low if "quick_elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance' (defaults to 0.08)
+#' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90)
+#' @param pca.select if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).
+#' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90)
+#' @param choose.n.clust if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
+#' @param criterion if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
+#' @param max.n.clust if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
+#'
+#' TODO [EAC]: reason why some of above params aren't just inherited from adegenet::find.clusters?
 #'
 #' @return
 #' @export
 #'
 #' @examples
-select_K <- function(gen, K_selection = "tracy.widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
+select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
                   low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
                   criterion = "diffNgroup", max.n.clust = 10){
 
-  if(K_selection == "tracy.widom") K <- select_K_tw(gen, criticalpoint)
+  if(K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
 
-  if(K_selection == "quick.elbow") K <- select_K_elbow(gen, low, max.pc)
+  if(K_selection == "quick_elbow") K <- select_K_elbow(gen, low, max.pc)
 
   if(K_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
 
-  if(K_selection == "find.clusters") K <- select_K_fc(gen,
+  if(K_selection == "find_clusters") K <- select_K_fc(gen,
                                                    pca.select = pca.select,
                                                    perc.pca = perc.pca,
                                                    choose.n.clust = choose.n.clust,
@@ -247,44 +250,45 @@ select_K <- function(gen, K_selection = "tracy.widom", coords = NULL, Kvals = 1:
 #'
 #' @examples
 select_K_tw <- function(gen, criticalpoint = 2.0234){
-  # turn into df
+  # Turn gen into df
   df <- data.frame(gen)
 
-  # run pca
+  # Run PCA
   pc <- prcomp(~., df, na.action = na.omit)
 
-  # get eig
+  # Get eig
   eig <- pc$sdev^2
 
-  # run tracy widom test
+  # Run Tracy-Widom test
   tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
 
-  # get K based on number of significant eigenvalues
+  # Get K based on number of significant eigenvalues
   K <- tw_result$SigntEigenL
 
-  # if K is zero, return 1
+  # If K is zero, return 1
   if(K == 0) K <- 1
 
   return(K)
 }
 
-#' @describeIn select_K select K using PCA and \code{quick.elbow} method
+#' @describeIn select_K select K using PCA and \code{quick_elbow} method
 #' @param gen genotype matrix
-#' @inheritParams quick.elbow
+#' @inheritParams quick_elbow
 #'
 #' @return
 #' @export
 #'
 #' @examples
 select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
-  # run pca
+  # Run PCA
   pc <- prcomp(gen)
 
-  # get eig
+  # Get eig
   eig <- pc$sdev^2
-  # estimate number of latent factors using quick.elbow (see general functions for description of how this function works)
-  # this is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
-  K <- quick.elbow(eig, low = low, max.pc = max.pc)
+
+  # Estimate number of latent factors using quick_elbow (see general functions for description of how this function works)
+  # This is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
+  K <- quick_elbow(eig, low = low, max.pc = max.pc)
 
   par(pty = "s",mfrow = c(1,1))
   plot(eig, xlab = 'PC', ylab = "Variance explained")
@@ -294,7 +298,7 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 }
 
 
-#' @describeIn select_K select K using  TESS and \code{bestK} method
+#' @describeIn select_K select K using TESS and \code{bestK} method
 #' @param gen genotype matrix
 #' @param coords coordinates for "tess"
 #' @param Kvals values of K to test for "tess"
@@ -306,15 +310,15 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 #'
 #' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
-  # run tess for all K values
+  # Run TESS for all K values
   tess3_obj <- tess3r::tess3(X = gen, coord = as.matrix(coords), K = Kvals, method = tess_method, ploidy = ploidy)
 
-  # plot CV results and mark the K-value automatically selected
+  # Plot x-validation results and indicate K-value that is automatically selected
   plot(tess3_obj, pch = 19, col = "blue",
        xlab = "Number of ancestral populations",
        ylab = "Cross-validation score")
 
-  # get best K value
+  # Get best K value
   K <-  bestK(tess3_obj, Kvals)
 
   return(K)
@@ -344,25 +348,23 @@ select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clu
 }
 
 
-# quickly choose an elbow for a PC.
-# at variance below 5% per component, choose the largest % drop
-# designed for variance percentages, but will also work given a full set of Evalues
+#' Quickly choose an elbow for a PC.
+#' At variance below 5% per component, choose the largest % drop
+#' Designed for variance percentages, but will also work given a full set of Evalues
 #' Quickly estimate the 'elbow' of a scree plot (PCA)
 #'
 #' This function uses a rough algorithm to estimate a sensible 'elbow' to
-#' choose for a PCA scree plot of eigenvalues. The function looks at an initial arbitrarily 'low'
+#' choose for a PCA screeplot of eigenvalues. The function looks at an initial arbitrarily 'low'
 #' level of variance and looks for the first eigenvalue lower than this. If the very first eigenvalue
 #' is actually lower than this (i.e, when the PCs are not very explanatory) then this 'low' value is
 #' iteratively halved until this is no longer the case. After starting below this arbitrary threshold
 #' the drop in variance explained by each pair of consecutive PCs is standardized by dividing over the
 #' larger of the pair. The largest percentage drop in the series below 'low' % is selected as the 'elbow'.
-#' @param varpc numeric, vector of eigenvalues, or 'percentage of variance' explained datapoints for
-#'  each principle component. If only using a partial set of components, should first pass to
-#'  estimate.eig.vpcs() to estimate any missing eigenvalues.
-#' @param low numeric, between zero and one, the threshold to define that a principle component
-#'  does not explain much 'of the variance'.
+#'
+#' @param varpc numeric, vector of eigenvalues, or 'percentage of variance' explained by datapoints for each principal component. If only using a partial set of components, should first pass to `estimate.eig.vpcs()` to estimate any missing eigenvalues
+#' @param low numeric (between zero and one); the threshold that defines whether a principal component explains 'much' of the variance
 #' @param max.pc maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n')
-#' @return The number of last principle component to keep, prior to the determined elbow cutoff
+#' @return the number of principal components to keep, prior to the determined elbow cutoff
 #' @export
 #' @seealso \code{\link{estimate.eig.vpcs}}
 #' @author Nicholas Cooper
@@ -371,20 +373,22 @@ select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clu
 #' mat <- sim.cor(100,50)
 #' result <- princomp(mat)
 #' eig <- result$sdev^2
-#' elb.a <- quick.elbow(eig)
+#' elb.a <- quick_elbow(eig)
 #' pca.scree.plot(eig,elbow=elb.a,M=mat)
-#' elb.b <- quick.elbow(eig,low=.05) # decrease 'low' to select more components
+#' elb.b <- quick_elbow(eig,low=.05) # decrease 'low' to select more components
 #' pca.scree.plot(eig,elbow=elb.b,M=mat)
 #' # random (largely independent) data, usually higher elbow #
 #' mat2 <- generate.test.matrix(5,3)
 #' result2 <- princomp(mat2)
 #' eig2 <- result2$sdev^2
-#' elb2 <- quick.elbow(result2$sdev^2)
+#' elb2 <- quick_elbow(result2$sdev^2)
 #' pca.scree.plot(eig2,elbow=elb2,M=mat2)
-quick.elbow <- function(varpc, low=.08, max.pc=.9) {
-  ee <- varpc/sum(varpc) # ensure sums to 1
-  #print(round(log(ee),3))
-  while(low>=max(ee)) { low <- low/2 } # when no big components, then adjust 'low'
+quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
+  # Ensure below sums to 1
+  ee <- varpc/sum(varpc)
+
+  # When no big components, then adjust 'low'
+  while(low>=max(ee)) { low <- low/2 }
   lowie <- (ee<low) ; highie <- ee>low/8
   low.ones <- which(lowie & highie)
   others <- length(which(!lowie))
@@ -395,19 +399,18 @@ quick.elbow <- function(varpc, low=.08, max.pc=.9) {
       set <- ee[low.ones]
       pc.drops <- abs(diff(set))/(set[1:(length(set)-1)])
       infz <- is.infinite(pc.drops)
-      #print(pc.drops)
       elbow <- which(pc.drops==max(pc.drops[!infz],na.rm=T))[1]+others
     }
   } else {
-    # if somehow there are no small eigenvalues, just choose the elbow as the second last
-    cat("no eigenvalues weresignificantly smaller than the previous\n")
+    # If somehow there are no small eigenvalues, just choose the elbow as the second last
+    cat("No eigenvalues were significantly smaller than the previous\n")
     elbow <- length(ee)
   }
   if(tail(cumsum(ee[1:elbow]),1)>max.pc) {
     elbow <- which(cumsum(ee)>max.pc)[1]-1
   }
   if(elbow<1) {
-    warning("elbow calculation failed, return zero")
+    warning("Elbow calculation failed, return zero")
     return(0)
   }
   names(elbow) <- NULL
@@ -419,7 +422,7 @@ quick.elbow <- function(varpc, low=.08, max.pc=.9) {
 #' @param tess3_obj list produced by \code{\link{tess3}}
 #' @param Kvals vector of K values for testing
 #'
-#' @note  (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
+#' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
 #' @return
 #' @export
 #'
@@ -431,16 +434,16 @@ bestK <- function(tess3_obj, Kvals){
   for(k in Kvals) ce.K[k] <- min(ce[[k]])
   diff <- ce.K[-1] - ce.K[-max(Kvals)]
   slope <- exp(-diff) - 1
-  #K is selected based on the smallest slope value in the upper quartile
+  # K is selected based on the smallest slope value in the upper quartile
   K <- min(which(slope <= quantile(slope)[4]))
   return(K)
 }
 
 #' LFMM QQplot
 #'
-#' @param df dataframe of lfmm test results produced by \link[wingen]{lfmm_df}
+#' @param df dataframe of lfmm test results produced by \code{lfmm_df}
 #'
-#' @return
+#' @return TODO [EAC] fill in details
 #' @export
 #'
 #' @examples
@@ -460,7 +463,7 @@ lfmm_qqplot <- function(df){
 
 #' LFMM Manhattan Plot
 #'
-#' @param df dataframe of lfmm test results produced by \link[wingen]{lfmm_df}
+#' @param df dataframe of lfmm test results produced by \code{lfmm_df}
 #' @param sig significance cutoff
 #'
 #' @return

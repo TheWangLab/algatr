@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(algatr)
 library(here)
-#to install LFMM:
+# To install LFMM:
 #devtools::install_github("bcm-uga/lfmm")
 library(lfmm) 
 library(tidyverse)
@@ -31,39 +31,62 @@ library(tess3r)
 devtools::load_all()
 ```
 
-Latent factor mixed models (LFMM; [TODO](TODO REFER)) describe
+LFMM ([Frichot et al. 2013](https://academic.oup.com/mbe/article/30/7/1687/972098)) is a genotype-environment association (GEA) method in which mixed models are used to determine loci that are significantly associated with environmental variables. This method is similar to performing RDA, except that LFMM takes into account -- and corrects for -- unobserved variables that may confound results (known as latent factors). A good example of a latent factor that we may want to correct for prior to examining environment-associated loci is population structure.
 
+As with TESS3, there are a variety of ways to determine the best number of latent factors (also called K values); algatr provides the option to test using three such methods: (1) Tracy-Widom test; (2) quick elbow test; and (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure). We will explore each of these, and compare results, in this vignette.
 
-Similar to RDA, LFMM is a genotype-environment association (GEA) method in which mixed models are used to determine loci that are significantly associated with environmental variables. Importantly, LFMM takes into account -- and corrects for -- unobserved variables that may confound results (known as latent factors). A good example of a latent factor that we may want to correct for prior to examining environment-associated loci is population structure.
+Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
-As with TESS3 (TODO link vignette?), there are a variety of ways to determine the best number of latent factors (also called K values); algatr provides the option to test three of these methods: (1) Tracy Widom test; (2) quick elbow test; and (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure). We will explore all of these, and compare results, in this vignette.
+To perform an LFMM analysis [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100), algatr  uses the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details). Despite its name, this package implements the lfmm2 method, which is similar to the original LFMM algorithm, but is computationally faster. The LEA package [Frichot & Francois 2015](https://rdrr.io/bioc/LEA/) also provides a wrapper for lfmm2 using the `lfmm2()` function.
 
-Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
-
-The main function to perform an LFMM analysis is `lfmm_do_everything()`, which primarily uses the `lfmm2()` function [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100) within the LEA package [Frichot & Francois 2015](https://rdrr.io/bioc/LEA/). The `lfmm2()` function builds off the `lfmm()` function within the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details), but is computationally faster.
-
-## Read in and process data files
+### Read in and process data files
 
 Running `lfmm_do_everything()` requires two input files: a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `lfmm_do_everything()` will extract values for us. For clarity's sake here, we'll do the conversion from a vcf to dosage matrix using the `vcf_to_dosage()` function. 
 
 ```{r, warning = FALSE}
-# Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
 # Convert vcf to dosage matrix
 gen <- vcf_to_dosage(liz_vcf)
 # Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!
 ```
 
-# Run LFMM
+As mentioned above, LFMM requires that your genotype matrix contains no missing values. Let's impute missing values based on the per-site median. *N.B.: this type of simplistic imputation is strongly not recommended for downstream analyses and is used here for example's sake!*
 
-## Comparing different LFMM methods
-
-Because the `CA_env` object doesn't have extracted environmental values for each of our coordinates, we also need to add the `coords` argument into `lfmm_do_everything()`. The function will automatically extract relevant values from our environmental layers given the coordinate data.
-
-```{r, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
-results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "ridge", K_selection = "tracy.widom")
+```{r impute}
+gen <- simple_impute(gen)
+# Check that NAs are gone
+head(gen)
 ```
 
+## Selecting the number of latent factors using `select_K()`
+
+------------------------------------------------------------------------
+
+As with population structure methods such as TESS, LFMM requires a user to define the number of latent factors (also referred to as K). algatr provides options to perform four types of K selection using the `K_selection` parameter within the `select_K()` function:
+
+-   If `K_selection = "tracy_widom"`: A Tracy-Widom test is performed. Briefly, this method finds significant eigenvalues of a matrix after performing a PCA. This argument uses the `tw()` function within the [AssocTests](https://cran.r-project.org/web/packages/AssocTests/index.html) package, and also requires a user to provide the `criticalpoint`, which corresponds to the significance level. Significance levels of alpha=0.05, 0.01, 0.005, or 0.001 correspond to critical point values of 0.9793, 2.0234, 2.4224, or 3.2724, respectively. The default significance level is 0.05, so the default for the `criticalpoint` parameter is 2.0234. The Tracy-Widom test is also the default method for the `select_K()` function.
+
+-   If `K_selection = "quick_elbow"`: A "quick elbow" is found automatically, which refers to a large percent drop in eigenvalues given a variance below 5% for each principal component. The code to determine a quick elbow is adapted from that developed by Nicholas Cooper [here](TODO REFER). This argument requires users to select TODO XXX
+
+-   `K_selection = "tess"`: The automatic K selection is performed after running TESS. This method minimizes the slope of the line that connects cross-entropy scores between K values. This approach is described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/). This argument requires users to select TODO XXX coords
+
+-   `K_selection = "find_clusters"`: Uses K-means clustering to detect the number of clusters that best describe the data. This approach uses the `find.clusters()` function in the adegenet package. This argument requires users to select TODO XXX
+
+Let's see how the above methods compare to one another in terms of how K values compare. Regardless of the K selection that's done, a user must specify the dosage matrix (`gen`), the K selection procedure they would like to perform (`K_selection`), and a range of K values (`Kvals`).
+
+```{r K selection, warning = FALSE}
+lf_tw <- select_K(gen = , K_selection = "tracy_widom", Kvals = 1:10)
+
+lf_elbow
+
+lf_tess
+
+lf_fc <- 
+
+
+
+results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "ridge", K_selection = "tracy.widom")
+```
 
 ## Comparing different K selection methods
 
@@ -79,13 +102,39 @@ results_qe <- lfmm_do_everything(gen, env = env, K_selection = "quick.elbow")
 results_tess <- lfmm_do_everything(gen, env, coords, K_selection = "tess", Kvals = 1:20)
 ```
 
+## Comparing different LFMM methods with `lfmm_run()`
+
+------------------------------------------------------------------------
+
+```{r lfmm run}
+
+```
+
+## Visualizing LFMM results
+
+------------------------------------------------------------------------
+
+There are three main ways we can visualize the results from our LFMM analysis. Each of these is automatically produced by `lfmm_run()`, but you can produce them individually as well with the functions below.
+
+-   `lfmm_table()`: Build a table with each SNP and its association (and p-value) with each environmental variable
+
+-   `lfmm_qqplot()`: XXXX TODO
+
+-   `lfmm_manhattanplot()`: Build a Manhattan plot with defined significance threshold XXX TODO
+
+```{r lfmm results}
+
+```
+
 ## Running LFMM with `lfmm_do_everything()`
 
 ------------------------------------------------------------------------
 
 The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
 
-```{r do everything}
+Because the `CA_env` object doesn't have extracted environmental values for each of our coordinates, we also need to add the `coords` argument into `lfmm_do_everything()`. The function will automatically extract relevant values from our environmental layers given the coordinate data.
 
+```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
+results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "ridge", K_selection = "tracy.widom")
 ```
 
