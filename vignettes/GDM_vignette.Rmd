@@ -27,7 +27,7 @@ library(readr)
 devtools::load_all()
 ```
 
-Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). A GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data vary nonlinearly across an environmental gradient.
+Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data vary nonlinearly across an environmental gradient.
 
 For additional information on GDM, please see [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x) for a description of its basic use in estimating patterns of beta diversity, [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x) for a classic example of its use, and [Fitzpatrick & Keller 2015](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376#:~:text=Community%2Dlevel%20modelling%20of%20genomic,assessments%20of%20climate%20change%20vulnerability.) for a perspective piece on its applications. Finally, our code primarily uses the gdm package which has excellent documentation (see [here](https://cran.r-project.org/web/packages/gdm/gdm.pdf)) including a thorough [vignette](https://cran.microsoft.com/snapshot/2018-01-13/web/packages/gdm/vignettes/gdmVignette.pdf) that describes some of the theory behind GDM.
 
@@ -45,7 +45,9 @@ Contained within `gdm_do_everything()` are the following functions, which we'll 
 
 ### *Assumptions*
 
-There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site.
+There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site. 
+
+TODO[EAC]: does it assume individual based sampling? You could have site-based sampling and just have each coordinate as a site with an nsite x nsite genetic distance table.
 
 ## Read in and process input data
 
@@ -54,7 +56,7 @@ Running a GDM requires three data files for input: a genetic distance matrix (th
 ```{r data}
 # Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
 load_example()
-# Our code assumes that the first column is longitude and second is latitude; check this:
+# Our code assumes that the first column is longitude and second is latitude; like this:
 head(liz_coords)
 ```
 
@@ -89,14 +91,15 @@ gdm_full$model$coefficients
 
 ### GDM with model selection
 
-Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel . It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection with geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
+Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done through backwards-elimination TODO: describe var sel. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection with geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
 
 There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
 *N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
 
 ```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
-gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
+gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", 
+                    scale_gendist = TRUE, nperm = 50, sig = 0.05)
 install_github("DeveloperName/PackageName")
 # Which predictors were considered significant?
 # TODO fill in
