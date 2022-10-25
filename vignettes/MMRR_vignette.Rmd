@@ -19,93 +19,131 @@ knitr::opts_chunk$set(
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
+library(raster)
 ```
 
 Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to determine the relative contributions of isolation by distance (i.e., an association between genetic and geographic distances) and isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environmental and geographic distances).
 
 The randomization aspect of MMRR is that significance testing is performed through random permutations of the rows and columns of the dependent matrix (the genetic distances), which is necessary because of the non-independence of values in pairwise distance matrices. Once significance testing is completed, MMRR provides individual regression coefficients and p-values for each dependent variable and a "coefficient ratio," which is the ratio between regression coefficients, which thus provides an idea of the relative contributions of IBD and IBE in explaining variation in the genetic distances in your data.
 
-There is one main function to perform an MMRR analysis: `mmrr_do_everything()`. This function runs MMRR and allows a user to run MMRR with all variables or with backward elimination variable selection to choose the best-supported variables. This function outputs information on the final model and coefficients for the explanatory variables.
+There are a few assumptions built into this function that users should be aware of: (1) the coordinates and genetic distance files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes that each individual has its own sampling coordinates (i.e., multiple individuals weren't collected per site).
 
-There are a few assumptions built into this function that users should be aware of: (1) the coords and gendist files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes individual-based sampling and that each individual is a sampling site with individual coordinates.
+### Read in and process genetic data
 
-## Read in and process data files
+Let's load the example dataset and extract environmental variables based on our sampling coordinates. To perform MMRR, we need a genetic distance matrix; please refer to the genetic distances vignette for information on how to generate this in algatr using a vcf file.
 
-Running MMRR_do_everything() requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers on which the coordinates are found (the `envlayers` argument).
-[# Need to be careful of the wording here, because this isn't true for MMRR, sensu strictu; this is true for mmmrr_do_everything.]
-
-```{r data}
-# Load vcf, coords, and CA enviro layers
+```{r genetic data, warning = FALSE}
 load_example()
+Y <- as.matrix(liz_gendist)
+```
+
+### Process environmental data
+
+Let's calculate environmental distances with our extracted environmental values using the `env_dist()` function, and add on geographic distances to this matrix using the `geo_dist()` function. For more information on how these two functions work, please refer to algatr's environmental data processing vignette.
+
+```{r enviro data}
+# Extract enviro vars
+env <- extract(CA_env, liz_coords)
+# Calculate environmental distances
+X <- env_dist(env)
+# Add geographic distance to X
+X[["geodist"]] <- geo_dist(liz_coords)
 ```
 
 ## Run MMRR
 
+------------------------------------------------------------------------
+
+We can run MMRR either by running the full model (with no variable selection) using the `mmrr_full()` function, or by running a variable selection procedure using backwards elimination using the `mmrr_best()` function. Regardless of the function, the arguments are the same:
+
+-   `Y`: matrix of genetic distances
+
+-   `X`: matrix of environmental distances (including geographic distances) at each sampling coordinate
+
+-   `nperm`: number of permutations to perform
+
+-   `stdz`: whether matrices are standardized
+
+-   `plot`: whether to plot results
+
 ### MMRR with all variables
 
-```{r all vars, fig.width = 5, fig.height = 5}
-set.seed(01)
-mmrr_all <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "full")
+First, let's run the full MMRR model with all variables included (i.e., no variable selection).
 
+```{r mmrr full, fig.width = 5, fig.height = 5}
+set.seed(10)
+results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, plot = FALSE)
 ```
 
-## MMRR with model selection
+The results from MMRR "full" contains four elements:
 
-```{r best vars, fig.width = 5, fig.height = 5}
-set.seed(10)
-mmrr_best <- mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
-```
+-   `coeff_df`: a dataframe with statistics relating to each variable's distance related to genetic distance, including coefficient values for each environmental variable and geographic distance
 
-## Step by Step
+-   `mod`: a dataframe containing statistics for the results of the model, including an R^2 value, and F statistics
 
-Create distance matrix:
+-   `X` and `Y`: the input data
 
-```{r, fig.width = 5, fig.height = 5}
-# Make an dataframe with environmental data
-env <- raster::extract(CA_env, liz_coords)
-X <- env_dist(env)
+### MMRR with model selection
 
-# Add geographic distance
-X[["geodist"]] <- geo_dist(liz_coords)
+Now, let's run MMRR with variable selection.
 
-# Make a genetic distance matrix
-Y <- as.matrix(gendist)
-
-# Run MMRR with variable selection
-set.seed(10)
-results <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, plot = TRUE)
-
+```{r mmrr best}
 # Run MMRR with all variables
 set.seed(01)
-results <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, plot = TRUE)
+results_best <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, plot = FALSE)
 ```
 
-You can also produce each plot separately:
+Once again, the results from `mmrr_best()` contains the same elements as `mmrr_full()`, except that `mmrr_best()` now also contains an element. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance). There is also an additional element, `X_best`, which contains TODO [EAC]: FILL IN values for significant variables; in this case, only geographic distance.
 
-```{r, fig.width = 5, fig.height = 5}
-# Covariance plot
-mmrr_plot(X = X, plot_type = "cov", stdz = TRUE)
+## Visualizing MMRR results
 
+------------------------------------------------------------------------
+
+### Plotting MMRR results with `mmrr_plot()`
+
+Let's take a look at the results from our MMRR analyses above. We can produce several plots to visualize results with the `mmrr_plot()` function, including plotting single variable relationships (`plot_type = "vars"`), plotting the fitted relationship that compares predicted against the observed genetic distances (`plot_type = "fitted"`), or plotting covariances between the predictor variables (`plot_type = "cov"`). Lastly, you can set `plot_type = "all"` to produce all three of these plots for your MMRR run.
+
+```{r mmrr plots, fig.width = 5, fig.height = 5}
 # Single variable plot
-mmrr_plot(Y, X, plot_type = "vars", stdz = TRUE)
+mmrr_plot(Y, X, mod = results_full$mod, plot_type = "vars", stdz = TRUE)
 
 # Fitted variable plot
-# TODO [EAC]: needs to be fixed
-mmrr_plot(Y, X, mod = results$mod, plot_type = "fitted", stdz = TRUE)
+mmrr_plot(Y, X, mod = results_full$mod, plot_type = "fitted", stdz = TRUE)
+
+# Covariance plot
+mmrr_plot(Y, X, mod = results_full$mod, plot_type = "cov", stdz = TRUE)
 ```
 
-Now, let's take a look at the output statistics:
+How do the above results compare to those from the "best" model?
+
+```{r mmrr plots best, fig.width = 5, fig.height = 5}
+mmrr_plot(Y, X, mod = results_best$mod, plot_type = "all", stdz = TRUE)
+```
+
+### Look at MMRR output statistics with `mmrr_table()`
+
+We can also take a closer look at the output statistics from our MMRR runs using the `mmrr_table()` function. This function will also provide summary statistics if we set `summary_stats` to TRUE (the default).
 
 ```{r stats}
-# TODO [EAC]: should this be built in within the function?
+mmrr_table(results_full, digits = 2, summary_stats = TRUE)
 ```
 
 ## Running MMRR with `mmrr_do_everything()`
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
+The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function runs MMRR while specifying whether a user would like to run variable selection or not (using the `model` argument), producing a table and all plots automatically. It will automatically extract environmental variables based on coordinates and calculate environmental distances from these data.
 
-```{r do everything}
+### MMRR with all variables
 
+```{r all vars, fig.width = 5, fig.height = 5}
+set.seed(01)
+mmrr_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full")
+```
+
+## MMRR with model selection
+
+```{r best vars, fig.width = 5, fig.height = 5}
+set.seed(10)
+mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```

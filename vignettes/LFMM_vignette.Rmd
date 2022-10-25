@@ -43,7 +43,7 @@ To perform an LFMM analysis [Caye et al. 2019](https://academic.oup.com/mbe/arti
 
 To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental variables based on our sampling coordinates.
 
-```{r prepare data, warning = FALSE}
+```{r data, warning = FALSE}
 load_example()
 # Convert vcf to dosage matrix
 gen <- vcf_to_dosage(liz_vcf)

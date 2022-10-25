@@ -53,7 +53,7 @@ For additional information on the original development and implementation of the
 
 ### Read in and process input data
 
-Running TESS3 requires three data files for input: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function to convert a vcf to a dosage matrix.
+Running TESS3 requires three data files: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function to convert a vcf to a dosage matrix.
 
 ```{r data}
 load_example()

@@ -35,7 +35,6 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999
   print(mmrr_table(results$coeff_df))
 
   return(results)
-
 }
 
 #' Run MMRR with variable selection
@@ -109,6 +108,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
 }
 
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
+#'
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
@@ -135,11 +135,12 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
 }
 
 #' MMRR performs Multiple Matrix Regression with Randomization analysis
+#'
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
 #' @param nperm is the number of permutations to be used in significance tests. Default = 999.
 #' @param scale if TRUE then matrices will be standardized. Default = TRUE.
-#' 
+#'
 #' @details
 #' When using MMRR, please cite the original citation:
 #' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
@@ -194,9 +195,9 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
 }
 
 #' unfold converts the lower diagonal elements of a matrix into a vector
-#' @param X is a distance matrix.
-#' @param scale if TRUE then matrices will be standardized. Default = TRUE.
-
+#'
+#' @param X is a distance matrix
+#' @param scale if TRUE then matrices will be standardized (defaults to TRUE)
 unfold <- function(X, scale = TRUE){
   x <- vector()
   for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
@@ -207,7 +208,7 @@ unfold <- function(X, scale = TRUE){
 
 #' Make nice dataframe from MMRR results
 #'
-#' @param mod The fitted MMRR model
+#' @param mod the fitted MMRR model
 #'
 #' @return
 #' @export
@@ -226,12 +227,12 @@ mmrr_df <- function(mod){
 
 #' Plot MMRR results
 #'
-#' @param Y The dependent variable in the form of a distance matrix
-#' @param X A list of independent variables in the form of distance matrices (required if `plot_type = "fitted"`, `vars` or `"all"`)
-#' @param mod The fitted MMRR model (required if `plot_type = "fitted"` or `"all"`)
+#' @param Y the dependent variable in the form of a distance matrix
+#' @param X a list of independent variables in the form of distance matrices (required if `plot_type = "fitted"`, `vars` or `"all"`)
+#' @param mod the fitted MMRR model (required if `plot_type = "fitted"` or `"all"`)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
-#' @param scale If TRUE, all variables are scaled
-#' @param varNames A vector of names for the variables in the model (optional)
+#' @param var_names add variable names to plot (defaults to NULL)
+#' @inheritParams mmrr_do_everything
 #'
 #' @return
 #' @export
@@ -334,8 +335,9 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
 
 #' Create `gt` table of MMRR results
 #'
-#' @param mmrr_results
-#' @param digits
+#' @param mmrr_results results from MMRR
+#' @param digits TODO FILL IN
+#' @param summary_stats TODO FILL IN
 #'
 #' @return An object of class `gt_tbl`
 #' @export
@@ -379,7 +381,6 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
     if(!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -var, decimals = 2)
 
   })
-
 
   tbl
 }
