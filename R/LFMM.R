@@ -6,7 +6,7 @@
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
-#' @param sig alpha level for determining candidate snps (defaults to 0.5)
+#' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
 #' @param p_adj method to use for p-value correction (defaults to "none")
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
@@ -111,7 +111,6 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 #' Make LFMM results into a tidy dataframe for downstream processing
 #'
 #' @param x
-#' TODO [EAC]: this is already defined in wingen?
 #'
 #' @return tidy dataframe with TODO XXX
 #' @export
@@ -147,16 +146,16 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 
 #' Create `gt` table of LFMM results
 #'
-#' @param df TODO FILL IN
+#' @param df df element from \code{\link{lfmm_run}} results
 #' @param sig alpha level for determining candidate snps (defaults to 0.5)
-#' @param sig_only
-#' @param top
-#' @param order
-#' @param var
-#' @param rows
-#' @param digits number of significant digits to use within table (defaults to 2)
+#' @param sig_only only include SNPs that exceeded the significance threshold in the table
+#' @param top TODO FILL IN
+#' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
+#' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
+#' @param rows number of rows to include in table (defaults to NULL; will only include significant SNPs)
+#' @param digits number of decimal points to include (defaults to 2)
 #'
-#' @return TODO FILL IN
+#' @return table of LFMM results
 #' @export
 #'
 #' @examples
@@ -206,17 +205,15 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #' @param coords if "tess" method is used, coordinates for TESS based K selection (defaults to NULL)
 #' @param Kvals values of K to test if using "tess" method of K selection (defaults to 1:10)
 #' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
-#' @param low if "quick_elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance' (defaults to 0.08)
-#' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90)
+#' @param low if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
+#' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
 #' @param pca.select if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).
-#' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90)
+#' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
 #' @param choose.n.clust if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
 #' @param criterion if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
 #' @param max.n.clust if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
 #'
-#' TODO [EAC]: reason why some of above params aren't just inherited from adegenet::find.clusters?
-#'
-#' @return
+#' @return prints the best K value given the specified K selection procedure
 #' @export
 #'
 #' @examples
