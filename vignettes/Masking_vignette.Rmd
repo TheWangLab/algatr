@@ -31,7 +31,7 @@ Often, we may want to mask areas of maps to visualize landscape genomics results
 
 This vignette makes use of the following masking functions:
 
--   `extrap_mask()` extrapolates environmental values from environmental layers that will be masked
+-   `extrap_mask()` function to reduce extrapolation by masking areas that fall outside the data (either based on environmental or spatial coverage)
 
 -   `plot_extrap_mask()` generates a map with masked areas
 
