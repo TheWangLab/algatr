@@ -98,13 +98,13 @@ Let's take a look at the environmental layers included in the example dataset. T
 plot(CA_env, col = turbo(100), axes = FALSE)
 ```
 
-We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B.
+We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B using the `scaleRGB()` function.
 
-```{r, RGB plot, fig.width = 5, fig.height = 6}
+```{r, RGB plot, fig.width = 5, fig.height = 6, fig.align='center'}
 # Convert from RasterStack to SpatRaster for terra functionality
 CA_env_sp <- rast(CA_env)
 
-# TODO[EAC]: make this into a function 
+# TODO[EAC]: make this into a function scaleRGB
 for(layer in 1:3){
   minval <- minmax(CA_env_sp[[layer]])[1,]
   maxval <- minmax(CA_env_sp[[layer]])[2,]
