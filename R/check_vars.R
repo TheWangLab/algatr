@@ -1,11 +1,13 @@
+
 #' Check environmental layers for collinearity
-#' @param envlayers A RasterStack of data layers
-#' @param threshold The cutoff correlation coefficient for flagging variables as collinear (numeric)
+#'
+#' @param envlayers a RasterStack of data layers
+#' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)
 #'
 #' @return A matrix of correlation coefficients
 #'
 #' @export
-check_env <- function(envlayers, threshold = 0.5){
+check_env <- function(envlayers, threshold = 0.7){
   cors <- raster::layerStats(envlayers, stat = "pearson", na.rm = TRUE)
   cors.m <- as.matrix(cors[[1]])
   counter <- 0

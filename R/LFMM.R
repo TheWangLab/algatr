@@ -1,5 +1,6 @@
 
 #' Run LFMM
+#'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
@@ -7,7 +8,7 @@
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
 #' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
-#' @param p_adj method to use for p-value correction (defaults to "none")
+#' @param p_adj method to use for p-value correction (defaults to "fdr")
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #'
@@ -17,7 +18,7 @@
 #' @examples
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
                      K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
-                     p_adj = "none", calibrate = "gif", criticalpoint = 2.0234,
+                     p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                      low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
                      choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
 
@@ -72,7 +73,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 
   # Remove NAs
   if(any(is.na(envmat))){
-    warning("missing values found in environmental data, removing rows with NAs")
+    warning("Missing values found in environmental data, removing rows with NAs")
     genmat <- genmat[complete.cases(envmat),]
     envmat <- envmat[complete.cases(envmat),]
   }
@@ -91,7 +92,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
   lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, p.adjust, method = p_adj)
 
   # Stop if all p-values are NA
-  if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("all p-values are NA")
+  if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("All p-values are NA")
 
   # Transfer column names
   colnames(lfmm_test_result$adjusted.pvalue) <- colnames(envmat)
@@ -154,7 +155,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #' @param df df element from \code{\link{lfmm_run}} results
 #' @param sig alpha level for determining candidate snps (defaults to 0.5)
 #' @param sig_only only include SNPs that exceeded the significance threshold in the table
-#' @param top TODO FILL IN
+#' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
 #' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
 #' @param rows number of rows to include in table (defaults to NULL; will only include significant SNPs)
@@ -417,28 +418,6 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
   }
   names(elbow) <- NULL
   return(elbow)
-}
-
-#' Best K Selection based on cross entropy
-#'
-#' @param tess3_obj list produced by \code{\link{tess3}}
-#' @param Kvals vector of K values for testing
-#'
-#' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
-#' @return
-#' @export
-#'
-#' @examples
-bestK <- function(tess3_obj, Kvals){
-  ce <- list()
-  for(k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
-  ce.K <- c()
-  for(k in Kvals) ce.K[k] <- min(ce[[k]])
-  diff <- ce.K[-1] - ce.K[-max(Kvals)]
-  slope <- exp(-diff) - 1
-  # K is selected based on the smallest slope value in the upper quartile
-  K <- min(which(slope <= quantile(slope)[4]))
-  return(K)
 }
 
 #' LFMM QQplot

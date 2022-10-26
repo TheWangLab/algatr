@@ -22,13 +22,15 @@ library(here)
 library(vcfR)
 library(SNPRelate)
 library(SeqArray)
+
+devtools::load_all()
 ```
 
 For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
 
 -   `vcf_to_dosage()` to convert a vcf file to a dosage matrix
 
--   `ld_prune()` to prune variants that are in linkage disequilibrium with one another; this primarily uses the `snpgdsLDpruning()` function within the SNPRelate package ([Zheng et al. 2012](10.1093/bioinformatics/bts606); see [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) for further information)
+-   `ld_prune()` to prune variants that are in linkage disequilibrium with one another; this primarily uses the `snpgdsLDpruning()` function within the SNPRelate package ([Zheng et al. 2012](https://academic.oup.com/bioinformatics/article/28/24/3326/245844); see [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) for further information)
 
 ## Converting a vcf to a dosage matrix with `vcf_to_dosage()`
 
@@ -57,33 +59,24 @@ dosage[1:5,1:8]
 
 ------------------------------------------------------------------------
 
-We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur  below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. The main arguments within this function are as follows:
+We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. The main arguments within this function are as follows:
 
 -   `ld.threshold` specifies the LD pruning threshold (the default is the correlation coefficient value; thus, the higher the `ld.threshold` value, fewer variants will be pruned)
+
 -   `slide.max.n` specifies the maximum number of SNPs in the sliding window (defaults to 100)
+
 -   `maf` specifies the minor allele frequency (defaults to 0.05)
 
-```{r LD-pruning int files}
-# ld_prune() takes in the path to the vcf file, not the vcf object. The vcf used to generate the test dataset is in the extdata directory
-# Leave the ld.threshold default (0.6), but change slide.max.n:
-ld_prune(vcf = system.file("extdata", "liz_test.vcf", package = "algatr"), out_name = "liz", out_format = "vcf", slide.max.n=10)
+-   `vcf` specifies the path to the vcf file that you would like to be pruned
 
-# The above should have generated a new directory (liz_LDpruned) containing several files
-# TODO[EAC]: it is highly unlikely that this will be created in a way that can be read in consistently. I would out the liz_LDpruned_r0.6_n10.vcf  in extdata as an example and read it in as a system file as follows. For example, I get an error when I ran the old code because it creates the LD folder in the algatr main folder but then tries to read it in from the vignette folder (where the Rmd is). In general, creating and reading in files from a users environment should be avoided, but I get that this is somewhat unavoidable in this case.
-# Let's take a look at the LD-pruned vcf:
-vcf_ldpruned <- vcfR::read.vcfR(system.file("extdata", "liz_LDpruned_r0.6_n10.vcf", package = "algatr"))
+-   `out_name` specifies the prefix of output file names
 
-# How many SNPs were retained after LD-pruning?
-nrow(vcf_ldpruned@gt)
-```
+-   `out_format` specifies the file type (options are `"vcf"` for vcf and gds files [default], or `"plink"` for ped and map files)
 
-You'll notice that a number of intermediate files (contained within a new directory, liz_LDpruned), were created. This is because within the `ld_prune()` function, several file conversions are occurring, and any intermediate files produced from this conversion are stored in the new directory. There is also a logfile that is produced that provides output from the LD pruning.
+-   `save_output` specifies whether you would like a new directory made containing all output (and intermediate) files; default is `TRUE.` If set to `FALSE`, the function will simply return a vcf object.
 
-We can specify not to create these intermediate files, but rather to just produce the end vcf, using the `save_output` argument. If we do this, the function will simply return the vcf object. Let's also change the `ld.threshold` argument for this run.
+The way to call this function is as follows:
 
-```{r LD-pruning no int files}
-vcf_ldpruned <- ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n = 10, save_output = FALSE)
+`vcf_ldpruned <- ld_prune(vcf = "test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n = 10)`
 
-# How many sites were retained from this run, with a higher LD threshold correlation value?
-nrow(vcf_ldpruned@gt)
-```
+We will not be running this function within the vignette to avoid generating intermediate files, but this example line creates a new directory called liz_LDpruned, and it contains five files: a LOGFILE, with information on how many sites were pruned and how many remain, three gds files (pre- and post-pruned SNP GDS files and a GDS SeqArray file), and the pruned vcf. All of these output files are named such that the `ld.threshold` and `slide.max.n` parameter settings are contained in file names.
