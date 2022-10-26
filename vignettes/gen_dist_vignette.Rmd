@@ -65,8 +65,9 @@ head(euc_dists)
 Now, let's process Plink distances:
 
 ```{r plink dists}
-plink_dists <- gen_dist(plink_file = here("inst", "extdata", "liz_test.dist"), plink_id_file = here("inst", "extdata", "liz_test.dist.id"), dist_type = "plink")
-# TODO: switch above to system.file for raw plink dist files
+plink_dists <- gen_dist(plink_file = system.file("extdata", "liz_test.dist", package = "algatr"), 
+                        plink_id_file = system.file("extdata", "liz_test.dist.id", package = "algatr"), 
+                        dist_type = "plink")
 ```
 
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
