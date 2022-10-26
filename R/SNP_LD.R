@@ -1,6 +1,5 @@
 
 #' ld_prune prunes SNPs based on linkage disequilibrium using `SNPRelate` and `SeqArray` packages
-#' TODO [EAC]: LOGFILE produced no matter what; do we want to keep this?
 #'
 #' `SNPRelate` package citation: Zheng et al. (2012): https://doi.org/10.1093/bioinformatics/bts606
 #'
