@@ -24,7 +24,7 @@ library(SNPRelate)
 library(SeqArray)
 ```
 
-For landscape genomic analyses, we need to process our input data files in various ways, which are used throughout the analyses in this package. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
+For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
 
 -   `vcf_to_dosage()` to convert a vcf file to a dosage matrix
 
@@ -66,12 +66,12 @@ We want to prune any linked sites from our data to not bias results. To do so, w
 ```{r LD-pruning int files}
 # ld_prune() takes in the path to the vcf file, not the vcf object. The vcf used to generate the test dataset is in the extdata directory
 # Leave the ld.threshold default (0.6), but change slide.max.n:
-# vcf <- system.file("extdata", "liz_test.vcf", mustWork = TRUE)
-ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", slide.max.n=10)
+ld_prune(vcf = system.file("extdata", "liz_test.vcf", package = "algatr"), out_name = "liz", out_format = "vcf", slide.max.n=10)
 
 # The above should have generated a new directory (liz_LDpruned) containing several files
+# TODO[EAC]: it is highly unlikely that this will be created in a way that can be read in consistently. I would out the liz_LDpruned_r0.6_n10.vcf  in extdata as an example and read it in as a system file as follows. For example, I get an error when I ran the old code because it creates the LD folder in the algatr main folder but then tries to read it in from the vignette folder (where the Rmd is). In general, creating and reading in files from a users environment should be avoided, but I get that this is somewhat unavoidable in this case.
 # Let's take a look at the LD-pruned vcf:
-vcf_ldpruned <- vcfR::read.vcfR(here("liz_LDpruned", "liz_LDpruned_r0.6_n10.vcf"))
+vcf_ldpruned <- vcfR::read.vcfR(system.file("extdata", "liz_LDpruned_r0.6_n10.vcf", package = "algatr"))
 
 # How many SNPs were retained after LD-pruning?
 nrow(vcf_ldpruned@gt)
@@ -82,7 +82,7 @@ You'll notice that a number of intermediate files (contained within a new direct
 We can specify not to create these intermediate files, but rather to just produce the end vcf, using the `save_output` argument. If we do this, the function will simply return the vcf object. Let's also change the `ld.threshold` argument for this run.
 
 ```{r LD-pruning no int files}
-vcf_ldpruned <- ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n=10, save_output = FALSE)
+vcf_ldpruned <- ld_prune(vcf = "inst/extdata/liz_test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n = 10, save_output = FALSE)
 
 # How many sites were retained from this run, with a higher LD threshold correlation value?
 nrow(vcf_ldpruned@gt)
