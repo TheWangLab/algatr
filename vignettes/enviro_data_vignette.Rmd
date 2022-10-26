@@ -37,11 +37,11 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
     -   `check_env()` to detect collinearity between environmental layers
 
-    -   `check_vals()` to detect collinearity between extracted values
+    -   `check_vals()` to detect collinearity between extracted environmental values
 
     -   `check_dists()` to detect collinearity between geographic and environmental distances
 
--   Perform a raster PCA on a stack of environmental layers to reduce dimensionality
+-   `rasterPCA()` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
 -   `coords_to_raster()` to create a raster layer from coordinate data
 
@@ -57,7 +57,7 @@ load_example()
 
 ## Introduction to environmental data files and object types
 
-Briefly, in R, any (geo)spatial data can be represented using vectors or rasters. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, vectors are used to represent data points (e.g., sampling coordinates) or polygons (e.g., the state of California); rasters are used for storing environmental attributes of California.
+Briefly, in R, any (geo)spatial data can be represented using points, vectors, or rasters. Points represent coordinates. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, points represent sampling coordinates, vectors represent polygons (e.g., the state of California), and rasters store different environmental layers (e.g. temperature, precipitation) for  California.
 
 There are two main packages algatr uses to process and manipulate environmental data: terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)). Both of these packages have excellent resources and walkthroughs (see [here](https://rspatial.org/terra/) for terra; see [here](https://rspatial.org/raster/pkg/index.html) for raster) that explain in depth environmental data processing and manipulation in R.
 
@@ -96,11 +96,13 @@ points(liz_coords, pch = 19)
 
 ------------------------------------------------------------------------
 
-An important first check for any landscape genomics analysis is to discount collinearity between sets of variables. Specifically, we always want to verify that there is no collinearity (within a given threshold) between environmental layers (using `check_env()`), extracted values from environmental layers (using `check_vals()`), and geographic and environmental distances (using `check_dists()`).
+An important first check for any landscape genomics analysis is to detect collinearity between sets of variables. Specifically, we always want to verify that there is no collinearity (within a given threshold) between environmental layers (using `check_env()`), extracted values from environmental layers (using `check_vals()`), and geographic and environmental distances (using `check_dists()`) as many of the methods used for landscape genomics assume that these variables are indepenedent.
 
 ### Collinearity among environmental layers
 
-The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.5.
+The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.5. 
+
+TODO[EAC]: I think a threshold of 0.70 is more common
 
 ```{r collin env}
 # Convert wclim from SpatRaster to RasterStack
@@ -148,7 +150,7 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables.
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. TODO[EAC]:describe what is returned 
 
 ```{r raster PCA}
 env_pcs <- rasterPCA(wclim, spca = TRUE)
@@ -167,7 +169,7 @@ ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
 
 ------------------------------------------------------------------------
 
-In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument).
+In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument). This raster does not have any meaningful values assigned to it, but can be used to create maps of genetic diversity in wingen (see the wingen vignette).
 
 ```{r coords to raster}
 raster <- coords_to_raster(liz_coords, res = 1)
