@@ -69,7 +69,9 @@ liz_dosage <- vcf_to_dosage(liz_vcf)
 
 ### Process environmental data
 
-TESS provides the ability to map ancestry coefficient estimates, and smooths the resulting surface using a method of spatial interpolation called kriging. We need to download a raster onto which we can map Q values.
+We can create interpolated maps of the ancestry coefficient estimates using a method known as kriging which uses a spatially explicit model for spatial interpolation. To do so, we need a raster onto which we can map Q values. 
+
+*TODO[EAC]: show how you can use the coords_to_raster function to do this. Also, while TESS itself provides an interpolation method I do not know if it is kriging. The code that I wrote uses kriging for interpolation but maybe check if TESS does the same. I don't think it does because the smoothed maps produced by TESS are different from the ones produced by my code. We may want to include a note about this (just briefly say TESS also does this but you can't get a raster output currently from it). You actually discuss this on line 224 a bit so maybe just add that up here*
 
 ```{r raster}
 # First, create a RasterLayer for kriging
@@ -85,11 +87,13 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 ------------------------------------------------------------------------
 
-algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but often this over-simplifies the data. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
+algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
 
 ### Manual K selection
 
 Let's run TESS on a set of K values ranging from 1-10, and select the "best" K value manually based on cross-validation scores. To do so, we'll specify `"manual"` within the `K_selection` argument. Typically, researchers will select the "best" K value by minimizing cross-validation scores.
+
+*TODO[EAC]: you can't run a manual selection step as part of a vignette because it won't knit/build properly*
 
 ```{r manual K selection, message = FALSE}
 # In this case, we can see that the "best" K (minimizing xval score) is also the max value, 10
@@ -152,7 +156,7 @@ head(qmat)
 
 ------------------------------------------------------------------------
 
-The `tess_krig()` function will take in ancestry coefficient values (in the Q-matrix) and will krige the values based on the raster provided (`krig_raster` from above). This will produce a RasterBrick object.
+The `tess_krig()` function will take in ancestry coefficient values (in the Q-matrix) and will krige the values based on the raster provided (`krig_raster` from above). This will produce a Raster* type object.
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
 krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
