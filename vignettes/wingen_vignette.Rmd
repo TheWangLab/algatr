@@ -34,7 +34,7 @@ There are three key components within wingen:
 
 -   `mask_gd()` to mask out any undersampled areas (or generally areas that are not of interest)
 
-### Load example data
+### Read in and process input data
 
 ```{r test data}
 load_example()
