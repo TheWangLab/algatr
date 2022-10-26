@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # TESS population structure analysis
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(here)
 library(tidyverse)
 library(raster)
