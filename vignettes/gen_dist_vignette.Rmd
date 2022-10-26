@@ -17,12 +17,14 @@ knitr::opts_chunk$set(
 # Calculating genetic distances
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+# library(algatr)
 library(here)
 library(vcfR)
 library(ecodist)
 library(adegenet)
 library(cowplot)
+
+devtools::load_all()
 ```
 
 For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are as follows:
@@ -65,13 +67,11 @@ head(euc_dists)
 Now, let's process Plink distances:
 
 ```{r plink dists}
-plink_dists <- gen_dist(plink_file = system.file("extdata", "liz_test.dist", package = "algatr"), 
-                        plink_id_file = system.file("extdata", "liz_test.dist.id", package = "algatr"), 
-                        dist_type = "plink")
+plink_dists <- gen_dist(plink_file = system.file("extdata", "liz_test.dist", package = "algatr"), plink_id_file = system.file("extdata", "liz_test.dist.id", package = "algatr"), dist_type = "plink")
 ```
 
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
-TODO[EAC]: describe what this significant cut-off is related to and provide options for different npc selection procedures (see the comment in the Gendist code file)
+*TODO[EAC]: describe what this significant cut-off is related to and provide options for different npc selection procedures (see the comment in the Gendist code file)*
 
 ```{r pc dists}
 pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
@@ -96,7 +96,7 @@ plot_grid(p_euc_plink, p_pc_plink, nrow=1)
 
 ### Plot heatmap of one of the genetic distances with `gen_dist_hm()`
 
-Let's look at a heatmap scaled to one of the genetic distance metrics we calculated. TODO[EAC]: what do you mean a heatmap "scaled" to one of the metrics? 
+Let's look at a heatmap scaled to one of the genetic distance metrics we calculated. *TODO[EAC]: what do you mean a heatmap "scaled" to one of the metrics?*
 
 ```{r gendist hm}
 gen_dist_hm(euc_dists)

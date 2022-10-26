@@ -125,10 +125,9 @@ In some cases, if we have no sampling from islands, we do not want those areas m
 
 ### Retrieve polygon
 
-First, let's get the shape (polygon) for the state of California. This will include the Channel Islands. TODO: We can retrieve administrative boundaries using the `gadm()` function within the geodata package.
+First, let's get the shape (polygon) for the state of California. This will include the Channel Islands. *TODO[EAC]: We can retrieve administrative boundaries using the `gadm()` function within the geodata package.*
 
 ```{r cali polygon}
-# TODO [EAC]: shouldn't use getData for this - need to switch to geodata
 states <- getData("GADM", country = "United States", level = 1)
 cali <- states[states$NAME_1 == "California",]
 plot(cali)
