@@ -577,7 +577,7 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 #' @param tess3_obj list produced by \code{\link{tess3}}
 #' @param Kvals vector of K values for testing
 #'
-#' @note  (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
+#' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
 #' @return
 #' @export
 #'
@@ -586,7 +586,6 @@ bestK <- function(tess3_obj, Kvals){
   ce <- list()
   for(k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
   ce.K <- c()
-  # TODO [EAC]: there is only one XEnt per k value (minimizing per k value applies if you have replicate runs); no replicates done so is the following line necessary?
   for(k in Kvals) ce.K[k] <- min(ce[[k]])
   diff <- ce.K[-1] - ce.K[-max(Kvals)]
   slope <- exp(-diff) - 1

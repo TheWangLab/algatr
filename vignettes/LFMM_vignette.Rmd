@@ -33,7 +33,7 @@ devtools::load_all()
 
 LFMM ([Frichot et al. 2013](https://academic.oup.com/mbe/article/30/7/1687/972098)) is a genotype-environment association (GEA) method in which mixed models are used to determine loci that are significantly associated with environmental variables. This method is similar to performing RDA, except that LFMM takes into account -- and corrects for -- unobserved variables that may confound results (known as latent factors). A good example of a latent factor that we may want to correct for prior to examining environment-associated loci is population structure.
 
-As with TESS3, there are a variety of ways to determine the best number of latent factors (also called K values) *TODO: K values in TESS and K values in LFMM are not the same thing, TESS Ks aren't latent factors. I think it is important to clarify that latent factors are not the same as pop gen cluster numbers even though we often assing latent factors as the the pop gen cluster K*; algatr provides the option to test using three such methods: (1) Tracy-Widom test; (2) quick elbow test (i.e., scree test); and (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure). We will explore each of these, and compare results, in this vignette.
+There are a variety of ways to determine the best number of latent factors in LFMM (which are called K values, although these are *not* the same as TESS K values). algatr provides the option to test using three such methods: (1) Tracy-Widom test; (2) quick elbow test (i.e., scree test); and (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure). We will explore each of these, and compare results, in this vignette.
 
 Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
@@ -63,11 +63,11 @@ head(gen)
 
 ------------------------------------------------------------------------
 
-As with population structure methods such as TESS, LFMM requires a user to define the number of latent factors (also referred to as K) *TODO[EAC]: see note above*. algatr provides options to perform four types of K selection using the `K_selection` parameter within the `select_K()` function:
+LFMM requires a user to define the number of latent factors (K values). algatr provides options to perform four types of K selection using the `K_selection` parameter within the `select_K()` function:
 
--   If `K_selection = "tracy_widom"`: A Tracy-Widom test is performed. Briefly, this method finds significant eigenvalues of a matrix after performing a PCA. This argument uses the `tw()` function within the [AssocTests](https://cran.r-project.org/web/packages/AssocTests/index.html) package, and also requires a user to provide the `criticalpoint`, which corresponds to the significance level. Significance levels of alpha=0.05, 0.01, 0.005, or 0.001 correspond to critical point values of 0.9793, 2.0234, 2.4224, or 3.2724, respectively. The default significance level is 0.05, so the default for the `criticalpoint` parameter is 2.0234. The Tracy-Widom test is also the default method for the `select_K()` function.
+-   `K_selection = "tracy_widom"`: A Tracy-Widom test is performed. Briefly, this method finds significant eigenvalues of a matrix after performing a PCA. This argument uses the `tw()` function within the [AssocTests](https://cran.r-project.org/web/packages/AssocTests/index.html) package, and also requires a user to provide the `criticalpoint`, which corresponds to the significance level. Significance levels of alpha=0.05, 0.01, 0.005, or 0.001 correspond to critical point values of 0.9793, 2.0234, 2.4224, or 3.2724, respectively. The default significance level is 0.05, so the default for the `criticalpoint` parameter is 2.0234. The Tracy-Widom test is also the default method for the `select_K()` function.
 
--   If `K_selection = "quick_elbow"`: A "quick elbow" is found automatically, which refers to a large percent drop in eigenvalues given a variance below 5% for each principal component (essentially the same as a scree test). The code to determine a quick elbow is adapted from that developed by Nicholas Cooper [here](https://rdrr.io/cran/bigpca/man/quick.elbow.html). This argument requires users to set the threshold that defines whether a principal component explains 'much' of the variance using the `low` argument, and also the maximum percentage of the variance to capture before the elbow (i.e., the cumulative sum to PC 'n') using the `max.pc` argument. The default for `low` is 0.08, and the default for `max.pc` is 0.90.
+-   `K_selection = "quick_elbow"`: A "quick elbow" is found automatically, which refers to a large percent drop in eigenvalues given a variance below 5% for each principal component (essentially the same as a scree test). The code to determine a quick elbow is adapted from that developed by Nicholas Cooper [here](https://rdrr.io/cran/bigpca/man/quick.elbow.html). This argument requires users to set the threshold that defines whether a principal component explains 'much' of the variance using the `low` argument, and also the maximum percentage of the variance to capture before the elbow (i.e., the cumulative sum to PC 'n') using the `max.pc` argument. The default for `low` is 0.08, and the default for `max.pc` is 0.90.
 
 -   `K_selection = "tess"`: The automatic K selection is performed after running TESS. This method minimizes the slope of the line that connects cross-entropy scores between K values. This approach is described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/). This argument requires users to provide coordinates (`coords`) and set the range of K values to test (`Kvals`; defaults to 1:10).
 
@@ -98,7 +98,7 @@ As you can see, the K selection method has quite an effect on the best number of
 
 ------------------------------------------------------------------------
 
-The main function in algatr that runs LFMM is `lfmm_run()`. This function requires that users provide the dosage matrix (`gen`), the extracted environmental variables (`env`), the number of latent factors (`K`), and the LFMM method (`lfmm_method`). *TODO [EAC]: FILL IN ADJUSTED p-VALUES???*
+The main function in algatr that runs LFMM is `lfmm_run()`. This function requires that users provide the dosage matrix (`gen`), the extracted environmental variables (`env`), the number of latent factors (`K`), and the LFMM method (`lfmm_method`).
 
 Importantly, LFMM can be performed using two main methods (`"lasso"` or `"ridge"`), which primarily differ in the penalized loss functions that are incorporated into the least-squares minimization and are specified using the `lfmm_method` argument. The least-squares minimization is how statistical significance is determined for SNPs being associated with environmental variables. The primary difference between the two methods is that the ridge method minimizes the problem with an L\^2 penalty, whereas the lasso method minimizes with an L\^1 penalty. According to [Caye & François 2017](https://bcm-uga.github.io/lfmm/articles/lfmm#starting-with-lfmm), a user would want to select the lasso method (i.e., L\^1-norm) to induce "sparsity on the fixed effects, and corresponds to prior info that not all response vars may be associated with vars of interest. Specifically, prior implies that a limited \# of rows of the effect size matrix B are effectively non-zero." The ridge penalty is further described in [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100).
 
@@ -107,6 +107,11 @@ Now that we've identified the number of latent factors to provide in our model, 
 ```{r lfmm run, warning = FALSE, message = FALSE}
 ridge_results <- lfmm_run(gen, env, K = 6, lfmm_method = "ridge")
 lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
+```
+
+One other argument to be aware of within `lfmm_run()` is the adjustment of p-values, specified using `p-adj`. There are two options for `p_adj`: `"none"`, which XXX (this is the default), and `"fdr"`, which adjusts p-values based on the false discovery rate. *TODO [EAC]: FILL IN ADJUSTED p-VALUES*
+ 
+```{r padj}
 lasso_results_fdr <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso", p_adj = "fdr")
 ```
 
@@ -134,7 +139,7 @@ There are three main ways we can visualize the results from our LFMM analysis. E
 
     -   `sig_only`: whether to only display SNPs above the significance threshold
     
-    -   `top`: TODO [EAC]: FILL IN
+    -   `top`: if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value)
 
     -   `order`: whether to order the SNPs in descending order based on their B value, otherwise they will be ordered based on environmental variable
 
@@ -154,19 +159,17 @@ There are three main ways we can visualize the results from our LFMM analysis. E
 
 Let's see what the top candidate SNPs were for each of our LFMM runs:
 
-```{r cand SNPs table}
+```{r cand SNPs table, fig.width=5, fig.height=5, fig.align='center'}
 # Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)
 lfmm_table(lasso_results$df, order = TRUE)
 lfmm_table(ridge_results$df, order = TRUE)
-
-lfmm_table(lasso_results_fdr$df, order = TRUE)
 ```
 
-As you can see from the above, the penalty chosen makes quite a bit of difference in terms of how many significant SNPs are found (only 6 with the lasso method, but 35 with the ridge method). However, the three SNPs with the largest effect size are the same between the two methods (loci 2338, 125, and 859), and the effect sizes and p-values are comparable.
+As you can see from the above, the penalty chosen makes quite a bit of difference in terms of how many significant SNPs are found (only 6 with the lasso method, but 35 with the ridge method). However, the three SNPs with the largest effect size are the same between the two methods (loci 2338, 125, and 859), and the effect sizes and p-values are comparable. The tables also contain *TODO [EAC]: FILL IN ADJUSTED p-VALUES*
 
 Let's only look at SNPs significantly associated with the PCA2 environmental variable from the lasso method:
 
-```{r modify tables}
+```{r modify tables, fig.width=5, fig.height=5, fig.align='center'}
 lfmm_table(lasso_results$df, order = TRUE, var = "CA_rPCA2")
 
 # Be aware that if significant SNPs < nrow, function will return NULL object
@@ -178,9 +181,9 @@ lfmm_table(lasso_results$df, order = TRUE, var = "CA_rPCA2")
 
 ### Building a QQplot with `lfmm_qqplot()`
 
-A QQplot plots theoretical quantiles against p-value quantiles, providing a way to visualize the significance of our outlier SNPs. The line that is plotted runs through the intercept and has a slope of 1. TODO [EAC]: add further details on QQ-plots here?
+A QQplot plots theoretical quantiles against p-value quantiles, providing a way to visualize the significance of our outlier SNPs. The line that is plotted runs through the intercept and has a slope of 1:
 
-```{r qqplot}
+```{r qqplot, fig.width=5, fig.height=5, fig.align='center'}
 lfmm_qqplot(lasso_results$df)
 ```
 
@@ -188,14 +191,14 @@ lfmm_qqplot(lasso_results$df)
 
 Manhattan plots are helpful ways to visualize the position of the outlier SNPs across the genome, as well as how much they exceed a user-specified significance threshold for each environmental variable.
 
-```{r manhattan lasso}
+```{r manhattan lasso, fig.width=5, fig.height=5, fig.align='center'}
 # As displayed in our table from above, only six SNPs are visible on the lasso method plots as outliers:
 lfmm_manhattanplot(lasso_results$df, sig = 0.05)
 ```
 
 For the ridge method LFMM run, we can see that there are (a) more outliers than the lasso method above, and (b) the majority of these outliers are associated with environmental PC2.
 
-```{r manhattan ridge}
+```{r manhattan ridge, fig.width=5, fig.height=5, fig.align='center'}
 lfmm_manhattanplot(ridge_results$df, sig = 0.05)
 ```
 
@@ -205,6 +208,6 @@ lfmm_manhattanplot(ridge_results$df, sig = 0.05)
 
 The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will automatically extract relevant values from our environmental layers given our coordinate data; it will also automatically convert a vcf object to a dosage matrix for us. The output looks the same as the output from `lfmm_run()` above, and plots will be automatically produced.
 
-```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6}
+```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
 results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "lasso", K_selection = "tracy_widom")
 ```

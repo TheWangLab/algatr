@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # Multiple matrix regression with randomization (MMRR)
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(here)
 library(raster)
 devtools::load_all()
@@ -71,7 +71,7 @@ We can run MMRR either by running the full model (with no variable selection) us
 
 First, let's run the full MMRR model with all variables included (i.e., no variable selection).
 
-```{r mmrr full, fig.width = 5, fig.height = 5}
+```{r mmrr full}
 set.seed(10)
 results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, plot = FALSE)
 ```
@@ -104,20 +104,24 @@ Once again, the results from `mmrr_best()` contains the same elements as `mmrr_f
 
 Let's take a look at the results from our MMRR analyses above. We can produce several plots to visualize results with the `mmrr_plot()` function, including plotting single variable relationships (`plot_type = "vars"`), plotting the fitted relationship that compares predicted against the observed genetic distances (`plot_type = "fitted"`), or plotting covariances between the predictor variables (`plot_type = "cov"`). Lastly, you can set `plot_type = "all"` to produce all three of these plots for your MMRR run.
 
-```{r mmrr plots, fig.width = 5, fig.height = 5}
+```{r mmrr plots, fig.width = 5, fig.height = 5, fig.align='center'}
 # Single variable plot
 mmrr_plot(Y, X, mod = results_full$mod, plot_type = "vars", stdz = TRUE)
+```
 
+```{r fitted plot, fig.width = 5, fig.height = 5, fig.align='center'}
 # Fitted variable plot
 mmrr_plot(Y, X, mod = results_full$mod, plot_type = "fitted", stdz = TRUE)
+```
 
+```{r cov plot, fig.width = 5, fig.height = 5, fig.align='center'}
 # Covariance plot
 mmrr_plot(Y, X, mod = results_full$mod, plot_type = "cov", stdz = TRUE)
 ```
 
 How do the above results compare to those from the "best" model?
 
-```{r mmrr plots best, fig.width = 5, fig.height = 5}
+```{r mmrr best plots, fig.width = 5, fig.height = 5, fig.align='center'}
 mmrr_plot(Y, X, mod = results_best$mod, plot_type = "all", stdz = TRUE)
 ```
 
@@ -137,14 +141,14 @@ The algatr package also has an option to run all of the above functionality in a
 
 ### MMRR with all variables
 
-```{r all vars, fig.width = 5, fig.height = 5}
+```{r all vars, fig.width = 5, fig.height = 5, fig.align='center'}
 set.seed(01)
 mmrr_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full")
 ```
 
 ## MMRR with model selection
 
-```{r best vars, fig.width = 5, fig.height = 5}
+```{r best vars, fig.width = 5, fig.height = 5, fig.align='center'}
 set.seed(10)
 mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
