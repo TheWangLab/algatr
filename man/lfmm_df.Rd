@@ -2,13 +2,16 @@
 % Please edit documentation in R/LFMM.R
 \name{lfmm_df}
 \alias{lfmm_df}
-\title{Title}
+\title{Convert LFMM results into a tidy dataframe for downstream processing}
 \usage{
 lfmm_df(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{df with LFMM test result (\code{lfmm_test_result} element)}
+}
+\value{
+tidy dataframe with LFMM results with each SNP, its p-value, association with env var and other relevant statistics
 }
 \description{
-Title
+Convert LFMM results into a tidy dataframe for downstream processing
 }

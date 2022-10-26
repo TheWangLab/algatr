@@ -7,7 +7,10 @@
 lfmm_qqplot(df)
 }
 \arguments{
-\item{df}{dataframe of lfmm test results produced by \link[wingen]{lfmm_df}}
+\item{df}{dataframe of LFMM test results produced by \code{lfmm_df}}
+}
+\value{
+a QQ-plot
 }
 \description{
 LFMM QQplot

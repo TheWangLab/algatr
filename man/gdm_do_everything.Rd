@@ -21,7 +21,7 @@ gdm_do_everything(
 \arguments{
 \item{gendist}{matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)}
 
-\item{coords}{dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order}
+\item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
 \item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
 

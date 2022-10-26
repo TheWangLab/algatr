@@ -2,18 +2,18 @@
 #' Function to Select K value
 #'
 #' @param gen genotype matrix
-#' @param k_selection method for performing K selection: "tracy.widom", "quick.elbow", or "tess"
+#' @param k_selection method for performing K selection: "tracy_widom", "quick_elbow", or "tess"
 #' @param coords coordinates for TESS-based K selection
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_K <- function(gen, coords = NULL, k_selection = "tracy.widom", Kvals = Kvals, ...){
+get_K <- function(gen, coords = NULL, k_selection = "tracy_widom", Kvals = Kvals, ...){
 
-  if(k_selection == "tracy.widom"){K <- get_K_tw(gen)}
+  if(k_selection == "tracy_widom"){K <- get_K_tw(gen)}
 
-  if(k_selection == "quick.elbow"){K <- get_K_elbow(gen)}
+  if(k_selection == "quick_elbow"){K <- get_K_elbow(gen)}
 
   if(k_selection == "tess"){K <- get_K_tess(gen, coords, Kvals)}
 

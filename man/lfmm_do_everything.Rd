@@ -10,10 +10,10 @@ lfmm_do_everything(
   coords = NULL,
   K = NULL,
   lfmm_method = "ridge",
-  K_selection = "tracy.widom",
+  K_selection = "tracy_widom",
   Kvals = 1:10,
   sig = 0.05,
-  p.adj = "none",
+  p_adj = "none",
   calibrate = "gif",
   criticalpoint = 2.0234,
   low = 0.08,
@@ -30,19 +30,19 @@ lfmm_do_everything(
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
-\item{coords}{dataframe with coordinates (only needed if K selection is performed with TESS)}
+\item{coords}{dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)}
 
 \item{K}{number of latent factors (if left as NULL (default), K value selection will be conducted)}
 
 \item{lfmm_method}{lfmm method (either \code{"ridge"} (default) or \code{"lasso"})}
 
-\item{K_selection}{method for performing k selection (can either by "tracy.widom" (default), "quick.elbow", "tess", or "find.clusters")}
+\item{K_selection}{method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")}
 
 \item{Kvals}{values of K to test for "tess"}
 
-\item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
+\item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
 
-\item{p.adj}{method to use for p-value correction (defaults to "none")}
+\item{p_adj}{method to use for p-value correction (defaults to "none")}
 
 \item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
 significance values are calibrated by using the genomic control method. Genomic control
@@ -50,21 +50,21 @@ uses a robust estimate of the variance of z-scores called "genomic inflation fac
 If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If \code{NULL}, the
 pvalues are not calibrated.}
 
-\item{criticalpoint}{if "tracy.widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly (defaults to 2.0234)}
+\item{criticalpoint}{if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
 
-\item{low}{if "quick.elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance' (defaults to 0.08)}
+\item{low}{if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
 
-\item{max.pc}{if "quick.elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90)}
+\item{max.pc}{if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
 
-\item{pca.select}{if "find.clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).}
+\item{pca.select}{if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).}
 
-\item{perc.pca}{if "find.clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90)}
+\item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
 
-\item{choose.n.clust}{if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
+\item{choose.n.clust}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
 
-\item{criterion}{if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
+\item{criterion}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
 
-\item{max.n.clust}{if "find.clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
+\item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 }
 \description{
 Run LFMM

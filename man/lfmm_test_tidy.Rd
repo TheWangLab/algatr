@@ -2,13 +2,15 @@
 % Please edit documentation in R/LFMM.R
 \name{lfmm_test_tidy}
 \alias{lfmm_test_tidy}
-\title{Title}
+\title{Helper function to tidy LFMM test results}
 \usage{
 lfmm_test_tidy(colname, lfmm_test_result)
 }
 \arguments{
-\item{lfmm_test_result}{}
+\item{colname}{names of elements within lfmm_test_result}
+
+\item{lfmm_test_result}{LFMM test results}
 }
 \description{
-Title
+Helper function to tidy LFMM test results
 }

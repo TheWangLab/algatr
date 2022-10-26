@@ -15,13 +15,13 @@ gen_dist(
 \arguments{
 \item{vcf}{path to vcf file or a \code{vcfR} type object}
 
-\item{plink_file}{path to plink distance file (typically ".dist")}
+\item{plink_file}{path to plink distance file (typically ".dist"; required only for calculating plink distance)}
 
-\item{plink_id_file}{path to plink id file (typically ".dist.id")}
+\item{plink_id_file}{path to plink id file (typically ".dist.id"; required only for calculating plink distance)}
 
-\item{dist_type}{the type of genetic distance to calculate}
+\item{dist_type}{the type of genetic distance to calculate (TODO\link{EAC}: Switch the order so that dist_type comes before the plink files since dist_type is always required but plink files are not)}
 
-\item{criticalpoint}{the critical point for the significance threshold for the TW test within the PCA}
+\item{criticalpoint}{the critical point for the significance threshold for the Tracy Widom test within the PCA used to determine the number of PCs automatically (TODO\link{EAC}: add argument for automatic vs manual selection of PCs (e.g. have the function print a scree plot and then users can select a number of PCs and also have an argument for this function that is nPC ( i think I have this added in TESS)))}
 }
 \value{
 pairwise distance matrix for given distance metric

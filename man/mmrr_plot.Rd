@@ -14,17 +14,17 @@ mmrr_plot(
 )
 }
 \arguments{
-\item{Y}{The dependent variable in the form of a distance matrix}
+\item{Y}{the dependent variable in the form of a distance matrix}
 
-\item{X}{A list of independent variables in the form of distance matrices (required if \code{plot_type = "fitted"}, \code{vars} or \code{"all"})}
+\item{X}{a list of independent variables in the form of distance matrices (required if \code{plot_type = "fitted"}, \code{vars} or \code{"all"})}
 
-\item{mod}{The fitted MMRR model (required if \code{plot_type = "fitted"} or \code{"all"})}
+\item{mod}{the fitted MMRR model (required if \code{plot_type = "fitted"} or \code{"all"})}
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 
-\item{scale}{If TRUE, all variables are scaled}
+\item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{varNames}{A vector of names for the variables in the model (optional)}
+\item{var_names}{add variable names to plot (defaults to NULL)}
 }
 \description{
 Plot MMRR results

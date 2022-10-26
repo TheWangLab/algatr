@@ -7,7 +7,7 @@
 mmrr_df(mod)
 }
 \arguments{
-\item{mod}{The fitted MMRR model}
+\item{mod}{the fitted MMRR model}
 }
 \description{
 Make nice dataframe from MMRR results

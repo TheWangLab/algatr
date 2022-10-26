@@ -7,7 +7,11 @@
 do_everything_for_me(vcf, coords, envlayers)
 }
 \arguments{
-\item{envlayers}{}
+\item{vcf}{path to vcf file or a \code{vcfR} type object}
+
+\item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
+
+\item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
 }
 \description{
 Disclaimer: this is probably a bad idea...

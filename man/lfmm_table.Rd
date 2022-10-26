@@ -11,13 +11,30 @@ lfmm_table(
   top = FALSE,
   order = FALSE,
   var = NULL,
-  rows = NULL,
+  nrow = NULL,
   digits = 2,
   footnotes = TRUE
 )
 }
 \arguments{
-\item{digits}{}
+\item{df}{df element from \code{\link{lfmm_run}} results}
+
+\item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
+
+\item{sig_only}{only include SNPs that exceeded the significance threshold in the table}
+
+\item{top}{TODO FILL IN}
+
+\item{order}{if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)}
+
+\item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
+
+\item{digits}{number of decimal points to include (defaults to 2)}
+
+\item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
+}
+\value{
+table of LFMM results
 }
 \description{
 Create \code{gt} table of LFMM results

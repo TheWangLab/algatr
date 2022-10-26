@@ -10,7 +10,7 @@
 \usage{
 select_K(
   gen,
-  K_selection = "tracy.widom",
+  K_selection = "tracy_widom",
   coords = NULL,
   Kvals = 1:10,
   criticalpoint = 2.023,
@@ -47,43 +47,46 @@ select_K_fc(
 \arguments{
 \item{gen}{a genotype matrix}
 
-\item{K_selection}{method for performing K selection (can either by "tracy.widom" (default), "quick.elbow", or "tess")}
+\item{K_selection}{method for performing K selection (can either by "tracy_widom" (default), "quick_elbow", or "tess")}
 
 \item{coords}{coordinates for "tess"}
 
 \item{Kvals}{values of K to test for "tess"}
 
-\item{criticalpoint}{if "tracy.widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, accordingly (defaults to 2.0234)}
+\item{criticalpoint}{if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
 
-\item{low}{if "quick.elbow" method is used, a numeric, between zero and one, the threshold to define that a principle component does not explain much 'of the variance' (defaults to 0.08)}
+\item{low}{if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
 
-\item{max.pc}{if "quick.elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90)}
+\item{max.pc}{if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
 
-\item{pca.select}{if "find.clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).}
+\item{pca.select}{if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).}
 
-\item{perc.pca}{if "find.clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90)}
+\item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
 
-\item{choose.n.clust}{if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
+\item{choose.n.clust}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
 
-\item{criterion}{if "find.clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
+\item{criterion}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
 
-\item{max.n.clust}{if "find.clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
+\item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 
 \item{tess_method}{method to use for "tess"}
 
 \item{ploidy}{ploidy for "tess"}
+}
+\value{
+prints the best K value given the specified K selection procedure
 }
 \description{
 K selection
 }
 \section{Functions}{
 \itemize{
-\item \code{select_K_tw()}: select K using Tracy-Widom Test
+\item \code{select_K_tw}: select K using Tracy-Widom Test
 
-\item \code{select_K_elbow()}: select K using PCA and \code{quick.elbow} method
+\item \code{select_K_elbow}: select K using PCA and \code{quick_elbow} method
 
-\item \code{select_K_tess()}: select K using  TESS and \code{bestK} method
+\item \code{select_K_tess}: select K using TESS and \code{bestK} method
 
-\item \code{select_K_fc()}: select K using find.clusters method
-
+\item \code{select_K_fc}: select K using find.clusters method
 }}
+
