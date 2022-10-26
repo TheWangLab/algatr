@@ -23,7 +23,7 @@ lfmm_table(
 
 \item{sig_only}{only include SNPs that exceeded the significance threshold in the table}
 
-\item{top}{TODO FILL IN}
+\item{top}{if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)}
 
 \item{order}{if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)}
 

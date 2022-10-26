@@ -46,12 +46,12 @@ method can either be:
 }
 \section{Functions}{
 \itemize{
-\item \code{range_mask}: mask based on range of data
+\item \code{range_mask()}: mask based on range of data
 
-\item \code{sd_mask}: mask based on mean and standard deviation of data
+\item \code{sd_mask()}: mask based on mean and standard deviation of data
 
-\item \code{buffer_mask}: mask based on buffers around points
+\item \code{buffer_mask()}: mask based on buffers around points
 
-\item \code{chull_mask}: mask based on range of data
+\item \code{chull_mask()}: mask based on range of data
+
 }}
-

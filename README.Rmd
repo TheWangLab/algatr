@@ -98,20 +98,11 @@ Let's take a look at the environmental layers included in the example dataset. T
 plot(CA_env, col = turbo(100), axes = FALSE)
 ```
 
-We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B using the `scaleRGB()` function.
+We can combine all three PCs into a single map by scaling each of the rasters in such a way that they each correspond to either R, G, or B using the `scaleRGB()` function, and subsequently map using the `plotRGB()` function.
 
 ```{r, RGB plot, fig.width = 5, fig.height = 6, fig.align='center'}
-# Convert from RasterStack to SpatRaster for terra functionality
-CA_env_sp <- rast(CA_env)
-
-# TODO[EAC]: make this into a function scaleRGB
-for(layer in 1:3){
-  minval <- minmax(CA_env_sp[[layer]])[1,]
-  maxval <- minmax(CA_env_sp[[layer]])[2,]
-  CA_env_sp[[layer]] <- ((CA_env_sp[[layer]] - minval) / (maxval - minval))*255
-}
-
-plotRGB(CA_env_sp, r = 1, g = 2, b = 3)
+env <- scaleRGB(CA_env)
+plotRGB(env, r = 1, g = 2, b = 3)
 
 # Add sampling localities on top of this
 points(liz_coords, pch = 19)
@@ -141,37 +132,37 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 
 You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the [**data processing vignette**](REFER)) and calculating genetic distances (see the [**genetic distances vignette**](REFER)).
 
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-|          | R package                                                      | algatr function          | Input files                               | Required args |
-+==========+================================================================+==========================+===========================================+===============+
-| TESS     | [tess3r](https://bcm-uga.github.io/TESS3_encho_sen/index.html) | `tess_do_everything()`   | -   Genotype dosage matrix                |               |
-|          |                                                                |                          | -   Environmental layers                  |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-| MMRR     | algatr                                                         | `mmrr_do_everything()`   | -   Genetic distance matrix               |               |
-|          |                                                                |                          |                                           |               |
-|          |                                                                |                          | -   Environmental layers                  |               |
-|          |                                                                |                          |                                           |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-| GDM      | [gdm](https://cran.r-project.org/web/packages/gdm/index.html)  | `gdm_do_everything()`    | -   Genetic distance matrix               |               |
-|          |                                                                |                          | -   Environmental layers                  |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-| RDA      | TODO                                                           | `rda_do_everything()`    | -   Genotype dosage matrix                |               |
-|          |                                                                |                          |                                           |               |
-|          |                                                                |                          | -   Environmental layers                  |               |
-|          |                                                                |                          |                                           |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-| LFMM     | [LEA](https://rdrr.io/bioc/LEA/)                               | `lfmm_do_everything()`   | -   Genotype dosage matrix                |               |
-|          |                                                                |                          | -   Environmental layers                  |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
-| wingen   | wingen                                                         | `wingen_do_everything()` | -   VCF file                              |               |
-|          |                                                                |                          | -   Raster layer (*though not necessary*) |               |
-|          |                                                                |                          | -   Sampling coordinates                  |               |
-+----------+----------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+|          | R package                                                         | algatr function          | Input files                               | Required args |
++==========+===================================================================+==========================+===========================================+===============+
+| TESS     | [tess3r](https://bcm-uga.github.io/TESS3_encho_sen/index.html)    | `tess_do_everything()`   | -   Genotype dosage matrix                |               |
+|          |                                                                   |                          | -   Environmental layers                  |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| MMRR     | algatr                                                            | `mmrr_do_everything()`   | -   Genetic distance matrix               |               |
+|          |                                                                   |                          |                                           |               |
+|          |                                                                   |                          | -   Environmental layers                  |               |
+|          |                                                                   |                          |                                           |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| GDM      | [gdm](https://cran.r-project.org/web/packages/gdm/index.html)     | `gdm_do_everything()`    | -   Genetic distance matrix               |               |
+|          |                                                                   |                          | -   Environmental layers                  |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| RDA      | [vegan](https://cran.r-project.org/web/packages/vegan/index.html) | `rda_do_everything()`    | -   Genotype dosage matrix                |               |
+|          |                                                                   |                          |                                           |               |
+|          |                                                                   |                          | -   Environmental layers                  |               |
+|          |                                                                   |                          |                                           |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| LFMM     | [LEA](https://rdrr.io/bioc/LEA/)                                  | `lfmm_do_everything()`   | -   Genotype dosage matrix                |               |
+|          |                                                                   |                          | -   Environmental layers                  |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
+| wingen   | wingen                                                            | `wingen_do_everything()` | -   VCF file                              |               |
+|          |                                                                   |                          | -   Raster layer (*though not necessary*) |               |
+|          |                                                                   |                          | -   Sampling coordinates                  |               |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+---------------+
 
 ### Example
 

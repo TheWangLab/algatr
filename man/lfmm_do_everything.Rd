@@ -13,7 +13,7 @@ lfmm_do_everything(
   K_selection = "tracy_widom",
   Kvals = 1:10,
   sig = 0.05,
-  p_adj = "none",
+  p_adj = "fdr",
   calibrate = "gif",
   criticalpoint = 2.0234,
   low = 0.08,
@@ -42,7 +42,7 @@ lfmm_do_everything(
 
 \item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
 
-\item{p_adj}{method to use for p-value correction (defaults to "none")}
+\item{p_adj}{method to use for p-value correction (defaults to "fdr")}
 
 \item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
 significance values are calibrated by using the genomic control method. Genomic control

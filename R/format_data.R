@@ -51,7 +51,7 @@ vcf_check <- function(x) {
 #' Remove islands from mapping
 #'
 #' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
-#' @param shape SpatialPolygons, sf, sfc, or other polygon object to filter
+#' @param shape SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object
 #' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)
 #'
 #' @return object (of input type) with islands removed
@@ -59,6 +59,11 @@ vcf_check <- function(x) {
 #'
 #' @examples
 rm_islands <- function(input, shape, min_vertices = 10000){
+
+
+  # Convert if SpatVector provided ------------------------------------------
+  if(inherits(shape, "SpatVector")) shape <- sf::st_as_sf(shape)
+
   no_island <- rmapshaper::ms_filter_islands(shape, min_vertices = min_vertices)
 
   if(class(input)[1] == "RasterLayer" | class(input)[1] == "RasterStack" ){
@@ -100,4 +105,27 @@ simple_impute <- function(x, FUN = median){
 impute_helper <- function(i, FUN = median){
   i[which(is.na(i))] <- FUN(i[-which(is.na(i))], na.rm = TRUE)
   return(i)
+}
+
+#' Scale three layers of environmental data to R, G, and B for mapping
+#'
+#' @param env object of type SpatRaster or RasterStack
+#'
+#' @return
+#' @export
+#'
+#' @examples
+scaleRGB <- function(env){
+
+  # Convert to SpatRaster if RasterStack provided ---------------------------
+  if(inherits(env, "RasterStack")) env <- terra::rast(env)
+
+  # Assign RGB values to each layer -----------------------------------------
+  for(layer in 1:3){
+    minval <- terra::minmax(env[[layer]])[1,]
+    maxval <- terra::minmax(env[[layer]])[2,]
+    env[[layer]] <- ((env[[layer]] - minval) / (maxval - minval))*255
+  }
+
+  return(env)
 }

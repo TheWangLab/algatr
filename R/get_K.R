@@ -48,7 +48,7 @@ get_K_tw <- function(gen){
   return(K)
 }
 
-#' @describeIn get_K Determine K using PCA and \code{quick.elbow}
+#' @describeIn get_K Determine K using PCA and \code{quick_elbow}
 #'
 #' @param gen genotype matrix
 #'
@@ -62,9 +62,9 @@ get_K_elbow <- function(gen){
 
   # Get eig
   eig <- pc$sdev^2
-  # Estimate number of latent factors using quick.elbow (see general functions for description of how this function works)
+  # Estimate number of latent factors using quick_elbow (see general functions for description of how this function works)
   # This is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
-  K <- quick.elbow(eig, low = 0.08, max.pc = 0.9)
+  K <- quick_elbow(eig, low = 0.08, max.pc = 0.9)
 
   par(pty = "s",mfrow = c(1,1))
   plot(eig, xlab = 'PC', ylab = "Variance explained")
