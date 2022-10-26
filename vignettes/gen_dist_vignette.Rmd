@@ -39,7 +39,7 @@ For several landscape genomics analyses, a pairwise genetic distance matrix is r
 
 A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
 
-This package also allows a user to look at the relationship between distance metrics using the `gen_dist_corr()` function, and to visualize one genetic distance metric with a heatmap using the `gen_dist_hm()` function.
+This package also allows a user to look at the relationship between distance metrics using the `gen_dist_corr()` function, and to visualize genetic distance matrices with a heatmap using the `gen_dist_hm()` function.
 
 ### Load example dataset
 
@@ -70,6 +70,7 @@ plink_dists <- gen_dist(plink_file = here("inst", "extdata", "liz_test.dist"), p
 ```
 
 Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
+TODO[EAC]: describe what this significant cut-off is related to and provide options for different npc selection procedures (see the comment in the Gendist code file)
 
 ```{r pc dists}
 pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
@@ -94,7 +95,7 @@ plot_grid(p_euc_plink, p_pc_plink, nrow=1)
 
 ### Plot heatmap of one of the genetic distances with `gen_dist_hm()`
 
-Let's look at a heatmap scaled to one of the genetic distance metrics we calculated.
+Let's look at a heatmap scaled to one of the genetic distance metrics we calculated. TODO[EAC]: what do you mean a heatmap "scaled" to one of the metrics? 
 
 ```{r gendist hm}
 gen_dist_hm(euc_dists)
