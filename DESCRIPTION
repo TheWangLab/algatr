@@ -23,6 +23,7 @@ Depends:
 LazyData: true
 Imports: 
     adegenet,
+    cowplot,
     gdm,
     lfmm,
     tess3r,

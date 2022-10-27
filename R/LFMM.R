@@ -96,6 +96,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 
   # Transfer column names
   colnames(lfmm_test_result$adjusted.pvalue) <- colnames(envmat)
+
   # Transfer rownames
   rownames(lfmm_test_result$adjusted.pvalue) <- colnames(genmat)
 
@@ -188,7 +189,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
-  # TODO: come back and remove adjusted p-value if no correction is applied
+  # TODO[APB]: come back and remove adjusted p-value if no correction is applied
   colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
 
   suppressWarnings(

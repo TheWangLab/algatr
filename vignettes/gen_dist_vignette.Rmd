@@ -61,7 +61,7 @@ To calculate Euclidean distances between our samples:
 # Calculate Euclidean distance matrix
 euc_dists <- gen_dist(liz_vcf, dist_type = "euclidean")
 
-head(euc_dists)
+euc_dists[1:5, 1:5]
 ```
 
 Now, let's process Plink distances:
@@ -97,13 +97,13 @@ plot_grid(p_euc_plink, p_pc_plink, nrow=1)
 
 Let's look at a heatmap of Euclidean distance for our example dataset.
 
-```{r gendist hm, fig.align='center', fig.height=5, fig.width=5}
+```{r euc hm, fig.align='center', fig.height=5, fig.width=5}
 gen_dist_hm(euc_dists)
 ```
 
 For the proportions of shared alleles distance metric, keep in mind that the more similar two samples are, the *higher* the distance will be, so this metric's heatmap will show the opposite trend as the other distance metrics available within `gen_dist()`:
 
-```{r gendist hm, fig.align='center', fig.height=5, fig.width=5}
+```{r dps hm, fig.align='center', fig.height=5, fig.width=5}
 dps_dists <- gen_dist(liz_vcf, dist_type = "dps")
 gen_dist_hm(dps_dists)
 ```
