@@ -207,7 +207,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #' K selection
 #'
 #' @param gen genotype matrix
-#' @param K_selection method for performing K selection (can either by "tracy_widom" (default), "quick_elbow", or "tess")
+#' @param K_selection method for performing K selection (options: "tracy_widom" (default), "quick_elbow", or "tess")
 #' @param coords if "tess" method is used, coordinates for TESS based K selection (defaults to NULL)
 #' @param Kvals values of K to test if using "tess" method of K selection (defaults to 1:10)
 #' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)

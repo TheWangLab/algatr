@@ -47,7 +47,7 @@ select_K_fc(
 \arguments{
 \item{gen}{a genotype matrix}
 
-\item{K_selection}{method for performing K selection (can either by "tracy_widom" (default), "quick_elbow", or "tess")}
+\item{K_selection}{method for performing K selection (options: "tracy_widom" (default), "quick_elbow", or "tess")}
 
 \item{coords}{coordinates for "tess"}
 

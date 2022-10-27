@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
+#' @param K_selection how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'

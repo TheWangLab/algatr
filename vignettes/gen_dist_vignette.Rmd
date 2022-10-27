@@ -27,17 +27,17 @@ library(cowplot)
 devtools::load_all()
 ```
 
-For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are as follows:
+For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are specified using the `dist_type` argument and are as follows:
 
 1.  Euclidean distance (the `"euclidean"` argument), which uses the `distance()` function within the [ecodist](https://cran.r-project.org/web/packages/ecodist/index.html) package
 
-2.  Bray-Curtis distance (the `"bray-curtis"` argument), which uses the `distance()` function within the [ecodist](https://cran.r-project.org/web/packages/ecodist/index.html) package
+2.  Bray-Curtis distance (the `"bray_curtis"` argument), which uses the `distance()` function within the [ecodist](https://cran.r-project.org/web/packages/ecodist/index.html) package
 
 3.  Proportion of shared alleles (the `"dps"` argument), which uses the `propShared()` function within the [adegenet](https://cran.r-project.org/web/packages/adegenet/index.html) package
 
-4.  PC-based distance (the `"pc"` argument), which uses the `prcomp()` function within the [stats](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html) package, and selects the number of PCs using a Tracy-Widom test
+4.  PC-based distance (the `"pc"` argument), which uses the `prcomp()` function within the [stats](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html) package and selects the number of PCs using a Tracy-Widom test (if `npc_selection = "auto"`; also requires specifying `criticalpoint` [see below for details]) or user-inputted PCs based on examining a screeplot and manually entering a value into the console (if `npc_selection = "manual"`)
 
-5.  Processing distances generated using Plink (the `"plink"` argument)
+5.  Processing distances generated using Plink (the `"plink"` argument). This type of distance requires providing paths to two plink output files (the distance file, `plink_file`, and the ID file, `plink_id_file`)
 
 A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
 
@@ -70,11 +70,10 @@ Now, let's process Plink distances:
 plink_dists <- gen_dist(plink_file = system.file("extdata", "liz_test.dist", package = "algatr"), plink_id_file = system.file("extdata", "liz_test.dist.id", package = "algatr"), dist_type = "plink")
 ```
 
-Finally, let's calculate PC-based distances using a significance threshold of 0.01 (the default):
-*TODO[EAC]: describe what this significant cut-off is related to and provide options for different npc selection procedures (see the comment in the Gendist code file)*
+Finally, let's calculate PC-based distances. There are two options for selecting the "best" number of PCs, specified using the `npc_selection` argument: `"auto"`, which runs a Tracy-Widom test and selects the number of significant eigenvalues of the PC, or `"manual"`, in which a screeplot is printed to the screen and a user can manually enter the number of PCs to choose into the console. For the automatic option, a significance threshold must be specified using the `criticalpoint` argument; significance levels of 0.05, 0.01, 0.005, or 0.001 correspond to the `criticalpoint` argument being 0.9793, 2.0234, 2.4224, or 3.2724, respectively).
 
 ```{r pc dists}
-pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
+pc_dists <- gen_dist(liz_vcf, dist_type = "pc", npc_selection = "auto", criticalpoint = 2.0234)
 ```
 
 ## Compare genetic distance results
@@ -85,7 +84,7 @@ pc_dists <- gen_dist(liz_vcf, dist_type = "pc")
 
 To compare between the genetic distances you just produced, we can plot them:
 
-```{r gendist corr}
+```{r gendist corr, fig.align='center', fig.height=5, fig.width=5}
 # Plot some pairwise comparisons, providing names for the metrics
 p_euc_plink <- gen_dist_corr(euc_dists, plink_dists, "Euclidean", "Plink")
 p_pc_plink <- gen_dist_corr(pc_dists, plink_dists, "PC_based", "Plink")
@@ -96,8 +95,15 @@ plot_grid(p_euc_plink, p_pc_plink, nrow=1)
 
 ### Plot heatmap of one of the genetic distances with `gen_dist_hm()`
 
-Let's look at a heatmap scaled to one of the genetic distance metrics we calculated. *TODO[EAC]: what do you mean a heatmap "scaled" to one of the metrics?*
+Let's look at a heatmap of Euclidean distance for our example dataset.
 
-```{r gendist hm}
+```{r gendist hm, fig.align='center', fig.height=5, fig.width=5}
 gen_dist_hm(euc_dists)
+```
+
+For the proportions of shared alleles distance metric, keep in mind that the more similar two samples are, the *higher* the distance will be, so this metric's heatmap will show the opposite trend as the other distance metrics available within `gen_dist()`:
+
+```{r gendist hm, fig.align='center', fig.height=5, fig.width=5}
+dps_dists <- gen_dist(liz_vcf, dist_type = "dps")
+gen_dist_hm(dps_dists)
 ```
