@@ -110,8 +110,6 @@ Finally, the last argument to be aware of within `lfmm_run()` is `calibrate`, wh
 
 Now that we've identified the number of latent factors to provide in our model, let's run LFMM using both ridge and lasso penalties with default settings (i.e., FDR p-value adjustment and the "gif" calibration).
 
-*TODO: fix below lines for p_adj?*
-
 ```{r lfmm run, warning = FALSE, message = FALSE}
 ridge_results <- lfmm_run(gen, env, K = 6, lfmm_method = "ridge")
 lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
