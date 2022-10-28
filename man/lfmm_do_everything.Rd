@@ -42,7 +42,7 @@ lfmm_do_everything(
 
 \item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
 
-\item{p_adj}{method to use for p-value correction (defaults to "fdr")}
+\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
 \item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
 significance values are calibrated by using the genomic control method. Genomic control

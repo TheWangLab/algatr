@@ -13,7 +13,8 @@ lfmm_table(
   var = NULL,
   nrow = NULL,
   digits = 2,
-  footnotes = TRUE
+  footnotes = TRUE,
+  p_adj = "fdr"
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ lfmm_table(
 \item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
 
 \item{digits}{number of decimal points to include (defaults to 2)}
+
+\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
 \item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
 }

@@ -7,7 +7,7 @@
 lfmm_df(x)
 }
 \arguments{
-\item{x}{df with LFMM test result (\code{lfmm_test_result} element)}
+\item{x}{lfmm_test_result element from \code{\link{lfmm_run}} results}
 }
 \value{
 tidy dataframe with LFMM results with each SNP, its p-value, association with env var and other relevant statistics

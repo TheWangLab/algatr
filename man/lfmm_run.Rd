@@ -23,7 +23,7 @@ lfmm_run(
 
 \item{lfmm_method}{lfmm method (either \code{"ridge"} (default) or \code{"lasso"})}
 
-\item{p_adj}{method to use for p-value correction (defaults to "fdr")}
+\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
 \item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
 
