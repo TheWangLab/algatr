@@ -7,7 +7,11 @@
 mmrr_table(mmrr_results, digits = 2, summary_stats = TRUE)
 }
 \arguments{
-\item{digits}{}
+\item{mmrr_results}{results from MMRR}
+
+\item{digits}{the number of decimal places to round to}
+
+\item{summary_stats}{whether to add summary statistics (R-squared, F-statistic, F p-value) to bottom of table (defaults to TRUE)}
 }
 \value{
 An object of class \code{gt_tbl}

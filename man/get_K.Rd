@@ -7,7 +7,7 @@
 \alias{get_K_tess}
 \title{Function to Select K value}
 \usage{
-get_K(gen, coords = NULL, k_selection = "tracy.widom", Kvals = Kvals, ...)
+get_K(gen, coords = NULL, k_selection = "tracy_widom", Kvals = Kvals, ...)
 
 get_K_tw(gen)
 
@@ -20,7 +20,7 @@ get_K_tess(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2)
 
 \item{coords}{coordinates for "tess"}
 
-\item{k_selection}{method for performing k selection (can either by "tracy.widom", "quick.elbow", or "tess")}
+\item{k_selection}{method for performing K selection: "tracy_widom", "quick_elbow", or "tess"}
 
 \item{Kvals}{values of K to test for "tess"}
 
@@ -35,7 +35,7 @@ Function to Select K value
 \itemize{
 \item \code{get_K_tw()}: Determine K using Tracy-Widom Test
 
-\item \code{get_K_elbow()}: Determine K using PCA and \code{quick.elbow}
+\item \code{get_K_elbow()}: Determine K using PCA and \code{quick_elbow}
 
 \item \code{get_K_tess()}: Determine K using TESS and \code{bestK}
 

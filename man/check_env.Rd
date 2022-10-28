@@ -4,12 +4,12 @@
 \alias{check_env}
 \title{Check environmental layers for collinearity}
 \usage{
-check_env(envlayers, threshold = 0.5)
+check_env(envlayers, threshold = 0.7)
 }
 \arguments{
-\item{envlayers}{A RasterStack of data layers}
+\item{envlayers}{a RasterStack of data layers}
 
-\item{threshold}{The cutoff correlation coefficient for flagging variables as collinear (numeric)}
+\item{threshold}{the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)}
 }
 \value{
 A matrix of correlation coefficients

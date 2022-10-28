@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param K_selection how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
+#' @param K_selection how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
@@ -577,7 +577,7 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 #' @param tess3_obj list produced by \code{\link{tess3}}
 #' @param Kvals vector of K values for testing
 #'
-#' @note  (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
+#' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
 #' @return
 #' @export
 #'
@@ -586,7 +586,6 @@ bestK <- function(tess3_obj, Kvals){
   ce <- list()
   for(k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
   ce.K <- c()
-  # TODO [EAC]: there is only one XEnt per k value (minimizing per k value applies if you have replicate runs); no replicates done so is the following line necessary?
   for(k in Kvals) ce.K[k] <- min(ce[[k]])
   diff <- ce.K[-1] - ce.K[-max(Kvals)]
   slope <- exp(-diff) - 1

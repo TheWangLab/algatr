@@ -9,7 +9,7 @@ lfmm_run(
   env,
   K,
   lfmm_method = "ridge",
-  p.adj = "fdr",
+  p_adj = "fdr",
   sig = 0.05,
   calibrate = "gif"
 )
@@ -23,9 +23,9 @@ lfmm_run(
 
 \item{lfmm_method}{lfmm method (either \code{"ridge"} (default) or \code{"lasso"})}
 
-\item{p.adj}{method to use for p-value correction (defaults to "none")}
+\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
-\item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
+\item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
 
 \item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
 significance values are calibrated by using the genomic control method. Genomic control

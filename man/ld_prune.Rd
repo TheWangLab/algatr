@@ -2,8 +2,7 @@
 % Please edit documentation in R/SNP_LD.R
 \name{ld_prune}
 \alias{ld_prune}
-\title{ld_prune prunes SNPs based on linkage disequilibrium using \code{SNPRelate} and \code{SeqArray} packages
-TODO \link{EAC}: LOGFILE produced no matter what; do we want to keep this?}
+\title{ld_prune prunes SNPs based on linkage disequilibrium using \code{SNPRelate} and \code{SeqArray} packages}
 \usage{
 ld_prune(
   vcf,

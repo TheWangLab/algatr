@@ -7,9 +7,9 @@
 unfold(X, scale = TRUE)
 }
 \arguments{
-\item{X}{is a distance matrix.}
+\item{X}{is a distance matrix}
 
-\item{scale}{if TRUE then matrices will be standardized. Default = TRUE.}
+\item{scale}{if TRUE then matrices will be standardized (defaults to TRUE)}
 }
 \description{
 unfold converts the lower diagonal elements of a matrix into a vector

@@ -11,9 +11,9 @@ gen_dist_corr(dist_x, dist_y, metric_name_x, metric_name_y)
 
 \item{dist_y}{df containing square distance matrix for y axis}
 
-\item{metric_name_x}{name of distance metric for x axis}
+\item{metric_name_x}{name of distance metric for x axis; if DPS used, must be \code{"dps"}}
 
-\item{metric_name_y}{name of distance metric for y axis}
+\item{metric_name_y}{name of distance metric for y axis; if DPS used, must be \code{"dps"}}
 }
 \description{
 Plot the relationship between two distance metrics

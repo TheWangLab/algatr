@@ -9,9 +9,12 @@ rm_islands(input, shape, min_vertices = 10000)
 \arguments{
 \item{input}{RasterLayer or RasterStack object with islands to be removed; also accepts coords}
 
-\item{shape}{spatial object to filter TODO \link{EAC}: needs more detail}
+\item{shape}{SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object}
 
 \item{min_vertices}{minimum number of vertices in polygons to retain (defaults to 10000)}
+}
+\value{
+object (of input type) with islands removed
 }
 \description{
 Remove islands from mapping

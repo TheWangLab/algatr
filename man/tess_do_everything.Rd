@@ -28,7 +28,7 @@ tess_do_everything(
 
 \item{Kvals}{vector of K values to test}
 
-\item{K_selection}{how to perform k selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)}
+\item{K_selection}{how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)}
 
 \item{ploidy}{an integer corresponding to ploidy of the studied
 organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}

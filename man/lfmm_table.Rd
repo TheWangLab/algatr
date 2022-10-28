@@ -11,13 +11,33 @@ lfmm_table(
   top = FALSE,
   order = FALSE,
   var = NULL,
-  rows = NULL,
+  nrow = NULL,
   digits = 2,
-  footnotes = TRUE
+  footnotes = TRUE,
+  p_adj = "fdr"
 )
 }
 \arguments{
-\item{digits}{}
+\item{df}{df element from \code{\link{lfmm_run}} results}
+
+\item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
+
+\item{sig_only}{only include SNPs that exceeded the significance threshold in the table}
+
+\item{top}{if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)}
+
+\item{order}{if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)}
+
+\item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
+
+\item{digits}{number of decimal points to include (defaults to 2)}
+
+\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
+
+\item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
+}
+\value{
+table of LFMM results
 }
 \description{
 Create \code{gt} table of LFMM results

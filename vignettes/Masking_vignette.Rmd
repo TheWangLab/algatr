@@ -31,7 +31,7 @@ Often, we may want to mask areas of maps to visualize landscape genomics results
 
 This vignette makes use of the following masking functions:
 
--   `extrap_mask()` extrapolates environmental values from environmental layers that will be masked
+-   `extrap_mask()` function to reduce extrapolation by masking areas that fall outside the data (either based on environmental or spatial coverage)
 
 -   `plot_extrap_mask()` generates a map with masked areas
 
@@ -125,14 +125,13 @@ In some cases, if we have no sampling from islands, we do not want those areas m
 
 ### Retrieve polygon
 
-First, let's get the shape (polygon) for the state of California. This will include the Channel Islands. TODO: We can retrieve administrative boundaries using the `gadm()` function within the geodata package.
+First, let's get the shape (polygon) for the state of California. This will include the Channel Islands. We can retrieve administrative boundaries using the `gadm()` function within the geodata package.
 
 ```{r cali polygon}
-# TODO [EAC]: shouldn't use getData for this - need to switch to geodata
-states <- getData("GADM", country = "United States", level = 1)
+# states <- getData("GADM", country = "United States", level = 1)
+states <- gadm("United States", level = 1, path = here())
 cali <- states[states$NAME_1 == "California",]
 plot(cali)
-# states <- gadm("United States", level = 1, path = here())
 ```
 
 ### Remove islands

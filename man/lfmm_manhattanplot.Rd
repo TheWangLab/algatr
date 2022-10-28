@@ -7,7 +7,7 @@
 lfmm_manhattanplot(df, sig, group = NULL, var = NULL)
 }
 \arguments{
-\item{df}{dataframe of lfmm test results produced by \link[wingen]{lfmm_df}}
+\item{df}{dataframe of lfmm test results produced by \code{lfmm_df}}
 
 \item{sig}{significance cutoff}
 }

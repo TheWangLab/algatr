@@ -20,7 +20,7 @@ gdm_run(
 \arguments{
 \item{gendist}{matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)}
 
-\item{coords}{dataframe with x (i.e. Longitude) and y (i.e. Latitude) coordinates; must be in this order}
+\item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
 \item{env}{dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 

@@ -2,19 +2,20 @@
 #' Calculate genetic distances
 #'
 #' @param vcf path to vcf file or a `vcfR` type object
-#' @param plink_file path to plink distance file (typically ".dist"; required only for calculating plink distance)
-#' @param plink_id_file path to plink id file (typically ".dist.id"; required only for calculating plink distance)
-#' @param dist_type the type of genetic distance to calculate (TODO[EAC]: Switch the order so that dist_type comes before the plink files since dist_type is always required but plink files are not)
-#' @param criticalpoint the critical point for the significance threshold for the Tracy Widom test within the PCA used to determine the number of PCs automatically (TODO[EAC]: add argument for automatic vs manual selection of PCs (e.g. have the function print a scree plot and then users can select a number of PCs and also have an argument for this function that is nPC ( i think I have this added in TESS)))
+#' @param dist_type the type of genetic distance to calculate (options: "euclidean" (default), "bray_curtis", "dps" for proportion of shared alleles, "plink", or "pc" for PC-based)
+#' @param plink_file if "plink" dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)
+#' @param plink_id_file if "plink" dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)
+#' @param npc_selection if "pc" dist_type is used, how to perform K selection (options: "auto" for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or "manual" to examine PC screeplot and enter no. PCs into console)
+#' @param criticalpoint if "pc" dist_type is used with "auto" npc_selection, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)
 #'
 #' @details
 #' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
 #' Proportions of shared alleles calculated using the adegenet package: Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi:10.1093/bioinformatics/btr521.
-#' For PC-based distances, mean-based imputation calculated using the dartR package: Gruber, B, Unmack, PJ, Berry, OF, Georges, A. dartr: An r package to facilitate analysis of SNP data generated from reduced representation genome sequencing. Mol Ecol Resour. 2018; 18: 691-699. https://doi.org/10.1111/1755-0998.12745
-
+#' For calculating proportions of shared alleles, missing values are ignored (i.e., prop shared alleles calculated from present values; no scaling performed)
+#'
 #' @return pairwise distance matrix for given distance metric
 #'
-gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_type, criticalpoint = 2.0234){
+gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL, npc_selection = "auto", criticalpoint = 2.0234){
 
   # Import vcf if provided --------------------------------------------------
 
@@ -33,12 +34,6 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
       warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
 
-    # Check for NAs
-    # TODO[EAC]: this code is repetitive with the above expression
-    if(any(is.na(mat))){
-      stop("NA values found in genetic data")
-    }
-
     dists <- ecodist::distance(mat, method = "euclidean")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
@@ -46,7 +41,7 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
 
   # Calculate Bray-Curtis distances -----------------------------------------
 
-  if (dist_type == "bray-curtis") {
+  if (dist_type == "bray_curtis") {
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl)
@@ -72,7 +67,6 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
   if (dist_type == "dps") {
     # Convert to genind
     genind <- vcfR::vcfR2genind(vcf)
-    # TODO[EAC]: include in function description how adegent deals with NAs?
     dists <- adegenet::propShared(genind)
     return(as.data.frame(dists))
   }
@@ -99,13 +93,9 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
 
     # Perform imputation with warning
     if(any(is.na(mat))){
-      length <- rep(1, length(gl$ind.names))
-      adegenet::strata(gl) <- as.data.frame(length)
-      adegenet::setPop(gl) <- ~length
-      gl <- dartR::gl.impute(gl, method = "frequency")
-      mat <- as.matrix(gl)
-      # TODO[EAC]: why is imputation to the mean performed for PC and then imputation to the median performed for other measures? Probably should make consistent or give an explanation or make the choice of summarizing function an argument
-      warning("NAs found in genetic data, imputing to mean (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+      mat <- simple_impute(mat, median)
+      gl <- adegenet::as.genlight(mat)
+      warning("NAs found in genetic data, imputing to median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
 
     # Check for NAs
@@ -119,19 +109,26 @@ gen_dist <- function(vcf = NULL, plink_file = NULL, plink_id_file = NULL, dist_t
     # Get eig
     eig <- pc$sdev^2
 
-    # Run Tracy-Widom test
-    # NOTE: critical point corresponds to significance level.
-    # If the significance level is 0.05, 0.01, 0.005, or 0.001,
-    # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively.
-    # The default is 2.0234.
-    tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
+    # Automatic npc selection based on number of significant eigenvalues
+    if (npc_selection == "auto") {
+      # Run Tracy-Widom test
+      # NOTE: critical point corresponds to significance level.
+      # If the significance level is 0.05, 0.01, 0.005, or 0.001,
+      # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively.
+      # The default is 2.0234.
+      tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
+      npc <- tw_result$SigntEigenL
+    }
 
-    # TODO: see note above about adding automatic vs manual seleciton options as in TESS
-    # Get K based on number of significant eigenvalues
-    K <- tw_result$SigntEigenL
+    # Manual npc selection: screeplot printout and selecting no. PCs to retain
+    if (npc_selection == "manual") {
+      stats::screeplot(pc, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
+      npc <- as.numeric(readline(prompt = "Number of PC axes to retain:"))
+    }
 
-    # Calculate PC distance based on significant PCs
-    dists <- as.matrix(dist(pc$x[,1:K], diag = TRUE, upper = TRUE))
+    # Calculate PC-based distance
+    dists <- as.matrix(dist(pc$x[,1:npc], diag = TRUE, upper = TRUE))
+
     return(as.data.frame(dists))
   }
 
@@ -197,7 +194,7 @@ gen_dist_hm <- function(dist){
     ggplot2::geom_tile() +
     ggplot2::coord_equal() +
     viridis::scale_fill_viridis(option = "inferno") +
-    xlab("Sample") +
-    ylab("Sample") +
-    theme(axis.text.x = element_text(angle = 90))
+    ggplot2::xlab("Sample") +
+    ggplot2::ylab("Sample") +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
 }
