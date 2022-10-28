@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+# library(algatr)
 library(here)
 # To install LFMM:
 #devtools::install_github("bcm-uga/lfmm")
@@ -83,7 +83,7 @@ LFMM requires a user to define the number of latent factors (K values). algatr p
 
 Let's see how the above methods compare to one another in terms of how K values compare. Regardless of the K selection that's done, a user must provide a dosage matrix (`gen`) and the K selection procedure they would like to perform (`K_selection`).
 
-```{r K selection, warning = FALSE}
+```{r K selection, warning = FALSE, fig.align='center', fig.height=3, fig.width=3}
 # Keep relevant params but retain default values for them
 select_K(gen, K_selection = "tracy_widom", criticalpoint = 2.0234) # 6
 
