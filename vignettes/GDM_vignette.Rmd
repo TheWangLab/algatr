@@ -127,15 +127,9 @@ par(mfrow = c(2,2))
 gdm_plot_isplines(gdm_full$model)
 ```
 
-### Comparing between full and best GDM models
-
-*TODO [EAC]: need to fill this in once I get gdm best running*
-
 ### Table of GDM statistics
 
-We can generate a nice table with relevant GDM statistics to report using the `gdm_table()` function.
-
-To understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
+We can generate a nice table with relevant GDM statistics to report using the `gdm_table()` function. To understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
 
 ```{r GDM table}
 gdm_table(gdm_full)

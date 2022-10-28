@@ -1,5 +1,5 @@
 
-#' Run LFMM
+#' LFMM function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
@@ -11,6 +11,10 @@
 #' @param p_adj method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
+#'
+#' @details
+#' LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
+#' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860.
 #'
 #' @return
 #' @export
