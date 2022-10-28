@@ -39,6 +39,7 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
 }
 
 #' Create raster mask based on range of data
+#'
 #' @describeIn extrap_mask mask based on range of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
@@ -77,6 +78,7 @@ range_mask <- function(coords, envlayers){
 
 
 #' Create raster mask based on mean and standard deviation of data
+#'
 #' @describeIn extrap_mask mask based on mean and standard deviation of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
@@ -90,7 +92,6 @@ range_mask <- function(coords, envlayers){
 sd_mask <- function(coords, envlayers, nsd){
 
   vals <- raster::extract(envlayers, coords)
-  # TODO [EAC]: check that this is ok
   vals <- as.matrix(vals)
   envmask <- envlayers*0
 
@@ -119,6 +120,7 @@ sd_mask <- function(coords, envlayers, nsd){
 
 
 #' Mask rasters based on buffers around points
+#'
 #' @describeIn extrap_mask mask based on buffers around points
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
@@ -150,6 +152,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 }
 
 #' Mask rasters based on convex hull around points
+#'
 #' @describeIn extrap_mask mask based on range of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
@@ -187,12 +190,13 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 }
 
 #' Plot mask on top of map
+#'
 #' @description Plots a raster with another raster "mask" on top of it
 #'
 #' @param map_r raster you want masked
 #' @param map_mask raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
 #' @param RGB_cols whether the plot should be RGB-based or not
-#' @param mask_col color and transparency of mask (defaults to black and alpha=0.9)
+#' @param mask_col color and transparency of mask (defaults to black and alpha = 0.9)
 #'
 #' @return plot \code{map} with areas masked based on \code{map_mask}
 #' @export
