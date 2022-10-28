@@ -8,7 +8,7 @@
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
 #' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
-#' @param p_adj method to use for p-value correction (defaults to "fdr")
+#' @param p_adj method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #'
@@ -53,7 +53,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10))
+  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, p_adj = p_adj))
 
   return(results)
 }
@@ -89,7 +89,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
                   calibrate = calibrate)
 
   # If p_adj method is specified, perform p-value correction by column (by env variable)
-  lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, p.adjust, method = p_adj)
+  lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, stats::p.adjust, method = p_adj)
 
   # Stop if all p-values are NA
   if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("All p-values are NA")
@@ -112,7 +112,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 
 #' Convert LFMM results into a tidy dataframe for downstream processing
 #'
-#' @param x df with LFMM test result (`lfmm_test_result` element)
+#' @param x lfmm_test_result element from \code{\link{lfmm_run}} results
 #'
 #' @return tidy dataframe with LFMM results with each SNP, its p-value, association with env var and other relevant statistics
 #' @export
@@ -161,12 +161,13 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
 #' @param rows number of rows to include in table (defaults to NULL; will only include significant SNPs)
 #' @param digits number of decimal points to include (defaults to 2)
+#' @inheritParams lfmm_do_everything
 #'
 #' @return table of LFMM results
 #' @export
 #'
 #' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE){
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE, p_adj = "fdr"){
 
   if(!is.null(var)) df <- df[df$var %in% var, ]
   if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
@@ -189,8 +190,10 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
-  # TODO[APB]: come back and remove adjusted p-value if no correction is applied
   colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
+
+  # Remove adjusted p-value if no correction is applied
+  if(p_adj == "none"){df <- df %>% dplyr::select(-`adjusted p-value`)}
 
   suppressWarnings(
     tbl <- df  %>%
@@ -329,7 +332,6 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 }
 
 
-
 #' @describeIn select_K select K using find.clusters method
 #' @param gen a genotype matrix
 #' @inheritParams adegenet::find.clusters
@@ -350,7 +352,6 @@ select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clu
   K <- max(as.numeric(fc$grp))
   return(K)
 }
-
 
 #' Quickly choose an elbow for a PC.
 #' At variance below 5% per component, choose the largest % drop
@@ -420,6 +421,7 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
   names(elbow) <- NULL
   return(elbow)
 }
+
 
 #' LFMM QQplot
 #'

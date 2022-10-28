@@ -104,9 +104,9 @@ The main function in algatr that runs LFMM is `lfmm_run()`. This function requir
 
 Importantly, LFMM can be performed using two main methods (`"lasso"` or `"ridge"`), which primarily differ in the penalized loss functions that are incorporated into the least-squares minimization and are specified using the `lfmm_method` argument. The least-squares minimization is how statistical significance is determined for SNPs being associated with environmental variables. The primary difference between the two methods is that the ridge method minimizes the problem with an L\^2 penalty, whereas the lasso method minimizes with an L\^1 penalty. According to [Caye & François 2017](https://bcm-uga.github.io/lfmm/articles/lfmm#starting-with-lfmm), a user would want to select the lasso method (i.e., L\^1-norm) to induce "sparsity on the fixed effects, and corresponds to the prior information that not all response variables may be associated with the variables of interest. More specifically, the prior implies that a limited number of rows of the effect size matrix B are effectively non-zero." The ridge penalty is further described in [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100).
 
-One other argument to be aware of within `lfmm_run()` is the adjustment of p-values, specified using `p-adj`. There are two options for `p_adj`: `"fdr"`, which adjusts p-values based on the false discovery rate (the default), and `"none"` for no p-value adjustment (not recommended).
+One other argument to be aware of within `lfmm_run()` is the adjustment of p-values, specified using `p_adj`. There are two options for `p_adj`: `"fdr"`, which adjusts calibrated p-values based on the false discovery rate (the default). Other options for p-value adjustment can be found within the `p.adjust()` function in the stats package.
 
-Finally, the last argument to be aware of within `lfmm_run()` is `calibrate`, which calibrates p-values based on aspects of the resulting z-scores. There are two options for this argument: `"gif"` (the default), and `"median+MAD"`. From the LFMM documentation: "If the "gif" option is set (default), significance values are calibrated by using the genomic control method. Genomic control uses a robust estimate of the variance of z-scores called "genomic inflation factor". If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If NULL, the pvalues are not calibrated."
+Finally, the last argument to be aware of within `lfmm_run()` is `calibrate`, which calibrates p-values based on resulting z-scores. There are two options for this argument: `"gif"` (the default), and `"median+MAD"`. From the LFMM documentation: "If the "gif" option is set (default), significance values are calibrated by using the genomic control method. Genomic control uses a robust estimate of the variance of z-scores called "genomic inflation factor". If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If NULL, the pvalues are not calibrated."
 
 Now that we've identified the number of latent factors to provide in our model, let's run LFMM using both ridge and lasso penalties with default settings (i.e., FDR p-value adjustment and the "gif" calibration).
 
@@ -115,10 +115,6 @@ Now that we've identified the number of latent factors to provide in our model, 
 ```{r lfmm run, warning = FALSE, message = FALSE}
 ridge_results <- lfmm_run(gen, env, K = 6, lfmm_method = "ridge")
 lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
-```
-
-```{r padj}
-lasso_results_fdr <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso", p_adj = "fdr")
 ```
 
 The results object from `lfmm_run()` contains 5 elements:
@@ -156,6 +152,8 @@ There are three main ways we can visualize the results from our LFMM analysis. E
     -   `digits`: the number of decimal places to include
     
     -   `footnotes`: whether to include footnotes describing the variables displayed
+    
+    -   `p_adj`: whether p-values were adjusted in `lfmm_run()`
 
 -   `lfmm_qqplot()`: Build a QQ-plot (quantile-quantile plot) which plots expected quantiles (percentiles) against p-values.
 
