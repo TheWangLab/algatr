@@ -14,7 +14,7 @@ rda_do_everything(
   outlier_method = "p",
   sig = 0.05,
   z = 3,
-  padj_method = "fdr",
+  p_adj = "fdr",
   cortest = TRUE,
   nPC = 3,
   naxes = "all",
@@ -39,23 +39,23 @@ rda_do_everything(
 
 \item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
-\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify snps}
+\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify SNPs (defaults to 3)}
 
-\item{padj_method}{if \code{outlier_method = "p"}, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
-\item{cortest}{whether to create table of correlations for snps and environmental variable}
+\item{cortest}{whether to create table of correlations for snps and environmental variable (defaults to TRUE)}
 
 \item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided}
 
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
-\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordi2step})}
+\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordiR2step})}
 
-\item{R2permutations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
+\item{R2permutations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})}
 
-\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})}
+\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})}
 
 \item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
 }

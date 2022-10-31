@@ -8,7 +8,7 @@ rda_getoutliers(
   mod,
   naxes = "all",
   outlier_method = "p",
-  padj_method = "fdr",
+  p_adj = "fdr",
   sig = 0.05,
   z = 3,
   plot = TRUE
@@ -19,11 +19,11 @@ rda_getoutliers(
 
 \item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
 
-\item{padj_method}{if \code{outlier_method = "p"}, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
-\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify snps}
+\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify SNPs (defaults to 3)}
 
 \item{plot}{whether to produce scree plot of RDA axes (defaults to TRUE)}
 }
