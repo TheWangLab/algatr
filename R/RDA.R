@@ -8,15 +8,15 @@
 #' @param correctGEO whether to condition on geographic coordinates
 #' @param correctPC whether to condition on PCs from PCA of genotypes
 #' @param outlier_method method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html
-#' @param sig if `outlier_method = "p"`, the significance level to use to identify SNPs
-#' @param padj_method if `outlier_method = "p"`, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
-#' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify snps
-#' @param cortest whether to create table of correlations for snps and environmental variable
+#' @param sig if `outlier_method = "p"`, the significance level to use to identify SNPs (defaults to 0.05)
+#' @param p_adj if `outlier_method = "p"`, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
+#' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify SNPs (defaults to 3)
+#' @param cortest whether to create table of correlations for snps and environmental variable (defaults to TRUE)
 #' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
-#' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
-#' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
-#' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
+#' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordiR2step})
+#' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})
+#' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #'
 #' @inheritParams vegan::ordiR2step
@@ -29,7 +29,7 @@
 #' @examples
 rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
-                              padj_method = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
+                              p_adj = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
   if(inherits(env, "Raster")) env <- raster::extract(env, coords)
 
   # Standardize environmental variables
-  if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
+  if(stdz) env <- raster::scale(env, center = TRUE, scale = TRUE)
   env <- data.frame(env)
 
   # Rename coords
@@ -85,12 +85,12 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # get RSquared and run ANOVA
   mod_rsq <- vegan::RsquareAdj(mod)
-  mod_aov <- anova(mod)
+  mod_aov <- stats::anova(mod)
 
   # Identify candidate SNPs ----------------------------------------------------------------------------------------------------
 
   # Running with all axes
-  rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, padj_method = padj_method, sig = sig)
+  rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, p_adj = p_adj, sig = sig)
 
   # Get SNPs
   rda_snps <- rda_sig$rda_snps
@@ -186,14 +186,14 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 #' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier snps, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
 #'
 #' @export
-rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", padj_method = "fdr", sig = 0.05, z = 3, plot = TRUE){
+rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.05, z = 3, plot = TRUE){
   # Running the function with all axes
   if(plot) stats::screeplot(mod, main = "Eigenvalues of constrained axes")
   if(naxes == "manual") naxes <- readline("Number of RDA axes to retain:")
   if(naxes == "all") naxes <- ncol(mod$CCA$v)
 
   if(outlier_method == "p" & naxes == 1) warning("Cannot compute p-values (outlier_method = \"p\") when the number of RDA axes is less than two, using the standard deviation based method (outlier_method = \"z\") instead")
-  if(outlier_method == "p" & naxes != 1) results <- p_outlier_method(mod, naxes, sig, padj_method)
+  if(outlier_method == "p" & naxes != 1) results <- p_outlier_method(mod, naxes, sig, p_adj)
   if(outlier_method == "z" | naxes == 1) results <- z_outlier_method(mod, naxes, z)
 
   return(results)
@@ -207,11 +207,11 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", padj_metho
 #' @export
 #' @noRd
 #'
-p_outlier_method <- function(mod, naxes, sig = 0.05, padj_method = "fdr"){
+p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
   rdadapt_env <- rdadapt(mod, naxes)
 
   # P-values threshold after FDR correction (different from Capblancq & Forester 2021)
-  pvalues <- p.adjust(rdadapt_env$p.values, method = padj_method)
+  pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
 
   # get snp names
   snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))

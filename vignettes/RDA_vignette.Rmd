@@ -39,7 +39,7 @@ RDA cannot take in missing values. Imputation based on the per-site median is co
 
 The general workflow to perform an RDA with algatr is as follows:
 
-
+-   
 
 
 ### Read in and process genetic data
@@ -64,14 +64,14 @@ gen[1:5, 1:5]
 
 ### Process environmental data
 
-Let's extract environmental variables using the `extract()` function from the raster package. TODO EXPLAIN STDZ
+Let's extract environmental variables using the `extract()` function from the raster package. We also need to standardize environmental varibles. This is particularly important if we are using (for example) bioclimatic variables as input, as units of measurement are completely different (e.g., mm for precipitation vs. degrees celsius for temperature). To do so, we'll use the `scale()` function within the raster package.
 
 ```{r enviro data}
 # Extract enviro vars
 env <- extract(CA_env, liz_coords)
 
-# Standardize environmental variables
-if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
+# Standardize environmental variables and make into dataframe
+env <- scale(env, center = TRUE, scale = TRUE)
 env <- data.frame(env)
 ```
 
@@ -83,16 +83,16 @@ The main function within algatr to perform an RDA is `rda_run()`, which makes us
 
 ### Run a simple RDA
 
-A simple RDA is one in which our model will not account for covariables in the model.
+A simple RDA is one in which our model will not account for covariables in the model. Let's first run a simple RDA on all environmental variables (i.e., no variable selection). This is specified using the `model` argument.
 
-```{r, warning = FALSE, message = FALSE}
-mod <- rda_run(gen, env, 
+```{r full model, warning = FALSE, message = FALSE}
+mod_full <- rda_run(gen, env, 
                model = "full", # can set to best as well
                correctGEO = FALSE,
                correctPC = FALSE,
-               Pin = 0.05, # only if model=best limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
-               R2permutations = 1000, # only if model=best number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
-               R2scope = T) # only if model=best use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
+               Pin = 0.05,
+               R2permutations = 1000,
+               R2scope = T)
 ```
 
 ```{r rsq ANOVA}
@@ -101,15 +101,27 @@ mod_rsq <- vegan::RsquareAdj(mod)
 mod_aov <- anova(mod)
 ```
 
+Now, let's run variable selection procedure by specifying the `"best"` model within `rda_run()`, which is accomplished with the `ordiR2step()` function in the vegan package. Running variable selection requires specifying several more parameters: the limits of permutation p-values for adding (`Pin`) or dropping (`Pout`) a term to the model, the number of permutations used in the estimation of adjusted R2 (`R2permutations`), and whether the use the adjusted R2 value as the stopping criterion (`R2scope`; only models with adjusted R2 values lower than specified are accepted).
+
+```{r best model, warning = FALSE, message = FALSE}
+mod_best <- rda_run(gen, env, 
+               model = "best",
+               correctGEO = FALSE,
+               correctPC = FALSE,
+               Pin = 0.05,
+               R2permutations = 1000,
+               R2scope = T)
+```
+
 ### Run a partial RDA
 
-A partial RDA, as described at the beginning of the vignette, is when covariables (or conditioning variables) are incorporated into the RDA. Within `rda_run()`, users have the option of including sampling coordinates (`correctGEO`; if this is set to true, then `coords` must also be provided) or selecting PC axes (`correctPC`; if this is set to `TRUE`, then `nPC` must also be provided) as conditioning variables. For `nPC`, we can also set this argument to "manual", which case a screeplot will be generated and a user can manually enter the number of PCs to consider into the console.
+A partial RDA, as described at the beginning of the vignette, is when covariables (or conditioning variables) are incorporated into the RDA. Within `rda_run()`, users have the option of including sampling coordinates (`correctGEO`; if this is set to true, then `coords` must also be provided) or selecting PC axes (`correctPC`; if this is set to `TRUE`, then `nPC` must also be provided) as conditioning variables. For `nPC`, we can also set this argument to `"manual"`, in which case a screeplot will be generated and a user can manually enter the number of PCs to include into the console.
 
 ```{r partial rda}
 mod <- rda_run(gen, env, liz_coords,
                model = "best",
                correctGEO = TRUE,
-               correctPC = FALSE,
+               correctPC = TRUE,
                nPC = 3,
                Pin = 0.05,
                R2permutations = 1000,
@@ -118,13 +130,13 @@ mod <- rda_run(gen, env, liz_coords,
 
 ### Identifying candidate SNPs with `rda_getoutliers()`
 
-The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
+Now that we have the models run, we can discover SNPs that are candidate outliers. In algatr, this can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p-values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
 
 Let's start with using the p-value method to detect outlier loci:
 
 ```{r cand snps}
 # Running with all axes
-rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, padj_method = padj_method, sig = sig)
+rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = "p", padj_method = "fdr", sig = 0.05)
 
 # Get SNPs
 rda_snps <- rda_sig$rda_snps
