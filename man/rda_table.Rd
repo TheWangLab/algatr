@@ -18,7 +18,7 @@ rda_table(
 \arguments{
 \item{cor_df}{dataframe of correlation results output from \link[algatr]{rda_cor}}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs}
 
 \item{sig_only}{whether to only include loci with p-values less than \code{sig} (defaults to TRUE)}
 

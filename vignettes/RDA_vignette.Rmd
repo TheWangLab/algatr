@@ -17,80 +17,150 @@ knitr::opts_chunk$set(
 ### Redundancy analysis (RDA)
 
 ```{r setup, warning=FALSE, message=FALSE}
-library(algatr)
-library("here")
-library("gt")
+# library(algatr)
+library(here)
+library(gt)
 # RDA
-library("vegan")
-library("raster")
-library("robust")
-library("tidyverse")
+library(vegan)
+library(raster)
+library(robust)
+library(tidyverse)
 # BiocManager::install("qvalue")
-library("qvalue")
+library(qvalue)
+
 devtools::load_all()
 ```
 
-RDA is a method to detect outlier loci that are significantly associated with environmental variables.
+Redundancy analysis (RDA) is a genotype-environmental association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental) with ordination (a PCA). Importantly, both explanatory and response variables can be multivariate, which is part of the appeal of this method. Model selection is performed by starting with a null model wherein the response is only explained by an intercept, and environmental variables are added until the amount of variance explained by a model that includes all variables is reached. By doing so, this method minimizes the *redundancy* among explanatory variables. Importantly, we can also perform an RDA that accounts for *covariables* (or "conditioning variables") such as neutral population structure. When covariables are included, this is called a **partial RDA**.
 
-Importantly, RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+Some of the earliest uses of using RDA for identifying environment-associated loci are [Lasky et al. 2012](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2012.05709.x) and [Forester et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/mec.13476). Since then, there have been several reviews and walkthroughs of the method that provide additional information, including workflows and comparisons to other GEA methods (e.g., [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)). Much of algatr's code is adapted from one such paper, [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722), the code of which is available [here](https://github.com/Capblancq/RDA-landscape-genomics).
 
-CITATION FOR METHOD?
+RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
-### Read in and process input data
+The general workflow to perform an RDA with algatr is as follows:
 
-Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). If you do not have extracted environmental values (as with the test dataset), `lfmm_do_everything()` will extract values for us. For clarity's sake here, we'll do the conversion from a vcf to dosage matrix using the `vcf_to_dosage()` function. 
 
-```{r, warning = FALSE}
-# Load vcf, genetic dist matrix, and coordinates for 53 inds, and three environmental layers for test dataset
+
+
+### Read in and process genetic data
+
+Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). Let's first convert our vcf to a dosage matrix using the `vcf_to_dosage()` function. *N.B.: our code assumes that sample IDs from our genetic data and our coords are in the same order; be sure to check this before moving forward!*
+
+```{r gen data, warning = FALSE}
 load_example()
 # Convert from vcf to dosage matrix:
 gen <- vcf_to_dosage(liz_vcf)
-# Also, our code assumes that sample IDs from gen and coords are the same order; be sure to check this before moving forward!
 ```
 
+As mentioned above, running an RDA requires that your genotype matrix contains no missing values. Let's impute missing values based on the per-site median. *N.B.: this type of simplistic imputation is strongly not recommended for downstream analyses and is used here for example's sake!*
+
+```{r impute}
+# Are there NAs in the data?
+gen[1:5, 1:5]
+gen <- simple_impute(gen)
+# Check that NAs are gone
+gen[1:5, 1:5]
+```
+
+### Process environmental data
+
+Let's extract environmental variables using the `extract()` function from the raster package. TODO EXPLAIN STDZ
+
+```{r enviro data}
+# Extract enviro vars
+env <- extract(CA_env, liz_coords)
+
+# Standardize environmental variables
+if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
+env <- data.frame(env)
+```
+
+## Running an RDA using `rda_run()`
+
+------------------------------------------------------------------------
+
+The main function within algatr to perform an RDA is `rda_run()`, which makes use of the `rda()` function within the vegan package.
+
 ### Run a simple RDA
+
+A simple RDA is one in which our model will not account for covariables in the model.
+
+```{r, warning = FALSE, message = FALSE}
+mod <- rda_run(gen, env, 
+               model = "full", # can set to best as well
+               correctGEO = FALSE,
+               correctPC = FALSE,
+               Pin = 0.05, # only if model=best limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordi2step})
+               R2permutations = 1000, # only if model=best number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})
+               R2scope = T) # only if model=best use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})
+```
+
+```{r rsq ANOVA}
+# get RSquared and run ANOVA
+mod_rsq <- vegan::RsquareAdj(mod)
+mod_aov <- anova(mod)
+```
+
+### Run a partial RDA
+
+A partial RDA, as described at the beginning of the vignette, is when covariables (or conditioning variables) are incorporated into the RDA. Within `rda_run()`, users have the option of including sampling coordinates (`correctGEO`; if this is set to true, then `coords` must also be provided) or selecting PC axes (`correctPC`; if this is set to `TRUE`, then `nPC` must also be provided) as conditioning variables. For `nPC`, we can also set this argument to "manual", which case a screeplot will be generated and a user can manually enter the number of PCs to consider into the console.
+
+```{r partial rda}
+mod <- rda_run(gen, env, liz_coords,
+               model = "best",
+               correctGEO = TRUE,
+               correctPC = FALSE,
+               nPC = 3,
+               Pin = 0.05,
+               R2permutations = 1000,
+               R2scope = T)
+```
+
+### Identifying candidate SNPs with `rda_getoutliers()`
 
 The RDA analysis in algatr can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html).
 
 Let's start with using the p-value method to detect outlier loci:
 
-```{r, warning = FALSE, message = FALSE}
-results <- rda_do_everything(gen, CA_env, liz_coords, 
-                            correctGEO = FALSE, 
-                            correctPC = FALSE,
-                            outlier_method = "p",
-                            sig = 0.05, 
-                            padj_method = "fdr")
+```{r cand snps}
+# Running with all axes
+rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, padj_method = padj_method, sig = sig)
+
+# Get SNPs
+rda_snps <- rda_sig$rda_snps
 ```
 
-Now, let's run the same analysis but instead using the z-scores method to detect outlier loci:
+Now, let's try the z-score method to detect oulier loci:
 
-```{r}
-results <- rda_do_everything(gen, env, coords, 
-                            correctGEO = FALSE, 
-                            correctPC = FALSE,
-                            outlier_method = "z",
-                            z = 3, 
-                            padj_method = "fdr")
-```
+How do the results compare?
+
+
+## Interpreting RDA results
+
+------------------------------------------------------------------------
+
+
+## Visualizing RDA results
+
+------------------------------------------------------------------------
 
 ## Look at simple RDA results
 
 The results from `rda_do_everything()` contain:
 
-1. Candidate SNPs: `rda_snps`
+-   Candidate SNPs: `rda_snps`
 
-2. Data frame of environmental associations with outlier SNPs: `cor_df`
+-   Data frame of environmental associations with outlier SNPs: `cor_df`
 
-3. RDA model specifics: `rda_mod`
+-   RDA model specifics: `rda_mod`
 
-4. Outlier test results: `rda_outlier_test`
+-   Outlier test results: `rda_outlier_test`
 
-5. Relevant R-squared values: `rsq`
+-   Relevant R-squared values: `rsq`
 
-6. ANOVA results: `anova`
+-   ANOVA results: `anova`
 
-7. List of all p-values: `pvalues`
+-   List of all p-values: `pvalues`
 
 In our case, we can see that there were 138 outlier SNPs detected.
 
@@ -98,7 +168,7 @@ In our case, we can see that there were 138 outlier SNPs detected.
 summary(results)
 ```
 
-### Visualize results
+### Visualize results using `rda_plot()`
 
 ## Biplot
 
@@ -122,42 +192,7 @@ A partial RDA describes incorporating covariables into a redundancy analysis. Fo
 
 To condition on geographic sampling coordinates, use the `correctGEO` argument:
 
-```{r, warning = TRUE, message = FALSE}
-results <- rda_do_everything(gen, 
-                            env, 
-                            coords, 
-                            model = "full",
-                            correctGEO = TRUE, 
-                            correctPC = FALSE,
-                            sig = 0.05, 
-                            padj_method = "fdr")
-```
 
-To condition on PCs built using a PCA of all genotypes, use the `correctPC` argument:
-
-```{r, warning = TRUE, message = FALSE}
-results <- rda_do_everything(gen, 
-                            env, 
-                            coords, 
-                            model = "full",
-                            correctGEO = FALSE, 
-                            correctPC = TRUE,
-                            sig = 0.05, 
-                            padj_method = "fdr")
-```
-
-To condition both on PCs and geographic coordinates:
-
-```{r, warning = TRUE, message = FALSE}
-results <- rda_do_everything(gen, 
-                            env, 
-                            coords, 
-                            model = "full",
-                            correctGEO = TRUE, 
-                            correctPC = TRUE,
-                            sig = 0.05, 
-                            padj_method = "fdr")
-```
 
 Let's look at how these results compare.
 
@@ -265,5 +300,60 @@ rda_plot(mod, rda_snps, axes = 1, rdaplot = TRUE, binwidth = 0.01)
 The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function will TODO XXXXX. The resulting object looks identical to the output object from TODO XXXX.
 
 ```{r do everything}
+results <- rda_do_everything(gen, CA_env, liz_coords, 
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            outlier_method = "p",
+                            sig = 0.05, 
+                            padj_method = "fdr")
+```
 
+Now, let's run the same analysis but instead using the z-scores method to detect outlier loci:
+
+```{r}
+results <- rda_do_everything(gen, env, coords, 
+                            correctGEO = FALSE, 
+                            correctPC = FALSE,
+                            outlier_method = "z",
+                            z = 3, 
+                            padj_method = "fdr")
+```
+
+### Partial RDA
+
+```{r, warning = TRUE, message = FALSE}
+results <- rda_do_everything(gen, 
+                            env, 
+                            coords, 
+                            model = "full",
+                            correctGEO = TRUE, 
+                            correctPC = FALSE,
+                            sig = 0.05, 
+                            padj_method = "fdr")
+```
+
+To condition on PCs built using a PCA of all genotypes, use the `correctPC` argument:
+
+```{r, warning = TRUE, message = FALSE}
+results <- rda_do_everything(gen, 
+                            env, 
+                            coords, 
+                            model = "full",
+                            correctGEO = FALSE, 
+                            correctPC = TRUE,
+                            sig = 0.05, 
+                            padj_method = "fdr")
+```
+
+To condition both on PCs and geographic coordinates:
+
+```{r, warning = TRUE, message = FALSE}
+results <- rda_do_everything(gen, 
+                            env, 
+                            coords, 
+                            model = "full",
+                            correctGEO = TRUE, 
+                            correctPC = TRUE,
+                            sig = 0.05, 
+                            padj_method = "fdr")
 ```

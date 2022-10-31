@@ -21,7 +21,7 @@ rda_getoutliers(
 
 \item{padj_method}{if \code{outlier_method = "p"}, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs}
 
 \item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify snps}
 

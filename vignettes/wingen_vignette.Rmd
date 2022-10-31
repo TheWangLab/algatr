@@ -18,21 +18,29 @@ knitr::opts_chunk$set(
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
+# library(remotes)
+# install_github("AnushaPB/wingen")
 library(wingen)
 library(raster)
 library(vcfR)
 library(viridis)
+
+devtools::load_all()
 ```
 
 wingen is a package that uses a moving window approach to create continuous maps of genetic diversity. Please see [Bishop et al. 2022](REFER) for the paper describing the method, and refer to the [wingen package](https://github.com/AnushaPB/wingen) for further documentation.
 
-There are three key components within wingen:
+Briefly, wingen takes in genetic data (in the form of a vcf), sampling coordinates, and a raster of a given study area. wingen then moves a window (of a user-specified size) across the landscape, and calculates genetic diversity for any samples that fall within this window. The focal cell (the size of which is determined by the raster layer inputted) is then assigned this resulting genetic diversity value, and the window continues sliding across the landscape. Users are able to specify not only window size, but can also aggregate cells to increase computational speed (if the cell size of their raster layer is very small), and can perform rarefaction of samples such that uneven sampling does not bias calculations. The resulting wingen map can be smoothed using kriging, and any areas that were undersampled (or fall outside an area of interest, such as a species range, for example) are masked.
 
--   `window_gd()` to create a map of genetic diversity
+There are four key functions within wingen:
+
+-   `window_gd()` to create a map of genetic diversity (this can be visualized using `preview_gd()`)
 
 -   `krig_gd()` for spatial interpolation (smoothing) of the resulting map using kriging
 
--   `mask_gd()` to mask out any undersampled areas (or generally areas that are not of interest)
+-   `mask_gd()` to mask out any undersampled areas (or areas that are not of interest)
+
+-   `plot_gd()` to plot resulting genetic diversity map
 
 ### Read in and process input data
 
@@ -49,50 +57,86 @@ envlayer <- CA_env$CA_rPCA1
 
 The `window_gd()` function takes in a vcf file (the `vcf` argument), sampling coordinates (`coords` argument), and a RasterLayer for the window to move across (the `lyr` argument), and the genetic diversity summary statistic to calculate (the `stat` argument); choices are allelic richness (`"allelic.richness"` or `"biallelic.richness"`), nucleotide diversity (`"pi"`), or average heterozygosity (`"Ho"`).
 
-There are a number of additional arguments within this function, and the wingen package documentation provides extensive explanations (and guidelines for testing) these parameters. Briefly, `fact` aggregates the input raster layer to allow for faster computational speeds by a given factor, `wdim` specifies the window dimensions, `rarify` specifies whether the user would like samples to be rarified (which then requires users to specify `rarify_n` and `rarify_nit`), and finally `parallel` specifies whether you would like to parallelize.
+There are a number of additional arguments within this function, and the wingen package documentation provides extensive explanations (and guidelines for testing) these parameters. Briefly, `fact` aggregates the input raster layer (by a given factor) to allow for faster computational speed, `wdim` specifies the window dimensions, `rarify` specifies whether the user would like samples to be rarified (which then requires users to specify `rarify_n` and `rarify_nit`), and finally `parallel` specifies whether you would like to parallelize.
 
 ### Preview the moving window
 
-First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. wingen calculates the specified diversity statistic from samples that fall within the window, and then assigns the focal cell within that window a value according to the calculated diversity. 
+First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. We want adjust the window size (using the `wdim` argument) to ensure (to some extent) that our window size is capturing samples as it slides across the landscape. We will also specify that genetic diversity only be calculated for windows that contain at least two samples (`min_n`). This function will generate two figures: one that allows us to visualize the size of our window compared to the raster layer and sampling coordinates, and also a map of how many samples will be included in each cell's calculation (specified using `sample_count`).
 
-```{r, fig.width = 5, fig.height = 5, cache = TRUE}
+```{r preview gd, fig.width = 5, fig.height = 5}
+par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
 preview_gd(envlayer,
            liz_coords,
-           wdim = 10, 
-           fact = 5,
+           wdim = 30, 
+           fact = 8,
            sample_count = TRUE, 
            min_n = 2)
 ```
 
 ### Run the moving window
 
-Next, let's run the moving window function (`window_gd()`) using the parameters specified above.
+Next, let's run the moving window function (`window_gd()`) using the parameters specified above, calculating nucleotide diversity (`stat = "pi"`) as our diversity metric. For simplicity's sake, we will not perform rarefaction of our samples (`rarify = FALSE`).
 
-```{r moving window, fig.width = 5, fig.height = 5, cache = TRUE}
+```{r window gd}
 wgd <- window_gd(liz_vcf,
           liz_coords,
           envlayer,
           stat = "pi",
-          wdim = 10,
-          fact = 5,
+          wdim = 30,
+          fact = 8,
           rarify = FALSE,
+          min_n = 2,
           L = 100)
 ```
 
-### Plot wingen results
+## Visualizing wingen results
 
-wingen allows for plotting maps in two ways: `plot_gd()` plots the genetic diversity layer, while `plot_count()` plots the sample count layer.
+------------------------------------------------------------------------
 
-```{r plot window}
-plot_gd(wgd, main = "Window pi")
-plot_count(wgd, main = "Window sample counts")
+### Plot wingen results with `plot_gd()` and `plot_count()`
+
+wingen allows for plotting maps in two ways: `plot_gd()` plots the genetic diversity layer, while `plot_count()` plots the sample count layer. We can also provide a background map using the `bkg` argument.
+
+```{r plot window, fig.width=5, fig.height=5}
+par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
+plot_gd(wgd, bkg = envlayer, main = "Moving window pi")
+plot_count(wgd, main = "Sample counts")
 ```
 
 ### Krige results
 
-Kriging is a type of spatial interpolation to allow for smoother maps of genetic diversity. We can krige our moving window map using the `krig_gd()` function.
+Kriging is a type of spatial interpolation to allow for smoother maps of genetic diversity. We can krige our moving window map using the `krig_gd()` function. We must provide the results from the moving window and our raster layer. This step can often take a bit of time.
+
+```{r krige window}
+kgd <- krig_gd(wgd, index = 1, envlayer, disagg_grd = 2)
+
+# summary(kgd)
+
+plot_gd(kgd, main = "Kriged pi")
+plot_count(kgd, main = "Kriged sample counts")
+```
 
 ### Mask results
+
+Finally, we may want to mask out any areas that we're not interested in. There are a variety of ways to do this (of which the wingen vignette provides additional information), but let's do so using two methods: the first, standard deviation-based masking, and the second, based on sample count.
+
+uncertainty is higher (setting standard deviation limit to 0.05)
+
+```{r mask sd}
+mask_gd()
+
+mgd <- mask_gd(kgd[["pi"]], kgd_autoKrige[["stdev"]], maxval = 0.05)
+
+plot_gd(mgd, main = "Kriged & masked pi")
+```
+
+Mask using the sample counts
+
+```{r mask sample count}
+mgd <- mask_gd(kgd[["pi"]], kgd[["sample_count"]], minval = 1)
+
+plot_gd(mgd, main = "Kriged & masked pi")
+```
 
 ## Running wingen with `wingen_do_everything()`
 
@@ -102,4 +146,18 @@ The algatr package also has an option to run all of the above functionality in a
 
 ```{r do everything}
 # wingen_do_everything()
+```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+-   Package citation: [Bishop et al. 2022](REFER)
+
+-   R package found [here](https://github.com/AnushaPB/wingen)
+
+See below to retrieve wingen's vignette:
+
+```{r package vignette}
+vignette("wingen-vignette")
 ```

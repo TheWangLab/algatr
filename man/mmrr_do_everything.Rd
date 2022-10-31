@@ -35,3 +35,6 @@ mmrr_do_everything(
 \description{
 MMRR function to do everything
 }
+\details{
+The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411.
+}
