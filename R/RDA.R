@@ -323,6 +323,7 @@ rda_cor_env_helper <- function(snp_name, snp_df, env){
 #' @noRd
 rda_cor_helper <- function(envvar, snp){
   if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
+  # kendall is used instead of pearson because it is non-parameteric and doesn't require vars to be continuous
   mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "kendall", na.action = "na.omit")
   pvalue <- mod$p.value
   r <- mod$estimate
