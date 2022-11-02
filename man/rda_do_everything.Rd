@@ -37,15 +37,15 @@ rda_do_everything(
 
 \item{correctPC}{whether to condition on PCs from PCA of genotypes}
 
-\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
+\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from \href{https://github.com/Capblancq/RDA-landscape-genomics}{here} or "z" to use the z-score based method from \href{https://popgen.nescent.org/2018-03-27_RDA_GEA.html}{here}}
 
 \item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
 \item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify SNPs (defaults to 3)}
 
-\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link[=p.adjust]{p.adjust()}}}
 
-\item{cortest}{whether to create table of correlations for snps and environmental variable (defaults to TRUE)}
+\item{cortest}{whether to create table of correlations for SNPs and environmental variable (defaults to TRUE)}
 
 \item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided}
 

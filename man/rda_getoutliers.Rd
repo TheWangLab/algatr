@@ -17,9 +17,9 @@ rda_getoutliers(
 \arguments{
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
-\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
+\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from \href{https://github.com/Capblancq/RDA-landscape-genomics}{here} or "z" to use the z-score based method from \href{https://popgen.nescent.org/2018-03-27_RDA_GEA.html}{here}}
 
-\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link[=p.adjust]{p.adjust()}}}
 
 \item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 

@@ -7,11 +7,11 @@
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
 #' @param correctGEO whether to condition on geographic coordinates
 #' @param correctPC whether to condition on PCs from PCA of genotypes
-#' @param outlier_method method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html
+#' @param outlier_method method to determine outliers. Can either be "p" to use the p-value method from [here](https://github.com/Capblancq/RDA-landscape-genomics) or "z" to use the z-score based method from [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html)
 #' @param sig if `outlier_method = "p"`, the significance level to use to identify SNPs (defaults to 0.05)
-#' @param p_adj if `outlier_method = "p"`, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
+#' @param p_adj if `outlier_method = "p"`, method to use for p-value correction (defaults to "fdr"); other options can be found in [p.adjust()]
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify SNPs (defaults to 3)
-#' @param cortest whether to create table of correlations for snps and environmental variable (defaults to TRUE)
+#' @param cortest whether to create table of correlations for SNPs and environmental variable (defaults to TRUE)
 #' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
 #' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordiR2step})
@@ -85,6 +85,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # get RSquared and run ANOVA
   mod_rsq <- vegan::RsquareAdj(mod)
+  # TODO [APB]: I actually think below should be anova.cca, not an anova
+  # this is running a permutation test (forward selection)
   mod_aov <- stats::anova(mod)
 
   # Identify candidate SNPs ----------------------------------------------------------------------------------------------------
@@ -139,7 +141,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
   }
 
   if(correctPC & !correctGEO){
-    pcres <- prcomp(gen)
+    pcres <- stats::prcomp(gen)
     stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
     if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <-  pcres$x[,1:nPC]
@@ -155,7 +157,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 
   if(correctPC & correctGEO){
     if(is.null(coords)) stop("Coordinates must be provided if correctGEO is TRUE")
-    pcres <- prcomp(gen)
+    pcres <- stats::prcomp(gen)
     stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
     if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[,1:3]
@@ -336,12 +338,12 @@ rda_cor_helper <- function(envvar, snp){
 #'
 #' @param mod model object of class `rda`
 #' @param rda_snps vector of outlier SNPs
-#' @param pvalues if creating a manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
+#' @param pvalues if creating a Manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
 #' @param axes which RDA axes to include while plotting (defaults to `all`)
 #' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
-#' @param manhattan whether to produce manhattan plot (defaults to `TRUE`)
+#' @param manhattan whether to produce Manhattan plot (defaults to `TRUE`)
 #' @param rdaplot whether to produce an RDA biplot (defaults to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
-#' @param sig
+#' @param sig if creating a Manhattan plot, significance threshold for y axis (defaults to 0.05)
 #' @param binwidth
 #'
 #' @export
