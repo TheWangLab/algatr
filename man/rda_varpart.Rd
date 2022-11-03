@@ -4,22 +4,7 @@
 \alias{rda_varpart}
 \title{Partial RDA variance partitioning}
 \usage{
-rda_varpart(
-  gen,
-  env,
-  coords,
-  Pin,
-  R2permutations,
-  R2scope,
-  nPC,
-  digits = 2,
-  call_col = FALSE
-)
-}
-\arguments{
-\item{digits}{number of digits to include (defaults to 2)}
-
-\item{call_col}{whether to include column with RDA call (defaults to FALSE)}
+rda_varpart(gen, env, coords, Pin, R2permutations, R2scope, nPC)
 }
 \value{
 df with relevant statistics from variance partitioning analysis

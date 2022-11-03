@@ -540,14 +540,12 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 #' Partial RDA variance partitioning
 #'
 #' @inheritParams rda_doEverything
-#' @param digits number of digits to include (defaults to 2)
-#' @param call_col whether to include column with RDA call (defaults to FALSE)
 #'
 #' @return df with relevant statistics from variance partitioning analysis
 #' @export
 #'
 #' @examples
-rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC, digits = 2, call_col = FALSE){
+rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
   moddf <- data.frame(env)
 
   # Run best ----------------------------------------------------------------
