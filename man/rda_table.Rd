@@ -30,7 +30,7 @@ rda_table(
 
 \item{nrow}{number of rows to display (defaults to displaying all rows)}
 
-\item{digits}{number of digist to include (defaults to 2)}
+\item{digits}{number of digits to include (defaults to 2)}
 }
 \value{
 An object of class \code{gt_tbl}

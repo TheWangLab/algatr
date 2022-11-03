@@ -13,6 +13,7 @@
 #' @param z if `outlier_method = "z"`, the number of standard deviations to use to identify SNPs (defaults to 3)
 #' @param cortest whether to create table of correlations for SNPs and environmental variable (defaults to TRUE)
 #' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided
+#' @param varpart whether to perform variance partitioning (defaults to FALSE)
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
 #' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordiR2step})
 #' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})
@@ -23,13 +24,15 @@
 #'
 #' @importFrom vegan rda
 #'
-#' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`,
+#' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
 #' @export
+#'
+#' @family RDA functions
 #'
 #' @examples
 rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
-                              p_adj = "fdr", cortest = TRUE, nPC = 3, naxes = "all",
+                              p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
@@ -85,9 +88,14 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # get RSquared and run ANOVA
   mod_rsq <- vegan::RsquareAdj(mod)
-  # TODO [APB]: I actually think below should be anova.cca, not an anova
-  # this is running a permutation test (forward selection)
   mod_aov <- stats::anova(mod)
+
+  # Variance partitioning ---------------------------------------------------
+
+  if(varpart) {
+    varpart_df <- rda_varpart(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC, call_col = call_col)
+    print(rda_varpart_table(varpart_df))
+  } else varpart_df <- NULL
 
   # Identify candidate SNPs ----------------------------------------------------------------------------------------------------
 
@@ -118,7 +126,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
                   rda_outlier_test = rda_sig,
                   rsq = mod_rsq,
                   anova = mod_aov,
-                  pvalues = pvalues)
+                  pvalues = pvalues,
+                  varpart = varpart_df)
 
   return(results)
 }
@@ -160,7 +169,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
     pcres <- stats::prcomp(gen)
     stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
     if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
-    pc <- pcres$x[,1:3]
+    pc <- pcres$x[,1:nPC]
     moddf <- data.frame(env, coords, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = '+'), "+ Condition(" , paste(colnames(pc), collapse = '+'), "+ x + y)"))
   }
@@ -185,7 +194,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 #' @param plot whether to produce scree plot of RDA axes (defaults to TRUE)
 #' @inheritParams rda_do_everything
 #'
-#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier snps, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
+#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier SNPs, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
 #'
 #' @export
 rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.05, z = 3, plot = TRUE){
@@ -212,21 +221,19 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
   rdadapt_env <- rdadapt(mod, naxes)
 
-  # P-values threshold after FDR correction (different from Capblancq & Forester 2021)
+  # P-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
   pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
 
-  # get snp names
+  # Get SNP names
   snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))
 
-  # restore SNP names
+  # Restore SNP names
   names(pvalues) <- snp_names
 
   # TODO [EAC]: CHECK BELOW
-  # Capblancq include a step where they only take p-values with highest loading for each contig to deal with LD (not applied here)
-  # NOTE: I think this filtering step should occur before (e.g., only one SNP per LD block, but you know which comes from where)
 
-  ## Identifying the snps that are below the p-value threshold
-  # Identify rda cand snps (P)
+  ## Identifying the SNPs that are below the p-value threshold
+  # Identify RDA candidate SNPs (P)
   rda_snps <- snp_names[which(pvalues < sig)]
   if (length(rda_snps) == 0) {
     warning("No significant SNPs found, returning NULL object")
@@ -491,7 +498,7 @@ rda_hist <- function(TAB_snps, binwidth = NULL){
 #' @param order whether to order by the magnitude of the correlation (defaults to FALSE)
 #' @param var which variables to include (defaults to including all variables)
 #' @param nrow number of rows to display (defaults to displaying all rows)
-#' @param digits number of digist to include (defaults to 2)
+#' @param digits number of digits to include (defaults to 2)
 #' @inheritParams rda_do_everything
 #'
 #' @return An object of class `gt_tbl`
@@ -526,6 +533,167 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
       gt::gt() %>%
       gtExtras::gt_hulk_col_numeric(r, trim = TRUE, domain = c(-d,d))
   )
+
+  tbl
+}
+
+#' Partial RDA variance partitioning
+#'
+#' @inheritParams rda_doEverything
+#' @param digits number of digits to include (defaults to 2)
+#' @param call_col whether to include column with RDA call (defaults to FALSE)
+#'
+#' @return df with relevant statistics from variance partitioning analysis
+#' @export
+#'
+#' @examples
+rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC, digits = 2, call_col = FALSE){
+  moddf <- data.frame(env)
+
+  # Run best ----------------------------------------------------------------
+
+  f <- as.formula(paste0("gen ~ ", paste(colnames(moddf), collapse = '+')))
+  mod_best <- rda_run(gen, env,
+                      model = "best",
+                      Pin = Pin,
+                      R2permutations = R2permutations,
+                      R2scope = R2scope)
+  # Extract sig enviro vars
+  sig_vars <- as.character(mod_best$terms)[3]
+
+  # Run PCA for pop structure -----------------------------------------------
+
+  pcres <- stats::prcomp(gen)
+  stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
+  if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
+  pc <- pcres$x[,1:nPC]
+
+  moddf_covar <- data.frame(env, coords, pc)
+
+  # Run RDAs ----------------------------------------------------------------
+
+  # Full model with covariables as full expl vars; only sig enviro vars
+  f <- as.formula(paste0("gen ~ ", paste(sig_vars), " + ", paste(colnames(pc), collapse = '+'), "+ x + y"))
+  full <- vegan::rda(f, data = moddf_covar)
+
+  # Pure env
+  f <- as.formula(paste0("gen ~ ", paste(sig_vars), " + Condition(" , paste(colnames(pc), collapse = '+'), "+ x + y)"))
+  pure_env <- vegan::rda(f, data = moddf_covar)
+
+  # Pure structure
+  f <- as.formula(paste0("gen ~ ", paste(colnames(pc), collapse = '+'), "+ Condition(" , paste(sig_vars), "+ x + y)"))
+  pure_str <- vegan::rda(f, data = moddf_covar)
+
+  # Pure geo
+  f <- as.formula(paste0("gen ~ x + y + Condition(", paste(colnames(pc), collapse = ' + '), " + ", paste(sig_vars), ")"))
+  pure_geo <- vegan::rda(f, data = moddf_covar)
+
+  # Run helper function on models -------------------------------------------
+
+  df <- rbind(rda_varpart_helper(full),
+              rda_varpart_helper(pure_env),
+              rda_varpart_helper(pure_str),
+              rda_varpart_helper(pure_geo))
+
+  # Calculate relevant stats ------------------------------------------------
+
+  total_inertia <- mod_best$tot.chi
+  full_inertia = df$inertia[1]
+  confounded = as.numeric(
+    df$inertia[1] - (df %>%
+                       filter(rownames(df) %in% c('pure_env', 'pure_str', 'pure_geo')) %>%
+                       summarize(sum(inertia)))
+  )
+  total_unexpl = total_inertia - full_inertia
+  results <- data.frame(total_inertia, full_inertia, confounded, total_unexpl)
+
+  # Compile df --------------------------------------------------------------
+
+  df <- df %>%
+    mutate(prop_expl_var = inertia/max(df$inertia),
+           prop_total_var = inertia/total_inertia)
+
+  # Add additional rows
+  df <-
+    df %>%
+      tibble::add_row(inertia = results$confounded,
+                      prop_expl_var = results$confounded/results$full_inertia,
+                      prop_total_var = results$confounded/results$total_inertia) %>%
+      tibble::add_row(inertia = results$total_unexpl,
+                      prop_total_var = results$total_unexpl/results$total_inertia) %>%
+      tibble::add_row(inertia = results$total_inertia,
+                      prop_total_var = 1)
+
+  rownames(df) <- c("full", "pure_env", "pure_str", "pure_geo", "confounded", "total_unexplained", "total")
+
+  return(df)
+}
+
+
+
+#' Helper function for `rda_varpart()`
+#'
+#' Extracts relevant statistics from variance partitioning analysis
+#'
+#' @param mod RDA model results
+#'
+#' @return df with relevant statistics (call, R2, adjusted R2, inertia)
+#' @export
+#'
+#' @examples
+rda_varpart_helper <- function(mod){
+  call <- paste(mod$call)[2]
+  R2adj <- vegan::RsquareAdj(mod)
+  results <- anova(mod)
+  inertia <- results$Variance[1]
+  p <- results$`Pr(>F)`[1]
+  df <- data.frame(call, inertia, R2adj, p)
+  rownames(df) <- deparse(substitute(mod))
+
+  return(df)
+}
+
+#' Create `gt` table with RDA variance partitioning results
+#'
+#' @param df dataframe of variance partitioning results output from \link[algatr]{rda_varpart}
+#' @param results results from \link[algatr]{rda_varpart}
+#' @param digits number of digits to include (defaults to 2)
+#' @param call_col whether to include column with RDA call (defaults to FALSE)
+#'
+#' @return
+#' @export
+#'
+#' @examples
+rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
+  # Replace row and column names
+  rownames(df) <- c("Full model", "Pure enviro. model", "Pure pop. structure model", "Pure geography model", "Confounded variance", "Total unexplained variance", "Total inertia")
+  colnames(df) <- c("pRDA model call", "Inertia", "R2", "Adjusted R2", "p (>F)",
+                    "Prop. of explainable variance", "Prop. of total variance")
+
+  df <- df %>%
+    rownames_to_column(var = "Model")
+
+  if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c("Model", "pRDA model call"), round, digits))
+
+  d <- max(abs(min(df$Inertia, na.rm = TRUE)), abs(max(df$Inertia, na.rm = TRUE)))
+
+  suppressWarnings({
+    tbl <- df  %>%
+      dplyr::select(-"pRDA model call") %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d,d)) %>%
+      gt::sub_missing(missing_text = "") %>%
+      tab_header(title = md("Variance partitioning"))
+
+    # Add column with call
+    if (call_col) {
+      tbl <- df  %>%
+        gt::gt() %>%
+        gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d,d)) %>%
+        gt::sub_missing(missing_text = "") %>%
+        tab_header(title = md("Variance partitioning"))
+    }
+  })
 
   tbl
 }

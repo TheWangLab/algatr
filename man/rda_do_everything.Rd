@@ -17,6 +17,7 @@ rda_do_everything(
   p_adj = "fdr",
   cortest = TRUE,
   nPC = 3,
+  varpart = FALSE,
   naxes = "all",
   Pin = 0.05,
   R2permutations = 1000,
@@ -49,6 +50,8 @@ rda_do_everything(
 
 \item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided}
 
+\item{varpart}{whether to perform variance partitioning (defaults to FALSE)}
+
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
 \item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordiR2step})}
@@ -60,8 +63,9 @@ rda_do_everything(
 \item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
 }
 \value{
-list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
+list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"}, and (8) results from variance partitioning analysis, if \code{varpart = TRUE}
 }
 \description{
 RDA function to do everything
 }
+\concept{RDA functions}
