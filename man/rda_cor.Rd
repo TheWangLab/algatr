@@ -17,3 +17,14 @@ dataframe with r and p-values from correlation test
 \description{
 Genotype-environment correlation test
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

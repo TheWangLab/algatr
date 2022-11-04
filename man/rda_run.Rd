@@ -23,3 +23,14 @@ RDA model
 \description{
 Run RDA
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

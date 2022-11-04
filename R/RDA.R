@@ -140,6 +140,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 #' @return RDA model
 #' @export
 #'
+#' @family RDA functions
+#'
 rda_run <- function(gen, env, coords = NULL, model = "full",
                     correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T){
@@ -194,9 +196,11 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 #' @param plot whether to produce scree plot of RDA axes (defaults to TRUE)
 #' @inheritParams rda_do_everything
 #'
-#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier SNPs, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
-#'
+#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier SNPs, p-values, and results from rdadapt test (see [Capblancq & Forester 2021](https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd)). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
 #' @export
+#'
+#' @family RDA functions
+#'
 rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.05, z = 3, plot = TRUE){
   # Running the function with all axes
   if(plot) stats::screeplot(mod, main = "Eigenvalues of constrained axes")
@@ -217,6 +221,8 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 #' @inheritParams rda_getoutliers
 #' @export
 #' @noRd
+#'
+#' @family RDA functions
 #'
 p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
   rdadapt_env <- rdadapt(mod, naxes)
@@ -253,6 +259,8 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
 #' @export
 #' @noRd
 #'
+#' @family RDA functions
+#'
 z_outlier_method <- function(mod, naxes, z = 3){
   load.rda <- vegan::scores(mod, choices = naxes, display = "species")
 
@@ -265,6 +273,8 @@ z_outlier_method <- function(mod, naxes, z = 3){
 #'
 #' @export
 #' @noRd
+#'
+#' @family RDA functions
 #'
 z_outlier_helper <- function(axis, load.rda, z){
   x <- load.rda[,axis]
@@ -281,6 +291,8 @@ z_outlier_helper <- function(axis, load.rda, z){
 #' @export
 #' @noRd
 #'
+#' @family RDA functions
+#'
 outliers <- function(x,z){
   lims <- mean(x) + c(-1, 1) * z * sd(x)     # find loadings +/-z sd from mean loading
   x[x < lims[1] | x > lims[2]]               # snp names in these tails
@@ -291,6 +303,7 @@ outliers <- function(x,z){
 # TODO[EAC]: GO THROUGH THIS CODE
 #' @export
 #' @noRd
+#' @family RDA functions
 rdadapt <- function(rda,K){
   zscores <- rda$CCA$v[,1:as.numeric(K)]
   resscale <- apply(zscores, 2, scale)
@@ -309,6 +322,7 @@ rdadapt <- function(rda,K){
 #'
 #' @return dataframe with r and p-values from correlation test
 #' @export
+#' @family RDA functions
 rda_cor <- function(gen, var){
   cor_df <- purrr::map_dfr(colnames(gen), rda_cor_env_helper, gen, var)
   rownames(cor_df) <- NULL
@@ -320,6 +334,7 @@ rda_cor <- function(gen, var){
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_cor_env_helper <- function(snp_name, snp_df, env){
   cor_df <- data.frame(t(apply(env, 2, rda_cor_helper, snp_df[,snp_name])))
   cor_df$snp <- snp_name
@@ -331,6 +346,7 @@ rda_cor_env_helper <- function(snp_name, snp_df, env){
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_cor_helper <- function(envvar, snp){
   if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
   mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "pearson", na.action = "na.omit")
@@ -354,6 +370,8 @@ rda_cor_helper <- function(envvar, snp){
 #' @param binwidth
 #'
 #' @export
+#'
+#' @family RDA functions
 #'
 rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = NULL, sig = 0.05, manhattan = TRUE, rdaplot = TRUE, binwidth = NULL){
   # Get axes
@@ -388,6 +406,7 @@ rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = 
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_ggtidy <- function(mod, rda_snps, axes){
   snp_scores <- vegan::scores(mod, choices = axes, display = "species", scaling = "none") # vegan references "species", here these are the snps
   TAB_snps <- data.frame(names = row.names(snp_scores), snp_scores)
@@ -406,6 +425,7 @@ rda_ggtidy <- function(mod, rda_snps, axes){
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
 
   # Select axes for plotting
@@ -444,6 +464,7 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1,2)){
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 
   TAB_manhattan <- data.frame(pos = 1:nrow(TAB_snps),
@@ -473,6 +494,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 #'
 #' @export
 #' @noRd
+#' @family RDA functions
 rda_hist <- function(TAB_snps, binwidth = NULL){
   ggplot2::ggplot() +
     ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
@@ -503,7 +525,7 @@ rda_hist <- function(TAB_snps, binwidth = NULL){
 #'
 #' @return An object of class `gt_tbl`
 #' @export
-#'
+#' @family RDA functions
 rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2){
 
   if(!is.null(var)) cor_df <- cor_df[cor_df$var %in% var, ]
@@ -543,6 +565,8 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 #'
 #' @return df with relevant statistics from variance partitioning analysis
 #' @export
+#'
+#' @family RDA functions
 #'
 #' @examples
 rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
@@ -638,6 +662,8 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
 #' @return df with relevant statistics (call, R2, adjusted R2, inertia)
 #' @export
 #'
+#' @noRd
+#' @family RDA functions
 #' @examples
 rda_varpart_helper <- function(mod){
   call <- paste(mod$call)[2]
@@ -660,6 +686,8 @@ rda_varpart_helper <- function(mod){
 #'
 #' @return
 #' @export
+#'
+#' @family RDA functions
 #'
 #' @examples
 rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){

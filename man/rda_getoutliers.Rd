@@ -28,8 +28,19 @@ rda_getoutliers(
 \item{plot}{whether to produce scree plot of RDA axes (defaults to TRUE)}
 }
 \value{
-results from outlier tests. If \code{outlier_method = "p"}, a list of outlier SNPs, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If \code{outlier_method = "z"}, a dataframe with outlier snp z-scores for each axes
+results from outlier tests. If \code{outlier_method = "p"}, a list of outlier SNPs, p-values, and results from rdadapt test (see \href{https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd}{Capblancq & Forester 2021}). If \code{outlier_method = "z"}, a dataframe with outlier snp z-scores for each axes
 }
 \description{
 Get significant outliers from RDA model
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

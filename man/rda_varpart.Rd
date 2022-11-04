@@ -12,3 +12,14 @@ df with relevant statistics from variance partitioning analysis
 \description{
 Partial RDA variance partitioning
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()}
+}
+\concept{RDA functions}

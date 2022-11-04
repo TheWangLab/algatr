@@ -18,3 +18,14 @@ rda_varpart_table(df, results, digits = 2, call_col = FALSE)
 \description{
 Create \code{gt} table with RDA variance partitioning results
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}
