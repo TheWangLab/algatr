@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# TESS population structure analysis
+# TESS
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
@@ -256,3 +256,14 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 # One could also use krig_raster as the grid object
 results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:10, K_selection = "auto", minQ = 0.10)
 ```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                       | Citation/URL                                                                                                                                                                      | Details                                         |
+|-----------------|------------------------------|-------------------------|
+| Main literature       | [Caye et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12471); vignette available [here](https://bcm-uga.github.io/TESS3_encho_sen/articles/main-vignette.html) | Citation for TESS3                              |
+| Associated literature | [François et al. 2006](https://academic.oup.com/genetics/article/174/2/805/6061653?login=false)                                                                                   | Details on algorithm used by TESS               |
+| Associated literature | [Chen et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1471-8286.2007.01769.x)                                                                                          | Details on algorithm used by TESS               |
+| Blog post             | [Automatic K selection](https://chazhyseni.github.io/NALgen/post/determining_bestk/)                                                                                              | Details on automatic K selection used by algatr |

@@ -62,7 +62,7 @@ load_example()
 
 ------------------------------------------------------------------------
 
-Briefly, in R, any (geo)spatial data can be represented using points, vectors, or rasters. Points represent coordinates. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, points represent sampling coordinates, vectors represent polygons (e.g., the state of California), and rasters store different environmental layers (e.g. temperature, precipitation) for  California.
+Briefly, in R, any (geo)spatial data can be represented using points, vectors, or rasters. Points represent coordinates. Vectors are used for discrete phenomena that have clear boundaries (e.g., a country), while rasters are used to represent continuous data (e.g., precipitation). Rasters are able to represent continuous data by dividing up the landscape into a grid of equally sized cells; each cell is then assigned one (or more) values for relevant variables. In our case, taking California as an example, points represent sampling coordinates, vectors represent polygons (e.g., the state of California), and rasters store different environmental layers (e.g. temperature, precipitation) for California.
 
 There are two main packages algatr uses to process and manipulate environmental data: terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)). Both of these packages have excellent resources and walkthroughs (see [here](https://rspatial.org/terra/) for terra; see [here](https://rspatial.org/raster/pkg/index.html) for raster) that explain in depth environmental data processing and manipulation in R.
 
@@ -150,7 +150,7 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. TODO[EAC]:describe what is returned 
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. TODO[EAC]:describe what is returned
 
 ```{r raster PCA}
 env_pcs <- rasterPCA(wclim, spca = TRUE)
@@ -292,4 +292,23 @@ topo_dist %>%
   scale_fill_viridis() +
   xlab("Sample") +
   ylab("Sample")
+```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                          | Citation/URL                                                                                                                                                            | Details                                                                                    |
+|-----------------|------------------------------|-------------------------|
+| Associated code          | terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)) | algatr largely uses terra and raster packages to process and manipulate environmental data |
+| Associated documentation | Walkthroughs for terra [here](https://rspatial.org/terra/) and raster [here](https://rspatial.org/raster/pkg/index.html)                                                |                                                                                            |
+| Associated code          | [Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist)                                                                                                     | algatr uses the geodist package to calculate Euclidean distances                           |
+| Associated code          | [Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)                                                                               | algatr uses the topoDistance package to calculate topographic distances                    |
+| Associated code          | [van Etten 2017](https://www.jstatsoft.org/article/view/v076i13); vignette available [here](http://127.0.0.1:20697/library/gdistance/doc/Overview.html)                 | algatr uses the gdistance package to calculate resistance distances                        |
+
+Retrieve relevant vignettes:
+
+```{r package vignette}
+vignette("topoDistance-vignette")
+vignette("geodist")
 ```

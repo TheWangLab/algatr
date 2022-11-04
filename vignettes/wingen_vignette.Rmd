@@ -152,11 +152,12 @@ The algatr package also has an option to run all of the above functionality in a
 
 ------------------------------------------------------------------------
 
--   Package citation: [Bishop et al. 2022](REFER)
+|                         | Citation/URL                                              | Details                                         |
+|-------------------------|-----------------------------------------------------------|-------------------------------------------------|
+| Manuscript with method  | [Bishop et al. 2022](REFER)                               | Paper describing wingen methodology and package |
+| R package documentation | [Available on Github](https://github.com/AnushaPB/wingen) | Code, vignette                                  |
 
--   R package found [here](https://github.com/AnushaPB/wingen)
-
-See below to retrieve wingen's vignette:
+Retrieve wingen's vignette:
 
 ```{r package vignette}
 vignette("wingen-vignette")

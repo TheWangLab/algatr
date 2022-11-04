@@ -172,3 +172,15 @@ Running a GDM with `gdm_do_everything()` requires three data files for input: a 
 ```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='hide'}
 gdm_full_everything <- gdm_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full", scale_gendist = TRUE)
 ```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                       | Citation/URL                                                                                                                                                                                     | Details                                                       |
+|-----------------|------------------------------|-------------------------|
+| Associated code       | [Fitzpatrick et al. 2022](https://cran.r-project.org/web/packages/gdm/gdm.pdf)                                                                                                                   | algatr uses the `gdm()` package; manual contains walkthroughs |
+| Associated literature | [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x)                                                                                                      | Paper describing basic use of GDM                             |
+| Associated literature | [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x)                                                                                                     | Classic example of using GDM                                  |
+| Associated literature | [Fitzpatrick & Keller 2015](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376#:~:text=Community%2Dlevel%20modelling%20of%20genomic,assessments%20of%20climate%20change%20vulnerability.) | Perspective on using GDM                                      |
+| Associated literature | [Mokany et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13459)                                                                                                                 | Perspective on using GDM                                      |

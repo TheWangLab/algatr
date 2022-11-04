@@ -106,7 +106,7 @@ Importantly, LFMM can be performed using two main methods (`"lasso"` or `"ridge"
 
 One other argument to be aware of within `lfmm_run()` is the adjustment of p-values, specified using `p_adj`. There are two options for `p_adj`: `"fdr"`, which adjusts calibrated p-values based on the false discovery rate (the default). Other options for p-value adjustment can be found within the `p.adjust()` function in the stats package.
 
-Finally, the last argument to be aware of within `lfmm_run()` is `calibrate`, which calibrates p-values based on resulting z-scores. There are two options for this argument: `"gif"` (the default), and `"median+MAD"`. From the LFMM documentation: "If the "gif" option is set (default), significance values are calibrated by using the genomic control method. Genomic control uses a robust estimate of the variance of z-scores called "genomic inflation factor". If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If NULL, the pvalues are not calibrated."
+Finally, the last argument to be aware of within `lfmm_run()` is `calibrate`, which calibrates p-values based on resulting z-scores. There are two options for this argument: `"gif"` (the default), and `"median+MAD"`. From the LFMM documentation: "If the"gif" option is set (default), significance values are calibrated by using the genomic control method. Genomic control uses a robust estimate of the variance of z-scores called "genomic inflation factor". If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If NULL, the pvalues are not calibrated."
 
 Now that we've identified the number of latent factors to provide in our model, let's run LFMM using both ridge and lasso penalties with default settings (i.e., FDR p-value adjustment and the "gif" calibration).
 
@@ -138,7 +138,7 @@ There are three main ways we can visualize the results from our LFMM analysis. E
     -   `sig`: the significance threshold (alpha value)
 
     -   `sig_only`: whether to only display SNPs above the significance threshold
-    
+
     -   `top`: if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value)
 
     -   `order`: whether to order the SNPs in descending order based on their B value, otherwise they will be ordered based on environmental variable
@@ -146,11 +146,11 @@ There are three main ways we can visualize the results from our LFMM analysis. E
     -   `var`: only display SNPs associated with one environmental variable
 
     -   `nrow`: the number of rows to display
-    
+
     -   `digits`: the number of decimal places to include
-    
+
     -   `footnotes`: whether to include footnotes describing the variables displayed
-    
+
     -   `p_adj`: whether p-values were adjusted in `lfmm_run()`
 
 -   `lfmm_qqplot()`: Build a QQ-plot (quantile-quantile plot) which plots expected quantiles (percentiles) against p-values.
@@ -212,4 +212,22 @@ The algatr package also has an option to run all of the above functionality in a
 
 ```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
 results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "lasso", K_selection = "tracy_widom")
+```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                                   | Citation/URL                                                                                                                                       | Details                                                                                |
+|-----------------|------------------------------|-------------------------|
+| Main manuscript describing method | [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100); see [here](https://bcm-uga.github.io/lfmm/index.html) for documentation | Paper and code describing LFMM2                                                        |
+| Associated literature             | [Frichot et al. 2013](https://academic.oup.com/mbe/article/30/7/1687/972098)                                                                       | Paper describing LFMM                                                                  |
+| Associated code                   | [Wang et al. 2020](https://cran.r-project.org/web/packages/AssocTests/index.html)                                                                  | algatr performs a Tracy-Widom test using the `tw()` function in the AssocTests package |
+| Associated code                   | [Blog post on automatic K selection](https://chazhyseni.github.io/NALgen/post/determining_bestk/)                                                  | algatr's automatic K selection code                                                    |
+| Additional code                   | [Frichot & Francois 2015](https://rdrr.io/bioc/LEA/)                                                                                               | The LEA package provides wrapper functions for LFMM (using the `lfmm2()` function      |
+
+Retrieve LFMM's vignette:
+
+```{r package vignette}
+vignette("lfmm")
 ```

@@ -80,7 +80,7 @@ The results from MMRR "full" contains four elements:
 
 -   `coeff_df`: a dataframe with statistics relating to each variable's distance related to genetic distance, including coefficient values for each environmental variable and geographic distance
 
--   `mod`: a dataframe containing statistics for the results of the model, including an R^2 value, and F statistics
+-   `mod`: a dataframe containing statistics for the results of the model, including an R\^2 value, and F statistics
 
 -   `X` and `Y`: the input data
 
@@ -146,9 +146,18 @@ set.seed(01)
 mmrr_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full")
 ```
 
-## MMRR with model selection
+### MMRR with model selection
 
 ```{r best vars, fig.width = 5, fig.height = 5, fig.align='center'}
 set.seed(10)
 mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
 ```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                        | Citation/URL                                                                                     | Details                      |
+|-----------------|------------------------------|-------------------------|
+| Manuscript with method |  [Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)                         | Paper describing MMRR method |
+| Associated code        | [MMRR tutorial](https://nature.berkeley.edu/wanglab/wp-content/uploads/2019/09/MMRRtutorial.zip) | Walkthrough of MMRR          |
