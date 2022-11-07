@@ -40,6 +40,7 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE){
   }
 
   # Define crop area based on buffer size
+  colnames(coords) <- c("x", "y")
   buff_ext <- raster::extent(coords)
   ext_vals <- c()
   if(buff_ext@xmin < 0){
