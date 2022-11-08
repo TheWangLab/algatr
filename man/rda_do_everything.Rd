@@ -68,10 +68,14 @@ list containing (1) outlier SNPs, (2) dataframe with correlation test results, i
 \description{
 RDA function to do everything
 }
+\details{
+Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
+}
 \seealso{
 Other RDA functions: 
 \code{\link{rda_cor}()},
 \code{\link{rda_getoutliers}()},
+\code{\link{rda_loadings}()},
 \code{\link{rda_plot}()},
 \code{\link{rda_run}()},
 \code{\link{rda_table}()},
