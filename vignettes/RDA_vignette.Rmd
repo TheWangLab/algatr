@@ -115,7 +115,7 @@ RsquareAdj(mod_full)
 
 ### Run a simple RDA with variable selection
 
-Now, let's run variable selection procedure by specifying the `"best"` model within `rda_run()`, which is accomplished with the `ordiR2step()` function in the vegan package. As described at the beginning of the vignette, this is a forward selection method which begins with a null model and adds explanatory variables one at a time until genetic variance is maximized. Because model selection relies on forward selection, we need to specify stopping criteria. Parameters are specified for two things which correspond to our stopping criteria: a permutation-based significance test, for which the limits of permutation p-values for adding (`Pin`) or dropping (`Pout`) a term to the model, the number of permutations used in the estimation of adjusted R2 (`R2permutations`), and whether the use the adjusted R2 value as the stopping criterion (`R2scope`; only models with adjusted R2 values lower than specified are accepted) are specified. TODO [EAC]: this is horribly written, clean it up!
+Now, let's run an RDA model with variable selection by specifying the `"best"` model within `rda_run()`. Variable selection occurs using the `ordiR2step()` function in the vegan package, and is a forward selection method that begins with a null model and adds explanatory variables one at a time until genetic variance is maximized. To perform forward selection, we need to specify stopping criteria (i.e., when to stop adding more explanatory variables). There are two primary ways to specify stopping criteria: parameters involved in a permutation-based significance test (two parameters: the limits of permutation p-values for adding (`Pin`) or dropping (`Pout`) a term to the model, and the number of permutations used in the estimation of adjusted R2 (`R2permutations`)), and whether to use the adjusted R2 value as the stopping criterion (`R2scope`; only models with adjusted R2 values lower than specified are accepted).
 
 ```{r best model, warning = FALSE, message = FALSE}
 mod_best <- rda_run(gen, env, 
@@ -168,7 +168,7 @@ mod_pRDA_gs <- rda_run(gen, env, liz_coords,
 
 Now, we see that even more inertia/variance is explained by the conditioning variables.
 
-```{r pRDA struct+geo}
+```{r pRDA struct+geo summaryl}
 head(summary(mod_pRDA_gs))
 ```
 
@@ -208,7 +208,7 @@ Given this partial RDA, only environmental PC2 is considered significant.
 mod_pRDA$anova
 ```
 
-Now that we have the RDA model, we can discover SNPs that are outliers. In algatr, this can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first, using p-values, is described in [Capblancq and Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); their code can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). The other method, relying on Z-scores for outlier detection, is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html). We provide brief explanations for each of these methods below.
+Now that we have the RDA model, we can discover SNPs that are outliers. In algatr, this can be done using two different methods to detect outlier loci, specified by the `outlier_method` argument. The first uses Z-scores for outlier detection, and is from [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.14584); their code can be found [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html). The other method transforms RDA loadings into p-values, and was developed by [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906) and is further described in [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); code developed to run this is associated with Capblancq and Forester 2021 and can be found [here](https://github.com/Capblancq/RDA-landscape-genomics). We provide brief explanations for each of these methods below.
 
 **N.B.: Some researchers may prefer to do MAF filtering and linkage disequilibrium pruning during outlier detection (e.g., Capblancq & Forester 2021). In this case, only one SNP per contig is selected based on the highest loading. The algatr pipeline does this filtering initially when processing genetic data; see data processing vignette for more information.**
 
@@ -235,21 +235,42 @@ length(rda_sig_z$rda_snps)
 
 ### Identifying outliers using the p-value method
 
-TODO DESCRIPTION OF METHOD
+Another method to detect outliers is a p-value method wherein rather than using the loadings along RDA axes to identify extreme outliers (as with the Z-scores method above), the loadings are transformed into p-values. To do so, Mahalanobis distances are calculated for each locus, scaled based on a genomic inflation factor, from which p-values and q-values can be computed. We then adjust our p-values (based on a false discovery rate, for example; this adjustment is done using the `p.adjust()` function) and subsequently identify outliers based on a user-specified significance threshold. Rather than detecting outliers based on a p-value significance threshold, one could also detect outliers based on q-values (which are also provided as output in algatr), as is done in [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906) and [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). To do so, we would select loci that fall below a user-specified threshold based on the proportion of false positives we allow. For example, if we allow 10% or fewer outliers to be false positives, outliers couldbe identified based on loci that have q-values =< 0.1.
 
-Now, let's detect outliers using the p-value method. To do so, along with `outlier_method`, we need to specify `p_adj`, which is the method by which p-values are adjusted (inherited from the `p.adjust()` function), as well as `sig`, which is our significance threshold. We will also tell the function not to produce a screeplot.
+Now, let's detect outliers using this method. To do so, along with `outlier_method`, we need to specify `p_adj`, which is the method by which p-values are adjusted, as well as `sig`, which is our significance threshold. We will also tell the function not to produce a screeplot.
 
-One limitation of the p-value outlier method is that you cannot calculate outliers given fewer than two RDA axes (as is the case with our partial RDA results). So, let's move forward with this outlier detection method but using the results from our simple RDA model.
+One limitation of the p-value outlier method is that you cannot calculate outliers given fewer than two RDA axes (as is the case with our partial RDA results). So, let's move forward with this outlier detection method but using the results from our simple RDA model with variable selection, `mod_best`.
 
 ```{r cand snps}
-# Running with all axes
 rda_sig_p <- rda_getoutliers(mod_best, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.01, plot = FALSE)
 
 # How many outlier SNPs were detected?
 length(rda_sig_p$rda_snps)
 ```
 
-Note the differences between the two methods: using the p-value method, we found many more outlier SNPs than with the Z-scores method (101 vs. 19).
+As mentioned above, we could also identify outliers based on q-values. To do so, we can extract the q-values from the resulting object from `rda_getoutliers()`.
+
+```{r q-values}
+# Extract SNP names; choices is number of axes
+snp_names <- rownames(scores(mod_best, choices = 2, display = "species"))
+
+# Identify outliers that have q-values < 0.1
+q_sig <-
+  rda_sig_p$rdadapt %>%
+  mutate(snp_names = snp_names) %>%
+  filter(q.values <= 0.1)
+
+# How many outlier SNPs were detected?
+nrow(q_sig)
+```
+
+Note the differences between the two methods: using the p-value method, we found many more outlier SNPs than with the Z-scores method (101 vs. 19). Even more outliers were found when only using q-values as a significant threshold (170). We can also see that 19 SNPs were detected using all three methods.
+
+```{r intersect}
+Reduce(intersect, list(q_sig$snp_names,
+                       rda_sig_p$rda_snps,
+                       rda_sig_z$rda_snps))
+```
 
 ## Visualizing RDA results with `rda_plot()`
 
@@ -270,9 +291,9 @@ rda_plot(mod_pRDA, rda_sig_z$rda_snps, rdaplot = TRUE, binwidth = 0.01)
 
 ### Manhattan plot
 
-Let's now build a Manhattan plot with a significance level of 0.05 using the `manhattan` argument; if this is set to TRUE, we must also provide a significance threshold value using the `sig` argument (the default is 0.05). Be aware that outliers were detected with a different p-value threshold which is why there are grey points above our threshold line (i.e., data points are colorized according to the threshold of the model, not the visualization). TODO why is there only one plot displayed when there should be two for either enviro vars?
+Let's now build a Manhattan plot with a significance level of 0.05 using the `manhattan` argument; if this is set to TRUE, we must also provide a significance threshold value using the `sig` argument (the default is 0.05). Be aware that outliers were detected with a different p-value threshold which is why there are grey points above our threshold line (i.e., data points are colorized according to the threshold of the model, not the visualization).
 
-```{r Manhattan simple}
+```{r Manhattan}
 rda_plot(mod_best, rda_sig_p$rda_snps, rda_sig_p$pvalues, rdaplot = FALSE, manhattan = TRUE)
 ```
 
@@ -333,7 +354,7 @@ The resulting object from `rda_do_everything()` contains:
 
 Let's first run a simple RDA with variable selection and the p-value outlier method:
 
-```{r simple RDA do everything, warning=FALSE, message=FALSE}
+```{r simple RDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
 results <- rda_do_everything(gen, CA_env, liz_coords, 
                             correctGEO = FALSE, 
                             correctPC = FALSE,
@@ -342,12 +363,11 @@ results <- rda_do_everything(gen, CA_env, liz_coords,
                             p_adj = "fdr", 
                             cortest = TRUE,
                             varpart = FALSE)
-summary(results)
 ```
 
 Now, let's run a partial RDA, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
 
-```{r pRDA do everything, warning=FALSE, message=FALSE}
+```{r pRDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
 results <- rda_do_everything(gen, env, liz_coords,
                             model = "full",
                             correctGEO = TRUE,
@@ -364,8 +384,9 @@ results <- rda_do_everything(gen, env, liz_coords,
 ------------------------------------------------------------------------
 
 |                         | Citation/URL                                                                                                                                                                            | Details                                                                                             |
-|------------------|-----------------------------|-------------------------|
+|-------------------|-----------------------------|-------------------------|
 | Associated literature   | [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); [Github repository for code](https://github.com/Capblancq/RDA-landscape-genomics) | Paper describing RDA methodology; also provides walkthrough and description of `rdadapt()` function |
+| Associated literature   | [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906)                                                                                                | Description of p-value method of detecting outlier loci                                             |
 | R package documentation | [Oksanen et al. 2022.](https://cran.r-project.org/web/packages/vegan/index.html)                                                                                                        | algatr uses the `rda()` and `ordiR2step()` functions in the vegan package                           |
 | Associated literature   | [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)                                                                                                      | Review of genotype-environment association methods                                                  |
 | Associated tutorial     | [Forester et al.](https://popgen.nescent.org/2018-03-27_RDA_GEA.html)                                                                                                                   | Walkthrough of performing an RDA with the Z-scores outlier detection method                         |

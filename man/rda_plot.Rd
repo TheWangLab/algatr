@@ -33,7 +33,7 @@ rda_plot(
 
 \item{rdaplot}{whether to produce an RDA biplot (defaults to \code{TRUE}). If only one axis is provided, instead of a biplot, a histogram will be created}
 
-\item{binwidth}{}
+\item{binwidth}{width of bins for histograms (defaults to NULL)}
 }
 \description{
 Plot RDA results

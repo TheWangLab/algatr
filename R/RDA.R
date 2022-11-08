@@ -85,16 +85,16 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
                  R2scope = R2scope)
 
   # If NULL, exit
-  if(is.null(mod)) stop("model is NULL")
+  if(is.null(mod)) stop("Model is NULL")
 
-  # get RSquared and run ANOVA
+  # get R-squared and run ANOVA
   mod_rsq <- vegan::RsquareAdj(mod)
   mod_aov <- stats::anova(mod)
 
   # Variance partitioning ---------------------------------------------------
 
   if(varpart) {
-    varpart_df <- rda_varpart(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC, call_col = call_col)
+    varpart_df <- rda_varpart(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC)
     print(rda_varpart_table(varpart_df))
   } else varpart_df <- NULL
 
@@ -197,7 +197,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 #' @param plot whether to produce scree plot of RDA axes (defaults to TRUE)
 #' @inheritParams rda_do_everything
 #'
-#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier SNPs, p-values, and results from rdadapt test (see [Capblancq & Forester 2021](https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd)). If `outlier_method = "z"`, a dataframe with outlier snp z-scores for each axes
+#' @return results from outlier tests. If `outlier_method = "p"`, a list of outlier SNPs, p-values, and results from rdadapt (see [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906)). If `outlier_method = "z"`, a dataframe with outlier SNP Z-scores for each axis
 #' @export
 #'
 #' @family RDA functions
@@ -219,7 +219,7 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 
 #' Determine RDA outliers based on p-values
 #'
-#' @inheritParams rda_getoutliers
+#' @inheritParams rda_do_everything
 #' @export
 #' @noRd
 #'
@@ -228,7 +228,7 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
   rdadapt_env <- rdadapt(mod, naxes)
 
-  # P-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
+  # p-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
   pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
 
   # Get SNP names
@@ -237,10 +237,7 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
   # Restore SNP names
   names(pvalues) <- snp_names
 
-  # TODO [EAC]: CHECK BELOW
-
-  ## Identifying the SNPs that are below the p-value threshold
-  # Identify RDA candidate SNPs (P)
+  # Identifying the SNPs that are below the p-value threshold
   rda_snps <- snp_names[which(pvalues < sig)]
   if (length(rda_snps) == 0) {
     warning("No significant SNPs found, returning NULL object")
@@ -256,7 +253,8 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr"){
 
 #' Determine RDA outliers based on Z-scores
 #'
-#' @inheritParams rda_getoutliers
+#' @inheritParams rda_do_everything
+#'
 #' @export
 #' @noRd
 #'
@@ -280,39 +278,52 @@ z_outlier_method <- function(mod, naxes, z = 3){
 z_outlier_helper <- function(axis, load.rda, z){
   x <- load.rda[,axis]
   out <- outliers(x, z)
-  cand <- cbind.data.frame(names(out), rep(axis, times=length(out)), unname(out))
+  cand <- cbind.data.frame(names(out), rep(axis, times = length(out)), unname(out))
   colnames(cand) <- c("rda_snps", "axis", "loading")
   cand$rda_snps <- as.character(cand$rda_snps)
   return(cand)
 }
 
-#' Z outlier finder
-#' from https://popgen.nescent.org/2018-03-27_RDA_GEA.html
+#' Z-scores outlier finder
+#'
+#' @details code adapted from [Forester et al. 2018](https://popgen.nescent.org/2018-03-27_RDA_GEA.html)
 #'
 #' @export
 #' @noRd
 #'
 #' @family RDA functions
 #'
-outliers <- function(x,z){
+outliers <- function(x, z){
   lims <- mean(x) + c(-1, 1) * z * sd(x)     # find loadings +/-z sd from mean loading
-  x[x < lims[1] | x > lims[2]]               # snp names in these tails
+  x[x < lims[1] | x > lims[2]]               # SNP names in these tails
 }
 
-# Function to conduct a RDA based genome scan from Capblancq & Forester 2021
-# https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd
-# TODO[EAC]: GO THROUGH THIS CODE
+#' Function to conduct a RDA-based genome scan
+#'
+#' @param mod model object of class `rda`
+#' @param K number of RDA axes to retain when detecting outliers
+#'
+#' @details Method developed by [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906)
+#' Code provided in [Capblancq & Forester 2021](https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd)
+#'
 #' @export
 #' @noRd
 #' @family RDA functions
-rdadapt <- function(rda,K){
-  zscores <- rda$CCA$v[,1:as.numeric(K)]
+rdadapt <- function(mod, K){
+  # Extract scores based on number of specified RDA axes
+  zscores <- mod$CCA$v[,1:as.numeric(K)]
+  # Standardize by scaling
   resscale <- apply(zscores, 2, scale)
+  # Calculate squared Mahalanobis distances for each locus
   resmaha <- robust::covRob(resscale, distance = TRUE, na.action = na.omit, estim = "pairwiseGK")$dist
-  lambda <- median(resmaha)/qchisq(0.5,df = K)
+  # Distribute Mahalanobis distances as chi-sq dist'n with K DF; calculate genomic inflation factor (lambda)
+  lambda <- median(resmaha)/qchisq(0.5, df = K)
+  # Rescale distances according to lambda (genomic inflation factor); resulting values are p-values
   reschi2test <- pchisq(resmaha/lambda, K, lower.tail = FALSE)
+  # Obtain q-values
   qval <- qvalue::qvalue(reschi2test)
   q.values_rdadapt <- qval$qvalues
+
   return(data.frame(p.values = reschi2test, q.values = q.values_rdadapt))
 }
 
@@ -368,7 +379,7 @@ rda_cor_helper <- function(envvar, snp){
 #' @param manhattan whether to produce Manhattan plot (defaults to `TRUE`)
 #' @param rdaplot whether to produce an RDA biplot (defaults to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
 #' @param sig if creating a Manhattan plot, significance threshold for y axis (defaults to 0.05)
-#' @param binwidth
+#' @param binwidth width of bins for histograms (defaults to NULL)
 #'
 #' @export
 #'
