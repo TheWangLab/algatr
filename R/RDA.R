@@ -26,6 +26,7 @@
 #'
 #' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
 #' @export
+#' @details Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
 #'
 #' @family RDA functions
 #'
@@ -397,7 +398,7 @@ rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = 
     }
   }
 
-  # Make manhattan plot
+  # Make Manhattan plot
   if(manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
 }
 
@@ -722,4 +723,39 @@ rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
   })
 
   tbl
+}
+
+
+
+#' Generates plots of loadings from RDA model
+#'
+#' @param mod model object of class `rda`
+#' @param naxes number of axes to display loadings (defaults to the number of enviro. vars in call; values that exceed this will display loadings along PC axes)
+#'
+#' @return frequency histograms with loading of each SNP along each RDA axis
+#' @export
+#'
+#' @family RDA functions
+#'
+#' @examples
+rda_loadings <- function(mod, naxes = NULL){
+  if(!is.null(naxes)) {axes <- naxes
+  } else {axes = length(mod$terms[[3]])-1}
+
+  # Extract loadings from model (RDA places SNP names within "species")
+  loadings <- vegan::scores(mod, choices = c(1:axes), display = "species")
+
+  # Tidy data
+  loadings <- loadings %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "SNP") %>%
+    tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
+
+  # Generate plot, faceting on RDA axis
+  loadings %>%
+    ggplot2::ggplot(ggplot2::aes(x=loading)) +
+    ggplot2::geom_histogram(bins = 20) +
+    ggplot2::facet_wrap(~axis) +
+    ggplot2::theme_bw()
+
 }
