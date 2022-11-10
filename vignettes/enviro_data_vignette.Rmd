@@ -299,7 +299,7 @@ topo_dist %>%
 ------------------------------------------------------------------------
 
 |                          | Citation/URL                                                                                                                                                            | Details                                                                                    |
-|-----------------|------------------------------|-------------------------|
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | Associated code          | terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)) | algatr largely uses terra and raster packages to process and manipulate environmental data |
 | Associated documentation | Walkthroughs for terra [here](https://rspatial.org/terra/) and raster [here](https://rspatial.org/raster/pkg/index.html)                                                |                                                                                            |
 | Associated code          | [Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist)                                                                                                     | algatr uses the geodist package to calculate Euclidean distances                           |
