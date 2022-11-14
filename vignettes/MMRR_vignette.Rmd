@@ -27,7 +27,7 @@ Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary
 
 The randomization aspect of MMRR is that significance testing is performed through random permutations of the rows and columns of the dependent matrix (the genetic distances), which is necessary because of the non-independence of values in pairwise distance matrices. Once significance testing is completed, MMRR provides individual regression coefficients and p-values for each dependent variable and a "coefficient ratio," which is the ratio between regression coefficients, which thus provides an idea of the relative contributions of IBD and IBE in explaining variation in the genetic distances in your data.
 
-There are a few assumptions built into this function that users should be aware of: (1) the coordinates and genetic distance files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes that each individual has its own sampling coordinates (i.e., multiple individuals weren't collected per site).
+There are a few assumptions built into this function that users should be aware of: (1) the coordinates and genetic distance files MUST have the same ordering of individuals; there isn't a check for this, and (2) this function assumes that each individual has its own sampling coordinates (even if population-based sampling was performed).
 
 ### Read in and process genetic data
 
@@ -80,7 +80,7 @@ The results from MMRR "full" contains four elements:
 
 -   `coeff_df`: a dataframe with statistics relating to each variable's distance related to genetic distance, including coefficient values for each environmental variable and geographic distance
 
--   `mod`: a dataframe containing statistics for the results of the model, including an R^2 value, and F statistics
+-   `mod`: a dataframe containing statistics for the results of the model, including an R\^2 value, and F statistics
 
 -   `X` and `Y`: the input data
 
@@ -141,14 +141,24 @@ The algatr package also has an option to run all of the above functionality in a
 
 ### MMRR with all variables
 
-```{r all vars, fig.width = 5, fig.height = 5, fig.align='center'}
+```{r all vars, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE}
+# TODO [EAC]: error with do everything round() non-numeric arg, also check env
 set.seed(01)
-mmrr_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full")
+mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, model = "full")
 ```
 
-## MMRR with model selection
+### MMRR with model selection
 
-```{r best vars, fig.width = 5, fig.height = 5, fig.align='center'}
+```{r best vars, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE}
 set.seed(10)
-mmrr_do_everything(gendist, liz_coords, envlayers = CA_env, model = "best", nperm = 100)
+mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, model = "best", nperm = 100)
 ```
+
+## Additional documentation and citations
+
+------------------------------------------------------------------------
+
+|                        | Citation/URL                                                                                     | Details                      |
+|-----------------|------------------------------|-------------------------|
+| Manuscript with method |  [Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)                         | Paper describing MMRR method |
+| Associated code        | [MMRR tutorial](https://nature.berkeley.edu/wanglab/wp-content/uploads/2019/09/MMRRtutorial.zip) | Walkthrough of MMRR          |

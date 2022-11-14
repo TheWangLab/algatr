@@ -10,6 +10,9 @@
 #' @param plot whether to plot results (default = TRUE)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
+#' @details
+#' The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411.
+#'
 #' @return
 #' @export
 #'

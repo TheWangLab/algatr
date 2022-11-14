@@ -14,19 +14,19 @@ rda_do_everything(
   outlier_method = "p",
   sig = 0.05,
   z = 3,
-  padj_method = "fdr",
+  p_adj = "fdr",
   cortest = TRUE,
   nPC = 3,
+  varpart = FALSE,
   naxes = "all",
   Pin = 0.05,
   R2permutations = 1000,
   R2scope = T,
-  stdz = TRUE,
-  impute = "median"
+  stdz = TRUE
 )
 }
 \arguments{
-\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
+\item{gen}{genotype dosage matrix (rows = individuals & columns = SNPs) or \code{vcfR} object}
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
@@ -38,38 +38,48 @@ rda_do_everything(
 
 \item{correctPC}{whether to condition on PCs from PCA of genotypes}
 
-\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
+\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from \href{https://github.com/Capblancq/RDA-landscape-genomics}{here} or "z" to use the z-score based method from \href{https://popgen.nescent.org/2018-03-27_RDA_GEA.html}{here}}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
-\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify snps}
+\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify SNPs (defaults to 3)}
 
-\item{padj_method}{if \code{outlier_method = "p"}, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link[=p.adjust]{p.adjust()}}}
 
-\item{cortest}{whether to create table of correlations for snps and environmental variable}
+\item{cortest}{whether to create table of correlations for SNPs and environmental variable (defaults to TRUE)}
 
-\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3), if set to "manual" a selection option with a terminal prompt will be provided}
+\item{nPC}{number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided}
+
+\item{varpart}{whether to perform variance partitioning (defaults to FALSE)}
 
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
-\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordi2step})}
+\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordiR2step})}
 
-\item{R2permutations}{Number of permutations used in the estimation of
-  adjusted \eqn{R^2}{R2} for \code{\link[vegan]{cca}} using
-  \code{\link[vegan]{RsquareAdj}}.
-}
+\item{R2permutations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})}
 
-\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordi2step})}
+\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})}
 
 \item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
-
-\item{impute}{function to use for imputation (defaults to \code{median}). NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.}
-
-\item{R2permurations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordi2step})}
 }
 \value{
-list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"},
+list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"}, and (8) results from variance partitioning analysis, if \code{varpart = TRUE}
 }
 \description{
 RDA function to do everything
 }
+\details{
+Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
+}
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_loadings}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

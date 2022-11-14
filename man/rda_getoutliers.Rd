@@ -8,7 +8,7 @@ rda_getoutliers(
   mod,
   naxes = "all",
   outlier_method = "p",
-  padj_method = "fdr",
+  p_adj = "fdr",
   sig = 0.05,
   z = 3,
   plot = TRUE
@@ -17,19 +17,31 @@ rda_getoutliers(
 \arguments{
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
-\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from https://github.com/Capblancq/RDA-landscape-genomics or "z" to use the z-score based method from https://popgen.nescent.org/2018-03-27_RDA_GEA.html}
+\item{outlier_method}{method to determine outliers. Can either be "p" to use the p-value method from \href{https://github.com/Capblancq/RDA-landscape-genomics}{here} or "z" to use the z-score based method from \href{https://popgen.nescent.org/2018-03-27_RDA_GEA.html}{here}}
 
-\item{padj_method}{if \code{outlier_method = "p"}, the correction method supplied to \code{p.adjust} (can be "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")}
+\item{p_adj}{if \code{outlier_method = "p"}, method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link[=p.adjust]{p.adjust()}}}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
-\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify snps}
+\item{z}{if \code{outlier_method = "z"}, the number of standard deviations to use to identify SNPs (defaults to 3)}
 
 \item{plot}{whether to produce scree plot of RDA axes (defaults to TRUE)}
 }
 \value{
-results from outlier tests. If \code{outlier_method = "p"}, a list of outlier snps, p-values, and results from rdadapt test (see Capblancq & Forester 2021; https://github.com/Capblancq/RDA-landscape-genomics/blob/main/RDA_landscape_genomics.Rmd). If \code{outlier_method = "z"}, a dataframe with outlier snp z-scores for each axes
+results from outlier tests. If \code{outlier_method = "p"}, a list of outlier SNPs, p-values, and results from rdadapt (see \href{https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906}{Capblancq et al. 2018}). If \code{outlier_method = "z"}, a dataframe with outlier SNP Z-scores for each axis
 }
 \description{
 Get significant outliers from RDA model
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_loadings}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

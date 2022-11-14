@@ -18,7 +18,7 @@ rda_table(
 \arguments{
 \item{cor_df}{dataframe of correlation results output from \link[algatr]{rda_cor}}
 
-\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify snps}
+\item{sig}{if \code{outlier_method = "p"}, the significance level to use to identify SNPs (defaults to 0.05)}
 
 \item{sig_only}{whether to only include loci with p-values less than \code{sig} (defaults to TRUE)}
 
@@ -30,7 +30,7 @@ rda_table(
 
 \item{nrow}{number of rows to display (defaults to displaying all rows)}
 
-\item{digits}{number of digist to include (defaults to 2)}
+\item{digits}{number of digits to include (defaults to 2)}
 }
 \value{
 An object of class \code{gt_tbl}
@@ -38,3 +38,15 @@ An object of class \code{gt_tbl}
 \description{
 Create \code{gt} table of RDA results
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_loadings}()},
+\code{\link{rda_plot}()},
+\code{\link{rda_run}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

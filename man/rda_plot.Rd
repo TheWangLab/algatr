@@ -21,18 +21,32 @@ rda_plot(
 
 \item{rda_snps}{vector of outlier SNPs}
 
-\item{pvalues}{if creating a manhattan plot (i.e., \code{manhattan = TRUE}), a matrix of p-values}
+\item{pvalues}{if creating a Manhattan plot (i.e., \code{manhattan = TRUE}), a matrix of p-values}
 
 \item{axes}{which RDA axes to include while plotting (defaults to \code{all})}
 
 \item{biplot_axes}{if creating an RDA biplot (i.e., \code{rdaplot = TRUE}), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))}
 
-\item{manhattan}{whether to produce manhattan plot (defaults to \code{TRUE})}
+\item{sig}{if creating a Manhattan plot, significance threshold for y axis (defaults to 0.05)}
+
+\item{manhattan}{whether to produce Manhattan plot (defaults to \code{TRUE})}
 
 \item{rdaplot}{whether to produce an RDA biplot (defaults to \code{TRUE}). If only one axis is provided, instead of a biplot, a histogram will be created}
 
-\item{binwidth}{}
+\item{binwidth}{width of bins for histograms (defaults to NULL)}
 }
 \description{
 Plot RDA results
 }
+\seealso{
+Other RDA functions: 
+\code{\link{rda_cor}()},
+\code{\link{rda_do_everything}()},
+\code{\link{rda_getoutliers}()},
+\code{\link{rda_loadings}()},
+\code{\link{rda_run}()},
+\code{\link{rda_table}()},
+\code{\link{rda_varpart_table}()},
+\code{\link{rda_varpart}()}
+}
+\concept{RDA functions}

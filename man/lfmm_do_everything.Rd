@@ -2,7 +2,7 @@
 % Please edit documentation in R/LFMM.R
 \name{lfmm_do_everything}
 \alias{lfmm_do_everything}
-\title{Run LFMM}
+\title{LFMM function to do everything}
 \usage{
 lfmm_do_everything(
   gen,
@@ -67,5 +67,9 @@ pvalues are not calibrated.}
 \item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 }
 \description{
-Run LFMM
+LFMM function to do everything
+}
+\details{
+LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
+See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860.
 }

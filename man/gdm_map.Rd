@@ -37,6 +37,7 @@ Make map from model
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
 \code{\link{gdm_do_everything}()},
+\code{\link{gdm_plot_diss}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},

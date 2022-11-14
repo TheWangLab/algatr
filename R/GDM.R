@@ -13,6 +13,9 @@
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
 #' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
 #'
+#' @details
+#' GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto-Lugilde, D., & Ferrier, S. (2022). gdm: Generalized dissimilarity modeling. R package version 1.5.0-3.
+#'
 #' @return list with final model, predictor coefficients, and PCA RGB map
 #'
 #' @family GDM functions
@@ -181,7 +184,6 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp))
 
   }
-
   return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL))
 }
 
@@ -202,12 +204,13 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 #' @examples
 gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
+  # TODO: GDM ERROR IS WITHIN THIS FUNCTION
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
                      nPerm = nperm)
 
-  # Get pvalues from variable selection model
+  # Get p-values from variable selection model
   pvalues <- vars[[3]]
 
   # Identify which cells have p-values lower than sig and not NA
@@ -324,6 +327,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if(plot_vars & (n_layers == 3)){
     gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
   }
+
   if(plot_vars & (n_layers != 3)){
     warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
   }
@@ -331,11 +335,10 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   s <- list(rastTrans, pcaRastRGB)
   names(s) <- c("rastTrans", "pcaRastRGB")
   return(s)
-
 }
 
 
-#' Plot isplines for each variable
+#' Plot I-splines for each variable
 #'
 #' @param gdm_model GDM model
 #'
@@ -352,13 +355,68 @@ gdm_plot_isplines <- function(gdm_model){
   purrr::walk(1:ncol(gdm_model_splineDat$x), function(i){
     dat <- cbind(as.data.frame(gdm_model_splineDat$x[,i]), as.data.frame(gdm_model_splineDat$y[,i]))
     plot <- ggplot2::ggplot(dat) +
-      geom_line(ggplot2::aes(x = gdm_model_splineDat$x[,i], y = gdm_model_splineDat$y[,i])) +
+      ggplot2::geom_line(ggplot2::aes(x = gdm_model_splineDat$x[,i], y = gdm_model_splineDat$y[,i])) +
       ggplot2::theme_bw() +
-      xlab(colnames(gdm_model_splineDat$x)[i]) +
-      ylab("Partial Regression Distance")
+      ggplot2::xlab(colnames(gdm_model_splineDat$x)[i]) +
+      ggplot2::ylab("Partial Regression Distance")
 
     print(plot)})
   }
+
+
+
+#' Plot compositional dissimilarity spline plots
+#'
+#' TODO[APB]: can you look this function over
+#'
+#' @description generates two plots: a plot of the observed response data against raw ecological distance from the model, and a plot of the observed response against the predicted response from the model (after link function is applied)
+#' @param gdm_model GDM model
+#'
+#' @return two spline plots of compositional dissimilarity
+#'
+#' @family GDM functions
+#' @details code is modified from the `plot.gdm()` function in the gdm package (Fitzpatrick et al. 2022)
+#'
+#' @export
+#'
+#' @examples
+gdm_plot_diss <- function(gdm_model){
+  obs <- tidyr::as_tibble(gdm_model$observed) %>% dplyr::rename(observed = value)
+  pred <- tidyr::as_tibble(gdm_model$predicted) %>% dplyr::rename(predicted = value)
+  ecol <- tidyr::as_tibble(gdm_model$ecological) %>% dplyr::rename(ecological = value)
+
+  dat <- cbind(obs, pred, ecol)
+  datL <- nrow(dat)
+
+  # Get data for overlaid lines
+  overlayX_ecol <- seq(from = min(dat$ecological), to = max(dat$ecological), length = datL)
+  overlayY_ecol <- 1-exp(-overlayX_ecol)
+  overlayX_pred <- seq(from = min(dat$predicted), to = max(dat$predicted), length = datL)
+  overlayY_pred <- 1-exp(-overlayX_pred)
+
+  plot_ecol <-
+    ggplot2::ggplot(dat) +
+    ggplot2::geom_point(ggplot2::aes(x = ecological, y = observed), color = "darkgrey", alpha = 0.6, size = 2) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_y_continuous(limits = c(0,1), expand = c(0,0)) +
+    ggplot2::xlab("Predicted ecological distance") +
+    ggplot2::ylab("Observed compositional dissimilarity") +
+    ggplot2::geom_line(ggplot2::aes(x = overlayX_ecol, y = overlayY_ecol), size = 1)
+
+  plot_pred <-
+    ggplot2::ggplot(dat) +
+    ggplot2::geom_point(ggplot2::aes(x = predicted, y = observed), color = "darkgrey", alpha = 0.6, size = 2) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_y_continuous(limits = c(0,1), expand = c(0,0)) +
+    ggplot2::xlab("Predicted compositional dissimilarity") +
+    ggplot2::ylab("Observed compositional dissimilarity") +
+    ggplot2::geom_line(ggplot2::aes(x = overlayX_pred, y = overlayY_pred), size = 1)
+
+  plot <- cowplot::plot_grid(plot_ecol, plot_pred, nrow = 1)
+
+  print(plot)
+}
+
 
 
 #' Create a PCA plot for GDM
