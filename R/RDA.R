@@ -110,7 +110,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # Plot all axes
   if(any("pvalues" %in% names(rda_sig))) pvalues <- rda_sig[["pvalues"]] else pvalues <- NULL
-  rda_plot(mod, rda_snps = rda_snps, pvalues = pvalues,  axes = "all", biplot_axes = NULL, sig = sig)
+  rda_plot(mod, rda_snps = rda_snps, pvalues = pvalues,  axes = "all", biplot_axes = NULL, sig = sig, manhattan = TRUE, rdaplot = TRUE)
 
   # Get correlations -----------------------------------------------------------------------------------------------------------
   rda_gen <- gen[,rda_snps]
