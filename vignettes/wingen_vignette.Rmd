@@ -166,7 +166,7 @@ The algatr package also has an option to run all of the above functionality in a
 
 **WARNING: Many wingen arguments are excluded from `wingen_do_everything()` to reduce the number of arguments in the function. Thus, we strongly advise against using this function for actual analyses and encourage users to explore and test the individual wingen functions given their datasets.**
 
-Below, we'll run wingen with the following:
+Below, we'll run wingen with the following: TODO FINISH THIS UP
 
 -   Window size of 3x3, no aggregation factor for moving window
 
@@ -179,7 +179,7 @@ Below, we'll run wingen with the following:
 -   Kriging (of both genetic diversity and sample count layers) and masking to sample count layer
 
 ```{r wingen do everything, warning=FALSE}
-# wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2, 
+# results <- wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2, 
 #                      liz_vcf, stat = "pi", rarify = FALSE, kriged = TRUE, grd = liz_lyr, index = 1:2, 
 #                      agg_grd = NULL, disagg_grd = 5, agg_r = NULL, disagg_r = NULL, 
 #                      masked = TRUE, mask = kgd[["sample_count"]], bkg = envlayer, plot_count = TRUE)
