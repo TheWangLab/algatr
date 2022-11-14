@@ -595,12 +595,14 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
                       R2scope = R2scope)
   # Extract sig enviro vars
   sig_vars <- as.character(mod_best$terms)[3]
+  # TODO[EAC]: add a stopping point (return NULL) if there are no significant terms
 
   # Run PCA for pop structure -----------------------------------------------
 
   pcres <- stats::prcomp(gen)
+  # TODO[EAC]: why is the default number of pcs to display 10? It should probably just be the max number
   stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
-  if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
+  if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
   pc <- pcres$x[,1:nPC]
 
   moddf_covar <- data.frame(env, coords, pc)
@@ -693,7 +695,6 @@ rda_varpart_helper <- function(mod){
 #' Create `gt` table with RDA variance partitioning results
 #'
 #' @param df dataframe of variance partitioning results output from \link[algatr]{rda_varpart}
-#' @param results results from \link[algatr]{rda_varpart}
 #' @param digits number of digits to include (defaults to 2)
 #' @param call_col whether to include column with RDA call (defaults to FALSE)
 #'
@@ -703,7 +704,7 @@ rda_varpart_helper <- function(mod){
 #' @family RDA functions
 #'
 #' @examples
-rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
+rda_varpart_table <- function(df, digits = 2, call_col = FALSE){
   # Replace row and column names
   rownames(df) <- c("Full model", "Pure enviro. model", "Pure pop. structure model", "Pure geography model", "Confounded variance", "Total unexplained variance", "Total inertia")
   colnames(df) <- c("pRDA model call", "Inertia", "R2", "Adjusted R2", "p (>F)",
@@ -739,6 +740,10 @@ rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
 
 
 
+# TODO[EAC]: rda_plot is also showing a plot of the loadings (just not one axis a time (which you could make an option)), so I think this is a confusing additional function defined as is.
+# rda_plot should probably be changed such that it does not require RDA SNPs as input (i.e., you can just provide the model) and then you can just plot the loadings
+# as you do for this function.
+
 #' Generates plots of loadings from RDA model
 #'
 #' @param mod model object of class `rda`
@@ -751,8 +756,12 @@ rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
 #'
 #' @examples
 rda_loadings <- function(mod, naxes = NULL){
-  if(!is.null(naxes)) {axes <- naxes
-  } else {axes = length(mod$terms[[3]])-1}
+
+  if (!is.null(naxes)) {
+    axes <- naxes
+  } else {
+    axes = length(mod$terms[[3]])-1
+  }
 
   # Extract loadings from model (RDA places SNP names within "species")
   loadings <- vegan::scores(mod, choices = c(1:axes), display = "species")
