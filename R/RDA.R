@@ -154,7 +154,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 
   if(correctPC & !correctGEO){
     pcres <- stats::prcomp(gen)
-    stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
+    stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <-  pcres$x[,1:nPC]
     moddf <- data.frame(env, pc)
@@ -170,7 +170,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
   if(correctPC & correctGEO){
     if(is.null(coords)) stop("Coordinates must be provided if correctGEO is TRUE")
     pcres <- stats::prcomp(gen)
-    stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
+    stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[,1:nPC]
     moddf <- data.frame(env, coords, pc)
@@ -361,7 +361,8 @@ rda_cor_env_helper <- function(snp_name, snp_df, env){
 #' @family RDA functions
 rda_cor_helper <- function(envvar, snp){
   if(sum(!is.na(envvar)) < 3 | sum(!is.na(snp)) < 3) return(c(r = NA, p = NA))
-  mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "pearson", na.action = "na.omit")
+  # kendall is used instead of pearson because it is non-parameteric and doesn't require vars to be continuous
+  mod <- stats::cor.test(envvar, snp, alternative = "two.sided", method = "kendall", na.action = "na.omit")
   pvalue <- mod$p.value
   r <- mod$estimate
   results <- c(r, pvalue)
@@ -371,10 +372,10 @@ rda_cor_helper <- function(envvar, snp){
 
 #' Plot RDA results
 #'
-#' @param mod model object of class `rda`
-#' @param rda_snps vector of outlier SNPs
-#' @param pvalues if creating a Manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values
-#' @param axes which RDA axes to include while plotting (defaults to `all`)
+#' @param mod model object of class `rda`; if this is all that's provided, histograms with loadings will be generated
+#' @param rda_snps vector of outlier SNPs (defaults to NULL)
+#' @param pvalues if creating a Manhattan plot (i.e., `manhattan = TRUE`), a matrix of p-values (defaults to NULL)
+#' @param axes which RDA axes to include while plotting (defaults to `"all"`)
 #' @param biplot_axes if creating an RDA biplot (i.e., `rdaplot = TRUE`), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))
 #' @param manhattan whether to produce Manhattan plot (defaults to `TRUE`)
 #' @param rdaplot whether to produce an RDA biplot (defaults to `TRUE`). If only one axis is provided, instead of a biplot, a histogram will be created
@@ -385,32 +386,54 @@ rda_cor_helper <- function(envvar, snp){
 #'
 #' @family RDA functions
 #'
-rda_plot <- function(mod, rda_snps, pvalues = NULL, axes = "all", biplot_axes = NULL, sig = 0.05, manhattan = TRUE, rdaplot = TRUE, binwidth = NULL){
+rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_axes = NULL, sig = 0.05, manhattan = NULL, rdaplot = NULL, binwidth = NULL){
   # Get axes
-  if(axes == "all") axes <- 1:ncol(mod$CCA$v)
+  if (axes == "all") axes <- 1:ncol(mod$CCA$v)
 
-  # Make and get tidy dataframes for plotting
-  tidy_list <- rda_ggtidy(mod, rda_snps, axes = axes)
-  TAB_snps <- tidy_list[["TAB_snps"]]
-  TAB_var <- tidy_list[["TAB_var"]]
+  # Histograms with loadings ------------------------------------------------
 
-  # Make RDA plots
-  if(rdaplot){
-    if(length(axes) == 1) {
-      print(rda_hist(TAB_snps, binwidth = binwidth))
-    } else if(!is.null(biplot_axes)){
-      if(is.vector(biplot_axes)) print(rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes))
-      if(is.list(biplot_axes)) lapply(biplot_axes, function(x) {print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))})
-    } else {
-      cb <- combn(length(axes), 2)
-      if(!is.null(dim(cb))) {
-        apply(cb, 2, function(x) {print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))})
-      } else print(rda_biplot(TAB_snps, TAB_var, biplot_axes = cb))
-    }
+  if (is.null(rda_snps)) {
+    # Extract loadings from model (RDA places SNP names within "species")
+    loadings <- vegan::scores(mod, choices = axes, display = "species")
+
+    # Tidy data
+    loadings <- loadings %>%
+      as.data.frame() %>%
+      tibble::rownames_to_column(var = "SNP") %>%
+      tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
+
+    # Generate plot, faceting on RDA axis
+    print(rda_hist(loadings, binwidth = binwidth))
   }
 
-  # Make Manhattan plot
-  if(manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
+
+  # If outliers found -------------------------------------------------------
+
+  if (!is.null(rda_snps)) {
+    # Make and get tidy dataframes for plotting
+    tidy_list <- rda_ggtidy(mod, rda_snps, axes = axes)
+    TAB_snps <- tidy_list[["TAB_snps"]]
+    TAB_var <- tidy_list[["TAB_var"]]
+
+    # Make RDA plots
+    if(rdaplot){
+      if(length(axes) == 1) {
+        print(rda_hist(TAB_snps, binwidth = binwidth))
+      } else if(!is.null(biplot_axes)){
+        if(is.vector(biplot_axes)) print(rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes))
+        if(is.list(biplot_axes)) lapply(biplot_axes, function(x) {print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))})
+      } else {
+        cb <- combn(length(axes), 2)
+        if(!is.null(dim(cb))) {
+          apply(cb, 2, function(x) {print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))})
+        } else print(rda_biplot(TAB_snps, TAB_var, biplot_axes = cb))
+      }
+    }
+
+    # Make Manhattan plot
+    if(manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
+  }
+
 }
 
 
@@ -426,7 +449,7 @@ rda_ggtidy <- function(mod, rda_snps, axes){
   TAB_snps$type <- "Neutral"
   TAB_snps$type[TAB_snps$names %in% rda_snps] <- "Outliers"
   TAB_snps$type <- factor(TAB_snps$type, levels = c("Neutral", "Outliers"))
-  TAB_var <- as.data.frame(vegan::scores(mod, choices = axes, display="bp")) # pull the biplot scores
+  TAB_var <- as.data.frame(vegan::scores(mod, choices = axes, display = "bp")) # pull the biplot scores
 
   tidy_list <- list(TAB_snps = TAB_snps, TAB_var = TAB_var)
   return(tidy_list)
@@ -504,24 +527,38 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05){
 
 #' Helper function to plot RDA histogram
 #'
+#' @param data TAB_snps if `rda_getoutliers()` has been run, otherwise can be loadings
+#' @param binwidth width of bins for histogram
+#'
 #' @export
 #' @noRd
 #' @family RDA functions
-rda_hist <- function(TAB_snps, binwidth = NULL){
-  ggplot2::ggplot() +
-    ggplot2::geom_histogram(data = TAB_snps, ggplot2::aes(fill = type, x = get(colnames(TAB_snps)[2])), binwidth = binwidth) +
-    ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
-    ggplot2::guides(fill = ggplot2::guide_legend(title = "SNP type")) +
-    ggplot2::xlab(colnames(TAB_snps)[2]) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = "right",
-                   legend.background = ggplot2::element_blank(),
-                   panel.grid = ggplot2::element_blank(),
-                   legend.box.background = ggplot2::element_blank(),
-                   plot.background = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
-                   strip.text = ggplot2::element_text(size=11))
+rda_hist <- function(data, binwidth = NULL){
+  if("type" %in% names(data)) {
+    ggplot2::ggplot() +
+      ggplot2::geom_histogram(data = data, ggplot2::aes(fill = type, x = get(colnames(data)[2])), binwidth = binwidth) +
+      ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
+      ggplot2::guides(fill = ggplot2::guide_legend(title = "SNP type")) +
+      ggplot2::xlab(colnames(data)[2]) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position = "right",
+                     legend.background = ggplot2::element_blank(),
+                     panel.grid = ggplot2::element_blank(),
+                     legend.box.background = ggplot2::element_blank(),
+                     plot.background = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
+                     strip.text = ggplot2::element_text(size=11))
+  } else {
+    ggplot2::ggplot() +
+      ggplot2::geom_histogram(data = data, ggplot2::aes(x = loading), bins = binwidth) +
+      ggplot2::facet_wrap(~axis) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.grid = ggplot2::element_blank(),
+                     plot.background = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(),
+                     strip.text = ggplot2::element_text(size=11))
+  }
 }
 
 #' Create `gt` table of RDA results
@@ -594,12 +631,16 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
                       R2scope = R2scope)
   # Extract sig enviro vars
   sig_vars <- as.character(mod_best$terms)[3]
+  if (length(sig_vars) == 0) {
+    warning("No significant terms found in best model, returning NULL object")
+    return(NULL)
+  }
 
   # Run PCA for pop structure -----------------------------------------------
 
   pcres <- stats::prcomp(gen)
-  stats::screeplot(pcres, type = "barplot", npcs = 10, main = "PCA Eigenvalues")
-  if(nPC == "manual") nPC <- readline("Number of PC axes to retain:")
+  stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
+  if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
   pc <- pcres$x[,1:nPC]
 
   moddf_covar <- data.frame(env, coords, pc)
@@ -692,7 +733,6 @@ rda_varpart_helper <- function(mod){
 #' Create `gt` table with RDA variance partitioning results
 #'
 #' @param df dataframe of variance partitioning results output from \link[algatr]{rda_varpart}
-#' @param results results from \link[algatr]{rda_varpart}
 #' @param digits number of digits to include (defaults to 2)
 #' @param call_col whether to include column with RDA call (defaults to FALSE)
 #'
@@ -702,7 +742,7 @@ rda_varpart_helper <- function(mod){
 #' @family RDA functions
 #'
 #' @examples
-rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
+rda_varpart_table <- function(df, digits = 2, call_col = FALSE){
   # Replace row and column names
   rownames(df) <- c("Full model", "Pure enviro. model", "Pure pop. structure model", "Pure geography model", "Confounded variance", "Total unexplained variance", "Total inertia")
   colnames(df) <- c("pRDA model call", "Inertia", "R2", "Adjusted R2", "p (>F)",
@@ -734,39 +774,4 @@ rda_varpart_table <- function(df, results, digits = 2, call_col = FALSE){
   })
 
   tbl
-}
-
-
-
-#' Generates plots of loadings from RDA model
-#'
-#' @param mod model object of class `rda`
-#' @param naxes number of axes to display loadings (defaults to the number of enviro. vars in call; values that exceed this will display loadings along PC axes)
-#'
-#' @return frequency histograms with loading of each SNP along each RDA axis
-#' @export
-#'
-#' @family RDA functions
-#'
-#' @examples
-rda_loadings <- function(mod, naxes = NULL){
-  if(!is.null(naxes)) {axes <- naxes
-  } else {axes = length(mod$terms[[3]])-1}
-
-  # Extract loadings from model (RDA places SNP names within "species")
-  loadings <- vegan::scores(mod, choices = c(1:axes), display = "species")
-
-  # Tidy data
-  loadings <- loadings %>%
-    as.data.frame() %>%
-    tibble::rownames_to_column(var = "SNP") %>%
-    tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
-
-  # Generate plot, faceting on RDA axis
-  loadings %>%
-    ggplot2::ggplot(ggplot2::aes(x=loading)) +
-    ggplot2::geom_histogram(bins = 20) +
-    ggplot2::facet_wrap(~axis) +
-    ggplot2::theme_bw()
-
 }
