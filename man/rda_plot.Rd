@@ -6,24 +6,24 @@
 \usage{
 rda_plot(
   mod,
-  rda_snps,
+  rda_snps = NULL,
   pvalues = NULL,
   axes = "all",
   biplot_axes = NULL,
   sig = 0.05,
-  manhattan = TRUE,
-  rdaplot = TRUE,
+  manhattan = NULL,
+  rdaplot = NULL,
   binwidth = NULL
 )
 }
 \arguments{
-\item{mod}{model object of class \code{rda}}
+\item{mod}{model object of class \code{rda}; if this is all that's provided, histograms with loadings will be generated}
 
-\item{rda_snps}{vector of outlier SNPs}
+\item{rda_snps}{vector of outlier SNPs (defaults to NULL)}
 
-\item{pvalues}{if creating a Manhattan plot (i.e., \code{manhattan = TRUE}), a matrix of p-values}
+\item{pvalues}{if creating a Manhattan plot (i.e., \code{manhattan = TRUE}), a matrix of p-values (defaults to NULL)}
 
-\item{axes}{which RDA axes to include while plotting (defaults to \code{all})}
+\item{axes}{which RDA axes to include while plotting (defaults to \code{"all"})}
 
 \item{biplot_axes}{if creating an RDA biplot (i.e., \code{rdaplot = TRUE}), which pairs of axes to plot. Defaults to plotting all pairs of axes possible, otherwise can be set to a single pair of axes (e.g., c(1,2)) or a list of axes pairs (e.g., list(c(1,2), c(2,3))))}
 
@@ -43,7 +43,6 @@ Other RDA functions:
 \code{\link{rda_cor}()},
 \code{\link{rda_do_everything}()},
 \code{\link{rda_getoutliers}()},
-\code{\link{rda_loadings}()},
 \code{\link{rda_run}()},
 \code{\link{rda_table}()},
 \code{\link{rda_varpart_table}()},

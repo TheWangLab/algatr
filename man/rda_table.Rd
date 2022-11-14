@@ -43,7 +43,6 @@ Other RDA functions:
 \code{\link{rda_cor}()},
 \code{\link{rda_do_everything}()},
 \code{\link{rda_getoutliers}()},
-\code{\link{rda_loadings}()},
 \code{\link{rda_plot}()},
 \code{\link{rda_run}()},
 \code{\link{rda_varpart_table}()},
