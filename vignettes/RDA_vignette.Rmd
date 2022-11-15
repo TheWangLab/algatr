@@ -214,14 +214,14 @@ Now that we have the RDA model, we can discover SNPs that are outliers. In algat
 
 ### Identifying outliers using the Z-scores method
 
-To understand how the Z-scores method works to detect outliers, let's first take a look at the loadings of SNPs on the first two RDA axes using the `rda_loadings()` function. This will show us histograms for each of the selected RDA axes. SNPs that are not associated with environmental variables will fall in the center of these distributions, with outliers falling at the edges. The Z-score method works by setting a Z-score (number of standard deviations) threshold beyond which SNPs will be considered outliers (see [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html) for further details).
+To understand how the Z-scores method works to detect outliers, let's first take a look at the loadings of SNPs on the first two RDA axes using the `rda_plot()` function. This will show us histograms for each of the selected RDA axes. SNPs that are not associated with environmental variables will fall in the center of these distributions, with outliers falling at the edges. The Z-score method works by setting a Z-score (number of standard deviations) threshold beyond which SNPs will be considered outliers (see [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html) for further details).
 
 If we set this value too stringently, we minimize our false positive rate but risk detecting false negatives; if it's set too high, we increase our false positive rate. Researchers will want to adjust this parameter based on their tolerance for detecting false positives, but also the strength of selection under which outliers are subject to (assuming that SNPs that are more significantly associated with environmental variables are also under stronger selection).
 
 Because only one environmental variable was associated with our genetic data, we only have one resulting RDA axis.
 
 ```{r loadings, warning=FALSE, message=FALSE}
-rda_loadings(mod_pRDA)
+rda_plot(mod_pRDA, axes = "all", binwidth = 20)
 ```
 
 Now, let's discover outliers with the `rda_getoutliers()` function. The method is specified using the `outlier_method` argument, and the number of standard deviations to detect outliers is specified by the `z` argument; it defaults to 3. The resulting object is a dataframe containing the SNP name, the RDA axis it's associated with, and the loading along this axis. A screeplot for the RDA axes is automatically generated (but can be switched off using the `plot` argument).
@@ -286,7 +286,7 @@ Let's build a biplot (or some call it a triplot, since it also shows loadings of
 rda_plot(mod_best, rda_sig_p$rda_snps, biplot_axes = c(1,2), rdaplot = TRUE, manhattan = FALSE)
 
 # In the case of our partial RDA, there was only one RDA axis, so a histogram is generated
-rda_plot(mod_pRDA, rda_sig_z$rda_snps, rdaplot = TRUE, binwidth = 0.01)
+rda_plot(mod_pRDA, rda_sig_z$rda_snps, rdaplot = TRUE, manhattan = FALSE, binwidth = 0.01)
 ```
 
 ### Manhattan plot
