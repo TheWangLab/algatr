@@ -75,7 +75,6 @@ Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundan
 Other RDA functions: 
 \code{\link{rda_cor}()},
 \code{\link{rda_getoutliers}()},
-\code{\link{rda_loadings}()},
 \code{\link{rda_plot}()},
 \code{\link{rda_run}()},
 \code{\link{rda_table}()},

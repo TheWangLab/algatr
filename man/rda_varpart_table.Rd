@@ -4,12 +4,10 @@
 \alias{rda_varpart_table}
 \title{Create \code{gt} table with RDA variance partitioning results}
 \usage{
-rda_varpart_table(df, results, digits = 2, call_col = FALSE)
+rda_varpart_table(df, digits = 2, call_col = FALSE)
 }
 \arguments{
 \item{df}{dataframe of variance partitioning results output from \link[algatr]{rda_varpart}}
-
-\item{results}{results from \link[algatr]{rda_varpart}}
 
 \item{digits}{number of digits to include (defaults to 2)}
 
@@ -23,7 +21,6 @@ Other RDA functions:
 \code{\link{rda_cor}()},
 \code{\link{rda_do_everything}()},
 \code{\link{rda_getoutliers}()},
-\code{\link{rda_loadings}()},
 \code{\link{rda_plot}()},
 \code{\link{rda_run}()},
 \code{\link{rda_table}()},
