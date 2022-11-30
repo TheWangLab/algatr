@@ -30,7 +30,7 @@ library(readr)
 devtools::load_all()
 ```
 
-Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (environmental variables for sites from which samples were obtained). GDM calculates the compositional dissimilarity between pairs of sites, and importantly takes into account the fact that genetic data vary nonlinearly across an environmental gradient.
+Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (e.g., environmental variables for locations from which samples were obtained and geographic distances between those locations). GDM calculates the compositional dissimilarity between pairs of sites, and importantly allows for nonlinear relationships to be modeled.
 
 For additional information on GDM, please see [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x) for a description of its basic use in estimating patterns of beta diversity, [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x) for a classic example of its use, and [Fitzpatrick & Keller 2015](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376#:~:text=Community%2Dlevel%20modelling%20of%20genomic,assessments%20of%20climate%20change%20vulnerability.) and [Mokany et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13459) for perspectives on its application. Finally, our code primarily uses the gdm package which has excellent documentation (see [here](https://cran.r-project.org/web/packages/gdm/gdm.pdf)) including a thorough [vignette](https://cran.microsoft.com/snapshot/2018-01-13/web/packages/gdm/vignettes/gdmVignette.pdf) that describes some of the theory behind GDM.
 
@@ -50,6 +50,8 @@ Contained within `gdm_do_everything()` are the following functions, which we'll 
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes that each individual has its own sampling coordinates (even if population-based sampling was performed).
 
+TODO[EAC]: modify this so it is clear that this works for population based data (i.e., you should be able to provide allele frequencies/site based genetic distances and site locations instead of dosages/individual based genetic distances and individual locations). For example, if population based sampling is performed you can either use the individuals or the populations its just that the genetic data has to match.
+
 ### Read in and process input data
 
 Let's first load the objects within the example dataset.
@@ -60,7 +62,7 @@ load_example()
 
 ### Extract environmental variables
 
-To run GDM, we need to generate a site-pair table in which variables are extracted for each site. Because we only have environmental layers for our example dataset, we need to extract environmental variables from these layers for each sampling locality in which lizards were collected:
+To run GDM, we need to generate a site-pair table in which extracted you have extracted variable values for each site. Because we only have environmental layers for our example dataset, we need to extract the environmental values from these layers for each sampling locality in which lizards were collected:
 
 ```{r extract enviro vars}
 env <- extract(CA_env, liz_coords)
@@ -72,7 +74,9 @@ env <- extract(CA_env, liz_coords)
 
 ### GDM with all variables
 
-Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We can specify testing the full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
+Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We can specify running the full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
+
+TODO[EAC]: we should make it so that for gdm_run env can be a dataframe or a raster stack (just add a check at the start of the function that if env is a raster object (use the inherits function and check for RasterLayer and RasterStack or whatever they're called) you run raster::extract and if not you just leave it as is).
 
 ```{r gdm full}
 gdm_full <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "full", scale_gendist = TRUE)
@@ -80,7 +84,7 @@ gdm_full <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model
 
 ### GDM with model selection
 
-Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection with geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
+Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection without geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
 
 There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
@@ -139,7 +143,9 @@ gdm_table(gdm_full)
 
 ------------------------------------------------------------------------
 
-There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a PCA, and use the first three PC axes to assign to red, green, or blue scales. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector.
+There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a raster PCA on these environmental layers, and visualize the first three PC axes by assigning each axis to a red, green, or blue color scales to create an RGB plot. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector and coloring the individual points in the same PC RGB space.
+
+TODO[EAC]: What is "biological importance" and how is that treated "relative to genetic dissimiliarity"? aren't the layers just transformed based on the GDM I-splines (tbh haven't read this paper in a while so correct me if I am wrong)
 
 ```{r GDM plots, results='hide'}
 gdm_map(gdm_full$model, CA_env, liz_coords)
@@ -147,7 +153,7 @@ gdm_map(gdm_full$model, CA_env, liz_coords)
 
 ### Masking out irrelevant areas
 
-An important consideration for a researcher to be aware of is to not overinterpret GDM maps. In particular, areas with limited (or no) samples are still assigned values due to spatial interpolation; thus, it may be more helpful to mask out any areas with no sampling so as to not overinterpret these results. In looking at the map and PCA plot above, we can see that there are two regions in California that are lacking samples: the southeastern and north-central parts of the state. Using algatr's `extrap_mask()` function (see the masking vignette for more information), we can mask out areas from the GDM map in several ways. Below, we mask out areas (in white) that fall outside a user-defined buffer around our sampling coordinates.
+An important consideration for a researcher to be aware of is to not overinterpret GDM maps. In particular, areas with limited (or no) samples are still assigned values due to model extrapolation; thus, it may be more helpful to mask out any areas with no sampling so as to not overinterpret these results. In looking at the map and PCA plot above, we can see that there are two regions in California that are lacking samples: the southeastern and north-central parts of the state. Using algatr's `extrap_mask()` function (see the masking vignette for more information), we can mask out areas from the GDM map in several ways. Below, we mask out areas (in white) that fall outside a user-defined buffer around our sampling coordinates.
 
 ```{r gdm masked, warning=FALSE, fig.align='center', fig.width=5, fig.height=5}
 # Extract the GDM map from the GDM model object
