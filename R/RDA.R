@@ -85,7 +85,10 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
                  R2scope = R2scope)
 
   # If NULL, exit
-  if(is.null(mod)) stop("Model is NULL")
+  if(is.null(mod)) {
+    warning("Model is NULL, returning NULL object")
+    return(NULL)
+  }
 
   # get R-squared and run ANOVA
   mod_rsq <- vegan::RsquareAdj(mod)
