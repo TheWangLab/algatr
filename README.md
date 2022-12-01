@@ -6,8 +6,7 @@
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
 start-to-finish pipeline to perform various landscape genomics methods
-with their data. The algatr package is described in [Chambers, Bishop, &
-Wang 2022](REFER).
+with their data. The algatr package is described in [REFER](REFER).
 
 ## Installation
 
