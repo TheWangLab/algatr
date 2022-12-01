@@ -30,7 +30,9 @@ library(sf) # if doing map other way
 devtools::load_all()
 ```
 
-wingen is a package that uses a moving window approach to create continuous maps of genetic diversity. Please see [Bishop et al. 2022](REFER) for the paper describing the method, and refer to the [wingen package](https://github.com/AnushaPB/wingen) for further documentation.
+**If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. In review.**
+
+wingen is a package that uses a moving window approach to create continuous maps of genetic diversity. Please see [Bishop et al. 2022](TODO REFER) for the paper describing the method, and refer to the [wingen package](https://github.com/AnushaPB/wingen) for further documentation.
 
 Briefly, wingen takes in genetic data (in the form of a vcf), sampling coordinates, and a raster of a given study area. wingen then moves a window (of a user-specified size) across the landscape, and calculates genetic diversity for any samples that fall within this window. The focal cell (the size of which is determined by the raster layer inputted) is then assigned this resulting genetic diversity value, and the window continues sliding across the landscape. Users are able to specify not only window size, but can also aggregate cells to increase map continuity and decrease computational time, and can perform rarefaction of samples such that uneven sampling does not bias calculations. The resulting wingen map can be smoothed using kriging, and any areas that were undersampled (or fall outside an area of interest, such as a species range, for example) are masked.
 
@@ -38,7 +40,7 @@ There are four key functions within wingen:
 
 -   `window_gd()` to create a map of genetic diversity (this can be visualized using `preview_gd()`)
 
-TODO[EAC]: prevew_gd doesn't visualize window_gd, it provides a reference point for what the window and focal cell looks like relative to the landscape and what the sample count in each cell is given the parameters (idk how you want to incorporate this into the vignette)
+**TODO[EAC]: prevew_gd doesn't visualize window_gd, it provides a reference point for what the window and focal cell looks like relative to the landscape and what the sample count in each cell is given the parameters (idk how you want to incorporate this into the vignette)**
 
 -   `krig_gd()` for spatial interpolation (smoothing) of the resulting map using kriging
 
@@ -71,7 +73,7 @@ The `window_gd()` function takes in a vcf file (the `vcf` argument), sampling co
 
 There are a number of additional arguments within this function, and the wingen package documentation provides extensive explanations (and guidelines for testing) these parameters. Briefly, `fact` aggregates the input raster layer (by a given factor), `wdim` specifies the window dimensions, `rarify` specifies whether the user would like samples to be rarified (which then requires users to specify `rarify_n` and `rarify_nit`), and finally `parallel` specifies whether you would like to parallelize.
 
-TODO[EAC]:`fact` isn't just for decreasing computational speed, it can also help make the raster more continuous since each window will contain more samples. I have removed this point in some place, but you can add both back in (just don't only say the computational speed thing)
+**TODO[EAC]:`fact` isn't just for decreasing computational speed, it can also help make the raster more continuous since each window will contain more samples. I have removed this point in some place, but you can add both back in (just don't only say the computational speed thing)**
 
 ### Preview the moving window
 
@@ -116,7 +118,7 @@ plot_count(wgd, main = "Sample counts")
 
 ### Krige results
 
-TODO[EAC]: kriging isn't just about smoothing, maybe go back to the og paper and pull some pieces about kriging/interpolation (just that it uses a spatial model that provides better estimates as well as uncertainty estimates)
+**TODO[EAC]: kriging isn't just about smoothing, maybe go back to the og paper and pull some pieces about kriging/interpolation (just that it uses a spatial model that provides better estimates as well as uncertainty estimates)**
 
 Kriging is a type of spatial interpolation to allow for smoother maps of genetic diversity. We can krige our moving window map using the `krig_gd()` function by providing the results from the moving window, and a raster layer upon which kriging is performed (an "interpolation grid"); if no interpolation grid is provided, kriging will be done on the moving window layer. The `index` argument specifies which layer we want to krige across; in our case, we'll krige both layers 1 (genetic diversity) and 2 (sample counts) of the wgd object because we will eventually want to visualize both kriged maps. Kriging can be computationally intensive, but we can remedy this by aggregating the raster layer upon which kriging is performed using either the `agg_r` or `agg_grd` arguments depending on whether we want to aggregate across the moving window layer or the interpolation grid layer, respectively. In our case, given the resolution of `lyr`, we want to disaggregate by a factor of 5 to get a smoother interpolated surface, so we'll set `disagg_grd = 5`. If only the moving window layer is provided for kriging, we can use the `disagg_r` argument to set this parameter.
 
@@ -154,6 +156,8 @@ plot_gd(mgd, main = "Kriged & masked pi", bkg = envlayer)
 Next, let's mask areas based on sample count. Recall that above, we called `krig_gd()` using indices 1 and 2, which told wingen to krige on both the genetic diversity (pi) and sample count layers. We'll make use of the kriged sample count layer now by masking according to it. The `minval` argument specifies the minimum value below which areas will be masked, meaning that any areas that do not contain any samples will be masked. Let's compare two maps masked in this way with differing `minval` values.
 
 As you can see, more areas are masked as we increase `minval`.
+
+**TODO [EAC]: maybe switch this with above so there isn't weird buffer around results?**
 
 ```{r mask sample count, fig.align='center', fig.width=5, fig.height=5}
 mgd_1 <- mask_gd(kgd, kgd[["sample_count"]], minval = 1)

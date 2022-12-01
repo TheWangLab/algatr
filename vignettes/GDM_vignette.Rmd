@@ -17,10 +17,8 @@ knitr::opts_chunk$set(
 # Generalized dissimilarity modeling (GDM)
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(gdm)
-# library(remotes)
-# install_github("fitzLab-AL/gdm")
 library(here)
 library(tidyverse)
 library(raster)
@@ -29,6 +27,8 @@ library(readr)
 
 devtools::load_all()
 ```
+
+**If using GDM, please cite the following: for the GDM method, Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment, and for the `gdm` package, Fitzpatrick M., Mokany K., Manion G., Nieto-Lugilde D., Ferrier S. (2022). gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.**
 
 Generalized dissimilarity modeling (GDM) is a matrix regression method in which explanatory variables (in our case, genetic data, in the form of a distance matrix) is regressed against a response matrix (e.g., environmental variables for locations from which samples were obtained and geographic distances between those locations). GDM calculates the compositional dissimilarity between pairs of sites, and importantly allows for nonlinear relationships to be modeled.
 
@@ -89,14 +89,14 @@ There are a few additional considerations to make if running GDM with model sele
 *N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
 
 ```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
-# gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
+gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 500, sig = 0.05)
 ```
 
 Notice that the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains *TODO EAC DESCRIBE VARIMP; REMOVE COMMENTS ON BELOW LINES*.
 
 ```{r best preds}
 # Look at p-values
-# gdm_best$pvalues
+gdm_best$pvalues
 # gdm_best$varimp
 ```
 

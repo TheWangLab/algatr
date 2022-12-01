@@ -23,6 +23,8 @@ library(raster)
 devtools::load_all()
 ```
 
+**If using MMRR, please cite the following: Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifing geographic and ecological isolation. Evolution 67(1):3403-3411. DOI:10.1111/evo.12134**
+
 Multiple matrix regression with randomization ([Wang 2013](https://onlinelibrary.wiley.com/doi/full/10.1111/evo.12134)) examines how heterogeneity in the landscape (both geographic and environmental) affects spatial genetic variation, allowing a user to determine the relative contributions of isolation by distance (i.e., an association between genetic and geographic distances) and isolation by environment (i.e., an association between genetic and environmental distances). MMRR can provide information concerning how dependent variables (in our case, genetic data) change with respect to multiple independent variables (environmental and geographic distances).
 
 The randomization aspect of MMRR is that significance testing is performed through random permutations of the rows and columns of the dependent matrix (the genetic distances), which is necessary because of the non-independence of values in pairwise distance matrices. Once significance testing is completed, MMRR provides individual regression coefficients and p-values for each dependent variable and a "coefficient ratio," which is the ratio between regression coefficients, which thus provides an idea of the relative contributions of IBD and IBE in explaining variation in the genetic distances in your data.

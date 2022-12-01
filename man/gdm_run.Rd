@@ -22,7 +22,7 @@ gdm_run(
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
-\item{env}{dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
+\item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
 \item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
 
