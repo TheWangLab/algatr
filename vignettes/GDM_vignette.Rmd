@@ -50,7 +50,7 @@ Contained within `gdm_do_everything()` are the following functions, which we'll 
 
 There are a few assumptions built within this function that the user must be aware of: (1) the coords and gendist files *must* have the same ordering of individuals; there isn't a check for this, and (2) this function assumes that each individual has its own sampling coordinates (even if population-based sampling was performed).
 
-TODO[EAC]: modify this so it is clear that this works for population based data (i.e., you should be able to provide allele frequencies/site based genetic distances and site locations instead of dosages/individual based genetic distances and individual locations). For example, if population based sampling is performed you can either use the individuals or the populations its just that the genetic data has to match.
+Running a GDM analysis in algatr will work for both individual-based (i.e., one individual per sampling locality or population) or population-based sampling. The test dataset was performed using individual-based sampling, and so this vignette will walk users through running GDM with that sampling scheme. For population-based sampling, users should provide allele frequency or site-based genetic distances with site locations rather than dosage matrices with individual locations. Alternatively, users can select a single representative sample from each population to mimic individual-based sampling, if so desired; the most important consideration is to ensure that genetic data match sampling locations. The remainder of the analysis is identical.
 
 ### Read in and process input data
 
@@ -76,8 +76,6 @@ env <- extract(CA_env, liz_coords)
 
 Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We can specify running the full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
 
-TODO[EAC]: we should make it so that for gdm_run env can be a dataframe or a raster stack (just add a check at the start of the function that if env is a raster object (use the inherits function and check for RasterLayer and RasterStack or whatever they're called) you run raster::extract and if not you just leave it as is).
-
 ```{r gdm full}
 gdm_full <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "full", scale_gendist = TRUE)
 ```
@@ -89,8 +87,6 @@ Now, let's run a GDM using only significant variables (i.e., a "best" model). In
 There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
 *N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
-
-*TODO [EAC]: REMOVE COMMENTS ON BELOW LINES*.
 
 ```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
 # gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 50, sig = 0.05)
@@ -143,9 +139,7 @@ gdm_table(gdm_full)
 
 ------------------------------------------------------------------------
 
-There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance relative to genetic dissimilarity, run a raster PCA on these environmental layers, and visualize the first three PC axes by assigning each axis to a red, green, or blue color scales to create an RGB plot. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector and coloring the individual points in the same PC RGB space.
-
-TODO[EAC]: What is "biological importance" and how is that treated "relative to genetic dissimiliarity"? aren't the layers just transformed based on the GDM I-splines (tbh haven't read this paper in a while so correct me if I am wrong)
+There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance (i.e., based on the I-splines), run a raster PCA on these environmental layers, and visualize the first three PC axes by assigning each axis to a red, green, or blue color scales to create an RGB plot. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector and coloring the individual points in the same PC RGB space.
 
 ```{r GDM plots, results='hide'}
 gdm_map(gdm_full$model, CA_env, liz_coords)
@@ -184,7 +178,7 @@ gdm_full_everything <- gdm_do_everything(liz_gendist, liz_coords, envlayers = CA
 ------------------------------------------------------------------------
 
 |                       | Citation/URL                                                                                                                                                                                     | Details                                                       |
-|-----------------|------------------------------|-------------------------|
+|------------------|-----------------------------|-------------------------|
 | Associated code       | [Fitzpatrick et al. 2022](https://cran.r-project.org/web/packages/gdm/gdm.pdf)                                                                                                                   | algatr uses the `gdm()` package; manual contains walkthroughs |
 | Associated literature | [Ferrier et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2007.00341.x)                                                                                                      | Paper describing basic use of GDM                             |
 | Associated literature | [Freedman et al. 2010](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2010.04684.x)                                                                                                     | Classic example of using GDM                                  |
