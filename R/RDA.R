@@ -678,9 +678,9 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
   total_inertia <- mod_best$tot.chi
   full_inertia = df$inertia[1]
   confounded = as.numeric(
-    df$inertia[1] - (df %>%
-                       filter(rownames(df) %in% c('pure_env', 'pure_str', 'pure_geo')) %>%
-                       summarize(sum(inertia)))
+    full_inertia - (df %>%
+                   filter(rownames(df) %in% c('pure_env', 'pure_str', 'pure_geo')) %>%
+                   summarize(sum(inertia)))
   )
   total_unexpl = total_inertia - full_inertia
   results <- data.frame(total_inertia, full_inertia, confounded, total_unexpl)
