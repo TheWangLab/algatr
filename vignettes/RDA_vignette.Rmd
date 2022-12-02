@@ -14,13 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Redundancy analysis (RDA)
+# Redundancy analysis (RDA)
 
 ```{r setup, warning=FALSE, message=FALSE}
-# library(algatr)
+library(algatr)
 library(here)
 library(gt)
-# RDA
 library(vegan)
 library(raster)
 library(robust)
@@ -31,10 +30,12 @@ library(qvalue)
 devtools::load_all()
 ```
 
+**If using RDA, please cite the following: XXX**
+
 Redundancy analysis (RDA) is a genotype-environment association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental data) with ordination (a PCA). Importantly, both explanatory and response variables can be multivariate, which is part of the appeal of this method. 
 
 
-Model selection is performed by starting with a null model wherein the response is only explained by an intercept, and environmental variables are added until the amount of variance explained by a model that includes all variables is reached. By doing so, this method minimizes the *redundancy* among explanatory variables. Importantly, we can also perform an RDA that accounts for *covariables* (or "conditioning variables") such as those that account for neutral population structure. When covariables are included, this is called a **partial RDA**. In algatr, population structure is quantified by running a PCA on the genetic data, and selecting a number of PC axes to best represent this type of neutral variation. Users could also provide other values or data to account for neutral processes in their data, if so desired (TODO: How would they do this? is this an option? I think right now the code will only condition on PCs or coordinates).
+Model selection is performed by starting with a null model wherein the response is only explained by an intercept, and environmental variables are added until the amount of variance explained by a model that includes all variables is reached. By doing so, this method minimizes the *redundancy* among explanatory variables. Importantly, we can also perform an RDA that accounts for *covariables* (or "conditioning variables") such as those that account for neutral population structure. When covariables are included, this is called a **partial RDA**. In algatr, population structure is quantified by running a PCA on the genetic data, and selecting a number of PC axes to best represent this type of neutral variation. Users could also provide other values or data to account for neutral processes in their data, if so desired (**TODO: How would they do this? is this an option? I think right now the code will only condition on PCs or coordinates)**.
 
 
 Some of the earliest examples of uses of RDA for identifying environment-associated loci are [Lasky et al. 2012](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2012.05709.x) and [Forester et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/mec.13476). Since then, there have been several reviews and walkthroughs of the method that provide additional information, including workflows and comparisons with other GEA methods (e.g., [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)). Much of algatr's code is adapted from one such paper, [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722), the code of which is available [here](https://github.com/Capblancq/RDA-landscape-genomics). algatr's general workflow roughly follows the framework of Capblancq & Forester (2021).
@@ -112,7 +113,7 @@ Now, let's take a look at the summary of this model. One of the most important p
 head(summary(mod_full))
 ```
 
-One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased (TODO[EAC]: prob should explain why/how it is biased/just one sentence about # variables). The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
+One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased **(TODO[EAC]: prob should explain why/how it is biased/just one sentence about # variables)**. The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
 
 ```{r full Radj}
 RsquareAdj(mod_full)

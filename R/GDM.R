@@ -4,7 +4,7 @@
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
-#' @param env dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
+#' @param env dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
 #' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)
 #' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
@@ -78,6 +78,9 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL){
 
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
+
+  # Extract environmental data if env is a RasterStack
+  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
 
   # Rename coords
   coords <- dplyr::as_tibble(coords)

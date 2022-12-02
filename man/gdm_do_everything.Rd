@@ -25,7 +25,7 @@ gdm_do_everything(
 
 \item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
 
-\item{env}{dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
+\item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
 \item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
 
