@@ -104,16 +104,16 @@ An important first check for any landscape genomics analysis is to detect collin
 
 The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.7.
 
-```{r collin env, results='hide'}
+```{r collin env, results='hide', fig.width = 10, fig.height = 10}
 # Convert wclim from SpatRaster to RasterStack
 wclim_stack <- stack(wclim)
 
-# Check for collinearity; the result is a matrix with pairwise correlation coefficients
+# Check for collinearity; the result is a list containting (1) a dataframe of correlated environmental pairs that fall above the threshold and (2) a correlation matrix with all pairwise correlation coefficients
 cors_env <- check_env(wclim_stack)
-# There are many pairs of layers that have correlation coefficients > 0.5.
+# There are many pairs of layers that have correlation coefficients > 0.7 (the default threshold)
 ```
 
-```{r collin env CA}
+```{r collin env CA, fig.width = 10, fig.height = 10}
 # For the sake of argument, we can also run this function on the CA_env object:
 check_env(CA_env)
 # None of the pairwise comparisons exceed the threshold value
@@ -123,9 +123,10 @@ check_env(CA_env)
 
 Similar to the above, the `check_vals()` function determines collinearity using Pearson's correlation coefficients, but it does so on extracted environmental variables at each of the sampling coordinates.
 
-```{r collin vals}
+```{r collin vals, fig.width = 10, fig.height = 10}
 # Once again, we can see that there are many pairs of variables that exceed the threshold.
-check_vals(wclim_stack, liz_coords)
+check_result <- check_vals(wclim_stack, liz_coords)
+head(check_result$cor_pairs)
 ```
 
 ```{r collin vals CA}
@@ -137,8 +138,11 @@ check_vals(CA_env, liz_coords)
 
 The `check_dists()` function determines collinearity between geographic and environmental distances. It does so by extracting values at sampling coordinates, and then calculating geographic and environmental distances (of a user-specified metric; the default is Euclidean) and runs a Mantel test on resulting distances. It will output the p-value and Mantel's r and indicate which distances are significantly correlated.
 
+TODO[EAC]: THe instructions above need to be corrected. Currently the environmental distances can only be calculated with a euclidean distance. The geographic distance is the one that is flexible. Not sure how to explain that best.
+
 ```{r collin dists}
-check_dists(wclim_stack, liz_coords)
+check_results <- check_dists(wclim_stack, liz_coords)
+head(check_results$mantel_df)
 ```
 
 ```{r collin dists CA}
