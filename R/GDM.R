@@ -207,11 +207,11 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 #' @examples
 gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
-  # TODO: GDM ERROR IS WITHIN THIS FUNCTION
   vars <- gdm::gdm.varImp(gdmData,
                      geo = FALSE,
                      splines = NULL,
-                     nPerm = nperm)
+                     nPerm = nperm,
+                     predSelect = TRUE)
 
   # Get p-values from variable selection model
   pvalues <- vars[[3]]
