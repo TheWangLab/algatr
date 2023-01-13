@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # Processing environmental data for landscape genomics
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(terra)
 library(raster)
 library(geodata)
@@ -28,6 +28,7 @@ library(ggplot2)
 library(tidyr)
 library(RStoolbox)
 library(gridExtra)
+library(wingen)
 
 devtools::load_all()
 ```
@@ -46,7 +47,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
 -   `rasterPCA()` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
--   `coords_to_raster()` to create a raster layer from coordinate data
+-   `coords_to_raster()` to create a raster layer from coordinate data (using the wingen package)
 
 -   `env_dist()` to calculate environmental distances
 
@@ -303,7 +304,7 @@ topo_dist %>%
 ------------------------------------------------------------------------
 
 |                          | Citation/URL                                                                                                                                                            | Details                                                                                    |
-|---------------|--------------------------------------|--------------------|
+|-----------------|------------------------------------|-------------------|
 | Associated code          | terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)) | algatr largely uses terra and raster packages to process and manipulate environmental data |
 | Associated documentation | Walkthroughs for terra [here](https://rspatial.org/terra/) and raster [here](https://rspatial.org/raster/pkg/index.html)                                                |                                                                                            |
 | Associated code          | [Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist)                                                                                                     | algatr uses the geodist package to calculate Euclidean distances                           |
