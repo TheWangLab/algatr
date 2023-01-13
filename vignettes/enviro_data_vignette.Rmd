@@ -153,7 +153,7 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. The result of this function is an object containing multiple layers of PCA scores.
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. The result of this function is a list containing the model information, and a RasterBrick object containing multiple layers of PCA scores. One can also use the `nComp` argument to only extract the top n PCs; in many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
 
 ```{r raster PCA}
 env_pcs <- rasterPCA(wclim, spca = TRUE)
@@ -165,7 +165,7 @@ grid.arrange(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
 
 ```{r comp raster}
 # We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
-ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
+ggRGB(env_pcs$map,1,2,3, stretch="lin", q = 0)
 ```
 
 ## Create raster from coordinates with wingen: `coords_to_raster()`
