@@ -26,6 +26,7 @@ library(viridis)
 library(terra)
 # devtools::install_github("bcm-uga/TESS3_encho_sen")
 library(tess3r)
+library(wingen)
 
 # Need LEA library for cross entropy
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -73,7 +74,7 @@ liz_dosage <- vcf_to_dosage(liz_vcf)
 
 algatr can create interpolated maps of the ancestry coefficient estimates using a method known as kriging, which uses a spatially explicit model for spatial interpolation. *N.B.: Be aware that tess3r uses a different type of kriging to generate maps of ancestry coefficients (algatr uses the `autoKrige()` function within the automap package), and tess3r performs this interpolation and plotting in the same function, so there is no easy way to produce a raster output.*
 
-To generate a map, we need a raster onto which we can map Q values. We can either retrieve this, or generate one ourselves using the `coords_to_raster()` function. Please refer to the environmental data vignette for further information on this function.
+To generate a map, we need a raster onto which we can map Q values. We can either retrieve this, or generate one ourselves using wingen's `coords_to_raster()` function. Please refer to the wingen documentation found [here](https://github.com/AnushaPB/wingen), and the environmental data vignette, for further information on this function.
 
 ```{r raster, fig.align = 'center'}
 # First, create a RasterLayer for kriging

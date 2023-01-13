@@ -169,11 +169,11 @@ grid.arrange(plots[[1]],plots[[2]], plots[[3]], ncol=1)
 ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
 ```
 
-## Create raster from coordinates with `coords_to_raster()`
+## Create raster from coordinates with wingen: `coords_to_raster()`
 
 ------------------------------------------------------------------------
 
-In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument). This raster does not have any meaningful values assigned to it, but can be used to create maps of genetic diversity in wingen (see the wingen vignette).
+In some cases, we may not have a raster already prepared. Using the wingen package, we can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument). This raster does not have any meaningful values assigned to it, but can be used to create maps of genetic diversity in wingen (see the wingen vignette).
 
 ```{r coords to raster}
 raster <- coords_to_raster(liz_coords, res = 1)
@@ -303,7 +303,7 @@ topo_dist %>%
 ------------------------------------------------------------------------
 
 |                          | Citation/URL                                                                                                                                                            | Details                                                                                    |
-|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+|---------------|--------------------------------------|--------------------|
 | Associated code          | terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)) | algatr largely uses terra and raster packages to process and manipulate environmental data |
 | Associated documentation | Walkthroughs for terra [here](https://rspatial.org/terra/) and raster [here](https://rspatial.org/raster/pkg/index.html)                                                |                                                                                            |
 | Associated code          | [Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist)                                                                                                     | algatr uses the geodist package to calculate Euclidean distances                           |

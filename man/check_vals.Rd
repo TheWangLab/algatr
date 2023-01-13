@@ -4,7 +4,7 @@
 \alias{check_vals}
 \title{Check extracted values for collinearity}
 \usage{
-check_vals(envlayers, coords, threshold = 0.5)
+check_vals(envlayers, coords, threshold = 0.7)
 }
 \arguments{
 \item{envlayers}{A RasterStack of data layers}
