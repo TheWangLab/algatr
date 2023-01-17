@@ -91,11 +91,11 @@ There are a few additional considerations to make if running GDM with model sele
 gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 500, sig = 0.05)
 ```
 
-Within the `gdm_best` object, notice that the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains *TODO EAC DESCRIBE VARIMP; REMOVE COMMENTS ON BELOW LINES*.
+Within the `gdm_best` object, notice that the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains information about variable importance and relevant statistics about the model. *TODO MAKE DECISION ABOUT BEST*.
 
 ```{r best preds}
 # Look at p-values
-gdm_best$pvalues
+# gdm_best$pvalues
 # gdm_best$varimp
 ```
 
