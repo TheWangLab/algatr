@@ -12,6 +12,8 @@
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #'
+#' @family LFMM functions
+#'
 #' @details
 #' LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
 #' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860.
@@ -66,7 +68,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 #' Run LFMM
 #'
 #' @inheritParams lfmm_do_everything
-#'
+#' @family LFMM functions
 #' @export
 #'
 lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif"){
@@ -121,6 +123,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 #' @return tidy dataframe with LFMM results with each SNP, its p-value, association with env var and other relevant statistics
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 lfmm_df <- function(x){
   # Extract names of elements from lfmm_test_result
@@ -141,6 +144,7 @@ lfmm_df <- function(x){
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 lfmm_test_tidy <- function(colname, lfmm_test_result){
   x <- lfmm_test_result[[colname]]
@@ -170,6 +174,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #' @return table of LFMM results
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE, p_adj = "fdr"){
 
@@ -229,6 +234,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #'
 #' @return prints the best K value given the specified K selection procedure
 #' @export
+#' @family LFMM functions
 #'
 #' @examples
 select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
@@ -259,6 +265,7 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 select_K_tw <- function(gen, criticalpoint = 2.0234){
   # Turn gen into df
@@ -289,6 +296,7 @@ select_K_tw <- function(gen, criticalpoint = 2.0234){
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
   # Run PCA
@@ -319,6 +327,7 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
   # Run TESS for all K values
@@ -342,6 +351,7 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
                         criterion = "diffNgroup", max.n.clust = 10){
@@ -375,6 +385,8 @@ select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clu
 #' @param max.pc maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n')
 #' @return the number of principal components to keep, prior to the determined elbow cutoff
 #' @export
+#' @family LFMM functions
+#'
 #' @seealso \code{\link{estimate.eig.vpcs}}
 #' @author Nicholas Cooper
 #' @examples
@@ -434,6 +446,7 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
 #' @return a QQ-plot
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 lfmm_qqplot <- function(df){
 
@@ -457,6 +470,7 @@ lfmm_qqplot <- function(df){
 #' @return
 #' @export
 #'
+#' @family LFMM functions
 #' @examples
 lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
 
