@@ -20,7 +20,7 @@ check_env <- function(envlayers, threshold = 0.7){
 #' @param coords dataframe with x and y sample coordinates
 #' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric)
 #'
-#' @return A matrix of correlation coefficients
+#' @return a matrix of correlation coefficients
 #'
 #' @export
 check_vals <- function(envlayers, coords, threshold = 0.7){
