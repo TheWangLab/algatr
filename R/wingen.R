@@ -12,7 +12,8 @@
 #' @inheritParams wingen::plot_count
 #'
 #' @return RasterBrick object final raster
-#' @family wingen function
+#'
+#' @family wingen functions
 #'
 #' @details
 #' When using wingen, please cite the original citation: Bishop, A.P., Chambers, E.A., Wang, I.J. (202X) TODO: citation
@@ -97,7 +98,7 @@ krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd =
 #'
 #' @return number of cells contained in final (aggregated or disaggregated) raster layer
 #' @export
-#' @family wingen function
+#' @family wingen functions
 #'
 #' @examples
 krig_agg_helper <- function(to_krig, agg_disagg, agg_spec = "agg"){
