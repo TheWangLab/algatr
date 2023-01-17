@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param K_selection how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
+#' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
+tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
                       plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
                       tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE){
 
@@ -96,7 +96,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
 #' @family TESS functions
 #'
 #' @examples
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "auto", ploidy = 2){
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2){
 
   # Format coordinates
   coords <- as.matrix(coords)

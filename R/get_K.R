@@ -1,8 +1,10 @@
 
-#' Function to Select K value
+#' Function to select K value
+#'
+#' TODO[EAC]: add find.clusters code here and add function below
 #'
 #' @param gen genotype matrix
-#' @param k_selection method for performing K selection: "tracy_widom", "quick_elbow", or "tess"
+#' @param k_selection method for performing K selection: "tracy_widom" (default), "quick_elbow", "tess", or "dapc"
 #' @param coords coordinates for TESS-based K selection
 #'
 #' @return
@@ -20,7 +22,7 @@ get_K <- function(gen, coords = NULL, k_selection = "tracy_widom", Kvals = Kvals
   return(K)
 }
 
-#' @describeIn get_K Determine K using Tracy-Widom Test
+#' @describeIn get_K determine K using Tracy-Widom Test
 #' @param gen genotype matrix
 #'
 #' @return
@@ -74,7 +76,7 @@ get_K_elbow <- function(gen){
 }
 
 
-#' @describeIn get_K Determine K using TESS and \code{bestK}
+#' @describeIn get_K determine K using TESS and \code{bestK}
 #'
 #' @param gen genotype matrix
 #' @param coords coordinates for "tess"
