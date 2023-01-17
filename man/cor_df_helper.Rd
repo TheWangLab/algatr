@@ -4,7 +4,7 @@
 \alias{cor_df_helper}
 \title{Helper function to create correlation dataframe from matrix and filter based on threshold}
 \usage{
-cor_df_helper(cor, threshold)
+cor_df_helper(cors, threshold)
 }
 \description{
 Helper function to create correlation dataframe from matrix and filter based on threshold
