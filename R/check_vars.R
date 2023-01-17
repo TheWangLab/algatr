@@ -45,12 +45,12 @@ check_vals <- function(envlayers, coords, threshold = 0.7){
 #'
 #' @export
 check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05){
-  valsNA <- raster::extract(envlayers, coords)
+  vals <- raster::extract(envlayers, coords)
 
-  if(sum(!complete.cases(valsNA))){
-    warning("removing ", sum(!complete.cases(valsNA)), " locations with environmental NA values for Mantel test")
-    vals <- valsNA[complete.cases(valsNA),]
-    coords <- coords[complete.cases(valsNA),]
+  if(sum(!complete.cases(vals))){
+    warning("removing ", sum(!complete.cases(vals)), " locations with environmental NA values for Mantel test")
+    vals <- valsNA[complete.cases(vals),]
+    coords <- coords[complete.cases(vals),]
   }
 
   edists <- env_dist(vals)
@@ -83,7 +83,9 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
 
 #' Helper function to create correlation dataframe from matrix and filter based on threshold
 #'
-cor_df_helper <- function(cor, threshold){
+cor_df_helper <- function(cors, threshold){
+  # TODO[APB]: I added line below
+  cors <- cors$`pearson correlation coefficient`
   cor_df <-
     data.frame(var1 = rownames(cors)[row(cors)[upper.tri(cors)]],
                var2 = colnames(cors)[col(cors)[upper.tri(cors)]],
