@@ -15,6 +15,7 @@
 #'
 #' @return
 #' @export
+#' @family MMRR functions
 #'
 #' @examples
 mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
@@ -49,6 +50,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999
 #' @return
 #' @export
 #'
+#' @family MMRR functions
 #' @examples
 mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
@@ -86,6 +88,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "
 #' @return
 #' @export
 #'
+#' @family MMRR functions
 #' @examples
 mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all"){
 
@@ -116,6 +119,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
 #' @param X is a list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
+#' @family MMRR functions
 mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
   # Fit full model
   mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
@@ -147,6 +151,8 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
 #' @details
 #' When using MMRR, please cite the original citation:
 #' Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
+#'
+#' @family MMRR functions
 #' @export
 MMRR <- function(Y, X, nperm = 999, scale = TRUE){
   # Compute regression coefficients and test statistics
@@ -201,6 +207,7 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
 #'
 #' @param X is a distance matrix
 #' @param scale if TRUE then matrices will be standardized (defaults to TRUE)
+#' @family MMRR functions
 unfold <- function(X, scale = TRUE){
   x <- vector()
   for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
@@ -216,6 +223,7 @@ unfold <- function(X, scale = TRUE){
 #' @return
 #' @export
 #'
+#' @family MMRR functions
 #' @examples
 mmrr_df <- function(mod){
   coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
@@ -240,6 +248,7 @@ mmrr_df <- function(mod){
 #' @return
 #' @export
 #'
+#' @family MMRR functions
 #' @examples
 mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL){
 
@@ -259,6 +268,7 @@ mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, v
 #'
 #' @export
 #' @noRd
+#' @family MMRR functions
 mmrr_plot_vars <- function(Y, X, stdz = TRUE){
   # Unfold X and Y
   y <- unfold(Y, scale = stdz)
@@ -286,6 +296,7 @@ mmrr_plot_vars <- function(Y, X, stdz = TRUE){
 #'
 #' @inheritParams mmrr_plot
 #'
+#' @family MMRR functions
 #' @export
 #' @noRd
 mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
@@ -320,6 +331,7 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
 #'
 #' @inheritParams mmrr_plot
 #'
+#' @family MMRR functions
 #' @export
 #' @noRd
 mmrr_plot_cov <- function(X, stdz = TRUE){
@@ -345,6 +357,7 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
 #' @return An object of class `gt_tbl`
 #' @export
 #'
+#' @family MMRR functions
 mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
 
   mmrr_df <- mmrr_results$coeff_df
