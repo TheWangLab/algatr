@@ -86,7 +86,7 @@ questions fall into four broad categories of analyses.
 </thead>
 <tbody>
 <tr class="odd">
-<td>How is genetic variation structured spatially?</td>
+<td>What is the spatial structure of genetic variation?</td>
 <td>Structure</td>
 <td>TESS (Caye et al. 2016)</td>
 <td>TESS_vignette.Rmd</td>
@@ -106,8 +106,8 @@ Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
 <tr class="odd">
-<td>What regions of the genome show evidence of climate
-associations?</td>
+<td>What regions of the genome are associated with climate
+variation?</td>
 <td>Genotype-environment associations (GEA)</td>
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
@@ -117,7 +117,7 @@ associations?</td>
 <p><code>lfmm_do_everything()</code></p></td>
 </tr>
 <tr class="even">
-<td>How is intraspecific genetic diversity distributed spatially?</td>
+<td>How is genetic diversity distributed across space?</td>
 <td>Genetic diversity</td>
 <td>Moving windows of genetic diversity; wingen (Bishop et
 al. 2022)</td>
