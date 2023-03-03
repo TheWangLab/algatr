@@ -675,5 +675,5 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 #' @export
 #'
 #' @examples
-scale01 <- function(x){(x-min(x))/(max(x)-min(x))}
+scale01 <- function(x){(x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))}
 
