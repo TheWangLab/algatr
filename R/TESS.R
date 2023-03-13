@@ -30,9 +30,6 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   # Convert vcf to dosage
   if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
-  # Convert RasterLayer/Stack/Brick to SpatRaster
-  if(!inherits(grid, "SpatRaster")) grid <- terra::rast(grid)
-
   # Convert coords to matrix
   coords <- as.matrix(coords)
 
@@ -148,6 +145,9 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #'
 #' @examples
 tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
+
+  # Convert RasterLayer/Stack/Brick to SpatRaster
+  if(!inherits(grid, "SpatRaster")) grid <- terra::rast(grid)
 
   # Get K
   K <- ncol(qmat)
