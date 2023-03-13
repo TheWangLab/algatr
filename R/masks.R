@@ -2,8 +2,11 @@
 #' Create raster mask based on coordinates
 #'
 #' @description Creates a raster that can be used to mask areas falling outside the observation range of a dataset, as defined by coordinates and corresponding raster values
+#'
 #' @param method method to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.
+#'
 #' @return raster mask where values of 1 indicate areas that fall outside of observation range
+#'
 #' @details method can either be:
 #' 1. range - uses \code{\link{range_mask}}, mask all areas with values outside of the range of any of the values of the coords
 #' 2. sd - uses \code{\link{sd_mask}}, mask all areas outside the mean +/- stdev*nsd of any of the values of the coords (\code{nsd} defaults to 2)
@@ -37,6 +40,7 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
   return(map_mask)
 
 }
+
 
 #' Create raster mask based on range of data
 #'
@@ -151,6 +155,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
   return(map_mask)
 }
 
+
 #' Mask rasters based on convex hull around points
 #'
 #' @describeIn extrap_mask mask based on range of data
@@ -188,6 +193,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
   return(map_mask)
 
 }
+
 
 #' Plot mask on top of map
 #'

@@ -26,6 +26,7 @@ library(viridis)
 library(terra)
 # devtools::install_github("bcm-uga/TESS3_encho_sen")
 library(tess3r)
+library(wingen)
 
 # Need LEA library for cross entropy
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -44,6 +45,8 @@ library(rworldmap)
 
 devtools::load_all()
 ```
+
+**If using TESS, please cite the following: Caye K., Deist T.M., Martins H., Michel O., François O. (2016) TESS3: fast inference of spatial population structure and genome scans for selection. Molecular Ecology Resources 16(2):540-548. DOI: 10.1111/1755-0998.12471.**
 
 TESS is a method to estimate population structure using ancestry coefficient estimates. As with STRUCTURE, one first describes genetic variation by assigning individuals according to numbers of clusters (K values). Given the "best" number of K values, individuals are then given proportions to which they belong to each K. These proportions correspond to ancestry coefficients, and can be interpreted as the proportion of an individual's ancestry belonging to different ancestral groups.
 
@@ -71,7 +74,7 @@ liz_dosage <- vcf_to_dosage(liz_vcf)
 
 algatr can create interpolated maps of the ancestry coefficient estimates using a method known as kriging, which uses a spatially explicit model for spatial interpolation. *N.B.: Be aware that tess3r uses a different type of kriging to generate maps of ancestry coefficients (algatr uses the `autoKrige()` function within the automap package), and tess3r performs this interpolation and plotting in the same function, so there is no easy way to produce a raster output.*
 
-To generate a map, we need a raster onto which we can map Q values. We can either retrieve this, or generate one ourselves using the `coords_to_raster()` function. Please refer to the environmental data vignette for further information on this function.
+To generate a map, we need a raster onto which we can map Q values. We can either retrieve this, or generate one ourselves using wingen's `coords_to_raster()` function. Please refer to the wingen documentation found [here](https://github.com/AnushaPB/wingen), and the environmental data vignette, for further information on this function.
 
 ```{r raster, fig.align = 'center'}
 # First, create a RasterLayer for kriging
@@ -87,7 +90,7 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 ------------------------------------------------------------------------
 
-algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
+algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
 
 ### Manual K selection
 
@@ -95,7 +98,7 @@ A user can run TESS on a set of K values ranging from 1-10, and select the "best
 
 ### Automatic K selection
 
-The default K selection (`"auto"`) within the `tess_ktest()` function is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
+**TODO [EAC] CHANGE THIS** The default K selection (`"auto"`) within the `tess_ktest()` function is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
 
 The resulting object contains `tess3_obj`, which provides the cross-validation scores for the different K values that were tested. Let's do the automatic K-value testing procedure once again for K values 1-10. As you can see, the `tess_ktest()` function outputs a plot with cross-validation scores for each K value, with a red dashed line indicating the best K value obtained from the automatic K selection procedure described above.
 
@@ -262,7 +265,7 @@ results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1
 ------------------------------------------------------------------------
 
 |                       | Citation/URL                                                                                                                                                                      | Details                                         |
-|-----------------|------------------------------|-------------------------|
+|------------------|-----------------------------|-------------------------|
 | Main literature       | [Caye et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12471); vignette available [here](https://bcm-uga.github.io/TESS3_encho_sen/articles/main-vignette.html) | Citation for TESS3                              |
 | Associated literature | [François et al. 2006](https://academic.oup.com/genetics/article/174/2/805/6061653?login=false)                                                                                   | Details on algorithm used by TESS               |
 | Associated literature | [Chen et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1471-8286.2007.01769.x)                                                                                          | Details on algorithm used by TESS               |

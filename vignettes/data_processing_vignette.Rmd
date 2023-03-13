@@ -79,7 +79,7 @@ The way to call this function is as follows:
 
 `vcf_ldpruned <- ld_prune(vcf = "test.vcf", out_name = "liz", out_format = "vcf", ld.threshold = 0.9, slide.max.n = 10)`
 
-We will not be running this function within the vignette to avoid generating intermediate files, but this example line creates a new directory called liz_LDpruned, and it contains five files: a LOGFILE, with information on how many sites were pruned and how many remain, three gds files (pre- and post-pruned SNP GDS files and a GDS SeqArray file), and the pruned vcf. All of these output files are named such that the `ld.threshold` and `slide.max.n` parameter settings are contained in file names.
+We will not be running this function within the vignette to avoid generating intermediate files, but the example line above creates a new directory called liz_LDpruned, and it contains five files: a LOGFILE, with information on how many sites were pruned and how many remain, three gds files (pre- and post-pruned SNP GDS files and a GDS SeqArray file), and the pruned vcf. All of these output files are named such that the `ld.threshold` and `slide.max.n` parameter settings are contained in file names.
 
 ## Additional documentation and citations
 

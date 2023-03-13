@@ -22,7 +22,7 @@ gdm_run(
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
-\item{env}{dataframe with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
+\item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
 \item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
 
@@ -45,11 +45,13 @@ Run GDM and return model object
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
+\code{\link{gdm_df}()},
 \code{\link{gdm_do_everything}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_diss}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
+\code{\link{gdm_table}()},
 \code{\link{gdm_var_select}()},
 \code{\link{scale01}()}
 }

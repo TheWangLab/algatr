@@ -36,11 +36,13 @@ Make map from model
 \seealso{
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
+\code{\link{gdm_df}()},
 \code{\link{gdm_do_everything}()},
 \code{\link{gdm_plot_diss}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
+\code{\link{gdm_table}()},
 \code{\link{gdm_var_select}()},
 \code{\link{scale01}()}
 }

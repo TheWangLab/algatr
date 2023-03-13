@@ -4,63 +4,55 @@
 #' @param envlayers a RasterStack of data layers
 #' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)
 #'
-#' @return A matrix of correlation coefficients
+#' @return a matrix of correlation coefficients
 #'
 #' @export
 check_env <- function(envlayers, threshold = 0.7){
   cors <- raster::layerStats(envlayers, stat = "pearson", na.rm = TRUE)
-  cors.m <- as.matrix(cors[[1]])
-  counter <- 0
-  for(i in 1:(nrow(cors.m) - 1)){
-    for(j in (i + 1):ncol(cors.m)){
-      if(abs(cors.m[i, j]) >= threshold){
-        message(paste0("Layers ", rownames(cors.m)[i], " and ", colnames(cors.m)[i], " have a correlation coefficient of ", cors.m[i, j], "."))
-        counter <- counter + 1
-      }
-    }
-  }
-  if(counter == 1) message(paste0("Warning: 1 pair of layers had a correlation coefficient > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing raster PCA before proceeeding."))
-  else if(counter > 1) message(paste0("Warning: ", counter, " pairs of layers had correlation coefficients > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing raster PCA before proceeeding."))
-  return(cors.m)
+  cor_df <- cor_df_helper(cors, threshold)
+  return(list(cor_df = cor_df, cor_matrix = cors))
 }
 
+
 #' Check extracted values for collinearity
-#' @param envlayers A RasterStack of data layers
-#' @param coords Dataframe with x and y sample coordinates.
-#' @param threshold The cutoff correlation coefficient for flagging variables as collinear (numeric)
 #'
-#' @return A matrix of correlation coefficients
+#' @param envlayers a RasterStack of data layers
+#' @param coords dataframe with x and y sample coordinates
+#' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric)
+#'
+#' @return a matrix of correlation coefficients
 #'
 #' @export
-check_vals <- function(envlayers, coords, threshold = 0.5){
+check_vals <- function(envlayers, coords, threshold = 0.7){
   vals <- raster::extract(envlayers, coords)
   if(length(which(is.na(vals))) > 0) warning("NA values detected in extracted variables.")
   cors <- cor(vals, use = "na.or.complete", method = "pearson")
-  counter <- 0
-  for(i in 1:(nrow(cors) - 1)){
-    for(j in (i + 1):ncol(cors)){
-      if(abs(cors[i, j]) >= threshold){
-        message(paste0("Variables ", rownames(cors)[i], " and ", colnames(cors)[i], " have a correlation coefficient of ", cors[i, j], "."))
-        counter <- counter + 1
-      }
-    }
-  }
-  if(counter == 1) message(paste0("Warning: The extracted values for 1 pair of variables had a correlation coefficient > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing PCA before proceeeding."))
-  else if(counter > 1) message(paste0("Warning: The extracted values for ", counter, " pairs of variables had correlation coefficients > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing PCA before proceeeding."))
-  return(cors)
+  cor_df <- cor_df_helper(cors, threshold)
+  corrplot::corrplot.mixed(cors, upper = "ellipse", tl.pos = "lt")
+  return(list(cor_df = cor_df, cor_matrix = cors))
 }
 
+
 #' Check geographic and environmental distances for collinearity
-#' @param envlayers A RasterStack of data layers
-#' @param coords Dataframe with x and y sample coordinates.
-#' @param type The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.
+#'
+#' @param envlayers a RasterStack of data layers
+#' @param coords dataframe with x and y sample coordinates
+#' @param sig significance threshold for Mantel test
+#' @param type the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
 #' @param lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #'
-#' @return A list with matrices of p-values and Mantel's r
+#' @return a list with (1) a dataframe of significantly correlated variables, (2) a matrix of p-values, (3) a matrix of Mantel's r
 #'
 #' @export
-check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL){
+check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05){
   vals <- raster::extract(envlayers, coords)
+
+  if(sum(!complete.cases(vals))){
+    warning("removing ", sum(!complete.cases(vals)), " locations with environmental NA values for Mantel test")
+    vals <- valsNA[complete.cases(vals),]
+    coords <- coords[complete.cases(vals),]
+  }
+
   edists <- env_dist(vals)
   gdist <- geo_dist(coords, type = type, lyr = lyr)
   gdist <- list(geo = gdist)
@@ -76,17 +68,33 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL){
     }
   }
 
-  counter <- 0
-  for(i in 1:(nrow(p) - 1)){
-    for(j in (i + 1):ncol(p)){
-      if(p[i, j] <= 0.05){
-        message(paste0(rownames(p)[i], " distances and ", rownames(p)[j], " are significantly correlated (p = ", p[i,j], " Mantel's r = ", r[i, j], "."))
-        counter <- counter + 1
-      }
-    }
-  }
-  if(counter == 1) message(paste0("Warning: The distances for 1 pair of variables are sifnicantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing PCA before proceeeding."))
-  else if(counter > 1) message(paste0("Warning: The distances for ", counter, " pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing PCA before proceeeding."))
-  return(list(p, r))
+  mantel_df <-
+    data.frame(var1 = rownames(p)[row(p)[upper.tri(p)]],
+               var2 = rownames(p)[col(p)[upper.tri(p)]],
+               p = p[upper.tri(p)],
+               r = r[upper.tri(r)]) %>%
+    dplyr::filter(p < sig)
+
+  if(nrow(mantel_df) == 1) message(paste0("Warning: The distances for 1 pair of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  else if(nrow(mantel_df) > 1) message(paste0("Warning: The distances for ", nrow(mantel_df), " pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  return(list(mantel_df = mantel_df, p = p, r = r))
+}
+
+
+#' Helper function to create correlation dataframe from matrix and filter based on threshold
+#'
+cor_df_helper <- function(cors, threshold){
+  # TODO[APB]: I added line below
+  cors <- cors$`pearson correlation coefficient`
+  cor_df <-
+    data.frame(var1 = rownames(cors)[row(cors)[upper.tri(cors)]],
+               var2 = colnames(cors)[col(cors)[upper.tri(cors)]],
+               r = cors[upper.tri(cors)]) %>%
+    dplyr::filter(r > threshold)
+
+  if(nrow(cor_df) == 1) message(paste0("Warning: The extracted values for 1 pair of variables had a correlation coefficient > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  else if(nrow(cor_df) > 1) message(paste0("Warning: The extracted values for ", nrow(cor_df), " pairs of variables had correlation coefficients > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+
+  return(cor_df)
 }
 

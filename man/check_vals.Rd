@@ -4,17 +4,17 @@
 \alias{check_vals}
 \title{Check extracted values for collinearity}
 \usage{
-check_vals(envlayers, coords, threshold = 0.5)
+check_vals(envlayers, coords, threshold = 0.7)
 }
 \arguments{
-\item{envlayers}{A RasterStack of data layers}
+\item{envlayers}{a RasterStack of data layers}
 
-\item{coords}{Dataframe with x and y sample coordinates.}
+\item{coords}{dataframe with x and y sample coordinates}
 
-\item{threshold}{The cutoff correlation coefficient for flagging variables as collinear (numeric)}
+\item{threshold}{the cutoff correlation coefficient for flagging variables as collinear (numeric)}
 }
 \value{
-A matrix of correlation coefficients
+a matrix of correlation coefficients
 }
 \description{
 Check extracted values for collinearity

@@ -12,7 +12,7 @@ check_env(envlayers, threshold = 0.7)
 \item{threshold}{the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)}
 }
 \value{
-A matrix of correlation coefficients
+a matrix of correlation coefficients
 }
 \description{
 Check environmental layers for collinearity

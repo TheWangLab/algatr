@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # Processing environmental data for landscape genomics
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(terra)
 library(raster)
 library(geodata)
@@ -28,6 +28,7 @@ library(ggplot2)
 library(tidyr)
 library(RStoolbox)
 library(gridExtra)
+library(wingen)
 
 devtools::load_all()
 ```
@@ -46,7 +47,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
 -   `rasterPCA()` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
--   `coords_to_raster()` to create a raster layer from coordinate data
+-   `coords_to_raster()` to create a raster layer from coordinate data (using the wingen package)
 
 -   `env_dist()` to calculate environmental distances
 
@@ -102,18 +103,14 @@ An important first check for any landscape genomics analysis is to detect collin
 
 ### Collinearity among environmental layers
 
-The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.7.
+The `check_env()` function calculates the Pearson correlation coefficient for pairwise comparisons of environmental layers. The `threshold` is the correlation coefficient; it defaults to 0.7. The output from this function is a list containing (1) a dataframe of correlated environmental pairs that fall above the threshold, and (2) a correlation matrix with all pairwise correlation coefficients.
 
-```{r collin env, results='hide'}
-# Convert wclim from SpatRaster to RasterStack
-wclim_stack <- stack(wclim)
-
-# Check for collinearity; the result is a matrix with pairwise correlation coefficients
-cors_env <- check_env(wclim_stack)
-# There are many pairs of layers that have correlation coefficients > 0.5.
+```{r collin env, results='hide', fig.width = 10, fig.height = 10}
+cors_env <- check_env(wclim)
+# There are many pairs of layers that have correlation coefficients > 0.7 (the default threshold)
 ```
 
-```{r collin env CA}
+```{r collin env CA, fig.width = 10, fig.height = 10}
 # For the sake of argument, we can also run this function on the CA_env object:
 check_env(CA_env)
 # None of the pairwise comparisons exceed the threshold value
@@ -121,11 +118,12 @@ check_env(CA_env)
 
 ### Collinearity among extracted environmental values
 
-Similar to the above, the `check_vals()` function determines collinearity using Pearson's correlation coefficients, but it does so on extracted environmental variables at each of the sampling coordinates.
+Similar to the above, the `check_vals()` function determines collinearity using Pearson's correlation coefficients, but it does so on extracted environmental variables at each of the sampling coordinates. This will also generate a plot showing the pairwise correlations between environmental variables.
 
-```{r collin vals}
-# Once again, we can see that there are many pairs of variables that exceed the threshold.
-check_vals(wclim_stack, liz_coords)
+```{r collin vals, fig.width = 10, fig.height = 10}
+# Once again, we can see that there are many pairs of variables that exceed the threshold
+check_result <- check_vals(wclim, liz_coords)
+head(check_result$cor_df)
 ```
 
 ```{r collin vals CA}
@@ -135,10 +133,11 @@ check_vals(CA_env, liz_coords)
 
 ### Collinearity between distances
 
-The `check_dists()` function determines collinearity between geographic and environmental distances. It does so by extracting values at sampling coordinates, and then calculating geographic and environmental distances (of a user-specified metric; the default is Euclidean) and runs a Mantel test on resulting distances. It will output the p-value and Mantel's r and indicate which distances are significantly correlated.
+The `check_dists()` function determines collinearity between geographic and environmental distances. It does so by extracting values at sampling coordinates, and then calculating geographic and environmental distances and runs a Mantel test on resulting distances. Environmental distances are calculated using Euclidean distances, while geographic distances can be Euclidean, topographic, or resistance distances, though the default is Euclidean. The result of this function is to output the p-value and Mantel's r and indicate which distances are significantly correlated.
 
 ```{r collin dists}
-check_dists(wclim_stack, liz_coords)
+check_results <- check_dists(wclim, liz_coords)
+head(check_results$mantel_df)
 ```
 
 ```{r collin dists CA}
@@ -150,26 +149,26 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. TODO[EAC]:describe what is returned
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. The result of this function is a list containing the model information, and a RasterBrick object containing multiple layers of PCA scores. One can also use the `nComp` argument to only extract the top n PCs; in many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
 
 ```{r raster PCA}
 env_pcs <- rasterPCA(wclim, spca = TRUE)
 
 # Let's take a look at the results for the top three PCs
 plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
-grid.arrange(plots[[1]],plots[[2]], plots[[3]], ncol=1)
+grid.arrange(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
 ```
 
 ```{r comp raster}
 # We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
-ggRGB(env_pcs$map,1,2,3, stretch="lin", q=0)
+ggRGB(env_pcs$map,1,2,3, stretch = "lin", q = 0)
 ```
 
-## Create raster from coordinates with `coords_to_raster()`
+## Create raster from coordinates with wingen: `coords_to_raster()`
 
 ------------------------------------------------------------------------
 
-In some cases, we may not have a raster already prepared. We can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument). This raster does not have any meaningful values assigned to it, but can be used to create maps of genetic diversity in wingen (see the wingen vignette).
+In some cases, we may not have a raster already prepared. Using the wingen package, we can use our coordinate data to generate a raster given a user-specified buffer around sampling coordinates (using the `buff` argument) and with a given resolution (using the `res` argument). This raster does not have any meaningful values assigned to it, but can be used to create maps of genetic diversity in wingen (see the wingen documentation [here](https://github.com/AnushaPB/wingen)).
 
 ```{r coords to raster}
 raster <- coords_to_raster(liz_coords, res = 1)
@@ -194,7 +193,6 @@ Now, we're ready to calculate environmental distances.
 
 ```{r env dist}
 env_dist <- env_dist(env)
-
 plot(env_dist$CA_rPCA1)
 ```
 
@@ -228,7 +226,6 @@ The `geo_dist()` function allows users to choose from five environmental distanc
 
 ```{r geo dist}
 geo_dist <- geo_dist(liz_coords, type = "Euclidean")
-
 plot(geo_dist)
 ```
 
@@ -256,7 +253,7 @@ We can also calculate topographic distances, but need to provide a digital eleva
 ```{r download DEM}
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
-dem <- elevation_30s(country = "USA", path=here())
+dem <- elevation_30s(country = "USA", path = here())
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)
@@ -299,7 +296,7 @@ topo_dist %>%
 ------------------------------------------------------------------------
 
 |                          | Citation/URL                                                                                                                                                            | Details                                                                                    |
-|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+|-----------------|------------------------------------|-------------------|
 | Associated code          | terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)) | algatr largely uses terra and raster packages to process and manipulate environmental data |
 | Associated documentation | Walkthroughs for terra [here](https://rspatial.org/terra/) and raster [here](https://rspatial.org/raster/pkg/index.html)                                                |                                                                                            |
 | Associated code          | [Padgham & Sumner 2021](https://CRAN.R-project.org/package=geodist)                                                                                                     | algatr uses the geodist package to calculate Euclidean distances                           |

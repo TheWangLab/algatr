@@ -4,19 +4,21 @@
 \alias{check_dists}
 \title{Check geographic and environmental distances for collinearity}
 \usage{
-check_dists(envlayers, coords, type = "Euclidean", lyr = NULL)
+check_dists(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05)
 }
 \arguments{
-\item{envlayers}{A RasterStack of data layers}
+\item{envlayers}{a RasterStack of data layers}
 
-\item{coords}{Dataframe with x and y sample coordinates.}
+\item{coords}{dataframe with x and y sample coordinates}
 
-\item{type}{The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.}
+\item{type}{the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances}
 
 \item{lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances}
+
+\item{sig}{significance threshold for Mantel test}
 }
 \value{
-A list with matrices of p-values and Mantel's r
+a list with (1) a dataframe of significantly correlated variables, (2) a matrix of p-values, (3) a matrix of Mantel's r
 }
 \description{
 Check geographic and environmental distances for collinearity

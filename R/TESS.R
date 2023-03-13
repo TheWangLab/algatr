@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param grid RasterLayer or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
-#' @param K_selection how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)
+#' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "auto",
+tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
                       plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
                       tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE){
 
@@ -93,8 +93,10 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "a
 #' @return
 #' @export
 #'
+#' @family TESS functions
+#'
 #' @examples
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "auto", ploidy = 2){
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2){
 
   # Format coordinates
   coords <- as.matrix(coords)
@@ -124,6 +126,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   return(tess_results)
 }
 
+
 #' Krige admixture values
 #'
 #' @param qmat qmatrix
@@ -131,6 +134,8 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #'
 #' @return
 #' @export
+#'
+#' @family TESS functions
 #'
 #' @examples
 tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
@@ -180,6 +185,8 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
+#'
 krig_K <- function(K, qmat, krig_grid, krig_df){
 
   # Add Q values to spatial dataframe
@@ -211,6 +218,9 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 #' @param x RasterLayer
 #'
 #' @return gridded SpatialPixelsDataFrame
+#'
+#' @family TESS functions
+#'
 #' @export
 #' @noRd
 raster_to_grid <- function(x) {
@@ -235,6 +245,8 @@ raster_to_grid <- function(x) {
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @inheritParams tess_do_everything
+#'
+#' @family TESS functions
 #'
 #' @return
 #' @export
@@ -313,6 +325,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #'
 #' @return
 #' @export
+#' @family TESS functions
 #'
 #' @examples
 tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
@@ -340,6 +353,7 @@ tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal =
 #' @param poly whether to plot as polygon instead of continuous Q values
 #'
 #' @export
+#' @family TESS functions
 #' @noRd
 tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, legend = TRUE){
 
@@ -381,6 +395,8 @@ tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = 
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
+#'
 max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
 
   # Subset by K
@@ -415,6 +431,8 @@ max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
+#'
 tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
 
   # Get max raster value for plotting (minQ defines minimum)
@@ -448,6 +466,7 @@ tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pa
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
 #'
 all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NULL){
 
@@ -469,6 +488,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 #'
 #' @return
 #' @export
+#' @family TESS functions
 #'
 #' @examples
 tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
@@ -488,6 +508,7 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 #' @param col single color code
 #'
 #' @export
+#' @family TESS functions
 #'
 allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...){
 
@@ -513,6 +534,8 @@ allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...)
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
+#'
 make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col = rgb(1, 1, 1, alpha)){
 
   if(poly){
@@ -542,6 +565,7 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 #' @return
 #' @export
 #'
+#' @family TESS functions
 #' @examples
 tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
   # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
@@ -580,6 +604,7 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 #' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
 #' @return
 #' @export
+#' @family TESS functions
 #'
 #' @examples
 bestK <- function(tess3_obj, Kvals){
@@ -599,7 +624,7 @@ bestK <- function(tess3_obj, Kvals){
 #' @param n number of colors to generate (must be less than 9)
 #'
 #' @export
-#'
+#' @family TESS functions
 tess_col_default <- function(n, alpha = 1){
   if (n > 9) stop("The default color palette expects less than 9 values")
   tessCP <- CreatePalette()
@@ -614,6 +639,7 @@ tess_col_default <- function(n, alpha = 1){
 #'
 #' @export
 #' @noRd
+#' @family TESS functions
 algatr_col_default <- function(x){
   if(x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
   if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis::viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")

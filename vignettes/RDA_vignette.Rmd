@@ -14,13 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Redundancy analysis (RDA)
+# Redundancy analysis (RDA)
 
 ```{r setup, warning=FALSE, message=FALSE}
-# library(algatr)
+library(algatr)
 library(here)
 library(gt)
-# RDA
 library(vegan)
 library(raster)
 library(robust)
@@ -31,15 +30,19 @@ library(qvalue)
 devtools::load_all()
 ```
 
-Redundancy analysis (RDA) is a genotype-environmental association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental) with ordination (a PCA). Importantly, both explanatory and response variables can be multivariate, which is part of the appeal of this method. Model selection is performed by starting with a null model wherein the response is only explained by an intercept, and environmental variables are added until the amount of variance explained by a model that includes all variables is reached. By doing so, this method minimizes the *redundancy* among explanatory variables. Importantly, we can also perform an RDA that accounts for *covariables* (or "conditioning variables") such as neutral population structure. When covariables are included, this is called a **partial RDA**. In algatr, population structure is quantified by running a PCA on the genetic data, and selecting a number of PC axes to best represent this type of neutral variation. Users could also provide other values or data to account for neutral processes in their data, if so desired.
+**If using RDA, please cite the following: Capblancq T. & Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**
 
-Some of the earliest uses of using RDA for identifying environment-associated loci are [Lasky et al. 2012](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2012.05709.x) and [Forester et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/mec.13476). Since then, there have been several reviews and walkthroughs of the method that provide additional information, including workflows and comparisons to other GEA methods (e.g., [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)). Much of algatr's code is adapted from one such paper, [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722), the code of which is available [here](https://github.com/Capblancq/RDA-landscape-genomics). algatr's general workflow roughly follows the framework of Capblancq & Forester (2021).
+Redundancy analysis (RDA) is a genotype-environment association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental data) with ordination (a PCA). Importantly, both explanatory and response variables can be multivariate, which is part of the appeal of this method.
 
-RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll explore imputing on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+Model selection is performed by starting with a null model wherein the response is only explained by an intercept, and environmental variables are added until the amount of variance explained by a model that includes all variables is reached. By doing so, this method minimizes the *redundancy* among explanatory variables. Importantly, we can also perform an RDA that accounts for *covariables* (or "conditioning variables") such as those that account for neutral population structure. When covariables are included, this is called a **partial RDA**. In algatr, population structure is quantified by running a PCA on the genetic data, and selecting a number of PC axes to best represent this type of neutral variation.
+
+Some of the earliest examples of uses of RDA for identifying environment-associated loci are [Lasky et al. 2012](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2012.05709.x) and [Forester et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/mec.13476). Since then, there have been several reviews and walkthroughs of the method that provide additional information, including workflows and comparisons with other GEA methods (e.g., [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)). Much of algatr's code is adapted from one such paper, [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722), the code of which is available [here](https://github.com/Capblancq/RDA-landscape-genomics). algatr's general workflow roughly follows the framework of Capblancq & Forester (2021).
+
+RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll opt to impute to the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
 The general workflow to perform an RDA with algatr is as follows:
 
--   **Simple vs. partial RDAs:** We can run a simple RDA (no covariables) or partial RDA (covariables relating to neutral processes, such as geography or population structure, are included in the model) using `rda_run()`
+-   **Simple vs. partial RDAs:** We can run a simple RDA (no covariables) or partial RDA (conditioning covariables included) using `rda_run()`
 
 -   **Variable selection:** Both simple and partial RDAs can be performed considering all variables (`"full"` model) or by performing variable selection to determine variables that contribute most to genetic variance (`"best"` model)
 
@@ -49,7 +52,7 @@ The general workflow to perform an RDA with algatr is as follows:
 
 ### Read in and process genetic data
 
-Running an RDA requires three data files for input: a genotype dosage matrix (the `gen` argument), a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). Let's first convert our vcf to a dosage matrix using the `vcf_to_dosage()` function. *N.B.: our code assumes that sample IDs from our genetic data and our coords are in the same order; be sure to check this before moving forward!*
+Running an RDA requires two data files for input: a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). Let's first convert our vcf to a dosage matrix using the `vcf_to_dosage()` function. *N.B.: our code assumes that sample IDs from our genetic data and our coords are in the same order; be sure to check this before moving forward!*
 
 ```{r gen data, warning = FALSE}
 load_example()
@@ -72,7 +75,7 @@ gen[1:5, 1:5]
 Let's extract environmental variables using the `extract()` function from the raster package. We also need to standardize environmental varibles. This is particularly important if we are using (for example) bioclimatic variables as input, as units of measurement are completely different (e.g., mm for precipitation vs. degrees celsius for temperature). To do so, we'll use the `scale()` function within the raster package.
 
 ```{r enviro data}
-# Extract enviro vars
+# Extract environmental vars
 env <- raster::extract(CA_env, liz_coords)
 
 # Standardize environmental variables and make into dataframe
@@ -107,7 +110,7 @@ Now, let's take a look at the summary of this model. One of the most important p
 head(summary(mod_full))
 ```
 
-One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased. The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
+One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased **(TODO[EAC]: prob should explain why/how it is biased/just one sentence about \# variables)**. The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
 
 ```{r full Radj}
 RsquareAdj(mod_full)
@@ -235,7 +238,7 @@ length(rda_sig_z$rda_snps)
 
 ### Identifying outliers using the p-value method
 
-Another method to detect outliers is a p-value method wherein rather than using the loadings along RDA axes to identify extreme outliers (as with the Z-scores method above), the loadings are transformed into p-values. To do so, Mahalanobis distances are calculated for each locus, scaled based on a genomic inflation factor, from which p-values and q-values can be computed. We then adjust our p-values (based on a false discovery rate, for example; this adjustment is done using the `p.adjust()` function) and subsequently identify outliers based on a user-specified significance threshold. Rather than detecting outliers based on a p-value significance threshold, one could also detect outliers based on q-values (which are also provided as output in algatr), as is done in [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906) and [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). To do so, we would select loci that fall below a user-specified threshold based on the proportion of false positives we allow. For example, if we allow 10% or fewer outliers to be false positives, outliers couldbe identified based on loci that have q-values =< 0.1.
+Another method to detect outliers is a p-value method wherein rather than using the loadings along RDA axes to identify extreme outliers (as with the Z-scores method above), the loadings are transformed into p-values. To do so, Mahalanobis distances are calculated for each locus, scaled based on a genomic inflation factor, from which p-values and q-values can be computed. We then adjust our p-values (based on a false discovery rate, for example; this adjustment is done using the `p.adjust()` function) and subsequently identify outliers based on a user-specified significance threshold. Rather than detecting outliers based on a p-value significance threshold, one could also detect outliers based on q-values (which are also provided as output in algatr), as is done in [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906) and [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). To do so, we would select loci that fall below a user-specified threshold based on the proportion of false positives we allow. For example, if we allow 10% or fewer outliers to be false positives, outliers could be identified based on loci that have q-values =\< 0.1.
 
 Now, let's detect outliers using this method. To do so, along with `outlier_method`, we need to specify `p_adj`, which is the method by which p-values are adjusted, as well as `sig`, which is our significance threshold. We will also tell the function not to produce a screeplot.
 
@@ -384,7 +387,7 @@ results <- rda_do_everything(gen, env, liz_coords,
 ------------------------------------------------------------------------
 
 |                         | Citation/URL                                                                                                                                                                            | Details                                                                                             |
-|-------------------|-----------------------------|-------------------------|
+|-------------------|----------------------------|-------------------------|
 | Associated literature   | [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722); [Github repository for code](https://github.com/Capblancq/RDA-landscape-genomics) | Paper describing RDA methodology; also provides walkthrough and description of `rdadapt()` function |
 | Associated literature   | [Capblancq et al. 2018](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12906)                                                                                                | Description of p-value method of detecting outlier loci                                             |
 | R package documentation | [Oksanen et al. 2022.](https://cran.r-project.org/web/packages/vegan/index.html)                                                                                                        | algatr uses the `rda()` and `ordiR2step()` functions in the vegan package                           |
