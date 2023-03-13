@@ -3,9 +3,15 @@
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords dataframe with x and y coordinates
-#' @param grid RasterLayer or other gridded spatial object for kriging
+#' @param grid SpatRaster or other gridded spatial object for kriging
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
+#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param col_breaks number of breaks for plotting (defaults to 20)
+#' @param col_alpha
+#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
+#' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @inheritParams tess3r::tess3
 #'
@@ -144,7 +150,7 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   K <- ncol(qmat)
 
   # Make grid for kriging
-  if (inherits(grid, "RasterLayer")) {
+  if (inherits(grid, "SpatRaster")) {
     krig_grid <- raster_to_grid(grid)
   } else if (sp::gridded(grid)) {
     krig_grid <- grid
@@ -153,14 +159,14 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   }
 
   # Remove any CRS values before kriging (autoKrige doesn't like lonlat projection systems)
-  raster::crs(krig_grid) <- NA
+  terra::crs(krig_grid) <- NA
 
   # Make coords into spatial object
   krig_df <- data.frame(coords)
   sp::coordinates(krig_df) <- ~x+y
 
   # Krige each K value
-  krig_admix <- raster::stack(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
+  krig_admix <- terra::c(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
 
   # If NULL, return NULL
   if(is.null(krig_admix)) return(NULL)
@@ -195,7 +201,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
   # Skip if all of the Q values are identical (kriging not possible)
   if(length(unique(krig_df$Q)) == 1){
     warning(paste0("Only one unique Q value for K = ", K, ", returning NA raster (note: may want to consider different K value)")); NULL
-    blank <- raster::rasterFromXYZ(krig_grid)
+    blank <- terra::rast(krig_grid, type = "xyz")
     blank[] <- NA
     return(blank)
   }
@@ -207,7 +213,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
   krig_spdf <- krig_res$krige_output
 
   # Turn into raster
-  krig_raster <- raster::rasterFromXYZ(krig_spdf)
+  krig_raster <- terra::rast(krig_spdf, type = "xyz")
 
   return(krig_raster)
 }
@@ -215,7 +221,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 
 #' Convert a raster to a grid
 #'
-#' @param x RasterLayer
+#' @param x SpatRaster
 #'
 #' @return gridded SpatialPixelsDataFrame
 #'
@@ -226,7 +232,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 raster_to_grid <- function(x) {
 
   # Convert raster to dataframe
-  grd <- data.frame(raster::rasterToPoints(x))
+  grd <- data.frame(terra::as.data.frame(x, xy = TRUE, na.rm = FALSE))
 
   # Convert dataframe to spatial dataframe
   sp::coordinates(grd) <- ~ x + y
@@ -239,7 +245,7 @@ raster_to_grid <- function(x) {
 
 #' ggplot of TESS results
 #'
-#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
+#' @param krig_admix SpatRaster returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
@@ -256,7 +262,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 
   # Set up ggplot df
   gg_df <- krig_admix %>%
-    raster::rasterToPoints() %>%
+    terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
     tidyr::as_tibble() %>%
     tidyr::gather("K", "Q", -c(x, y)) %>%
     dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
@@ -313,7 +319,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 
 #' Make rainbow TESS plot from kriged admixture rasters
 #'
-#' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
+#' @param krig_admix SpatRaster returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
 #' @param plot_method method for making rainbow map of kriged layers (options: \code{"maxQ"} to only plot the max Q value for each cell (default), \code{"allQ"} to plot all Qvalues greater than \code{minQ}, \code{"maxQ_poly"} or \code{"allQ_poly"} to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param col_pal function that creates a vector of contiguous colors (defaults to \link[viridis]{turbo}). If using \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"}, the function must accept \code{alpha} as an argument
@@ -331,7 +337,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 tess_plot <- function(krig_admix, coords = NULL, plot_method = "maxQ", col_pal = algatr_col_default("base"), col_breaks = 20, col_alpha = 0.50, minQ = 0.10, legend = TRUE){
 
   # Get K based on the number of layers
-  K <- raster::nlayers(krig_admix)
+  K <- terra::nlyr(krig_admix)
 
   # Select method and options and suppress irrelevant plot warnings
   suppressWarnings({
@@ -359,7 +365,7 @@ tess_plot_max <- function(krig_admix, K, coords = NULL, poly = FALSE, col_pal = 
 
   # Make and summarize dataframe by only retaining highest Q values for each point
   pop_df <-  krig_admix %>%
-    raster::rasterToPoints() %>%
+    terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
     tidyr::as_tibble() %>%
     tidyr::gather("K", "Q", -c(x, y)) %>%
     dplyr::mutate(K = as.numeric(gsub("K", "", K))) %>%
@@ -410,13 +416,13 @@ max_plot_helper <- function(K, pop_df, poly, col, col_breaks = 20, zlim = NULL){
 
   # Make into spdf and convert to raster
   sp::coordinates(pop_spdf) <- ~x+y
-  rl <- raster::rasterFromXYZ(pop_spdf[, "Q"])
+  rl <- terra::rast(pop_spdf[, "Q"], type="xyz")
 
   # If not poly plot, set zlim to range of all Q values
   if(!poly) zlim <- range(pop_df$Q)
 
   # Plot raster
-  raster::plot(rl,
+  terra::plot(rl,
                add = TRUE,
                legend = FALSE,
                col = make_plot_col(K, col, col_breaks, poly),
@@ -471,7 +477,7 @@ tess_plot_all <- function(krig_admix, K = K, coords = NULL, poly = FALSE, col_pa
 all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NULL){
 
   # Plot raster
-  raster::plot(krig_admix[[K]],
+  terra::plot(krig_admix[[K]],
                col = make_plot_col(K, col, col_breaks, poly),
                add = TRUE,
                legend = FALSE,
@@ -494,7 +500,7 @@ all_plot_helper <- function(K, krig_admix, poly, col, col_breaks = 20, zlim = NU
 tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
 
   # Get K
-  K <- raster::nlayers(krig_admix)
+  K <- terra::nlyr(krig_admix)
 
   # Plot kriged admixture maps while masking small values (e.g. < minQ)
   purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords,  col = col_pal(K), col_breaks = col_breaks, ...)
@@ -513,7 +519,7 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...){
 
   # Suppress irrelevant plot warnings
-  suppressWarnings({raster::plot(krig_admix[[K]],
+  suppressWarnings({terra::plot(krig_admix[[K]],
                col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
                zlim = c(0, max(maxValue(krig_admix))),
                axes = FALSE,
