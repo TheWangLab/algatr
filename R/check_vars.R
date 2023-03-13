@@ -9,6 +9,7 @@
 #' @export
 check_env <- function(envlayers, threshold = 0.7){
   cors <- raster::layerStats(envlayers, stat = "pearson", na.rm = TRUE)
+  cors <- cors$`pearson correlation coefficient`
   cor_df <- cor_df_helper(cors, threshold)
   return(list(cor_df = cor_df, cor_matrix = cors))
 }
@@ -84,8 +85,6 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
 #' Helper function to create correlation dataframe from matrix and filter based on threshold
 #'
 cor_df_helper <- function(cors, threshold){
-  # TODO[APB]: I added line below
-  cors <- cors$`pearson correlation coefficient`
   cor_df <-
     data.frame(var1 = rownames(cors)[row(cors)[upper.tri(cors)]],
                var2 = colnames(cors)[col(cors)[upper.tri(cors)]],
