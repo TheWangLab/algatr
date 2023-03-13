@@ -169,7 +169,7 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   sp::coordinates(krig_df) <- ~x+y
 
   # Krige each K value
-  krig_admix <- terra::c(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
+  krig_admix <- c(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
 
   # If NULL, return NULL
   if(is.null(krig_admix)) return(NULL)
