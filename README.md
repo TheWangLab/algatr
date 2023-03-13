@@ -6,7 +6,8 @@
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
 start-to-finish pipeline to perform various landscape genomics methods
-with their data. The algatr package is described in [REFER](REFER).
+with their data. The algatr package is described in [Chambers, Bishop, &
+Wang 2022](REFER).
 
 ## Installation
 
@@ -32,11 +33,11 @@ environmental data as input.
 
 The methods contained within algatr will perform analyses on:
 
--   Genomic-scale datasets (i.e., those generated using reduced
-    representation or whole genome sequencing)
+- Genomic-scale datasets (i.e., those generated using reduced
+  representation or whole genome sequencing)
 
--   Datasets with individual-based sampling (*it will also work on
-    population-based sampling schemes*)
+- Datasets with individual-based sampling (*it will also work on
+  population-based sampling schemes*)
 
 algatr makes use of several existing packages and methods, and we
 provide citations to these packages (and corresponding publications)
@@ -46,20 +47,21 @@ corresponding vignettes.
 
 We have added functionality to each of these methods within algatr which
 we discuss in each of the methods’ vignettes (and in our paper:
-[Chambers et al. 2022](REFER)).
+[Chambers, Bishop, & Wang 2022](REFER)).
 
 Other than input data processing functions, the main functions within
-algatr are named `method_do_everything()`. As the name implies, these
-functions will take you from your raw input data through to generating
-results, tables, and figures from the analysis. For example,
-`gdm_do_everything()` will run generalized dissimilarity modeling, while
-also generating a GDM map, a table with results, and several other
-outputs. However, to better understand what’s going on under the hood of
-these `method_do_everything()` functions, the algatr vignettes provide a
-line-by-line breakdown of the individual functions contained within the
-`method_do_everything()` function to (a) increase a user’s understanding
-of how the method actually works, and (b) allow users with more
-customizability in how they run their own analysis, if so desired.
+algatr are named with the pattern `[method]_do_everything()`. As the
+name implies, these functions will take you from your raw input data
+through to generating results, tables, and figures from the analysis.
+For example, `gdm_do_everything()` will run generalized dissimilarity
+modeling, while also generating a GDM map, a table with results, and
+several other outputs. However, to better understand what’s going on
+under the hood of these `[method]_do_everything()` functions, the algatr
+vignettes provide a line-by-line breakdown of the individual functions
+contained within the `[method]_do_everything()` function to (a) increase
+a user’s understanding of how the method actually works, and (b) allow
+users with more customizability in how they run their own analysis, if
+so desired.
 
 When deciding on methods to have within algatr, we found it best to
 first identify the questions that these methods seek to answer, and we
@@ -67,7 +69,7 @@ think this is a good framework for anyone (particularly beginner
 landscape genomicists) to think about landscape genomics methods. These
 questions fall into four broad categories of analyses.
 
-<table>
+<table style="width:99%;">
 <colgroup>
 <col style="width: 26%" />
 <col style="width: 19%" />
@@ -144,15 +146,15 @@ the state the California.
 
 There are four objects loaded within the example dataset:
 
--   `liz_coords`: sampling coordinates for 53 individuals (from 53
-    localities)
+- `liz_coords`: sampling coordinates for 53 individuals (from 53
+  localities)
 
--   `liz_vcf`: the vcfR object containing variant information
+- `liz_vcf`: the vcfR object containing variant information
 
--   `liz_gendist`: a matrix of genetic distances generated from the vcf
-    file (*distances were calculated using Plink*)
+- `liz_gendist`: a matrix of genetic distances generated from the vcf
+  file (*distances were calculated using Plink*)
 
--   `CA_env`: a RasterStack object with three PC environmental layers
+- `CA_env`: a RasterStack object with three PC environmental layers
 
 Load the example dataset to take a look:
 
@@ -183,26 +185,19 @@ plot(CA_env, col = turbo(100), axes = FALSE)
 <img src="man/figures/README-plot rasters-1.png" width="100%" />
 
 We can combine all three PCs into a single map by scaling each of the
-rasters in such a way that they each correspond to either R, G, or B.
+rasters in such a way that they each correspond to either R, G, or B
+using the `scaleRGB()` function, and subsequently map using the
+`plotRGB()` function.
 
 ``` r
-# Convert from RasterStack to SpatRaster for terra functionality
-CA_env_sp <- rast(CA_env)
-
-for(layer in 1:3){
-  minval <- minmax(CA_env_sp[[layer]])[1,]
-  maxval <- minmax(CA_env_sp[[layer]])[2,]
-  
-  CA_env_sp[[layer]] <- ((CA_env_sp[[layer]] - minval) / (maxval - minval))*255
-}
-
-plotRGB(CA_env_sp, r = 1, g = 2, b = 3)
+env <- scaleRGB(CA_env)
+plotRGB(env, r = 1, g = 2, b = 3)
 
 # Add sampling localities on top of this
 points(liz_coords, pch = 19)
 ```
 
-<img src="man/figures/README-RGB plot-1.png" width="100%" />
+<img src="man/figures/README-RGB plot-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Your NGS data
 
@@ -211,13 +206,13 @@ points(liz_coords, pch = 19)
 To generate the above files for your own dataset, you’ll need the
 following:
 
--   Sampling coordinates (*always in longitude, latitude \[x,y\] order;
-    refer to `liz_coords` for formatting*)
+- Sampling coordinates (*always in longitude, latitude \[x,y\] order;
+  refer to `liz_coords` for formatting*)
 
--   Genetic data in vcf file format (*this is the most standard file
-    format for reduced representation or whole genome sequencing data*)
+- Genetic data in vcf file format (*this is the most standard file
+  format for reduced representation or whole genome sequencing data*)
 
--   Environmental data layers of your choice
+- Environmental data layers of your choice
 
 **Be sure that the ordering of your individuals across your coordinate
 and genetic data files are consistent!**
@@ -254,11 +249,11 @@ conversions and LD-pruning (see the [**data processing
 vignette**](REFER)) and calculating genetic distances (see the
 [**genetic distances vignette**](REFER)).
 
-<table style="width:100%;">
+<table style="width:98%;">
 <colgroup>
 <col style="width: 6%" />
-<col style="width: 39%" />
-<col style="width: 16%" />
+<col style="width: 40%" />
+<col style="width: 15%" />
 <col style="width: 26%" />
 <col style="width: 9%" />
 </colgroup>
@@ -309,7 +304,8 @@ href="https://cran.r-project.org/web/packages/gdm/index.html">gdm</a></td>
 </tr>
 <tr class="even">
 <td>RDA</td>
-<td>TODO</td>
+<td><a
+href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 <td><code>rda_do_everything()</code></td>
 <td><ul>
 <li><p>Genotype dosage matrix</p></li>
