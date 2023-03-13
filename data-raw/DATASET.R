@@ -69,6 +69,11 @@ raster::writeRaster(CA_env, "inst/extdata/CA_env.tif", overwrite = TRUE)
 CA_env <- raster::readAll(CA_env)
 usethis::use_data(CA_env, overwrite = TRUE)
 
+CA_env <- raster::stack(list.files("inst/extdata/PC_layers/", full.names = TRUE))
+raster::writeRaster(CA_env, "inst/extdata/CA_env.tif", overwrite = TRUE)
+CA_env <- raster::readAll(CA_env)
+usethis::use_data(CA_env, overwrite = TRUE)
+
 
 dos <- dos[complete.cases(dos),]
 prcomp(~., data.frame(dos))

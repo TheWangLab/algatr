@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 library(algatr)
 library(here)
 library(tidyverse)
-library(raster)
+# library(raster)
 library(rgdal)
 library(viridis)
 library(terra)
@@ -77,9 +77,9 @@ algatr can create interpolated maps of the ancestry coefficient estimates using 
 To generate a map, we need a raster onto which we can map Q values. We can either retrieve this, or generate one ourselves using wingen's `coords_to_raster()` function. Please refer to the wingen documentation found [here](https://github.com/AnushaPB/wingen), and the environmental data vignette, for further information on this function.
 
 ```{r raster, fig.align = 'center'}
-# First, create a RasterLayer for kriging
+# First, create a grid for kriging
 # We can use one environmental layer (PC1), aggregated (i.e., increased cell size) to increase computational speed
-krig_raster <- raster::aggregate(CA_env[[1]], fact = 6)
+krig_raster <- terra::aggregate(CA_env[[1]], fact = 6)
 
 # If you want to see the difference between the non-aggregated (original) and aggregated rasters:
 terra::plot(CA_env[[1]], col = mako(100), axes = FALSE)
@@ -94,13 +94,15 @@ algatr allows users with the option to test a range of K values using the `tess_
 
 ### Manual K selection
 
-A user can run TESS on a set of K values ranging from 1-10, and select the "best" K value manually based on cross-validation scores. To do so, a user must specify `"manual"` within the `K_selection` argument. Typically, researchers will select the "best" K value by minimizing cross-validation scores.
+The default K selection (`"manual"`) within `tess_ktest()` runs TESS on a set of K values ranging from 1-10, and allows the user to select the "best" K value manually based on cross-validation scores. Typically, researchers will select the "best" K value by minimizing cross-validation scores.
 
 ### Automatic K selection
 
-**TODO [EAC] CHANGE THIS** The default K selection (`"auto"`) within the `tess_ktest()` function is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
+The other K selection method available is automatic K selection by specifying `"auto"` within the `tess_ktest()` function. This method is based on not only minimizing cross-entropy scores (which is typically done), but minimizes the slope of the line that connects cross-entropy scores between K values. In this way, the best K is selected once an "elbow" is visible, or when cross-entropy scores begin to plateau and the slope approaches 0. This function makes use of the approach described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/).
 
 The resulting object contains `tess3_obj`, which provides the cross-validation scores for the different K values that were tested. Let's do the automatic K-value testing procedure once again for K values 1-10. As you can see, the `tess_ktest()` function outputs a plot with cross-validation scores for each K value, with a red dashed line indicating the best K value obtained from the automatic K selection procedure described above.
+
+For this vignette, we'll use automatic K selection.
 
 ```{r auto K selection, message = FALSE, fig.align = 'center'}
 # Best K is 3; this provides a more reasonable estimate for the "best" K compared to manual selection above
@@ -135,7 +137,7 @@ The resulting object from the above run is a typical TESS output format (it is a
 
 ------------------------------------------------------------------------
 
-Now that we know which K value we want to use (K=3) from our automatic K selection results, we can move forward with TESS. We need to extract the tess3 object from our results, and create a Q-matrix with ancestry coefficient values from K=3 using the `qmatrix()` function with which we can visualize results.
+Now that we know which K value we want to use (K = 3) from our automatic K selection results, we can move forward with TESS. We need to extract the tess3 object from our results, and create a Q-matrix with ancestry coefficient values from K = 3 using the `qmatrix()` function with which we can visualize results.
 
 ```{r qmatrix}
 # Get TESS object and best K from results

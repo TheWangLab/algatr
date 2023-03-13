@@ -30,6 +30,9 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   # Convert vcf to dosage
   if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
+  # Convert RasterLayer/Stack/Brick to SpatRaster
+  if(!inherits(grid, "SpatRaster")) grid <- terra::rast(grid)
+
   # Convert coords to matrix
   coords <- as.matrix(coords)
 
