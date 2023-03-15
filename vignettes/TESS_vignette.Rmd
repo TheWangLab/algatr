@@ -79,7 +79,7 @@ To generate a map, we need a raster onto which we can map Q values. We can eithe
 ```{r raster, fig.align = 'center'}
 # First, create a grid for kriging
 # We can use one environmental layer (PC1), aggregated (i.e., increased cell size) to increase computational speed
-krig_raster <- terra::aggregate(CA_env[[1]], fact = 6)
+krig_raster <- raster::aggregate(CA_env[[1]], fact = 6)
 
 # If you want to see the difference between the non-aggregated (original) and aggregated rasters:
 terra::plot(CA_env[[1]], col = mako(100), axes = FALSE)
