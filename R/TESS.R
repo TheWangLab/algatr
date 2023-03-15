@@ -169,7 +169,10 @@ tess_krig <- function(qmat, coords, grid, correct_kriged_Q = TRUE){
   sp::coordinates(krig_df) <- ~x+y
 
   # Krige each K value
-  krig_admix <- c(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
+  # krig_admix <- raster::stack(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
+  krig_admix_terra = terra::rast(purrr::map(1:K, krig_K, qmat, krig_grid, krig_df))
+
+  krig_admix <- purrr::map(1:K, krig_K, qmat, krig_grid, krig_df)
 
   # If NULL, return NULL
   if(is.null(krig_admix)) return(NULL)
@@ -216,7 +219,8 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
   krig_spdf <- krig_res$krige_output
 
   # Turn into raster
-  krig_raster <- terra::rast(krig_spdf, type = "xyz")
+  krig_raster_terra <- terra::rast(krig_spdf, type = "xyz")
+  # krig_raster <- raster::rasterFromXYZ(krig_spdf)
 
   return(krig_raster)
 }
@@ -235,7 +239,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 raster_to_grid <- function(x) {
 
   # Convert raster to dataframe
-  grd <- data.frame(terra::as.data.frame(x, xy = TRUE, na.rm = FALSE))
+  grd <- terra::as.data.frame(x, xy = TRUE, na.rm = FALSE)
 
   # Convert dataframe to spatial dataframe
   sp::coordinates(grd) <- ~ x + y
