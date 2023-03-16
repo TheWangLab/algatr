@@ -122,7 +122,7 @@ variation?</td>
 <td>How is genetic diversity distributed across space?</td>
 <td>Genetic diversity</td>
 <td>Moving windows of genetic diversity; wingen (Bishop et
-al. 2022)</td>
+al. 2023)</td>
 <td>wingen_vignette.Rmd</td>
 <td><code>wingen_do_everything()</code></td>
 </tr>
