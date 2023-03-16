@@ -40,7 +40,7 @@ Recall the way genotypes are encoded within a vcf: `"0/0"` denotes individual is
 
 ```{r vcf}
 # Load the example data
-load_example()
+load_algatr_example()
 
 # Look at genotypes for five individuals at eight sites:
 liz_vcf@gt[1:8,2:6]
@@ -85,9 +85,9 @@ We will not be running this function within the vignette to avoid generating int
 
 ------------------------------------------------------------------------
 
-|                 | Citation/URL                                                                                                                                                                                           | Details                                                                                   |
-|-----------------|------------------------------|-------------------------|
-| Associated code | [Zheng et al. 2012](https://academic.oup.com/bioinformatics/article/28/24/3326/245844); further details [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) | algatr uses the `snpgdsLDpruning()` function within the SNPRelate package for LD-pruning  |
+|                 | Citation/URL                                                                                                                                                                                           | Details                                                                                  |
+|------------------|-----------------------------|-------------------------|
+| Associated code | [Zheng et al. 2012](https://academic.oup.com/bioinformatics/article/28/24/3326/245844); further details [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) | algatr uses the `snpgdsLDpruning()` function within the SNPRelate package for LD-pruning |
 
 Retrieve SNPRelate's vignette:
 

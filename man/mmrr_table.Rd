@@ -19,3 +19,15 @@ An object of class \code{gt_tbl}
 \description{
 Create \code{gt} table of MMRR results
 }
+\seealso{
+Other MMRR functions: 
+\code{\link{MMRR}()},
+\code{\link{mmrr_best}()},
+\code{\link{mmrr_df}()},
+\code{\link{mmrr_do_everything}()},
+\code{\link{mmrr_full}()},
+\code{\link{mmrr_plot}()},
+\code{\link{mmrr_var_sel}()},
+\code{\link{unfold}()}
+}
+\concept{MMRR functions}

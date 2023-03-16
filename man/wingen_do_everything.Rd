@@ -80,7 +80,8 @@ When using wingen, please cite the original citation: Bishop, A.P., Chambers, E.
 N.B.: Be aware that this function sets \emph{many} of the wingen function arguments to defaults, which may result in sub optimal results. We highly advise researchers to run each wingen function separately for best results.
 }
 \seealso{
-Other wingen function: 
-\code{\link{krig_agg_helper}()}
+Other wingen functions: 
+\code{\link{krig_agg_helper}()},
+\code{\link{krig_helper}()}
 }
-\concept{wingen function}
+\concept{wingen functions}

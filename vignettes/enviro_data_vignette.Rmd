@@ -56,7 +56,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 ### Load example data
 
 ```{r test data}
-load_example()
+load_algatr_example()
 ```
 
 ## Introduction to environmental data files and object types

@@ -14,3 +14,15 @@ lfmm_test_tidy(colname, lfmm_test_result)
 \description{
 Helper function to tidy LFMM test results
 }
+\seealso{
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_do_everything}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_run}()},
+\code{\link{lfmm_table}()},
+\code{\link{quick_elbow}()},
+\code{\link{select_K}()}
+}
+\concept{LFMM functions}

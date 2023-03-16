@@ -38,3 +38,15 @@ MMRR function to do everything
 \details{
 The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411.
 }
+\seealso{
+Other MMRR functions: 
+\code{\link{MMRR}()},
+\code{\link{mmrr_best}()},
+\code{\link{mmrr_df}()},
+\code{\link{mmrr_full}()},
+\code{\link{mmrr_plot}()},
+\code{\link{mmrr_table}()},
+\code{\link{mmrr_var_sel}()},
+\code{\link{unfold}()}
+}
+\concept{MMRR functions}

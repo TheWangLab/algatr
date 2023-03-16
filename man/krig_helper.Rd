@@ -35,4 +35,9 @@ kriged map
 \description{
 Helper function for kriging wingen moving window; checks raster resolution and runs kriging
 }
+\seealso{
+Other wingen functions: 
+\code{\link{krig_agg_helper}()},
+\code{\link{wingen_do_everything}()}
+}
 \concept{wingen functions}

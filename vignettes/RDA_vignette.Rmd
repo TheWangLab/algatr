@@ -57,7 +57,7 @@ The general workflow to perform an RDA with algatr is as follows:
 Running an RDA requires two data files for input: a genotype dosage matrix (the `gen` argument) and the environmental values extracted at sampling coordinates (the `env` argument). Let's first convert our vcf to a dosage matrix using the `vcf_to_dosage()` function. *N.B.: our code assumes that sample IDs from our genetic data and our coords are in the same order; be sure to check this before moving forward!*
 
 ```{r gen data, warning = FALSE}
-load_example()
+load_algatr_example()
 # Convert from vcf to dosage matrix using the wingen package:
 gen <- vcf_to_dosage(liz_vcf)
 ```

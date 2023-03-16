@@ -42,3 +42,15 @@ table of LFMM results
 \description{
 Create \code{gt} table of LFMM results
 }
+\seealso{
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_do_everything}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_run}()},
+\code{\link{lfmm_test_tidy}()},
+\code{\link{quick_elbow}()},
+\code{\link{select_K}()}
+}
+\concept{LFMM functions}

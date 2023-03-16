@@ -12,3 +12,16 @@ tess_col_default(n, alpha = 1)
 \description{
 Create default TESS color palette
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

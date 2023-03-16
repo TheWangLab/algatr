@@ -14,7 +14,7 @@ tess_ggplot(
 )
 }
 \arguments{
-\item{krig_admix}{RasterStack returned by \link[algatr]{tess_krig}}
+\item{krig_admix}{SpatRaster returned by \link[algatr]{tess_krig}}
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
@@ -27,3 +27,16 @@ tess_ggplot(
 \description{
 ggplot of TESS results
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

@@ -36,3 +36,15 @@ pvalues are not calibrated.}
 \description{
 Run LFMM
 }
+\seealso{
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_do_everything}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_table}()},
+\code{\link{lfmm_test_tidy}()},
+\code{\link{quick_elbow}()},
+\code{\link{select_K}()}
+}
+\concept{LFMM functions}

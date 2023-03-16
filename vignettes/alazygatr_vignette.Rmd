@@ -12,6 +12,7 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 ```{r, include = FALSE}
 library(algatr)
 devtools::load_all()
+load_algatr_example()
 vcf <- liz_vcf[,1:21]
 coords <- liz_coords[1:20,]
 envlayers <- CA_env

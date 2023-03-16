@@ -17,3 +17,16 @@ Best K Selection based on cross entropy
 \note{
 (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

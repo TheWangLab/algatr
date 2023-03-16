@@ -10,7 +10,7 @@ tess_ktest(
   Kvals = 1:10,
   grid = NULL,
   tess_method = "projected.ls",
-  K_selection = "auto",
+  K_selection = "manual",
   ploidy = 2
 )
 }
@@ -21,13 +21,27 @@ tess_ktest(
 
 \item{Kvals}{vector of K values to test}
 
-\item{grid}{RasterLayer or other gridded spatial object for kriging}
+\item{grid}{SpatRaster for kriging}
 
-\item{K_selection}{how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)}
+\item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
 
-\item{ploidy}{an integer corresponding to ploidy of the studied
-organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
+\item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
+
+\item{ploidy}{ploidy of data (defaults to 2)}
 }
 \description{
 Test multiple K values
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_plot_allK}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

@@ -17,8 +17,23 @@ tess_plot_allK(
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
+\item{col_breaks}{number of breaks for plotting (defaults to 20)}
+
 \item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot}
 }
 \description{
 Plot all kriged Q values for each K
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

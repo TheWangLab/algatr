@@ -46,7 +46,7 @@ This package also allows a user to look at the relationship between distance met
 ### Load example dataset
 
 ```{r load example}
-load_example()
+load_algatr_example()
 ```
 
 ## Calculate genetic distances with `gen_dist_calc()`
@@ -113,7 +113,7 @@ gen_dist_hm(dps_dists)
 ------------------------------------------------------------------------
 
 |                       | Citation/URL                                                                                                                                                                 | Details                                                                                                                |
-|-----------------|------------------------------|-------------------------|
+|------------------|-----------------------------|-------------------------|
 | Associated code       | [Goslee & Urban 2007](https://cran.r-project.org/web/packages/ecodist/index.html)                                                                                            | algatr's calculation of Euclidean and Bray-Curtis distances using the `distance()` function within the ecodist package |
 | Associated code       | [Jombart 2008](https://academic.oup.com/bioinformatics/article/24/11/1403/191127); [Jombart & Ahmed 2011](https://academic.oup.com/bioinformatics/article/27/21/3070/218892) | algatr's calculation of proportion of shared alleles using the `propShared()` function within the adegenet package     |
 | Associated literature | [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684)                                                                                        | Paper testing a number of different genetic distance metrics (including those used by algatr) for landscape genomics   |

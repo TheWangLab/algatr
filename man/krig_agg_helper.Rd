@@ -20,7 +20,8 @@ number of cells contained in final (aggregated or disaggregated) raster layer
 Helper function for krig_helper; calculates aggregated/disaggregated raster cell size
 }
 \seealso{
-Other wingen function: 
+Other wingen functions: 
+\code{\link{krig_helper}()},
 \code{\link{wingen_do_everything}()}
 }
-\concept{wingen function}
+\concept{wingen functions}

@@ -44,3 +44,16 @@ tess_barplot(
 \description{
 Based on code from: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()},
+\code{\link{tess_plot}()}
+}
+\concept{TESS functions}

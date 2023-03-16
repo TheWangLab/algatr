@@ -5,7 +5,7 @@
 \alias{get_K_tw}
 \alias{get_K_elbow}
 \alias{get_K_tess}
-\title{Function to Select K value}
+\title{Function to select K value}
 \usage{
 get_K(gen, coords = NULL, k_selection = "tracy_widom", Kvals = Kvals, ...)
 
@@ -20,7 +20,7 @@ get_K_tess(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2)
 
 \item{coords}{coordinates for "tess"}
 
-\item{k_selection}{method for performing K selection: "tracy_widom", "quick_elbow", or "tess"}
+\item{k_selection}{method for performing K selection: "tracy_widom" (default), "quick_elbow", "tess", or "dapc"}
 
 \item{Kvals}{values of K to test for "tess"}
 
@@ -29,14 +29,14 @@ get_K_tess(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2)
 \item{ploidy}{ploidy for "tess"}
 }
 \description{
-Function to Select K value
+TODO\link{EAC}: add find.clusters code here and add function below
 }
 \section{Functions}{
 \itemize{
-\item \code{get_K_tw()}: Determine K using Tracy-Widom Test
+\item \code{get_K_tw()}: determine K using Tracy-Widom Test
 
 \item \code{get_K_elbow()}: Determine K using PCA and \code{quick_elbow}
 
-\item \code{get_K_tess()}: Determine K using TESS and \code{bestK}
+\item \code{get_K_tess()}: determine K using TESS and \code{bestK}
 
 }}

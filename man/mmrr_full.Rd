@@ -22,3 +22,15 @@ mmrr_full(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all")
 \description{
 Run MMRR with all variables
 }
+\seealso{
+Other MMRR functions: 
+\code{\link{MMRR}()},
+\code{\link{mmrr_best}()},
+\code{\link{mmrr_df}()},
+\code{\link{mmrr_do_everything}()},
+\code{\link{mmrr_plot}()},
+\code{\link{mmrr_table}()},
+\code{\link{mmrr_var_sel}()},
+\code{\link{unfold}()}
+}
+\concept{MMRR functions}
