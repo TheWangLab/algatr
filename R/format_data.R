@@ -1,26 +1,4 @@
 
-#' Convert a vcf to a dosage matrix
-#'
-#' @param x can either be an object of class 'vcfR' or a path to a .vcf file
-#'
-#' @return returns dosage matrix
-#' @export
-#'
-#'
-vcf_to_dosage <- function(x) {
-  # Check vcf
-  vcf <- vcf_check(x)
-
-  # Convert to genlight
-  genlight <- vcfR::vcfR2genlight(vcf)
-
-  # Convert to dosage matrix
-  gen <- as.matrix(genlight)
-
-  return(gen)
-}
-
-
 #' Check if an object is a vcf or a path to a vcf
 #'
 #' @param x vcfR object or path to vcf
