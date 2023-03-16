@@ -8,10 +8,10 @@
 #'
 #' @noRd
 crs_check <- function(coords, lyr = NULL) {
-  # convert coords to sf
+  # Convert coords to sf
   coords <- coords_to_sf(coords)
 
-  # get CRS
+  # Get CRS
   coords_crs <- sf::st_crs(coords)
 
   if (is.na(coords_crs)) warning("No CRS found for the provided coordinates. Make sure the coordinates and the raster have the same projection (see function details or wingen vignette)")
@@ -24,5 +24,4 @@ crs_check <- function(coords, lyr = NULL) {
       if (coords_crs != lyr_crs) stop("CRS of the provided coordinates and raster do not match")
     }
   }
-
 }
