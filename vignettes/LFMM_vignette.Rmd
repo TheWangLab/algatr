@@ -27,6 +27,8 @@ library(raster)
 # Libraries for k selection
 library(AssocTests)
 library(tess3r)
+# devtools::install_github("AnushaPB/wingen")
+library(wingen)
 
 devtools::load_all()
 ```
@@ -43,7 +45,7 @@ To perform an LFMM analysis [Caye et al. 2019](https://academic.oup.com/mbe/arti
 
 ### Read in and process data files
 
-To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental variables based on our sampling coordinates.
+To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function in the wingen package, and extract environmental variables based on our sampling coordinates.
 
 ```{r data, warning = FALSE}
 load_example()

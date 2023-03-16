@@ -26,6 +26,8 @@ library(robust)
 library(tidyverse)
 # BiocManager::install("qvalue")
 library(qvalue)
+# devtools::install_github("AnushaPB/wingen")
+library(wingen)
 
 devtools::load_all()
 ```
@@ -56,7 +58,7 @@ Running an RDA requires two data files for input: a genotype dosage matrix (the 
 
 ```{r gen data, warning = FALSE}
 load_example()
-# Convert from vcf to dosage matrix:
+# Convert from vcf to dosage matrix using the wingen package:
 gen <- vcf_to_dosage(liz_vcf)
 ```
 

@@ -26,6 +26,7 @@ library(viridis)
 library(terra)
 # devtools::install_github("bcm-uga/TESS3_encho_sen")
 library(tess3r)
+# devtools::install_github("AnushaPB/wingen")
 library(wingen)
 
 # Need LEA library for cross entropy
@@ -56,7 +57,7 @@ For additional information on the original development and implementation of the
 
 ### Read in and process input data
 
-Running TESS3 requires three data files: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function to convert a vcf to a dosage matrix.
+Running TESS3 requires three data files: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function in the wingen package to convert a vcf to a dosage matrix.
 
 ```{r data}
 load_example()
@@ -66,7 +67,7 @@ head(liz_coords)
 ```
 
 ```{r dosage}
-# Convert vcf to genotype matrix
+# Convert vcf to genotype matrix using wingen
 liz_dosage <- vcf_to_dosage(liz_vcf)
 ```
 
