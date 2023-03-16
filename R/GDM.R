@@ -531,9 +531,9 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   if(display_axes == FALSE){
     plot <- plot +
       # Remove axes
-      ggplot2::theme(axis.title = element_blank(),
-                     axis.text = element_blank(),
-                     axis.ticks = element_blank())
+      ggplot2::theme(axis.title = ggplot2::element_blank(),
+                     axis.text = ggplot2::element_blank(),
+                     axis.ticks = ggplot2::element_blank())
   }
 
   # Plot
@@ -687,5 +687,5 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 #' @export
 #'
 #' @examples
-scale01 <- function(x){(x-min(x))/(max(x)-min(x))}
+scale01 <- function(x){(x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))}
 

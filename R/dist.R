@@ -51,7 +51,8 @@ env_dist_helper <- function(env, stdz = TRUE){
 geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   if(type == "Euclidean" | type == "euclidean" | type == "linear"){
     # Calculate geodesic distance between points
-    distmat <- geodist::geodist(coords, measure = "geodesic")
+    coords <- coords_to_sf(coords)
+    distmat <- sf::st_distance(coords)
   }
   else if(type == "topo" | type == "topographic"){
     if(is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
@@ -78,4 +79,19 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   }
 
   return(distmat)
+}
+
+
+#' convert coordinates to sf
+#' @noRd
+coords_to_sf <- function(coords) {
+  if (inherits(coords, "sf")) {
+    return(coords)
+  }
+  if (inherits(coords, "SpatVector")) {
+    return(sf::st_as_sf(coords))
+  }
+  if (is.matrix(coords)) coords <- data.frame(coords)
+  if (is.data.frame(coords)) colnames(coords) <- c("x", "y")
+  return(sf::st_as_sf(coords, coords = c("x", "y")))
 }
