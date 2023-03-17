@@ -461,7 +461,7 @@ lfmm_qqplot <- function(df){
 #' @examples
 lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
 
-  # subset variables
+  # Subset variables
   if(!is.null(var)) df <- df[df$var %in% var, ]
 
   # Convert to df to not get tidy warnings about uninitialized columns
@@ -470,25 +470,27 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
   df$type[!(df$adjusted.pvalue < sig)] <- "Neutral"
   df$index <- 1:length(unique(df$snp))
 
-  plt <-
+  # Build plot
+  # plt <-
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
     ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
-    ggplot2::scale_color_manual(values = c(rgb(0.7,0.7,0.7,0.5), "#F9A242FF"), na.translate = F) +
-    ggplot2::xlab("snps") + ggplot2::ylab("-log10(p)") +
-    ggplot2::geom_hline(yintercept=-log10(sig), linetype="dashed", color = "black", size=0.6) +
-    ggplot2::guides(color=ggplot2::guide_legend(title="snp type")) +
+    ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7,0.7,0.7,0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
+    ggplot2::xlab("SNPs") +
+    ggplot2::ylab("-log10(p)") +
+    ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", size = 0.6) +
+    ggplot2::guides(color = ggplot2::guide_legend(title = "SNP type")) +
     ggplot2::facet_wrap( ~ var, nrow = length(unique(df$var))) +
-    ggplot2::xlab("position") + ggplot2::ylab("-log10(p)") +
+    ggplot2::xlab("Position") + ggplot2::ylab("-log10(p)") +
     ggplot2::theme_bw(base_size = 11) +
-    ggplot2::theme(legend.position="right",
+    ggplot2::theme(legend.position = "right",
                    legend.background = ggplot2::element_blank(),
                    panel.grid = ggplot2::element_blank(),
                    legend.box.background = ggplot2::element_blank(),
                    plot.background = ggplot2::element_blank(),
                    panel.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size=ggplot2::rel(.8)),
-                   strip.text = ggplot2::element_text(size=11))
+                   legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
+                   strip.text = ggplot2::element_text(size = 11))
   return(plt)
 }
 
