@@ -18,7 +18,8 @@
 #' @family TESS functions
 #'
 #' @details
-#' TESS is run using the tess3r package
+#' TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
+#' See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471
 #'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
