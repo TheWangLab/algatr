@@ -16,8 +16,8 @@
 #' @family wingen functions
 #'
 #' @details
-#' When using wingen, please cite the original citation: Bishop, A.P., Chambers, E.A., Wang, I.J. (202X) TODO: citation
-#' N.B.: Be aware that this function sets *many* of the wingen function arguments to defaults, which may result in sub optimal results. We highly advise researchers to run each wingen function separately for best results.
+#' When using wingen, please cite the original citation: Bishop, A.P., Chambers, E.A., Wang, I.J. (2023). Generating continuous maps of genetic diversity using moving windows. Methods Ecol. Evol. doi: https://doi.org/10.1111/2041-210X.14090
+#' N.B.: Be aware that this function sets *many* of the wingen function arguments to defaults, which my result in sub optimal results. We highly advise researchers to run each wingen function separately for best results.
 #'
 wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
                                  vcf, stat, rarify = FALSE,

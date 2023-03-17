@@ -16,7 +16,7 @@
 #'
 #' @details
 #' LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
-#' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860.
+#' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860. doi: https://doi.org/10.1093/molbev/msz008
 #'
 #' @return
 #' @export

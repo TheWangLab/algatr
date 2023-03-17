@@ -17,6 +17,9 @@
 #'
 #' @family TESS functions
 #'
+#' @details
+#' TESS is run using the tess3r package
+#'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
 #'
