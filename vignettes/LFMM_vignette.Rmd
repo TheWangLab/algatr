@@ -96,7 +96,7 @@ select_K(gen, K_selection = "quick_elbow", low = 0.08, max.pc = 0.90) # 3
 
 select_K(gen, K_selection = "tess", coords = liz_coords, Kvals = 1:10) # 3
 
-select_K(gen, K_selection = "find_clusters", perc.pca = 90, max.n.clust = 10) # 7
+select_K(gen, K_selection = "find_clusters", perc.pca = 90, max.n.clust = 10) # 4
 ```
 
 As you can see, the K selection method has quite an effect on the best number of latent factors discovered in the data. For this vignette, let's move forward with the best K from the default method (Tracy-Widom test), which means **K = 6**.
