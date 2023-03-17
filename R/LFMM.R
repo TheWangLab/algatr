@@ -174,7 +174,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE, p_adj = "fdr"){
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE){
 
   if(!is.null(var)) df <- df[df$var %in% var, ]
   if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
@@ -198,9 +198,6 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
   colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
-
-  # Remove adjusted p-value if no correction is applied
-  if(p_adj == "none"){df <- df %>% dplyr::select(-`adjusted p-value`)}
 
   suppressWarnings(
     tbl <- df  %>%
