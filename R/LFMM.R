@@ -471,7 +471,7 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
   df$index <- 1:length(unique(df$snp))
 
   # Build plot
-  # plt <-
+  plt <-
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
     ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
