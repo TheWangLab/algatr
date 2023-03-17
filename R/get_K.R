@@ -90,7 +90,7 @@ get_K_elbow <- function(gen){
 #' @examples
 get_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
   # coordinates must be a matrix
-  coords <- as.matrix(coords)
+  coords <- coords_to_matrix(coords)
 
   # Run tess for all K values
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
