@@ -25,8 +25,7 @@
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
                      K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                      p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
-                     low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90,
-                     choose.n.clust = FALSE, criterion = "diffNgroup", max.n.clust = 10){
+                     low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10){
 
   # Get environmental data
   if(inherits(env, "Raster")) env <- raster::extract(env, coords)
@@ -45,8 +44,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if(is.null(K)){
     K <- select_K(gen, K_selection = K_selection, coords = coords,
                Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-               max.pc = max.pc, pca.select = pca.select,  perc.pca = perc.pca,
-               choose.n.clust = choose.n.clust, criterion = criterion, max.n.clust = max.n.clust)
+               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
   }
 
   # Run LFMM
@@ -226,10 +224,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
 #' @param low if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
 #' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
-#' @param pca.select if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).
 #' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
-#' @param choose.n.clust if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
-#' @param criterion if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).
 #' @param max.n.clust if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
 #'
 #' @return prints the best K value given the specified K selection procedure
@@ -238,8 +233,7 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #'
 #' @examples
 select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
-                  low = 0.08, max.pc = 0.9, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
-                  criterion = "diffNgroup", max.n.clust = 10){
+                  low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10){
 
   if(K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
 
@@ -247,12 +241,7 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 
   if(K_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
 
-  if(K_selection == "find_clusters") K <- select_K_fc(gen,
-                                                   pca.select = pca.select,
-                                                   perc.pca = perc.pca,
-                                                   choose.n.clust = choose.n.clust,
-                                                   criterion = criterion,
-                                                   max.n.clust = max.n.clust)
+  if(K_selection == "find_clusters") K <- select_K_fc(gen, perc.pca, max.n.clust)
 
   return(K)
 }
@@ -346,24 +335,25 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 
 
 #' @describeIn select_K select K using find.clusters method
+#'
 #' @param gen a genotype matrix
-#' @inheritParams adegenet::find.clusters
+#'
 #' @return
 #' @export
 #'
 #' @family LFMM functions
 #' @examples
-select_K_fc <- function(gen, pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE,
-                        criterion = "diffNgroup", max.n.clust = 10){
+select_K_fc <- function(gen, perc.pca, max.n.clust){
 
   fc <- adegenet::find.clusters(gen,
-                                pca.select = pca.select,
+                                pca.select = "percVar",
                                 perc.pca = perc.pca,
-                                choose.n.clust = choose.n.clust,
-                                criterion = criterion,
+                                choose.n.clust = FALSE,
+                                criterion = "diffNgroup",
                                 max.n.clust = max.n.clust)
 
   K <- max(as.numeric(fc$grp))
+
   return(K)
 }
 

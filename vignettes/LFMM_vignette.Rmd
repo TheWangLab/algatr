@@ -27,6 +27,7 @@ library(raster)
 # Libraries for k selection
 library(AssocTests)
 library(tess3r)
+library(adegenet)
 # devtools::install_github("AnushaPB/wingen")
 library(wingen)
 
@@ -77,13 +78,13 @@ LFMM requires a user to define the number of latent factors (K values). algatr p
 
 -   `K_selection = "tess"`: The automatic K selection is performed after running TESS. This method minimizes the slope of the line that connects cross-entropy scores between K values. This approach is described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/). This argument requires users to provide coordinates (`coords`) and set the range of K values to test (`Kvals`; defaults to 1:10).
 
--   `K_selection = "find_clusters"`: Uses K-means clustering to detect the number of clusters that best describe the data; this uses the `find.clusters()` function in the adegenet package. For this method, the data are first transformed using a PCA, after which successive K-means clustering is run with an increasing number of K values. This argument requires users to set several parameters for both the PCA and the K-means clustering steps:
+-   `K_selection = "find_clusters"`: Uses K-means clustering to detect the number of clusters that best describe the data; this uses the `find.clusters()` function in the adegenet package. For this method, the data are first transformed using a PCA, after which successive K-means clustering is run with an increasing number of K values. The "best" K is selected using the `"diffNgroup`" criterion in adegenet's `find.clusters` function. algatr's `"find_clusters"` argument requires users to set several parameters for both the PCA and the K-means clustering steps:
 
-    -   The mode of selection of PCA axes (`pca.select`) set to either `"nbEig"` or `"percVar"`. If set to `"nbEig"`, the user must specify the number of axes retained (interactively, or by `n.pca`); if set to `"percVar"`, the user must specify the minimum amount of the total variance to be preserved by the retained axes (interactively, or by `perc.pca`). The default for this argument is `"percVar"` with a `perc.pca` default of 90%.
-
-    -   Whether the number of clusters should be chosen by the user, or chosen automatically with the `choose.n.clusters` argument. If automatic selection is done, a criterion must be provided (`criterion`).
+    -   The user must specify the minimum amount of the total variance to be preserved by the retained axes using the `perc.pca` argument. The default for this argument is 90%.
 
     -   The maximum number of clusters to be tested using the `max.n.clust` parameter; the default for this is 10.
+
+There are more options within the `find.clusters` function in adegenet, but we've chosen to include only some of them in algatr (e.g., the `pca.select` argument is set to `"percVar"`). Please refer to the adegenet documentation for further information.
 
 Let's see how the above methods compare to one another in terms of how K values compare. Regardless of the K selection that's done, a user must provide a dosage matrix (`gen`) and the K selection procedure they would like to perform (`K_selection`).
 
@@ -95,7 +96,7 @@ select_K(gen, K_selection = "quick_elbow", low = 0.08, max.pc = 0.90) # 3
 
 select_K(gen, K_selection = "tess", coords = liz_coords, Kvals = 1:10) # 3
 
-select_K(gen, K_selection = "find_clusters", pca.select = "percVar", perc.pca = 90, choose.n.clust = FALSE, criterion = NULL, max.n.clust = 10) # 7
+select_K(gen, K_selection = "find_clusters", perc.pca = 90, max.n.clust = 10) # 7
 ```
 
 As you can see, the K selection method has quite an effect on the best number of latent factors discovered in the data. For this vignette, let's move forward with the best K from the default method (Tracy-Widom test), which means **K = 6**.
