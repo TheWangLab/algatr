@@ -18,6 +18,10 @@
 #' @examples
 extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_width = NULL){
 
+  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+
+  crs_check(coords, envlayers)
+
   if(method == "range"){
     map_mask <- range_mask(coords, envlayers)
   }
@@ -65,7 +69,7 @@ range_mask <- function(coords, envlayers){
   val_min <- apply(vals, 2, min, na.rm = TRUE)
 
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-  for(n in 1:nlayers(envlayers)){
+  for(n in 1:terra::nlyr(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
@@ -106,13 +110,13 @@ sd_mask <- function(coords, envlayers, nsd){
   val_min <- val_mean - val_sd*nsd
 
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-  for(n in 1:nlayers(envlayers)){
+  for(n in 1:terra::nlyr(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
 
   # Sum layers together to get all areas that should be masked
-  map_mask <- stackApply(envmask, 1, sum, na.rm=TRUE)
+  map_mask <- terra::app(envmask, sum, na.rm=TRUE)
   # Assign values of 1 to any areas that should be masked (i.e., anything that is not 0)
   map_mask[map_mask != 0] <- 1
   # Assign NA values to any areas that should not be masked (i.e., any zeros)
@@ -136,12 +140,6 @@ sd_mask <- function(coords, envlayers, nsd){
 #'
 #' @examples
 buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
-
-  # Convert envlayers
-  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
-
-  # Check coords and layer
-  crs_check(coords, envlayers)
 
   # Create sp coords
   coords <- coords_to_sp(coords)
@@ -175,13 +173,6 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 #'
 #' @examples
 chull_mask <- function(coords, envlayers, buffer_width = NULL){
-
-  # Convert envlayers
-  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
-
-  # Check coords and layer
-  crs_check(coords, envlayers)
-
   # Use one layer as a template
   env <- envlayers[[1]]
 
@@ -221,6 +212,9 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @examples
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)){
+
+  if (!inherits(map_r, "SpatRaster")) map_r <- terra::rast(map_r)
+  if (!inherits(map_mask, "SpatRaster")) map_mask <- terra::rast(map_mask)
 
   if(RGB_cols){terra::plotRGB(map_r, r = 1, g = 2, b = 3)} else {terra::plot(map_r)}
 
