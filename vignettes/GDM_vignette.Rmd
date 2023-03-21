@@ -76,28 +76,38 @@ env <- extract(CA_env, liz_coords)
 Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We can specify running the full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
 
 ```{r gdm full}
-gdm_full <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "full", scale_gendist = TRUE)
+gdm_full <- gdm_run(gendist = liz_gendist, 
+                    coords = liz_coords,
+                    env = env,
+                    model = "full",
+                    scale_gendist = TRUE)
 ```
 
 ### GDM with model selection
 
-Now, let's run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection without geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
+We can also run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection without geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
 
 There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
 *N.B.: Sometimes, the `gdm_run()` function will return NULL, implying that none of the predictor variables are significantly associated with genetic distances. Be sure to run adequate numbers of permutations; occasionally NULL will be returned when insufficient permutations were specified.*
 
-```{r best stats, fig.height=5, fig.width=20, cache = TRUE}
-gdm_best <- gdm_run(gendist = liz_gendist, coords = liz_coords, env = env, model = "best", scale_gendist = TRUE, nperm = 500, sig = 0.05)
+See below for an example of how model selection would be run; this code is not run within the vignette because there is no significant GDM model for the algatr test dataset.
+
 ```
+gdm_best <- gdm_run(gendist = liz_gendist, 
+                    coords = liz_coords, 
+                    env = env, 
+                    model = "best", 
+                    scale_gendist = TRUE,
+                    nperm = 500, 
+                    sig = 0.05)
 
-Within the `gdm_best` object, notice that the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains information about variable importance and relevant statistics about the model. *TODO MAKE DECISION ABOUT BEST*.
-
-```{r best preds}
 # Look at p-values
-# gdm_best$pvalues
-# gdm_best$varimp
+gdm_best$pvalues
+gdm_best$varimp
 ```
+
+Within the resulting object(`gdm_best`), the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains information about variable importance and relevant statistics about the model.
 
 ## Interpreting GDM results
 
@@ -107,7 +117,7 @@ The resulting object from `gdm_run()` contains three elements: `model`, containi
 
 Let's take a closer look at the `model` element. The relevant items of this list are `predictors` (the predictor variables that were considered in the model), `splines` (three I-splines for each variable; see below for more information), and `coefficients` (coefficients for each of the predictor I-splines; i.e., 12 total). Predictor variables that have the highest summed coefficient values are those that have most influence on predicted dissimilarity. The predicted ecological distances are given within the `ecological` element, predicted dissimilarity within the `predicted` element, and observed compositional dissimilarity within the `observed` element.
 
-```{gdm full summary, warning = FALSE}
+```{r full summary, warning = FALSE}
 summary(gdm_full$model)
 ```
 
@@ -169,7 +179,11 @@ The algatr package also has an option to run all of the above functionality in a
 Running a GDM with `gdm_do_everything()` requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
 ```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='hide'}
-gdm_full_everything <- gdm_do_everything(liz_gendist, liz_coords, envlayers = CA_env, model = "full", scale_gendist = TRUE)
+gdm_full_everything <- gdm_do_everything(liz_gendist,
+                                         liz_coords,
+                                         envlayers = CA_env,
+                                         model = "full", 
+                                         scale_gendist = TRUE)
 ```
 
 ## Additional documentation and citations

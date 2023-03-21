@@ -28,15 +28,14 @@
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE){
 
-  # Format coordinates
-  coords <- data.frame(coords)
-  colnames(coords) <- c("x", "y")
+  # Check CRS of envlayers and coords
+  crs_check(coords, envlayers)
 
   # If coords not provided, make env dataframe from layers and coords
-  if(is.null(env)) env <- raster::extract(envlayers, coords)
+  if(is.null(env)) env <- terra::extract(envlayers, coords, ID = FALSE)
 
   # Run model with all defaults
-  gdm_result <- gdm_run(gendist, coords, env, model = model, sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  gdm_result <- gdm_run(gendist, coords = coords, env = env, model = model, sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
 
   # If mod is null, exit
   if(is.null(gdm_result$model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
@@ -84,11 +83,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
 
   # Extract environmental data if env is a RasterStack
-  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
-
-  # Rename coords
-  coords <- dplyr::as_tibble(coords)
-  colnames(coords) <- c("x","y")
+  if(inherits(env, "Raster")) env <- terra::extract(env, coords, ID = FALSE)
 
   # Scale genetic distance data from 0 to 1
   if(scale_gendist){gendist <- scale01(gendist)}
@@ -101,14 +96,17 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   # Bind vector of sites with gen distances
   gdmGen <- cbind(site, gendist)
 
+  # Convert coords to df
+  coords_df <- coords_to_df(coords)
+
   # Create dataframe of predictor variables
   gdmPred <- data.frame(site = site,
-                        x = coords$x,
-                        y = coords$y,
+                        x = coords_df$x,
+                        y = coords_df$y,
                         env)
 
   # Format data for GDM
-  if(geodist_type == "resistance" | geodist_type == "topographic"){
+  if (geodist_type == "resistance" | geodist_type == "topographic"){
     distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
     gdmDist <- cbind(site, distmat)
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
@@ -137,7 +135,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   if(model == "best"){
     # Add distance matrix separately
     if(geodist_type == "Euclidean"){
-      geodist <- geo_dist(coords[,c("x","y")])
+      geodist <- geo_dist(coords)
       gdmDist <- cbind(site, geodist)
       gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
     }
@@ -185,8 +183,6 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 
     # Run final model
     gdm_model_final <- gdm::gdm(gdmData_final, geo = geo)
-
-
 
     return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp))
 
@@ -272,6 +268,12 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @examples
 gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, plot = TRUE){
 
+  # convert envlayers to SpatRaster
+  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+
+  # convert coords to df
+  coords <- coords_to_df(coords)
+
   # CHECK that all of the model variables are included in the stack of environmental layers
   # Create list of environmental predictors (everything but Geographic)
   check_geo <- gdm_model$predictors == "Geographic"
@@ -284,33 +286,33 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if(!all(var_check)){stop(paste("missing model variable(s) from raster stack:",  model_vars[!var_check]))}
 
   # Subset envlayers to only include variables in final model
-  envlayers_sub <- raster::subset(envlayers, model_vars)
+  envlayers_sub <- terra::subset(envlayers, model_vars)
 
 
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
   # Transform GIS layers
+  # convert envlayers to raster
+  envlayers_sub <- raster::stack(envlayers_sub)
   rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
+  rastTrans <- terra::rast(rastTrans)
 
   # Remove NA values
-  rastDat <- na.omit(raster::getValues(rastTrans))
+  rastDat <- na.omit(terra::values(rastTrans))
 
   # Run PCA
   pcaSamp <- stats::prcomp(rastDat)
 
   # Count number of layers
-  n_layers <- raster::nlayers(rastTrans)
+  n_layers <- terra::nlyr(rastTrans)
   # Max number of layers to plot is 3, so adjust n_layers accordingly
-  if(n_layers > 3){n_layers <- 3}
+  if (n_layers > 3){n_layers <- 3}
 
   # Make PCA raster
-  pcaRast <- raster::predict(rastTrans, pcaSamp, index=1:n_layers)
+  pcaRast <- terra::predict(rastTrans, pcaSamp, index=1:n_layers)
 
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
-  pcaRastRGB <- raster::stack(purrr::map(1:n_layers, function(i, pcaRast){
-    x <- pcaRast[[i]]
-    if(x@data@max == 0) x[] <- 255 else x <- (x - x@data@min) / (x@data@max - x@data@min)*255
-    return(x)}, pcaRast))
+  pcaRastRGB <- stack_to_rgb(pcaRast)
 
   # If there are fewer than 3 n_layers (e.g., <3 variables), the RGB plot won't work (because there isn't an R, G, and B)
   # To get around this, create a blank raster (i.e., a white raster), and add it to the stack
@@ -321,13 +323,13 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   }
 
   # If n_layers = 2, you end up making a bivariate map
-  if(n_layers == 2){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster)}
+  if(n_layers == 2){pcaRastRGB <- c(pcaRastRGB, white_raster)}
 
   # If n_layers = 1, you end up making a univariate map
-  if(n_layers == 1){pcaRastRGB <- raster::stack(pcaRastRGB, white_raster, white_raster)}
+  if(n_layers == 1){pcaRastRGB <- c(pcaRastRGB, white_raster, white_raster)}
 
   # Plot raster
-  if(plot) raster::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
+  if(plot) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
   if(!is.null(coords)) points(coords, cex = 1.5)
 
   # Plot variable vectors
@@ -373,8 +375,6 @@ gdm_plot_isplines <- function(gdm_model){
 
 
 #' Plot compositional dissimilarity spline plots
-#'
-#' TODO[APB]: can you look this function over
 #'
 #' @description generates two plots: a plot of the observed response data against raw ecological distance from the model, and a plot of the observed response against the predicted response from the model (after link function is applied)
 #' @param gdm_model GDM model
@@ -446,8 +446,8 @@ gdm_plot_diss <- function(gdm_model){
 gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE){
 
   # Confirm there are exactly 3 axes
-  if(raster::nlayers(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
-  if(raster::nlayers(pcaRastRGB) < 3){stop("Need exactly three PC layers (RGB) for creating the variable plot (too few provided)")}
+  if(terra::nlyr(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
+  if(terra::nlyr(pcaRastRGB) < 3){stop("Need exactly three PC layers (RGB) for creating the variable plot (too few provided)")}
 
   # GET PCA DATA ----------------------------------------------------------------------------------------------------
 
@@ -458,7 +458,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   varpc <- data.frame(varnames = rownames(pcaSamp$rotation), pcaSamp$rotation)
 
   # Get PC values for each coord
-  pcavals <- data.frame(raster::extract(pcaRast, coords))
+  pcavals <- data.frame(terra::extract(pcaRast, coords, ID = FALSE))
   colnames(pcavals) <- colnames(xpc)
 
   # Rescale var loadings with individual loadings so they fit in the plot nicely
@@ -474,7 +474,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
 
   # GET RGB VALS FOR EACH COORD----------------------------------------------------------------------------------------
 
-  pcavalsRGB <- data.frame(raster::extract(pcaRastRGB, coords))
+  pcavalsRGB <- data.frame(terra::extract(pcaRastRGB, coords, ID = FALSE))
   colnames(pcavalsRGB) <- colnames(xpc)
 
   # Create vector of RGB colors for plotting
@@ -483,7 +483,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   # GET RGB VALS FOR ENTIRE RASTER-------------------------------------------------------------------------------------
 
   # Get sample
-  s <- sample(1:raster::ncell(pcaRast), 10000)
+  s <- sample(1:terra::ncell(pcaRast), 10000)
 
   # Get all PC values from raster and remove NAs
   rastvals <- data.frame(values(pcaRast))[s,]
@@ -557,7 +557,7 @@ create_rgb_vec <- function(vec){
 #' @export
 stack_to_rgb <- function(s){
   stack_list <- as.list(s)
-  new_stack <- raster::stack(purrr::map(stack_list, raster_to_rgb))
+  new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb))
   return(new_stack)
 }
 
@@ -568,7 +568,9 @@ stack_to_rgb <- function(s){
 #' @noRd
 #' @export
 raster_to_rgb <- function(r){
-  if(r@data@max == 0){r <- 255} else {r <- (r-r@data@min) / (r@data@max-r@data@min)*255}
+  rmax <- terra::minmax(r)["max",]
+  rmin <- terra::minmax(r)["min",]
+  if(rmin == 0){r <- 255} else {r <- (r - rmin) / (rmax - rmin) * 255}
 }
 
 

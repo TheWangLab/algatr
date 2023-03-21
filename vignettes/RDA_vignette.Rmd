@@ -30,7 +30,7 @@ library(qvalue)
 devtools::load_all()
 ```
 
-**If using RDA, please cite the following: Capblancq T. & Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**
+**If using RDA, please cite the following: Capblancq T., Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**
 
 Redundancy analysis (RDA) is a genotype-environment association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental data) with ordination (a PCA). Importantly, RDA is multivariate (i.e., multiple loci can be considered at a time), which is appealing in cases where multilocus selection may be occurring.
 
