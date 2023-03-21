@@ -110,7 +110,7 @@ Now, let's take a look at the summary of this model. One of the most important p
 head(summary(mod_full))
 ```
 
-One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased **(TODO[EAC]: prob should explain why/how it is biased/just one sentence about \# variables)**. The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
+One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted; if not, it is biased because it will always increase if independent variables are added (i.e., there is no penalization for adding independent variables that aren't significantly affecting dependent variables within the model). The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
 
 ```{r full Radj}
 RsquareAdj(mod_full)
