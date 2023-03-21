@@ -30,7 +30,7 @@ library(sf) # if doing map other way
 devtools::load_all()
 ```
 
-**If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods Ecol. Evol. doi: https://doi.org/10.1111/2041-210X.14090**
+**If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods Ecol. Evol. doi: <https://doi.org/10.1111/2041-210X.14090>**
 
 wingen is a package that uses a moving window approach to create continuous maps of genetic diversity. Please see [Bishop et al. 2023](https://doi.org/10.1111/2041-210X.14090) for the paper describing the method, and refer to the [wingen package](https://github.com/AnushaPB/wingen) for further documentation.
 
@@ -48,7 +48,7 @@ There are five key functions within wingen:
 
 -   `plot_gd()` to plot resulting genetic diversity map and `plot_count()` to plot the resulting sample count map
 
-*Note:* Coordinates and rasters used in wingen should be in a projected (planar) coordinate system such that raster cells are of equal sizes. Therefore, spherical systems (including latitute-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given and wingen will assume the data are provided in a projected system.
+*Note:* Coordinates and rasters used in wingen should be in a projected (planar) coordinate system such that raster cells are of equal sizes. Therefore, spherical systems (including latitude-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given and wingen will assume the data are provided in a projected system. Please refer to the wingen vignette for further information.
 
 ### Read in and process input data
 
@@ -65,21 +65,6 @@ Although we can use one of the PCs within our CA_env object as a raster for wing
 
 ```{r coords to raster}
 liz_lyr <- coords_to_raster(liz_coords, res = 0.5, buffer = 1)
-
-# TODO[EAC]: fix below
-## Example raster:
-lyr_longlat <- rast(ncols = 40, nrows = 40, xmin = -110, xmax = -90, ymin = 40, ymax = 60, 
-                    crs = "+proj=longlat +datum=WGS84")
-
-## Example coordinates:
-coords_df <- data.frame(x = c(-110, -90), y = c(40, 60))
-coords_longlat <- st_as_sf(coords_df, coords = c("x", "y"), crs = "+proj=longlat")
-
-# Next, the coordinates and raster can be projected to an equal area projection, in this case the Goode Homolosine projection (https://proj.org/operations/projections/goode.html):
-coords_eq <- st_transform(coords_longlat, crs = "+proj=goode")
-lyr_eq <- project(lyr_longlat, "+proj=goode")
-
-# Coordinates can be switched back to latitude-longitude the same way by replacing "goode" with "longlat"
 ```
 
 ## Moving window calculations using `preview_gd()` and `window_gd()`
@@ -215,10 +200,10 @@ results <- wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, 
 
 ------------------------------------------------------------------------
 
-|                         | Citation/URL                                              | Details                                         |
-|-------------------------|-----------------------------------------------------------|-------------------------------------------------|
-| Manuscript with method  | [Bishop et al. 2022](REFER)                               | Paper describing wingen methodology and package |
-| R package documentation | [Available on Github](https://github.com/AnushaPB/wingen) | Code, vignette                                  |
+|                         | Citation/URL                                                                                       | Details                                         |
+|----------------|--------------------------------------|------------------|
+| Manuscript with method  | [Bishop et al. 2023](https://doi.org/10.1111/2041-210X.14090) | Paper describing wingen methodology and package |
+| R package documentation | [Available on Github](https://github.com/AnushaPB/wingen)                                          | Code, vignette                                  |
 
 Retrieve wingen's vignette:
 
