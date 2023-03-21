@@ -39,7 +39,7 @@ There are a variety of ways to determine the best number of latent factors in LF
 
 Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
 
-To perform an LFMM analysis [Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100), algatr uses the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details). Despite its name, this package implements the LFMM2 method, which is similar to the original LFMM algorithm, but is computationally faster. The LEA package [Frichot & Francois 2015](https://rdrr.io/bioc/LEA/) also provides a wrapper for lfmm2 using the `lfmm2()` function.
+To perform an LFMM analysis ([Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100)), algatr uses the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details). Despite its name, this package implements the LFMM2 method, which is similar to the original LFMM algorithm, but is computationally faster. The LEA package ([Frichot & Francois 2015](https://rdrr.io/bioc/LEA/)) also provides a wrapper for lfmm2 using the `lfmm2()` function.
 
 ### Read in and process data files
 
@@ -75,7 +75,7 @@ LFMM requires a user to define the number of latent factors (K values). algatr p
 
 -   `K_selection = "tess"`: The automatic K selection is performed after running TESS. This method minimizes the slope of the line that connects cross-entropy scores between K values. This approach is described [here](https://chazhyseni.github.io/NALgen/post/determining_bestk/). This argument requires users to provide coordinates (`coords`) and set the range of K values to test (`Kvals`; defaults to 1:10).
 
--   `K_selection = "find_clusters"`: Uses K-means clustering to detect the number of clusters that best describe the data; this uses the `find.clusters()` function in the adegenet package. For this method, the data are first transformed using a PCA, after which successive K-means clustering is run with an increasing number of K values. This argument requires users to set several parameters for both the PCA and the K-means clustering steps:
+-   `K_selection = "find_clusters"`: Uses K-means clustering to detect the number of clusters that best describe the data; this uses the `find.clusters()` function in the [adegenet](https://cran.r-project.org/web/packages/adegenet/index.html) package. For this method, the data are first transformed using a PCA, after which successive K-means clustering is run with an increasing number of K values. This argument requires users to set several parameters for both the PCA and the K-means clustering steps:
 
     -   The mode of selection of PCA axes (`pca.select`) set to either `"nbEig"` or `"percVar"`. If set to `"nbEig"`, the user must specify the number of axes retained (interactively, or by `n.pca`); if set to `"percVar"`, the user must specify the minimum amount of the total variance to be preserved by the retained axes (interactively, or by `perc.pca`). The default for this argument is `"percVar"` with a `perc.pca` default of 90%.
 
@@ -185,7 +185,7 @@ lfmm_table(lasso_results$df, order = TRUE, var = "CA_rPCA2")
 
 ### Building a QQplot with `lfmm_qqplot()`
 
-A QQplot plots theoretical quantiles against p-value quantiles, providing a way to visualize the significance of our outlier SNPs. The line that is plotted runs through the intercept and has a slope of 1:
+A QQplot plots theoretical quantiles against p-value quantiles, providing a way to visualize the normality of the test significance values. The line that is plotted runs through the intercept and has a slope of 1. The points should ideally fall along this reference line:
 
 ```{r qqplot, fig.width=5, fig.height=5, fig.align='center'}
 lfmm_qqplot(lasso_results$df)
