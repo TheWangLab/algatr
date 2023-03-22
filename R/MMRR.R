@@ -7,6 +7,8 @@
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
+#' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
+#' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param plot whether to plot results (default = TRUE)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
@@ -18,14 +20,23 @@
 #' @family MMRR functions
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+
+  # Convert env to SpatRaster if Raster
+  # note: need to check specifically for raster instead of not SpatRaster because it could be a df
+  if(inherits(env, "Raster")) env <- terra::rast(env)
+
+  # Check coords and env, if env is a raster
+  if (inherits(env, "SpatRaster")) crs_check(coords, env) else crs_check(coords)
 
   # If not provided, make env data frame from layers and coords
-  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
+  if(inherits(env, "SpatRaster")) env <- terra::extract(env, coords)
 
   # Make env dist matrix
   X <- env_dist(env)
-  X[["geodist"]] <- geo_dist(coords)
+
+  # Make distance matrix
+  X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
 
   # Make geodist mat
   Y <- as.matrix(gendist)
@@ -36,7 +47,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", nperm = 999
   if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
 
   # Print dataframe
-  print(mmrr_table(results$coeff_df))
+  print(mmrr_table(results))
 
   return(results)
 }

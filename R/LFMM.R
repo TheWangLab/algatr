@@ -27,8 +27,10 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
                      p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                      low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10){
 
-  # Get environmental data
-  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
+  # Get and check environmental data
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+  if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
 
   # Convert vcf to dosage matrix
   if(inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
@@ -317,7 +319,8 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 #' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
   # Run TESS for all K values
-  tess3_obj <- tess3r::tess3(X = gen, coord = as.matrix(coords), K = Kvals, method = tess_method, ploidy = ploidy)
+  coords <- coords_to_matrix(coords)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot x-validation results and indicate K-value that is automatically selected
   plot(tess3_obj, pch = 19, col = "blue",

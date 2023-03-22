@@ -49,12 +49,17 @@ env_dist_helper <- function(env, stdz = TRUE){
 #'
 #' @examples
 geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
+
   if(type == "Euclidean" | type == "euclidean" | type == "linear"){
-    # Calculate geodesic distance between points
+    # Format coordinates
     coords <- coords_to_sf(coords)
+    # Calculate geodesic distance between points
     distmat <- sf::st_distance(coords)
   }
   else if(type == "topo" | type == "topographic"){
+    # format coordinates
+    coords <- coords_to_df(coords)
+
     if(is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
     message("Calculating topo distances... This can be time consuming with many points and large rasters.")
 
@@ -66,6 +71,9 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
   else if(type == "resistance" | type == "cost" | type == "res"){
     if(is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
     message("Calculating resistance distances... This can be time consuming with many points and large rasters.")
+
+    # format coordinates
+    coords <- coords_to_df(coords)
 
     # Convert to RasterLayer if SpatRaster object
     if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)

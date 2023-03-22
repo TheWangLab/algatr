@@ -122,7 +122,7 @@ variation?</td>
 <td>How is genetic diversity distributed across space?</td>
 <td>Genetic diversity</td>
 <td>Moving windows of genetic diversity; wingen (Bishop et
-al. 2022)</td>
+al. 2023)</td>
 <td>wingen_vignette.Rmd</td>
 <td><code>wingen_do_everything()</code></td>
 </tr>
@@ -159,7 +159,7 @@ There are four objects loaded within the example dataset:
 Load the example dataset to take a look:
 
 ``` r
-load_example()
+load_algatr_example()
 #> 
 #> ---------------- example dataset ----------------
 #>  
@@ -246,8 +246,8 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 
 You’ll now want to do some processing of these data, such as file
 conversions and LD-pruning (see the [**data processing
-vignette**](REFER)) and calculating genetic distances (see the
-[**genetic distances vignette**](REFER)).
+vignette**](https://github.com/TheWangLab/algatr/blob/main/vignettes/data_processing_vignette.Rmd)) and calculating genetic distances (see the
+[**genetic distances vignette**](https://github.com/TheWangLab/algatr/blob/main/vignettes/gen_dist_vignette.Rmd)).
 
 <table style="width:98%;">
 <colgroup>

@@ -39,15 +39,17 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
-  # Extract environmental data if env is a RasterStack
-  if(inherits(env, "Raster")) env <- raster::extract(env, coords)
+  # Extract environmental data if env is a raster
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+  if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
 
   # Standardize environmental variables
-  if(stdz) env <- raster::scale(env, center = TRUE, scale = TRUE)
+  if (stdz) env <- terra::scale(env, center = TRUE, scale = TRUE)
   env <- data.frame(env)
 
-  # Rename coords
-  colnames(coords) <- c("x", "y")
+  # Format coords
+  coords <- coords_to_df(coords)
 
   # Modify genetic data -----------------------------------------------------
 

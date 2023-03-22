@@ -32,7 +32,7 @@ library(wingen)
 devtools::load_all()
 ```
 
-**If using RDA, please cite the following: Capblancq T. & Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**
+**If using RDA, please cite the following: Capblancq T., Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**
 
 Redundancy analysis (RDA) is a genotype-environment association (GEA) method that uses constrained ordination to detect outlier loci that are significantly associated with environmental variables. It does so by combining regression (in which response variables are genetic data, in our case, while explanatory variables are environmental data) with ordination (a PCA). Importantly, RDA is multivariate (i.e., multiple loci can be considered at a time), which is appealing in cases where multilocus selection may be occurring.
 
@@ -112,7 +112,7 @@ Now, let's take a look at the summary of this model. One of the most important p
 head(summary(mod_full))
 ```
 
-One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted because otherwise it is biased **(TODO[EAC]: prob should explain why/how it is biased/just one sentence about \# variables)**. The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
+One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted; if not, it is biased because it will always increase if independent variables are added (i.e., there is no penalization for adding independent variables that aren't significantly affecting dependent variables within the model). The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
 
 ```{r full Radj}
 RsquareAdj(mod_full)
@@ -193,7 +193,7 @@ varpart <- rda_varpart(gen, env, liz_coords, Pin = 0.05, R2permutations = 1000,
 rda_varpart_table(varpart, call_col = TRUE)
 ```
 
-From the above table, we can see that the full model only explains 37% of the total variance in our genetic data. Furthermore, our pure environmental model explains only a small proportion of the variance ("inertia") contained within the full model (9%), and that population structure explains substantially more (44%). There is also a large amount of variance (37%) within the full model that is confounded, meaning that variables within the three variable sets explain a substantial amount of the full model's variance *when in combination with one another*. This is a relatively common occurrence (see Capblancq & Forester 2021), and users should always keep in mind how collinearity may affect their results (and account for this, if possible; see algatr's environmental data vignette for more information on how to do so). However, accounting for collinearity may also elevate false positive rates, while failing to account for it at all can lead to elevated false negative rates.
+From the above table, we can see that the full model only explains 27% of the total variance in our genetic data. Furthermore, our pure environmental model explains only a small proportion of the variance ("inertia") contained within the full model (9%), and that population structure explains substantially more (44%). There is also a large amount of variance (37%) within the full model that is confounded, meaning that variables within the three variable sets explain a substantial amount of the full model's variance *when in combination with one another*. This is a relatively common occurrence (see Capblancq & Forester 2021), and users should always keep in mind how collinearity may affect their results (and account for this, if possible; see algatr's environmental data vignette for more information on how to do so). However, accounting for collinearity may also elevate false positive rates, while failing to account for it at all can lead to elevated false negative rates.
 
 In our case, it is clear from our variance partitioning analysis that much of the variation in our genetic data can explained by population structure, and thus users may want to further explore more sophisticated approaches for quantifying demographic history or population structure before moving forward with outlier loci detection. As with most analyses, careful consideration of the input data and the biology of the system are critical to draw robust and reliable conclusions.
 

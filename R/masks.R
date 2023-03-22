@@ -18,6 +18,10 @@
 #' @examples
 extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_width = NULL){
 
+  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+
+  crs_check(coords, envlayers)
+
   if(method == "range"){
     map_mask <- range_mask(coords, envlayers)
   }
@@ -54,7 +58,7 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
 #' @examples
 range_mask <- function(coords, envlayers){
   # Extract values at all coords
-  vals <- raster::extract(envlayers, coords)
+  vals <- terra::extract(envlayers, coords, ID = FALSE)
 
   # Create empty layer of zeroes
   envmask <- envlayers*0
@@ -65,13 +69,13 @@ range_mask <- function(coords, envlayers){
   val_min <- apply(vals, 2, min, na.rm = TRUE)
 
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-  for(n in 1:nlayers(envlayers)){
+  for(n in 1:terra::nlyr(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
 
   # Sum layers together to get all areas that should be masked
-  map_mask <- raster::stackApply(envmask, 1, sum, na.rm=TRUE)
+  map_mask <- terra::app(envmask, sum, na.rm = TRUE)
   # Assign values of 1 to any areas that should be masked (e.g. anything that is not 0)
   map_mask[map_mask != 0] <- 1
   # Assign NA values to any areas that should not be masked (i.e. any zeros)
@@ -95,7 +99,7 @@ range_mask <- function(coords, envlayers){
 #' @examples
 sd_mask <- function(coords, envlayers, nsd){
 
-  vals <- raster::extract(envlayers, coords)
+  vals <- terra::extract(envlayers, coords, ID = FALSE)
   vals <- as.matrix(vals)
   envmask <- envlayers*0
 
@@ -106,13 +110,13 @@ sd_mask <- function(coords, envlayers, nsd){
   val_min <- val_mean - val_sd*nsd
 
   # Loop to assign values of 1 to areas that should be masked based on the min/max vals for each layer
-  for(n in 1:nlayers(envlayers)){
+  for(n in 1:terra::nlyr(envlayers)){
     envmask[[n]][envlayers[[n]] > val_max[n]] <- 1
     envmask[[n]][envlayers[[n]] < val_min[n]] <- 1
   }
 
   # Sum layers together to get all areas that should be masked
-  map_mask <- stackApply(envmask, 1, sum, na.rm=TRUE)
+  map_mask <- terra::app(envmask, sum, na.rm=TRUE)
   # Assign values of 1 to any areas that should be masked (i.e., anything that is not 0)
   map_mask[map_mask != 0] <- 1
   # Assign NA values to any areas that should not be masked (i.e., any zeros)
@@ -137,16 +141,16 @@ sd_mask <- function(coords, envlayers, nsd){
 #' @examples
 buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 
-  # Create proper coords and add projection
-  colnames(coords) <- c("x", "y")
-  sp::coordinates(coords) <- ~x+y
-  raster::crs(coords) <- raster::crs(envlayers)
+  # Create sp coords
+  coords <- coords_to_sp(coords)
 
   # Add a buffer
   buff <- rgeos::gBuffer(coords, width = buffer_width)
+  # Convert to sf
+  buff <- sf::st_as_sf(buff)
 
   # Create a mask (just need one of the envlayers to do this since the values don't matter)
-  map_mask <- raster::mask(envlayers[[1]], buff, inverse = TRUE)
+  map_mask <- terra::mask(envlayers[[1]], buff, inverse = TRUE)
 
   # Modify mask to get values of 1 for any areas that should be masked
   # (multiplying by 0 and adding 1 will make everything but the NA values equal to 1)
@@ -169,23 +173,21 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8){
 #'
 #' @examples
 chull_mask <- function(coords, envlayers, buffer_width = NULL){
-
   # Use one layer as a template
   env <- envlayers[[1]]
 
-  # Create proper coords and add projection
-  colnames(coords) <- c("x", "y")
-  sp::coordinates(coords) <- ~x+y
-  raster::crs(coords) <- raster::crs(env)
+  # Create sp coords
+  coords <- coords_to_sp(coords)
 
   # Add a buffer to coords
   if(!is.null(buffer_width)){coords <- rgeos::gBuffer(coords, width = buffer_width)}
 
   # Make convex hull
   chull <- rgeos::gConvexHull(coords)
+  chull <- sf::st_as_sf(chull)
 
   # Create mask from areas outside of hull
-  env_chull_mask <- raster::mask(env, chull, inverse=TRUE)
+  env_chull_mask <- terra::mask(env, chull, inverse=TRUE)
 
   # Convert to ones
   map_mask <- env_chull_mask*0 + 1
@@ -211,9 +213,12 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL){
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)){
 
-  if(RGB_cols){raster::plotRGB(map_r, r = 1, g = 2, b = 3)} else {raster::plot(map_r)}
+  if (!inherits(map_r, "SpatRaster")) map_r <- terra::rast(map_r)
+  if (!inherits(map_mask, "SpatRaster")) map_mask <- terra::rast(map_mask)
+
+  if(RGB_cols){terra::plotRGB(map_r, r = 1, g = 2, b = 3)} else {terra::plot(map_r)}
 
   # Plots mask as black semi-transparent layer over map
-  raster::plot(map_mask, col = mask_col, add = TRUE, legend = FALSE)
+  terra::plot(map_mask, col = mask_col, add = TRUE, legend = FALSE)
 
 }

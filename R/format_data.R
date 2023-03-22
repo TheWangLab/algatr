@@ -95,7 +95,7 @@ impute_helper <- function(i, FUN = median){
 scaleRGB <- function(env){
 
   # Convert to SpatRaster if RasterStack provided ---------------------------
-  if(inherits(env, "RasterStack")) env <- terra::rast(env)
+  if (!inherits(env, "SpatRaster")) env <- terra::rast(env)
 
   # Assign RGB values to each layer -----------------------------------------
   for(layer in 1:3){

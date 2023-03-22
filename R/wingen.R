@@ -35,7 +35,7 @@ wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 
 
   if (fact == 0) lyr <- lyr * 0 else lyr <- raster::aggregate(lyr, fact, fun = mean) * 0
   if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
-  map <- wingen::window_gd(vcf = vcf, coords = coords, lyr = lyr, stat = stat,
+  map <- wingen::window_gd(gen = vcf, coords = coords, lyr = lyr, stat = stat,
                            wdim = wdim, fact = fact, rarify = rarify)
 
 
@@ -45,7 +45,7 @@ wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 
 
   # MASKING -----------------------------------------------------------------
 
-  if(masked == TRUE){map <- wingen::mask_gd(x = map, mask = mask)}
+  if (masked == TRUE) map <- wingen::mask_gd(x = map, mask = mask)
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
