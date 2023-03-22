@@ -309,6 +309,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if (n_layers > 3){n_layers <- 3}
 
   # Make PCA raster
+  # TODO [EAC]: below is returning error
   pcaRast <- terra::predict(rastTrans, pcaSamp, index=1:n_layers)
 
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)

@@ -158,7 +158,7 @@ gdm_map(gdm_full$model, CA_env, liz_coords)
 
 An important consideration for a researcher to be aware of is to not overinterpret GDM maps. In particular, areas with limited (or no) samples are still assigned values due to model extrapolation; thus, it may be more helpful to mask out any areas with no sampling so as to not overinterpret these results. In looking at the map and PCA plot above, we can see that there are two regions in California that are lacking samples: the southeastern and north-central parts of the state. Using algatr's `extrap_mask()` function (see the masking vignette for more information), we can mask out areas from the GDM map in several ways. Below, we mask out areas (in white) that fall outside a user-defined buffer around our sampling coordinates.
 
-```{r gdm masked, warning=FALSE, fig.align='center', fig.width=5, fig.height=5}
+```{r gdm masked, warning=FALSE, fig.align='center', fig.width=5, fig.height=5, warning = FALSE}
 # Extract the GDM map from the GDM model object
 map <- gdm_map(gdm_full$model, CA_env, liz_coords, plot_vars = FALSE)
 maprgb <- map$pcaRastRGB
