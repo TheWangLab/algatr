@@ -15,17 +15,17 @@ do_everything_for_me <- function(vcf, coords, envlayers){
 
   gendist <- gen_dist(vcf = vcf, dist_type = "dps")
 
-  tess <- tess_do_everything(vcf, coords, raster::aggregate(envlayers[[1]], 10))
+  tess <- tess_do_everything(vcf, coords, raster::aggregate(envlayers[[1]], 10), Kvals = 1:10, K_selection = "auto")
 
   ascii_alligator("TESS")
 
-  mmrr <- mmrr_do_everything(gendist, coords, envlayers, model = "best")
+  mmrr <- mmrr_do_everything(gendist, coords, envlayers, model = "best", nperm = 100)
 
   ascii_alligator("MMRR")
 
   if(is.null(mmrr)) {
     warning("MMRR model = \"best\" did not find a significant model, running a full model instead")
-    mmrr <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE)
+    mmrr <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE, nperm = 100)
     }
 
   gdm <- gdm_do_everything(gendist, coords, envlayers, model = "best", scale_gendist = TRUE)

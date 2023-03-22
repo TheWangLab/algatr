@@ -59,7 +59,9 @@ dosage[1:5,1:8]
 
 ------------------------------------------------------------------------
 
-We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. The main arguments within this function are as follows:
+We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. **TODO [EAC]: add further discussion of which analyses should take in LD-pruned files; also that after GEA analyses you could look at outliers with most significant p-values and prune out those in LD (see Capblancq & Forester 2021 for further details)**
+
+The main arguments within this function are as follows:
 
 -   `ld.threshold` specifies the LD pruning threshold (the default is the correlation coefficient value; thus, the higher the `ld.threshold` value, fewer variants will be pruned)
 
@@ -86,7 +88,7 @@ We will not be running this function within the vignette to avoid generating int
 ------------------------------------------------------------------------
 
 |                 | Citation/URL                                                                                                                                                                                           | Details                                                                                  |
-|------------------|-----------------------------|-------------------------|
+|-------------------|-----------------------------|-------------------------|
 | Associated code | [Zheng et al. 2012](https://academic.oup.com/bioinformatics/article/28/24/3326/245844); further details [here](https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf) | algatr uses the `snpgdsLDpruning()` function within the SNPRelate package for LD-pruning |
 
 Retrieve SNPRelate's vignette:

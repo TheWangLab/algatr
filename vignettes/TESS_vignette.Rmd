@@ -91,7 +91,7 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 ------------------------------------------------------------------------
 
-algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset.
+algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset. **TODO [EAC] discuss tess_method arg "projected.ls" for projected least squares alg (default) or "qp" for quadratic programming alg**
 
 ### Manual K selection
 
@@ -260,7 +260,7 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 
 ```{r do everything, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5, fig.align = 'center'}
 # One could also use krig_raster as the grid object
-results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:5, K_selection = "auto", minQ = 0.10)
+results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:5, K_selection = "auto")
 ```
 
 ## Additional documentation and citations
