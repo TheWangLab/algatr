@@ -55,7 +55,7 @@ There are five key functions within wingen:
 wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as an object for this purpose.
 
 ```{r test data}
-load_algatr_example()
+load_example()
 envlayer <- CA_env$CA_rPCA1
 ```
 
