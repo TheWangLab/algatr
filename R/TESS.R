@@ -498,7 +498,7 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
   K <- terra::nlyr(krig_admix)
 
   # Plot kriged admixture maps while masking small values (e.g. < minQ)
-  purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords,  col = col_pal(K), col_breaks = col_breaks, ...)
+  purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords, col = col_pal(K), col_breaks = col_breaks, ...)
 
   }
 
