@@ -177,7 +177,7 @@ tess_barplot(qmat)
 
 ### Building maps in TESS3 using `tess_ggplot()`
 
-Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggplot()` function will take in the kriged admixture values and sampling coordinates, and provides several options for the plot method (with the `plot_method` argument):
+Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggplot()` function will take in the kriged admixture values and sampling coordinates (if the user wants points mapped), and provides several options for the plot method (with the `plot_method` argument):
 
 -   `"maxQ"` plots only the maximum Q value for each cell (this is the default)
 
@@ -194,20 +194,20 @@ tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
 
 ### Extended plotting
 
-In many cases, a user may want more customizability in mapping their TESS results. For example, users may want to have more control over color breaks, alpha levels, legend/color scale settings. In this case, we can use base R plotting functions with the `tess_plot()` function.
+In many cases, a user may want more customizability in mapping their TESS results. For example, users may want to have more control over color and whether to display axes, both of which can be done using the `ggplot_fill` and `plot_axes` arguments, respectively:
 
 ```{r extended mapping, fig.width = 5, fig.height = 5, warning = FALSE, fig.align = 'center'}
 par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
 
-tess_plot(krig_admix, plot_method = "maxQ", col_breaks = 20)
-tess_plot(krig_admix, plot_method = "allQ", col_breaks = 20, minQ = 0.20, col_alpha = 0.90)
-tess_plot(krig_admix, plot_method = "maxQ_poly")
-tess_plot(krig_admix, plot_method = "allQ_poly", minQ = 0.20, col_alpha = 0.50)
+tess_ggplot(krig_admix, plot_method = "maxQ")
+tess_ggplot(krig_admix, plot_method = "allQ", minQ = 0.20)
+tess_ggplot(krig_admix, plot_method = "maxQ_poly")
+tess_ggplot(krig_admix, plot_method = "allQ_poly", minQ = 0.20)
 ```
 
 We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.
 
-```{r plot all K, fig.width = 10, fig.height = 4, fig.align = 'center'}
+```{r plot all K, fig.width = 10, fig.height = 4, fig.align = 'center', warning = FALSE}
 par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
 tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
@@ -222,7 +222,7 @@ barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", yl
 
 You can also map kriged Q-values using tess3r with the `plot()` function.
 
-```{r, fig.width = 5, fig.height = 5, fig.align = 'center', message = FALSE, warning=FALSE}
+```{r, fig.width = 5, fig.height = 5, fig.align = 'center', message = FALSE, warning = FALSE}
 plot(qmat, 
      liz_coords, 
      method = "map.max", 
@@ -259,7 +259,7 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 
 ```{r do everything, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5, fig.align = 'center'}
 # One could also use krig_raster as the grid object
-results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:10, K_selection = "auto", minQ = 0.10)
+results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:5, K_selection = "auto", minQ = 0.10)
 ```
 
 ## Additional documentation and citations
