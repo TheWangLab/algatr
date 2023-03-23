@@ -28,6 +28,7 @@ library(terra)
 library(tess3r)
 # devtools::install_github("AnushaPB/wingen")
 library(wingen)
+library(ggplot2)
 
 # Need LEA library for cross entropy
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -91,7 +92,7 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 ------------------------------------------------------------------------
 
-algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset. **TODO [EAC] discuss tess_method arg "projected.ls" for projected least squares alg (default) or "qp" for quadratic programming alg**
+algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset. Users have the option to select the algorithm with which TESS will be run using the `tess_method` argument; options for the argument are either projected least squares algorithm (`"projected.ls"`; the default) or an alternating quadratic programming algorithm (`"qp"`).
 
 ### Manual K selection
 
@@ -189,21 +190,20 @@ Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggp
 -   `"allQ_poly"` plots allQ as polygons for each K-value instead of continuous Q values
 
 ```{r basic ggplot, fig.width = 5, fig.height = 5, fig.align = 'center'}
-tess_ggplot(krig_admix, liz_coords, plot_method = "maxQ")
-tess_ggplot(krig_admix, liz_coords, plot_method = "allQ_poly", minQ = 0.20)
-```
-
-### Extended plotting
-
-In many cases, a user may want more customizability in mapping their TESS results. For example, users may want to have more control over color and whether to display axes, both of which can be done using the `ggplot_fill` and `plot_axes` arguments, respectively:
-
-```{r extended mapping, fig.width = 5, fig.height = 5, warning = FALSE, fig.align = 'center'}
 par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
 
 tess_ggplot(krig_admix, plot_method = "maxQ")
 tess_ggplot(krig_admix, plot_method = "allQ", minQ = 0.20)
 tess_ggplot(krig_admix, plot_method = "maxQ_poly")
 tess_ggplot(krig_admix, plot_method = "allQ_poly", minQ = 0.20)
+```
+
+### Extended plotting
+
+In many cases, a user may want more customizability in mapping their TESS results. If users want more control over color, they can use the `ggplot_fill` argument. Also, if users they want x and y axes to be displayed, this can be set using the `plot_axes` argument:
+
+```{r extended mapping, fig.width = 5, fig.height = 5, warning = FALSE, fig.align = 'center'}
+tess_ggplot(krig_admix, plot_method = "maxQ", ggplot_fill = scale_fill_manual(values = c("#bd9dac", "#257b94", "#476e9e")), plot_axes = FALSE)
 ```
 
 We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.

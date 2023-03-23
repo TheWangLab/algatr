@@ -1,6 +1,8 @@
 
 #' TESS function to do everything
 #'
+#' TODO [EAC]: ADD QUIET ARG
+#'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords dataframe with x and y coordinates
 #' @param grid SpatRaster for kriging
@@ -72,7 +74,6 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
 
   # Krige Qmatrix
   if(K != 1) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
-
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
@@ -249,6 +250,7 @@ raster_to_grid <- function(x) {
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @param plot_axes whether to plot axes or not (defaults to FALSE)
 #' @inheritParams tess_do_everything
 #'
 #' @family TESS functions
