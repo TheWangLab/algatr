@@ -16,8 +16,6 @@ two spline plots of compositional dissimilarity
 generates two plots: a plot of the observed response data against raw ecological distance from the model, and a plot of the observed response against the predicted response from the model (after link function is applied)
 }
 \details{
-TODO\link{APB}: can you look this function over
-
 code is modified from the \code{plot.gdm()} function in the gdm package (Fitzpatrick et al. 2022)
 }
 \seealso{

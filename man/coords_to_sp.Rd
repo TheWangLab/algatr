@@ -2,7 +2,7 @@
 % Please edit documentation in R/coords_convert.R
 \name{coords_to_sp}
 \alias{coords_to_sp}
-\title{Convert from matrix, data frame, or sf to sp}
+\title{Convert from matrix, data frame, or sf to formatted sp}
 \usage{
 coords_to_sp(coords)
 }
@@ -13,5 +13,5 @@ coords_to_sp(coords)
 converted coords in sp format
 }
 \description{
-Convert from matrix, data frame, or sf to sp
+Convert from matrix, data frame, or sf to formatted sp
 }

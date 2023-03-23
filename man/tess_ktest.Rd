@@ -41,7 +41,6 @@ Other TESS functions:
 \code{\link{tess_do_everything}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
-\code{\link{tess_plot_allK}()},
-\code{\link{tess_plot}()}
+\code{\link{tess_plot_allK}()}
 }
 \concept{TESS functions}

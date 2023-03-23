@@ -2,7 +2,7 @@
 % Please edit documentation in R/coords_convert.R
 \name{coords_to_sf}
 \alias{coords_to_sf}
-\title{Convert from matrix, data frame, or sf to sf}
+\title{Convert from matrix, data frame, or sf to sf (sf is a pass through)}
 \usage{
 coords_to_sf(coords)
 }
@@ -13,5 +13,5 @@ coords_to_sf(coords)
 converted coords in sf format
 }
 \description{
-Convert from matrix, data frame, or sf to sf
+Convert from matrix, data frame, or sf to sf (sf is a pass through)
 }
