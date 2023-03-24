@@ -15,7 +15,8 @@ gdm_do_everything(
   geodist_type = "Euclidean",
   dist_lyr = NULL,
   scale_gendist = FALSE,
-  plot_vars = TRUE
+  plot_vars = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ gdm_do_everything(
 \item{scale_gendist}{whether to scale genetic distance data from 0 to 1 (defaults to FALSE)}
 
 \item{plot_vars}{whether to create variable vector loading plot (defaults to TRUE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 list with final model, predictor coefficients, and PCA RGB map
