@@ -1,8 +1,8 @@
 
-# safe render (captures errors)
+# safely knit vignettes (captures errors)
 safe_render <- purrr::safely(rmarkdown::render)
 
-# get vector of vignettes
+# get vector of vignette paths
 vignettes <- list.files(here::here("vignettes"), full.names = TRUE, pattern = "*.Rmd")
 
 # knit all vignettes
