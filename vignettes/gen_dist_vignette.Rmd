@@ -49,7 +49,7 @@ This package also allows a user to look at the relationship between distance met
 load_algatr_example()
 ```
 
-## Calculate genetic distances with `gen_dist_calc()`
+## Calculate genetic distances with `gen_dist()`
 
 ------------------------------------------------------------------------
 
