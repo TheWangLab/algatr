@@ -14,6 +14,7 @@
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
 #' @details
 #' GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto-Lugilde, D., & Ferrier, S. (2022). gdm: Generalized dissimilarity modeling. R package version 1.5.0-3.
@@ -26,7 +27,8 @@
 #'
 #' @examples
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
-                              geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE){
+                              geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
+                              quiet = FALSE){
 
   # Check CRS of envlayers and coords
   crs_check(coords, envlayers)
@@ -40,14 +42,12 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # If mod is null, exit
   if(is.null(gdm_result$model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
 
-  # Get coefficients from models; print table if specified
+  # Get coefficients from models and print table if specified
   coeff_df <- gdm_df(gdm_result)
-  print(gdm_table(gdm_result))
-  # if(!quiet){print(gdm_table(gdm_result))}
+  if(!quiet) print(gdm_table(gdm_result))
 
   # Plot I-splines if output printed
-  gdm_plot_isplines(gdm_result$model)
-  # if(!quiet){gdm_plot_isplines(gdm_result$model)}
+  if(!quiet) gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
   if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars)

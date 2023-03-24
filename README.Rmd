@@ -50,7 +50,9 @@ algatr makes use of several existing packages and methods, and we provide citati
 
 We have added functionality to each of these methods within algatr which we discuss in each of the methods' vignettes (and in our paper: TODO REFER).
 
-Other than input data processing functions, the main functions within algatr are named with the pattern `[method]_do_everything()`. As the name implies, these functions will take you from your raw input data through to generating results, tables, and figures from the analysis. For example, `gdm_do_everything()` will run generalized dissimilarity modeling while also generating a GDM map, a table with results, and several other outputs. However, to better understand what's going on under the hood of these `[method]_do_everything()` functions, the algatr vignettes provide a line-by-line breakdown of the individual functions contained within the `[method]_do_everything()` function to (a) increase a user's understanding of how the method actually works, and (b) allow users with more customizability in how they run their own analysis, if so desired.
+Other than input data processing functions, the main functions within algatr are named with the pattern `[method]_do_everything()`. As the name implies, these functions will take you from your raw input data through to generating results, tables, and figures from the analysis. For example, `gdm_do_everything()` will run generalized dissimilarity modeling while also generating a GDM map, a table with results, and several other outputs. All of the `[method]_do_everything` functions has a `quiet` argument which, when set to `"TRUE"`, will not automatically print figures and outputs.
+
+However, to better understand what's going on under the hood of these `[method]_do_everything()` functions, the algatr vignettes provide a line-by-line breakdown of the individual functions contained within the `[method]_do_everything()` function to (a) increase a user's understanding of how the method actually works, and (b) allow users with more customizability in how they run their own analysis, if so desired.
 
 When deciding on methods to have within algatr, we found it best to first identify the questions that these methods seek to answer, and we think this is a good framework for anyone (particularly beginner landscape genomicists) to think about landscape genomic methods. These questions fall into four broad categories of analyses.
 
@@ -132,43 +134,43 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 
 You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the [**data processing vignette**](REFER)) and calculating genetic distances (see the [**genetic distances vignette**](REFER)).
 
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-|        | R package                                                         | algatr function          | Input files                               | Required arguments |
-+========+===================================================================+==========================+===========================================+====================+
-| TESS   | [tess3r](https://bcm-uga.github.io/TESS3_encho_sen/index.html)    | `tess_do_everything()`   | -   Genotype dosage matrix                | -   `gen`          |
-|        |                                                                   |                          | -   Environmental layers                  |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  | -   `coords`       |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          |                                           | -   `Kvals`        |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| MMRR   | algatr                                                            | `mmrr_do_everything()`   | -   Genetic distance matrix               | -   `gendist`      |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          | -   Environmental layers                  | -   `coords`       |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  | -   `env`          |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| GDM    | [gdm](https://cran.r-project.org/web/packages/gdm/index.html)     | `gdm_do_everything()`    | -   Genetic distance matrix               | -   `gendist`      |
-|        |                                                                   |                          | -   Environmental layers                  |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  | -   `coords`       |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          |                                           | -   `envlayers`    |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| RDA    | [vegan](https://cran.r-project.org/web/packages/vegan/index.html) | `rda_do_everything()`    | -   Genotype dosage matrix                | -   `gen`          |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          | -   Environmental layers                  | -   `env`          |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  |                    |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| LFMM   | [LEA](https://rdrr.io/bioc/LEA/)                                  | `lfmm_do_everything()`   | -   Genotype dosage matrix                | -   `gen`          |
-|        |                                                                   |                          | -   Environmental layers                  |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  | -   `env`          |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| wingen | wingen                                                            | `wingen_do_everything()` | -   VCF file                              | -   `gen`          |
-|        |                                                                   |                          | -   Raster layer (*though not necessary*) |                    |
-|        |                                                                   |                          | -   Sampling coordinates                  | -   `lyr`          |
-|        |                                                                   |                          |                                           |                    |
-|        |                                                                   |                          |                                           | -   `coords`       |
-+--------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+|          | R package                                                         | algatr function          | Input files                               | Required arguments |
++==========+===================================================================+==========================+===========================================+====================+
+| TESS     | [tess3r](https://bcm-uga.github.io/TESS3_encho_sen/index.html)    | `tess_do_everything()`   | -   Genotype dosage matrix                | -   `gen`          |
+|          |                                                                   |                          | -   Environmental layers                  |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  | -   `coords`       |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          |                                           | -   `Kvals`        |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+| MMRR     | algatr                                                            | `mmrr_do_everything()`   | -   Genetic distance matrix               | -   `gendist`      |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          | -   Environmental layers                  | -   `coords`       |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  | -   `env`          |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+| GDM      | [gdm](https://cran.r-project.org/web/packages/gdm/index.html)     | `gdm_do_everything()`    | -   Genetic distance matrix               | -   `gendist`      |
+|          |                                                                   |                          | -   Environmental layers                  |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  | -   `coords`       |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          |                                           | -   `envlayers`    |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+| RDA      | [vegan](https://cran.r-project.org/web/packages/vegan/index.html) | `rda_do_everything()`    | -   Genotype dosage matrix                | -   `gen`          |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          | -   Environmental layers                  | -   `env`          |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  |                    |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+| LFMM     | [LEA](https://rdrr.io/bioc/LEA/)                                  | `lfmm_do_everything()`   | -   Genotype dosage matrix                | -   `gen`          |
+|          |                                                                   |                          | -   Environmental layers                  |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  | -   `env`          |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
+| wingen   | wingen                                                            | `wingen_do_everything()` | -   VCF file                              | -   `gen`          |
+|          |                                                                   |                          | -   Raster layer (*though not necessary*) |                    |
+|          |                                                                   |                          | -   Sampling coordinates                  | -   `lyr`          |
+|          |                                                                   |                          |                                           |                    |
+|          |                                                                   |                          |                                           | -   `coords`       |
++----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
 
 ### Example
 
