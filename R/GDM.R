@@ -50,7 +50,9 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if(!quiet) gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
-  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars)
+  if(!quiet) {
+    if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars)
+  }
 
   # Create list to store results
   results <- list()
