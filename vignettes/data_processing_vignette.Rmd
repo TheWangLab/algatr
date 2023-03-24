@@ -22,6 +22,7 @@ library(here)
 library(vcfR)
 library(SNPRelate)
 library(SeqArray)
+library(wingen)
 
 devtools::load_all()
 ```
@@ -59,7 +60,9 @@ dosage[1:5,1:8]
 
 ------------------------------------------------------------------------
 
-We want to prune any linked sites from our data to not bias results. To do so, we'll use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach. **TODO [EAC]: add further discussion of which analyses should take in LD-pruned files; also that after GEA analyses you could look at outliers with most significant p-values and prune out those in LD (see Capblancq & Forester 2021 for further details)**
+For some analyses, we may want to prune out any linked sites from our data to not bias results. This is particularly the case with methods that estimate population structure (e.g., TESS), as population structure can be overinflated as more SNPs appear to independently support the same pattern. For other analyses - such as genotype-environment association methods like RDA and LFMM - SNPs in LD are sometimes removed prior to running such analyses, but we do not recommend this because SNPs most strongly associated with environmental variables may have been pruned out. However, failing to account for linkage may result in overinflated conclusions about environmental associations. A solution to this is to perform LD-pruning after having run GEA methods; one approach to do so is to retain SNPs with the strongest association (i.e., lowest p-value) and removing all others that are in linkage with that particular SNP (see the approach described in Capblancq & Forester 2021 for more information).
+
+To perform LD-pruning, we can use the `ld_prune()` function (which largely uses the `snpgdsLDpruning()` function within the SNPRelate package). The function works by first removing any variants that occur below a given minor allele frequency, and then by pruning any variants that have a given correlation using a sliding window approach.
 
 The main arguments within this function are as follows:
 

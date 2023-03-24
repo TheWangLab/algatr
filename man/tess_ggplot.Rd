@@ -23,6 +23,8 @@ tess_ggplot(
 \item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})}
 
 \item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
+
+\item{plot_axes}{whether to plot axes or not (defaults to FALSE)}
 }
 \description{
 ggplot of TESS results

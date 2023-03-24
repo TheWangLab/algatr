@@ -46,7 +46,7 @@ tess_do_everything(
 list with all TESS results, final K value, and final kriged raster
 }
 \description{
-TESS function to do everything
+TODO \link{EAC}: ADD QUIET ARG
 }
 \details{
 TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.

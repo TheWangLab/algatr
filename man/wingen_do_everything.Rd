@@ -12,8 +12,8 @@ wingen_do_everything(
   fact = 0,
   sample_count = TRUE,
   min_n = 2,
-  vcf,
-  stat,
+  gen,
+  stat = "pi",
   rarify = FALSE,
   kriged = FALSE,
   grd = NULL,
@@ -31,27 +31,27 @@ wingen_do_everything(
 \arguments{
 \item{preview}{whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)}
 
-\item{lyr}{RasterLayer to slide the window across}
+\item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections)}
 
-\item{coords}{coordinates (two columns, the first should be x and the second should be y)}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{wdim}{dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window)}
 
-\item{fact}{aggregation factor to apply to the RasterLayer (defaults to 0; \emph{note:} increasing this value reduces computational time)}
+\item{fact}{aggregation factor to apply to \code{lyr} (defaults to 0; \emph{note:} increasing this value reduces computational time)}
 
 \item{sample_count}{whether to create plot of sample counts for each cell (defaults to TRUE)}
 
 \item{min_n}{min number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)}
 
-\item{vcf}{object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
+\item{gen}{genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
 
-\item{stat}{genetic diversity statistic to calculate (can either be \code{"pi"} for nucleotide diversity (default), \code{"Ho"} for average observed heterozygosity across all sites, \code{"allelic_richness"} for average number of alleles across all sites, or \code{"biallelic_richness"} to get average allelic richness across all sites for a biallelic dataset (this option faster than \code{"allelic_richness"}))}
+\item{stat}{genetic diversity statistic to calculate (can either be \code{"pi"} for nucleotide diversity (default), \code{"Ho"} for average observed heterozygosity across all sites, \code{"allelic_richness"} for average number of alleles across all sites, or \code{"biallelic_richness"} to get average allelic richness across all sites for a biallelic dataset (this option is faster than \code{"allelic_richness"}))}
 
 \item{rarify}{if rarify = TRUE, rarefaction is performed (defaults to FALSE)}
 
 \item{kriged}{whether to smooth out mapped values using kriging using \link[wingen]{krig_gd} (default = FALSE)}
 
-\item{grd}{object to create grid for kriging; can be RasterLayer, SpatialPointsDataFrame, or a gridded object as defined by 'sp'. If undefined, will use \code{r} to create a grid.}
+\item{grd}{object to create grid for kriging; can be a SpatRaster, RasterLayer, SpatialPointsDataFrame, or a gridded object as defined by 'sp'. If undefined, will use \code{r} to create a grid.}
 
 \item{index}{integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer)}
 
@@ -64,8 +64,6 @@ wingen_do_everything(
 \item{disagg_r}{factor to use for disaggregation, of \code{r} if provided (this will increase the number of points used in the kriging model; defaults to NULL)}
 
 \item{masked}{whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)}
-
-\item{mask}{Raster object or Spatial object to use as mask}
 
 \item{plot_count}{if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)}
 }

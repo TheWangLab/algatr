@@ -20,7 +20,7 @@
 #' N.B.: Be aware that this function sets *many* of the wingen function arguments to defaults, which my result in sub optimal results. We highly advise researchers to run each wingen function separately for best results.
 #'
 wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
-                                 vcf, stat, rarify = FALSE,
+                                 gen, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
                                  masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE){
 
@@ -35,7 +35,7 @@ wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 
 
   if (fact == 0) lyr <- lyr * 0 else lyr <- raster::aggregate(lyr, fact, fun = mean) * 0
   if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
-  map <- wingen::window_gd(gen = vcf, coords = coords, lyr = lyr, stat = stat,
+  map <- wingen::window_gd(gen = gen, coords = coords, lyr = lyr, stat = stat,
                            wdim = wdim, fact = fact, rarify = rarify)
 
 
