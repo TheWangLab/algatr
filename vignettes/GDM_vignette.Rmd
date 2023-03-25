@@ -56,7 +56,7 @@ Running a GDM analysis in algatr will work for both individual-based (i.e., one 
 Let's first load the objects within the example dataset.
 
 ```{r data}
-load_example()
+load_algatr_example()
 ```
 
 ### Extract environmental variables

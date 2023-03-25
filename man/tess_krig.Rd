@@ -4,17 +4,29 @@
 \alias{tess_krig}
 \title{Krige admixture values}
 \usage{
-tess_krig(qmat, coords, grid, correct_kriged_Q = TRUE)
+tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
 }
 \arguments{
 \item{qmat}{qmatrix}
 
 \item{coords}{dataframe with x and y coordinates}
 
-\item{grid}{RasterLayer or other gridded spatial object for kriging}
+\item{grid}{SpatRaster for kriging}
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
 \description{
 Krige admixture values
 }
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()}
+}
+\concept{TESS functions}

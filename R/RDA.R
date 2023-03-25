@@ -26,7 +26,8 @@
 #'
 #' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
 #' @export
-#' @details Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
+#' @details
+#' Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
 #'
 #' @family RDA functions
 #'
@@ -53,7 +54,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
   # Modify genetic data -----------------------------------------------------
 
   # Convert vcf to dosage
-  if(inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+  if(inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
 
   # Perform imputation with warning
   if(any(is.na(gen))){

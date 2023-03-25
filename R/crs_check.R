@@ -27,5 +27,4 @@ crs_check <- function(coords = NULL, lyr = NULL) {
       if (coords_crs != lyr_crs) stop("CRS of the provided coordinates and raster do not match")
     }
   }
-
 }

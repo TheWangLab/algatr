@@ -30,7 +30,7 @@ library(sf) # if doing map other way
 devtools::load_all()
 ```
 
-**If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods Ecol. Evol. doi: <https://doi.org/10.1111/2041-210X.14090>**
+**If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods in Ecology and Evolution. DOI: <https://doi.org/10.1111/2041-210X.14090>.**
 
 wingen is a package that uses a moving window approach to create continuous maps of genetic diversity. Please see [Bishop et al. 2023](https://doi.org/10.1111/2041-210X.14090) for the paper describing the method, and refer to the [wingen package](https://github.com/AnushaPB/wingen) for further documentation.
 
@@ -55,7 +55,7 @@ There are five key functions within wingen:
 wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as an object for this purpose.
 
 ```{r test data}
-load_example()
+load_algatr_example()
 envlayer <- CA_env$CA_rPCA1
 ```
 
@@ -178,7 +178,7 @@ Below, we'll run wingen with the following:
 
 -   Window size of 3x3 (`wdim = 3`), no aggregation factor for moving window (`fact = 0`)
 
--   Pi as our genetic diversity statistic (`stat = "pi"`)
+-   Pi as our genetic diversity statistic (`stat = "pi"`); this is also the default
 
 -   No rarefaction (`rarify = FALSE`)
 
@@ -193,7 +193,6 @@ results <- wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, 
                      liz_vcf, stat = "pi", rarify = FALSE, kriged = TRUE, grd = liz_lyr, index = 1:2,
                      agg_grd = NULL, disagg_grd = 4, agg_r = NULL, disagg_r = NULL,
                      masked = TRUE, mask = envlayer, bkg = envlayer, plot_count = TRUE)
-
 ```
 
 ## Additional documentation and citations

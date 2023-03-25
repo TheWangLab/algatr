@@ -1,26 +1,4 @@
 
-#' Convert a vcf to a dosage matrix
-#'
-#' @param x can either be an object of class 'vcfR' or a path to a .vcf file
-#'
-#' @return returns dosage matrix
-#' @export
-#'
-#'
-vcf_to_dosage <- function(x) {
-  # Check vcf
-  vcf <- vcf_check(x)
-
-  # Convert to genlight
-  genlight <- vcfR::vcfR2genlight(vcf)
-
-  # Convert to dosage matrix
-  gen <- as.matrix(genlight)
-
-  return(gen)
-}
-
-
 #' Check if an object is a vcf or a path to a vcf
 #'
 #' @param x vcfR object or path to vcf
@@ -60,7 +38,6 @@ vcf_check <- function(x) {
 #' @examples
 rm_islands <- function(input, shape, min_vertices = 10000){
 
-
   # Convert if SpatVector provided ------------------------------------------
   if(inherits(shape, "SpatVector")) shape <- sf::st_as_sf(shape)
 
@@ -87,8 +64,8 @@ rm_islands <- function(input, shape, min_vertices = 10000){
 
 #' Impute NA values
 #' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
-#' @param x Matrix
-#' @param f Function to use for imputation (defaults to median)
+#' @param x matrix
+#' @param f function to use for imputation (defaults to median)
 #'
 #' @return
 #' @export

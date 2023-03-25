@@ -9,16 +9,28 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
                                    which = c("output", "message", "error"))
 ```
 
-```{r, include = FALSE}
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
 library(algatr)
 devtools::load_all()
+```
+
+Are you a lazy algatr? The `do_everything_for_me()` function runs all six landscape genomic methods in the algatr package (wingen, TESS, GDM, MMRR, RDA, and LFMM) and provides limited options for customizability. This function primarily exists for fun and to demonstrate that algatr really can be run using on a vcf and sampling coordinates; we **do not** encourage researchers to actually perform analyses on their data using this function!
+
+The main arguments within this function are simple: `vcf` specifies the vcf, `coords` specifies the sampling coordinates, and `envlayers` specifies the environmental layers (not required). As usual, make sure your samples are in the same order between your data file and coordinates file and that your CRS is consistent!
+
+First, let's load our test data. For the sake of things running quickly, let's run this function on only 20 individuals from the test dataset.
+
+```{r load data}
+load_algatr_example()
 vcf <- liz_vcf[,1:21]
 coords <- liz_coords[1:20,]
 envlayers <- CA_env
 ```
 
-```{r, warning = FALSE}
-res <- do_everything_for_me(vcf, coords, envlayers)
-```
-`
+Now, let's run the function:
 
+```{r alazygatr, warning = FALSE}
+lazy_results <- do_everything_for_me(vcf, coords, envlayers)
+```
+
+The `do_everything_for_me()` function returns a list with each analysis's results as objects named according to the method. These formats are identical to those obtained when running respective "do_everything" functions (e.g., `tess_do_everything()` function output is identical to that within the `tess` object).

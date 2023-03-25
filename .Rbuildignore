@@ -6,3 +6,4 @@
 ^data-raw$
 ^README\.Rmd$
 ^LICENSE\.md$
+^knit_everything_for_me\.R$

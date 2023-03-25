@@ -9,6 +9,8 @@ mmrr_do_everything(
   coords,
   env,
   model = "best",
+  geodist_type = "Euclidean",
+  dist_lyr = NULL,
   nperm = 999,
   stdz = TRUE,
   plot = TRUE,
@@ -24,6 +26,10 @@ mmrr_do_everything(
 
 \item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
 
+\item{geodist_type}{the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances}
+
+\item{dist_lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances}
+
 \item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
@@ -36,5 +42,17 @@ mmrr_do_everything(
 MMRR function to do everything
 }
 \details{
-The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411.
+The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411. doi: https://doi.org/10.1111/evo.12134
 }
+\seealso{
+Other MMRR functions: 
+\code{\link{MMRR}()},
+\code{\link{mmrr_best}()},
+\code{\link{mmrr_df}()},
+\code{\link{mmrr_full}()},
+\code{\link{mmrr_plot}()},
+\code{\link{mmrr_table}()},
+\code{\link{mmrr_var_sel}()},
+\code{\link{unfold}()}
+}
+\concept{MMRR functions}

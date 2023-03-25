@@ -22,3 +22,15 @@ MMRR performs Multiple Matrix Regression with Randomization analysis
 When using MMRR, please cite the original citation:
 Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution, 67: 3403-3411.
 }
+\seealso{
+Other MMRR functions: 
+\code{\link{mmrr_best}()},
+\code{\link{mmrr_df}()},
+\code{\link{mmrr_do_everything}()},
+\code{\link{mmrr_full}()},
+\code{\link{mmrr_plot}()},
+\code{\link{mmrr_table}()},
+\code{\link{mmrr_var_sel}()},
+\code{\link{unfold}()}
+}
+\concept{MMRR functions}

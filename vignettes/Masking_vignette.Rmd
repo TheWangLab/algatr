@@ -41,7 +41,7 @@ This vignette makes use of the following masking functions:
 
 ```{r data, fig.align='center', fig.height=5, fig.width=5}
 # Load test data, including CA_env which are the envlayers we'll be using
-load_example()
+load_algatr_example()
 
 # For the purposes of simplicity, let's just use one of the PCs for mapping:
 envlayers <- CA_env$CA_rPCA1

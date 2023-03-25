@@ -9,7 +9,7 @@ tess_do_everything(
   coords,
   grid,
   Kvals = 1:10,
-  K_selection = "auto",
+  K_selection = "manual",
   plot_method = "maxQ",
   col_breaks = 20,
   col_alpha = 0.5,
@@ -24,14 +24,21 @@ tess_do_everything(
 
 \item{coords}{dataframe with x and y coordinates}
 
-\item{grid}{RasterLayer or other gridded spatial object for kriging}
+\item{grid}{SpatRaster for kriging}
 
 \item{Kvals}{vector of K values to test}
 
-\item{K_selection}{how to perform K selection (options: "auto" for automatic selection based on \link[algatr]{bestK} (default) or "manual" to enter into console)}
+\item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
 
-\item{ploidy}{an integer corresponding to ploidy of the studied
-organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
+\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
+
+\item{col_breaks}{number of breaks for plotting (defaults to 20)}
+
+\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
+
+\item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
+
+\item{ploidy}{ploidy of data (defaults to 2)}
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
@@ -39,6 +46,21 @@ organism. Haploids have ploidy = 1, diploids have ploidy = 2, etc.}
 list with all TESS results, final K value, and final kriged raster
 }
 \description{
-TESS function to do everything
+TODO \link{EAC}: ADD QUIET ARG
+}
+\details{
+TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
+See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471
+}
+\seealso{
+Other TESS functions: 
+\code{\link{allK_plot_helper}()},
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()}
 }
 \concept{TESS functions}

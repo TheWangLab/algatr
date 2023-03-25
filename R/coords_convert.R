@@ -1,5 +1,11 @@
 
-#  convert from matrix/data.frame/sf to sf (sf is a pass through)
+#' Convert from matrix, data frame, or sf to sf (sf is a pass through)
+#'
+#' @param coords sf object, data frame, or matrix representing coordinates
+#'
+#' @return converted coords in sf format
+#' @export
+#'
 coords_to_sf <- function(coords){
   if (inherits(coords, "sf")) return(coords)
   if (is.matrix(coords)) coords <- data.frame(coords)
@@ -8,11 +14,17 @@ coords_to_sf <- function(coords){
   return(coords)
 }
 
-#  convert from matrix/data.frame/sf to formatted sp
+#' Convert from matrix, data frame, or sf to formatted sp
+#'
+#' @param coords sf object, data frame, or matrix representing coordinates
+#'
+#' @return converted coords in sp format
+#' @export
+#'
 coords_to_sp <- function(coords){
   coords <- coords_to_sf(coords)
   coords <- sf::as_Spatial(coords)
-  # needs to be x + y for kriging
+  # Needs to be x + y for kriging
   colnames(coords@coords) <- c("x", "y")
   return(coords)
 }

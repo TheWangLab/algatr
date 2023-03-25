@@ -46,7 +46,18 @@ pca.scree.plot(eig2,elbow=elb2,M=mat2)
 }
 \seealso{
 \code{\link{estimate.eig.vpcs}}
+
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_do_everything}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_run}()},
+\code{\link{lfmm_table}()},
+\code{\link{lfmm_test_tidy}()},
+\code{\link{select_K}()}
 }
 \author{
 Nicholas Cooper
 }
+\concept{LFMM functions}

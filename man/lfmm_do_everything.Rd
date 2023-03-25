@@ -18,10 +18,7 @@ lfmm_do_everything(
   criticalpoint = 2.0234,
   low = 0.08,
   max.pc = 0.9,
-  pca.select = "percVar",
   perc.pca = 90,
-  choose.n.clust = FALSE,
-  criterion = "diffNgroup",
   max.n.clust = 10
 )
 }
@@ -56,13 +53,7 @@ pvalues are not calibrated.}
 
 \item{max.pc}{if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
 
-\item{pca.select}{if "find_clusters" method is used, a character indicating the mode of selection of PCA axes, matching either "nbEig" or "percVar" (default). For "nbEig", the user has to specify the number of axes retained (interactively, or via n.pca). For "percVar", the user has to specify the minimum amount of the total variance to be preserved by the retained axes, expressed as a percentage (interactively, or via perc.pca).}
-
 \item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
-
-\item{choose.n.clust}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
-
-\item{criterion}{if "find_clusters" method is used, a logical indicating whether the number of clusters should be chosen by the user (defaults to FALSE), or automatically, based on a given criterion (argument criterion). It is HIGHLY RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the decrease of the summary statistics (BIC by default) is informative, and ii) no criteria for automatic selection is appropriate to all cases (see details in \code{find.cluster} documentation).}
 
 \item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 }
@@ -71,5 +62,17 @@ LFMM function to do everything
 }
 \details{
 LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
-See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860.
+See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860. doi: https://doi.org/10.1093/molbev/msz008
 }
+\seealso{
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_run}()},
+\code{\link{lfmm_table}()},
+\code{\link{lfmm_test_tidy}()},
+\code{\link{quick_elbow}()},
+\code{\link{select_K}()}
+}
+\concept{LFMM functions}

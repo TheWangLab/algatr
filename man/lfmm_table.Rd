@@ -13,8 +13,7 @@ lfmm_table(
   var = NULL,
   nrow = NULL,
   digits = 2,
-  footnotes = TRUE,
-  p_adj = "fdr"
+  footnotes = TRUE
 )
 }
 \arguments{
@@ -32,8 +31,6 @@ lfmm_table(
 
 \item{digits}{number of decimal points to include (defaults to 2)}
 
-\item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
-
 \item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
 }
 \value{
@@ -42,3 +39,15 @@ table of LFMM results
 \description{
 Create \code{gt} table of LFMM results
 }
+\seealso{
+Other LFMM functions: 
+\code{\link{lfmm_df}()},
+\code{\link{lfmm_do_everything}()},
+\code{\link{lfmm_manhattanplot}()},
+\code{\link{lfmm_qqplot}()},
+\code{\link{lfmm_run}()},
+\code{\link{lfmm_test_tidy}()},
+\code{\link{quick_elbow}()},
+\code{\link{select_K}()}
+}
+\concept{LFMM functions}

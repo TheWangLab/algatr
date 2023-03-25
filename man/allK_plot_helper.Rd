@@ -15,8 +15,22 @@ allK_plot_helper(K, krig_admix, coords = NULL, col, col_breaks, ...)
 
 \item{col}{single color code}
 
+\item{col_breaks}{number of breaks for plotting (defaults to 20)}
+
 \item{...}{Graphical parameters. Any argument that can be passed to image.plot and to base plot}
 }
 \description{
 Helper function for all K plotting
 }
+\seealso{
+Other TESS functions: 
+\code{\link{bestK}()},
+\code{\link{tess_barplot}()},
+\code{\link{tess_col_default}()},
+\code{\link{tess_do_everything}()},
+\code{\link{tess_ggplot}()},
+\code{\link{tess_krig}()},
+\code{\link{tess_ktest}()},
+\code{\link{tess_plot_allK}()}
+}
+\concept{TESS functions}

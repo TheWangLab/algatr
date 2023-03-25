@@ -56,7 +56,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 ### Load example data
 
 ```{r test data}
-load_example()
+load_algatr_example()
 ```
 
 ## Introduction to environmental data files and object types
@@ -68,6 +68,8 @@ Briefly, in R, any (geo)spatial data can be represented using points, vectors, o
 There are two main packages algatr uses to process and manipulate environmental data: terra ([Hijmans 2022](https://cran.r-project.org/web/packages/terra/index.html)) and raster ([Hijmans 2022](https://cran.r-project.org/web/packages/raster/index.html)). Both of these packages have excellent resources and walkthroughs (see [here](https://rspatial.org/terra/) for terra; see [here](https://rspatial.org/raster/pkg/index.html) for raster) that explain in depth environmental data processing and manipulation in R.
 
 Each of these packages has their own classes to represent rasters. Within the terra package, the `SpatRaster` class is used to represent rasters, while the raster package uses `RasterLayer` (single-layer raster data), `RasterBrick` and `RasterStack` (both are multi-variable raster data but differ in how many files can be linked to them) classes. No matter which class is used to represent rasters, the fundamental parameters that describe these rasters is always the same: numbers of rows, columns, the spatial extent, and the coordinate reference system (CRS) for proper projection.
+
+**TODO [EAC] add mention here of CRS, warnings, projections, etc. we've implemented checks from wingen but users should always be aware of how this works and ensure that their data match; CRS of coords and raster layer need to match, can't use lat/long for kriging**
 
 ## Gather environmental data using `get_worldclim()`
 
