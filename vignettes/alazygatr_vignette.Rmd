@@ -1,7 +1,12 @@
 ---
-title: "do_everything_for_me"
-output: html_document
+title: "alazygatr_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{RDA_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
 ```{r color, echo = FALSE, results = FALSE}
 options(crayon.enabled = TRUE)
 
