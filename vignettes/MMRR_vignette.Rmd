@@ -36,7 +36,7 @@ There are a few assumptions built into this function that users should be aware 
 Let's load the example dataset and extract environmental variables based on our sampling coordinates. To perform MMRR, we need a genetic distance matrix; please refer to the genetic distances vignette for information on how to generate this in algatr using a vcf file.
 
 ```{r genetic data, warning = FALSE}
-load_example()
+load_algatr_example()
 Y <- as.matrix(liz_gendist)
 ```
 
