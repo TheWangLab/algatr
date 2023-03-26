@@ -2,7 +2,7 @@
 title: "alazygatr_vignette"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{RDA_vignette}
+  %\VignetteIndexEntry{alazygatr_vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
