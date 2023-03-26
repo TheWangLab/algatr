@@ -22,6 +22,7 @@ library(gdm)
 library(here)
 library(tidyverse)
 library(raster)
+library(terra)
 library(readr)
 
 devtools::load_all()
