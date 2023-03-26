@@ -355,7 +355,7 @@ allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...)
   # Suppress irrelevant plot warnings
   suppressWarnings({terra::plot(krig_admix[[K]],
                col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
-               zlim = c(0, max(terra::minmax(krig_admix)["max",])),
+               range = c(0, max(terra::minmax(krig_admix)["max",])),
                axes = FALSE,
                box = FALSE,
                main = paste0("K = ",K),
