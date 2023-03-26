@@ -22,6 +22,7 @@ library(algatr)
 # install_github("AnushaPB/wingen")
 library(wingen)
 library(raster)
+library(terra)
 library(vcfR)
 library(viridis)
 library(tigris) # if doing map other way
@@ -52,11 +53,11 @@ There are five key functions within wingen:
 
 ### Read in and process input data
 
-wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as an object for this purpose.
+wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as a SpatRaster object for this purpose.
 
 ```{r test data}
 load_algatr_example()
-envlayer <- CA_env$CA_rPCA1
+envlayer <- rast(CA_env$CA_rPCA1)
 ```
 
 ### Generate raster layer for sliding window
@@ -158,6 +159,8 @@ Next, let's mask out any areas outside of California state boundaries using our 
 
 ```{r mask sd, fig.height=5, fig.width=5, fig.align='center'}
 # Perform masking
+## in this case, envlayer must first be resampled to match the mask layer
+envlayer <- resample(envlayer, mgd_1)
 mgd <- mask_gd(mgd_1, envlayer)
 
 # Plot masked map
@@ -189,10 +192,23 @@ Below, we'll run wingen with the following:
 -   Plot kriged and masked sample count (`plot_count = TRUE`)
 
 ```{r wingen do everything, warning=FALSE}
-results <- wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
-                     liz_vcf, stat = "pi", rarify = FALSE, kriged = TRUE, grd = liz_lyr, index = 1:2,
-                     agg_grd = NULL, disagg_grd = 4, agg_r = NULL, disagg_r = NULL,
-                     masked = TRUE, mask = envlayer, bkg = envlayer, plot_count = TRUE)
+results <- wingen_do_everything(gen = liz_vcf, 
+                                lyr = liz_lyr, 
+                                coords = liz_coords,
+                                wdim = 3, 
+                                fact = 0, 
+                                sample_count = TRUE,
+                                preview = FALSE,
+                                min_n = 2,
+                                stat = "pi", 
+                                rarify = FALSE,
+                                kriged = TRUE, 
+                                grd = liz_lyr, 
+                                index = 1:2,
+                                agg_grd = NULL, disagg_grd = 4, 
+                                agg_r = NULL, disagg_r = NULL,
+                                masked = TRUE, mask = envlayer, 
+                                bkg = envlayer, plot_count = TRUE)
 ```
 
 ## Additional documentation and citations
