@@ -27,7 +27,7 @@ check_env <- function(envlayers, threshold = 0.7){
 #'
 #' @export
 check_vals <- function(envlayers, coords, threshold = 0.7){
-  if (inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
   crs_check(coords, envlayers)
   vals <- terra::extract(envlayers, coords)
   if(length(which(is.na(vals))) > 0) warning("NA values detected in extracted variables.")
