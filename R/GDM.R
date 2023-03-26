@@ -34,11 +34,18 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # If coords not provided, make env dataframe from layers and coords
   if(is.null(env)) env <- terra::extract(envlayers, coords, ID = FALSE)
 
-  # Run model with all defaults
-  gdm_result <- gdm_run(gendist, coords = coords, env = env, model = model, sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  # Run model
+  gdm_run_safely <- purrr::safely(gdm_run, quiet = FALSE)
+  gdm_result <- gdm_run_safely(gendist, coords = coords, env = env, model = model, sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+
+  if (is.null(gdm_result$result) & model == "best"){
+    warning("failed to fit best model, rerunning GDM with full model")
+    gdm_result <- gdm_run_safely(gendist, coords = coords, env = env, model = "full", sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  }
+  gdm_result <- gdm_result$result
 
   # If mod is null, exit
-  if(is.null(gdm_result$model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
+  if (is.null(gdm_result$model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
 
   # Get coefficients from models; print table if specified
   coeff_df <- gdm_df(gdm_result)
@@ -61,7 +68,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if(geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
+  if (geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
 
   return(results)
 }
@@ -506,8 +513,8 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   plot <- ggplot2::ggplot() +
 
     # Create axes that cross through origin
-    {if(display_axes)ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray")} +
-    {if(display_axes)ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray")} +
+    {if(display_axes) ggplot2::geom_hline(yintercept = 0, size=0.2, col = "gray")} +
+    {if(display_axes) ggplot2::geom_vline(xintercept = 0, size=0.2, col = "gray")} +
 
     # Plot points from entire raster
     ggplot2::geom_point(data = rastvals, ggplot2::aes_string(x = x, y = y), col = rastpcacols, size = 4, alpha = 0.02) +
@@ -571,7 +578,8 @@ stack_to_rgb <- function(s){
 raster_to_rgb <- function(r){
   rmax <- terra::minmax(r)["max",]
   rmin <- terra::minmax(r)["min",]
-  if(rmin == 0){r <- 255} else {r <- (r - rmin) / (rmax - rmin) * 255}
+  if ((rmax - rmin) == 0) {r[] <- 255} else {r <- (r - rmin) / (rmax - rmin) * 255}
+  return(r)
 }
 
 
