@@ -80,7 +80,7 @@ WorldClim is a database that provides environmental layers for the entire globe 
 Users can add a buffer around sampling coordinates using the `buff` argument, which corresponds to the proportion of the spatial extent for the coordinates. Tile size (i.e., spatial resolution) is specified using the `res` argument, which corresponds to arc-minutes. The default is the 30s dataset (0.5 arc-mins), with a buffer of 0.01.
 
 ```{r get worldclim}
-wclim <- get_worldclim(coords = liz_coords) # can set save_output = TRUE if you want a directory with files made
+wclim <- get_worldclim(coords = liz_coords, res = 5) # can set save_output = TRUE if you want a directory with files made
 ```
 
 Notice that `wclim` is a terra `SpatRaster` object. Let's take a look at what this object looks like.
