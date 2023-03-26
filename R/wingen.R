@@ -19,8 +19,8 @@
 #' When using wingen, please cite the original citation: Bishop, A.P., Chambers, E.A., Wang, I.J. (2023). Generating continuous maps of genetic diversity using moving windows. Methods Ecol. Evol. doi: https://doi.org/10.1111/2041-210X.14090
 #' N.B.: Be aware that this function sets *many* of the wingen function arguments to defaults, which my result in sub optimal results. We highly advise researchers to run each wingen function separately for best results.
 #'
-wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
-                                 gen, stat = "pi", rarify = FALSE,
+wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
+                                 preview = FALSE, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
                                  masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE){
 
@@ -45,7 +45,16 @@ wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 
 
   # MASKING -----------------------------------------------------------------
 
-  if (masked == TRUE) map <- wingen::mask_gd(x = map, y = mask)
+  if (masked == TRUE) {
+    # resample to match
+    if (!compareGeom(mask, map, stopOnError = FALSE)) {
+      mask <- resample(mask, map)
+      warning("Mask warning:")
+      compareGeom(mask, map, stopOnError = FALSE, warncrs = TRUE, messages = TRUE)
+    }
+
+    map <- wingen::mask_gd(x = map, y = mask)
+  }
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
