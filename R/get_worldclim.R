@@ -32,16 +32,20 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE){
   r_nums <- terra::extract(r, ch_sf, ID = FALSE)
   r_xy <- terra::xyFromCell(r, r_nums[[1]])
 
-  # Download and merge tiles
-  message("Downloading WorldClim tile 1...")
   folder <- paste0(getwd(), "/tmp")
-  wclim <- geodata::worldclim_tile(var = "bio", lon = r_xy[1, 1], lat = r_xy[1, 2], path = folder)
-  if(length(r_nums[[1]]) > 1){
-    for(i in 2:length(r_nums[[1]])){
-      message(paste0("Downloading WorldClim tile ", i, "..."))
-      wc <- geodata::worldclim_tile(var = "bio", lon = r_xy[i, 1], lat = r_xy[i, 2], path = folder)
-      wclim <- terra::merge(wclim, wc)
+  # Download and merge tiles
+  if (res == 0.5) {
+    message("Downloading WorldClim tile 1...")
+    wclim <- geodata::worldclim_tile(var = "bio", lon = r_xy[1, 1], lat = r_xy[1, 2], path = folder)
+    if(length(r_nums[[1]]) > 1){
+      for(i in 2:length(r_nums[[1]])){
+        message(paste0("Downloading WorldClim tile ", i, "..."))
+        wc <- geodata::worldclim_tile(var = "bio", lon = r_xy[i, 1], lat = r_xy[i, 2], path = folder)
+        wclim <- terra::merge(wclim, wc)
+      }
     }
+  } else {
+    wclim <- geodata::worldclim_global(var = "bio", res = res, path = folder)
   }
 
   # Define crop area based on buffer size
