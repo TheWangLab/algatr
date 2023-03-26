@@ -209,7 +209,7 @@ tess_ggplot(krig_admix, plot_method = "maxQ", ggplot_fill = scale_fill_manual(va
 We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.
 
 ```{r plot all K, fig.width = 10, fig.height = 4, fig.align = 'center', warning = FALSE}
-par(mfrow = c(1, nlayers(krig_admix)), mar = rep(2,4), oma = rep(1,4))
+par(mfrow = c(1, nlyr(krig_admix)), mar = rep(2,4), oma = rep(1,4))
 tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
 
