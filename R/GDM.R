@@ -494,12 +494,12 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   s <- sample(1:terra::ncell(pcaRast), 10000)
 
   # Get all PC values from raster and remove NAs
-  rastvals <- data.frame(values(pcaRast))[s,]
+  rastvals <- data.frame(terra::values(pcaRast))[s,]
   colnames(rastvals) <- colnames(xpc)
   rastvals <- rastvals[stats::complete.cases(rastvals),]
 
   # Get all RGB values from raster and remove NAs
-  rastvalsRGB <- data.frame(values(pcaRastRGB))[s,]
+  rastvalsRGB <- data.frame(terra::values(pcaRastRGB))[s,]
   colnames(rastvalsRGB) <- colnames(rastvals)
   rastvalsRGB <- rastvalsRGB[stats::complete.cases(rastvalsRGB),]
 
