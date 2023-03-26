@@ -59,7 +59,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig, p_adj = p_adj))
+  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig))
 
   return(results)
 }
