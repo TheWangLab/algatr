@@ -44,7 +44,7 @@ load_algatr_example()
 # Convert vcf to dosage matrix
 gen <- vcf_to_dosage(liz_vcf)
 # Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!
-env <- extract(CA_env, liz_coords)
+env <- raster::extract(CA_env, liz_coords)
 ```
 
 As mentioned above, LFMM requires that your genotype matrix contains no missing values. Let's impute missing values based on the per-site median. *N.B.: this type of simplistic imputation is strongly not recommended for downstream analyses and is used here for example's sake!*

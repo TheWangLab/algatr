@@ -46,7 +46,7 @@ Let's calculate environmental distances with our extracted environmental values 
 
 ```{r enviro data}
 # Extract enviro vars
-env <- extract(CA_env, liz_coords)
+env <- raster::extract(CA_env, liz_coords)
 # Calculate environmental distances
 X <- env_dist(env)
 # Add geographic distance to X
