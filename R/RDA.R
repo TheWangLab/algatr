@@ -19,6 +19,7 @@
 #' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})
 #' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
 #' @inheritParams vegan::ordiR2step
 #'
@@ -35,7 +36,7 @@
 rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
                               p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
-                              Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE){
+                              Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, quiet = FALSE){
 
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
@@ -101,7 +102,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   if(varpart) {
     varpart_df <- rda_varpart(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC)
-    print(rda_varpart_table(varpart_df))
+    if(!quiet) print(rda_varpart_table(varpart_df))
   } else varpart_df <- NULL
 
   # Identify candidate SNPs ----------------------------------------------------------------------------------------------------
@@ -116,13 +117,13 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
   # Plot all axes
   if(any("pvalues" %in% names(rda_sig))) pvalues <- rda_sig[["pvalues"]] else pvalues <- NULL
-  rda_plot(mod, rda_snps = rda_snps, pvalues = pvalues,  axes = "all", biplot_axes = NULL, sig = sig, manhattan = TRUE, rdaplot = TRUE)
+  if(!quiet) rda_plot(mod, rda_snps = rda_snps, pvalues = pvalues,  axes = "all", biplot_axes = NULL, sig = sig, manhattan = TRUE, rdaplot = TRUE)
 
   # Get correlations -----------------------------------------------------------------------------------------------------------
   rda_gen <- gen[,rda_snps]
   if(cortest) {
     cor_df <- rda_cor(rda_gen, env)
-    print(rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
+    if(!quiet) print(rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
   } else cor_df <- NULL
 
   # Compile results ------------------------------------------------------------------------------------------------------------

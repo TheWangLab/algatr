@@ -1,8 +1,6 @@
 
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
-#' TODO: ADD QUIET ARG
-#'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
@@ -14,6 +12,7 @@
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
 #' @details
 #' GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto-Lugilde, D., & Ferrier, S. (2022). gdm: Generalized dissimilarity modeling. R package version 1.5.0-3.
@@ -26,7 +25,8 @@
 #'
 #' @examples
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
-                              geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE){
+                              geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
+                              quiet = FALSE){
 
   # Check CRS of envlayers and coords
   crs_check(coords, envlayers)
@@ -47,17 +47,15 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # If mod is null, exit
   if (is.null(gdm_result$model)){warning("GDM model is NULL, returning NULL object"); return(NULL)}
 
-  # Get coefficients from models; print table if specified
+  # Get coefficients from models and print table if specified
   coeff_df <- gdm_df(gdm_result)
-  print(gdm_table(gdm_result))
-  # if(!quiet){print(gdm_table(gdm_result))}
+  if(!quiet) print(gdm_table(gdm_result))
 
   # Plot I-splines if output printed
-  gdm_plot_isplines(gdm_result$model)
-  # if(!quiet){gdm_plot_isplines(gdm_result$model)}
+  if(!quiet) gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
-  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars)
+  if(geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
 
   # Create list to store results
   results <- list()
@@ -263,8 +261,8 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation
 #' @param coords data frame with x and y coordinates
 #' @param scl constant for rescaling variable vectors for plotting
-#' @param plot
 #' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
+#' @inheritParams gdm_do_everything
 #'
 #' @return GDM RGB map
 #'
@@ -273,7 +271,7 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10){
 #' @export
 #'
 #' @examples
-gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, plot = TRUE){
+gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, quiet = FALSE){
 
   # convert envlayers to SpatRaster
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
@@ -299,7 +297,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
   # Transform GIS layers
-  # convert envlayers to raster
+  # Convert envlayers to raster
   envlayers_sub <- raster::stack(envlayers_sub)
   rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
   rastTrans <- terra::rast(rastTrans)
@@ -316,7 +314,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if (n_layers > 3){n_layers <- 3}
 
   # Make PCA raster
-  # TODO [EAC]: below is returning error; add conversion here rastTrans to
   pcaRast <- terra::predict(rastTrans, pcaSamp, index=1:n_layers)
 
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
@@ -336,13 +333,14 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   # If n_layers = 1, you end up making a univariate map
   if(n_layers == 1){pcaRastRGB <- c(pcaRastRGB, white_raster, white_raster)}
 
-  # Plot raster
-  if(plot) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
+  # Plot raster if quiet = FALSE
+  if(!quiet) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
   if(!is.null(coords)) points(coords, cex = 1.5)
 
   # Plot variable vectors
   if(plot_vars & (n_layers == 3)){
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
+    # TODO [EAC] need to add quiet here?
+    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes, quiet = quiet)
   }
 
   if(plot_vars & (n_layers != 3)){
@@ -443,6 +441,8 @@ gdm_plot_diss <- function(gdm_model){
 #' @param x x-axis PC
 #' @param y y-axis PC
 #' @param scl constant for rescaling variable vectors for plotting
+#' @param display_axes whether to display axes
+#' @inheritParams gdm_do_everything
 #'
 #' @return GDM PCA plot
 #'
@@ -451,7 +451,7 @@ gdm_plot_diss <- function(gdm_model){
 #' @export
 #'
 #' @examples
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE){
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE, quiet = FALSE){
 
   # Confirm there are exactly 3 axes
   if(terra::nlyr(pcaRastRGB) > 3){stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")}
@@ -545,7 +545,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   }
 
   # Plot
-  print(plot)
+  if(!quiet) print(plot)
 }
 
 #' Helper function to create rgb vector

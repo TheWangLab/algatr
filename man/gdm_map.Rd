@@ -11,7 +11,7 @@ gdm_map(
   plot_vars = TRUE,
   scl = 1,
   display_axes = FALSE,
-  plot = TRUE
+  quiet = FALSE
 )
 }
 \arguments{
@@ -26,6 +26,8 @@ gdm_map(
 \item{scl}{constant for rescaling variable vectors for plotting}
 
 \item{display_axes}{display PC axes text, labels, and ticks (defaults to FALSE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 GDM RGB map

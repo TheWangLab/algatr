@@ -9,7 +9,7 @@
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
 #' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
-#' @param plot whether to plot results (default = TRUE)
+#' @param quiet whether to plot results (default = FALSE)
 #' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @details
@@ -20,7 +20,7 @@
 #' @family MMRR functions
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all"){
 
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
@@ -42,12 +42,12 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
+  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
 
-  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, plot = plot, plot_type = plot_type)
+  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
 
   # Print dataframe
-  print(mmrr_table(results))
+  if(!quiet) print(mmrr_table(results))
 
   return(results)
 }
@@ -63,7 +63,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all"){
 
   # Fit model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
@@ -75,7 +75,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "
   X_best <- X[names(mod$coefficients)[-1]]
 
   # Plot results
-  if (plot) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
+  if (!quiet) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice dataframe
   coeff_df <- mmrr_df(mod)
@@ -101,7 +101,7 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, plot = TRUE, plot_type = "
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all"){
+mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all"){
 
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
@@ -110,7 +110,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type =
   if (is.null(mod)) return(NULL)
 
   # Plot results
-  if (plot) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
+  if (!quiet) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice dataframe
   coeff_df <- mmrr_df(mod)
