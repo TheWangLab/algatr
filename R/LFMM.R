@@ -44,11 +44,10 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 
   # PCA to determine number of latent factors
   # If K is not specified, it is calculated based on given K selection method
-  if(is.null(K)){
+  if (is.null(K)){
     K <- select_K(gen, K_selection = K_selection, coords = coords,
                Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust,
-               quiet = quiet)
+               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
   }
 
   # Run LFMM
