@@ -7,3 +7,5 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^knit_everything_for_me\.R$
+^doc$
+^Meta$
