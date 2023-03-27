@@ -28,6 +28,7 @@ library(tidyr)
 library(RStoolbox)
 library(gridExtra)
 library(wingen)
+library(gt)
 
 devtools::load_all()
 ```
