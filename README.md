@@ -8,7 +8,7 @@
 start-to-finish pipeline to perform various landscape genomics methods
 with their data.
 
-# review <img src="man/figures/algatr_review.png" align="center" height="150"/>
+# review <img src="man/algatr_review.png" align="center" height="150"/>
 
 ## Installation
 
