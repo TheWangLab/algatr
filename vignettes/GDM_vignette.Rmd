@@ -74,11 +74,13 @@ env <- extract(CA_env, liz_coords)
 Given that GDM is a regression method, the "full" model (i.e., including all predictor variables) will include all environmental layers in addition to geographic distance, which is also considered a predictor. Thus, in this example, the maximum number of variables you can end up with that are significant is four (three enviro PCs + geographic distance). We can specify running the full model using the `model` argument. Extracted environmental values for each sampling coordinate are specified using the `env` argument, and if genetic distances are not bounded by 0-1, they must be scaled using the `scale_gendist` argument. Keep in mind that several arguments are only for model selection and so will not be used.
 
 ```{r gdm full}
-gdm_full <- gdm_run(gendist = liz_gendist, 
-                    coords = liz_coords,
-                    env = env,
-                    model = "full",
-                    scale_gendist = TRUE)
+gdm_full <- gdm_run(
+  gendist = liz_gendist,
+  coords = liz_coords,
+  env = env,
+  model = "full",
+  scale_gendist = TRUE
+)
 ```
 
 ### GDM with model selection
@@ -130,7 +132,7 @@ gdm_plot_diss(gdm_full$model)
 Let's plot the GDM-fitted functions for our full model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable. The y-axis ("partial regression distance") relates the genetic distances to the variable when all other variables are held constant. We can look at these I-splines using the `gdm_plot_isplines()` function. In general, three I-splines have been found to be sufficient to capture dissimilarity across a gradient and avoids over-fitting (see [Mokany et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13459) for further information). As we can see from the below plots, PCA1 has no relationship with genetic distance, which is also why the coefficient for this variable is 0.
 
 ```{r isplines, fig.width = 3, fig.height = 3}
-par(mfrow = c(2,2))
+par(mfrow = c(2, 2))
 gdm_plot_isplines(gdm_full$model)
 ```
 
@@ -178,10 +180,11 @@ Running a GDM with `gdm_do_everything()` requires three data files for input: a 
 
 ```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='hide'}
 gdm_full_everything <- gdm_do_everything(liz_gendist,
-                                         liz_coords,
-                                         envlayers = CA_env,
-                                         model = "full", 
-                                         scale_gendist = TRUE)
+  liz_coords,
+  envlayers = CA_env,
+  model = "full",
+  scale_gendist = TRUE
+)
 ```
 
 ## Additional documentation and citations

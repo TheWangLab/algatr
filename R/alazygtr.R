@@ -1,4 +1,3 @@
-
 #' Lazy run of all landscape genomic analyses contained within `algatr`
 #'
 #' Disclaimer: this is probably a bad idea...
@@ -11,8 +10,7 @@
 #' @export
 #'
 #' @examples
-do_everything_for_me <- function(gen, coords, envlayers){
-
+do_everything_for_me <- function(gen, coords, envlayers) {
   gendist <- gen_dist(gen, dist_type = "dps")
 
   tess <- tess_do_everything(gen, coords, raster::aggregate(envlayers[[1]], 10), Kvals = 1:10, K_selection = "auto")
@@ -23,10 +21,10 @@ do_everything_for_me <- function(gen, coords, envlayers){
 
   ascii_alligator("MMRR")
 
-  if(is.null(mmrr)) {
+  if (is.null(mmrr)) {
     warning("MMRR model = \"best\" did not find a significant model, running a full model instead")
     mmrr <- gdm_do_everything(gendist, liz_coords, CA_env, model = "full", scale_gendist = TRUE, nperm = 100)
-    }
+  }
 
   gdm <- gdm_do_everything(gendist, coords, envlayers, model = "best", scale_gendist = TRUE)
 

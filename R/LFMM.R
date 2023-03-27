@@ -1,4 +1,3 @@
-
 #' LFMM function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
@@ -24,43 +23,44 @@
 #'
 #' @examples
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
-                     K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
-                     p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
-                     low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE){
-
+                               K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
+                               p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
+                               low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
   # Get and check environmental data
   if (inherits(env, "Raster")) env <- terra::rast(env)
   if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
   if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
 
   # Convert vcf to dosage matrix
-  if(inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
 
   # Perform imputation with warning
-  if(any(is.na(gen))){
+  if (any(is.na(gen))) {
     gen <- simple_impute(gen, median)
     warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
   }
 
   # PCA to determine number of latent factors
   # If K is not specified, it is calculated based on given K selection method
-  if (is.null(K)){
-    K <- select_K(gen, K_selection = K_selection, coords = coords,
-               Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
+  if (is.null(K)) {
+    K <- select_K(gen,
+      K_selection = K_selection, coords = coords,
+      Kvals = Kvals, criticalpoint = criticalpoint, low = low,
+      max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust
+    )
   }
 
   # Run LFMM
   results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
 
   # Check qqplots
-  if(!quiet) print(lfmm_qqplot(results$df))
+  if (!quiet) print(lfmm_qqplot(results$df))
 
   # Make Manhattan plots
-  if(!quiet) print(lfmm_manhattanplot(results$df, sig))
+  if (!quiet) print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  if(!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig))
+  if (!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig))
 
   return(results)
 }
@@ -72,34 +72,40 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 #' @family LFMM functions
 #' @export
 #'
-lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif"){
+lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif") {
   # gen matrix
   genmat <- as.matrix(gen)
   # env matrix
   envmat <- as.matrix(env)
 
   # Remove NAs
-  if(any(is.na(envmat))){
+  if (any(is.na(envmat))) {
     warning("Missing values found in environmental data, removing rows with NAs")
-    genmat <- genmat[complete.cases(envmat),]
-    envmat <- envmat[complete.cases(envmat),]
+    genmat <- genmat[complete.cases(envmat), ]
+    envmat <- envmat[complete.cases(envmat), ]
   }
 
   # Run model
-  if(lfmm_method == "ridge"){lfmm_mod <- lfmm::lfmm_ridge(genmat, envmat, K = K)}
-  if(lfmm_method == "lasso"){lfmm_mod <- lfmm::lfmm_lasso(genmat, envmat, K = K)}
+  if (lfmm_method == "ridge") {
+    lfmm_mod <- lfmm::lfmm_ridge(genmat, envmat, K = K)
+  }
+  if (lfmm_method == "lasso") {
+    lfmm_mod <- lfmm::lfmm_lasso(genmat, envmat, K = K)
+  }
 
   # Perform association testing using the fitted model:
-  lfmm_test_result <- lfmm::lfmm_test(Y = genmat,
-                  X = envmat,
-                  lfmm = lfmm_mod,
-                  calibrate = calibrate)
+  lfmm_test_result <- lfmm::lfmm_test(
+    Y = genmat,
+    X = envmat,
+    lfmm = lfmm_mod,
+    calibrate = calibrate
+  )
 
   # If p_adj method is specified, perform p-value correction by column (by env variable)
   lfmm_test_result$adjusted.pvalue <- apply(dplyr::as_tibble(lfmm_test_result$calibrated.pvalue), 2, stats::p.adjust, method = p_adj)
 
   # Stop if all p-values are NA
-  if(all(is.na(lfmm_test_result$adjusted.pvalue))) stop("All p-values are NA")
+  if (all(is.na(lfmm_test_result$adjusted.pvalue))) stop("All p-values are NA")
 
   # Transfer column names
   colnames(lfmm_test_result$adjusted.pvalue) <- colnames(envmat)
@@ -126,7 +132,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_df <- function(x){
+lfmm_df <- function(x) {
   # Extract names of elements from lfmm_test_result
   df_names <- names(x)[purrr::map_lgl(x, function(x) !is.null(rownames(x)))]
 
@@ -147,9 +153,9 @@ lfmm_df <- function(x){
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_test_tidy <- function(colname, lfmm_test_result){
+lfmm_test_tidy <- function(colname, lfmm_test_result) {
   x <- lfmm_test_result[[colname]]
-  if(is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
+  if (is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
   df <- x %>%
     dplyr::as_tibble() %>%
     dplyr::mutate(snp = rownames(x)) %>%
@@ -177,23 +183,26 @@ lfmm_test_tidy <- function(colname, lfmm_test_result){
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE){
-
-  if(!is.null(var)) df <- df[df$var %in% var, ]
-  if(sig_only) df <- df[df$adjusted.pvalue < sig, ]
-  if(order) df <- df[order(abs(df$B), decreasing = TRUE),]
-  if(top) df <- df %>%
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE) {
+  if (!is.null(var)) df <- df[df$var %in% var, ]
+  if (sig_only) df <- df[df$adjusted.pvalue < sig, ]
+  if (order) df <- df[order(abs(df$B), decreasing = TRUE), ]
+  if (top) {
+    df <- df %>%
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(B) == max(abs(B)))
-  if(!is.null(nrow)) {
-    if(nrow > nrow(df)) nrow <- nrow(df)
+  }
+  if (!is.null(nrow)) {
+    if (nrow > nrow(df)) nrow <- nrow(df)
     df <- df[1:nrow, ]
   }
 
-  df <- df %>% dplyr::as_tibble() %>% dplyr::filter(dplyr::if_any(dplyr::everything(), ~ !is.na(.)))
-  if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
+  df <- df %>%
+    dplyr::as_tibble() %>%
+    dplyr::filter(dplyr::if_any(dplyr::everything(), ~ !is.na(.)))
+  if (!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c(var, snp), round, digits))
 
-  if(nrow(df) == 0) {
+  if (nrow(df) == 0) {
     warning("No significant variants found, returning NULL object")
     return(NULL)
   }
@@ -203,13 +212,12 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
 
   suppressWarnings(
-    tbl <- df  %>%
+    tbl <- df %>%
       gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric("B", trim = TRUE, domain = c(-d,d))
-
+      gtExtras::gt_hulk_col_numeric("B", trim = TRUE, domain = c(-d, d))
   )
 
-  if(footnotes) tbl <- tbl %>% gt::tab_footnote(footnote = "LFMM effect size", locations = gt::cells_column_labels(columns = B))
+  if (footnotes) tbl <- tbl %>% gt::tab_footnote(footnote = "LFMM effect size", locations = gt::cells_column_labels(columns = B))
 
   tbl
 }
@@ -233,15 +241,14 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #'
 #' @examples
 select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
-                  low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10){
+                     low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10) {
+  if (K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
 
-  if(K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
+  if (K_selection == "quick_elbow") K <- select_K_elbow(gen, low, max.pc)
 
-  if(K_selection == "quick_elbow") K <- select_K_elbow(gen, low, max.pc)
+  if (K_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
 
-  if(K_selection == "tess") K <- select_K_tess(gen, coords, Kvals)
-
-  if(K_selection == "find_clusters") K <- select_K_fc(gen, perc.pca, max.n.clust)
+  if (K_selection == "find_clusters") K <- select_K_fc(gen, perc.pca, max.n.clust)
 
   return(K)
 }
@@ -256,7 +263,7 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 #'
 #' @family LFMM functions
 #' @examples
-select_K_tw <- function(gen, criticalpoint = 2.0234){
+select_K_tw <- function(gen, criticalpoint = 2.0234) {
   # Turn gen into df
   df <- data.frame(gen)
 
@@ -273,7 +280,7 @@ select_K_tw <- function(gen, criticalpoint = 2.0234){
   K <- tw_result$SigntEigenL
 
   # If K is zero, return 1
-  if(K == 0) K <- 1
+  if (K == 0) K <- 1
 
   return(K)
 }
@@ -287,7 +294,7 @@ select_K_tw <- function(gen, criticalpoint = 2.0234){
 #'
 #' @family LFMM functions
 #' @examples
-select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
+select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
   # Run PCA
   pc <- prcomp(gen)
 
@@ -298,8 +305,8 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
   # This is a crude way to determine the number of latent factors that is based on an arbitrary "low" value
   K <- quick_elbow(eig, low = low, max.pc = max.pc)
 
-  par(pty = "s",mfrow = c(1,1))
-  plot(eig, xlab = 'PC', ylab = "Variance explained")
+  par(pty = "s", mfrow = c(1, 1))
+  plot(eig, xlab = "PC", ylab = "Variance explained")
   abline(v = K, col = "red", lty = "dashed")
 
   return(K)
@@ -318,18 +325,20 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9){
 #'
 #' @family LFMM functions
 #' @examples
-select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2){
+select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2) {
   # Run TESS for all K values
   coords <- coords_to_matrix(coords)
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot x-validation results and indicate K-value that is automatically selected
-  plot(tess3_obj, pch = 19, col = "blue",
-       xlab = "Number of ancestral populations",
-       ylab = "Cross-validation score")
+  plot(tess3_obj,
+    pch = 19, col = "blue",
+    xlab = "Number of ancestral populations",
+    ylab = "Cross-validation score"
+  )
 
   # Get best K value
-  K <-  bestK(tess3_obj, Kvals)
+  K <- bestK(tess3_obj, Kvals)
 
   return(K)
 }
@@ -344,14 +353,14 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 #'
 #' @family LFMM functions
 #' @examples
-select_K_fc <- function(gen, perc.pca, max.n.clust){
-
+select_K_fc <- function(gen, perc.pca, max.n.clust) {
   fc <- adegenet::find.clusters(gen,
-                                pca.select = "percVar",
-                                perc.pca = perc.pca,
-                                choose.n.clust = FALSE,
-                                criterion = "diffNgroup",
-                                max.n.clust = max.n.clust)
+    pca.select = "percVar",
+    perc.pca = perc.pca,
+    choose.n.clust = FALSE,
+    criterion = "diffNgroup",
+    max.n.clust = max.n.clust
+  )
 
   K <- max(as.numeric(fc$grp))
 
@@ -382,46 +391,49 @@ select_K_fc <- function(gen, perc.pca, max.n.clust){
 #' @author Nicholas Cooper
 #' @examples
 #' # correlated data
-#' mat <- sim.cor(100,50)
+#' mat <- sim.cor(100, 50)
 #' result <- princomp(mat)
 #' eig <- result$sdev^2
 #' elb.a <- quick_elbow(eig)
-#' pca.scree.plot(eig,elbow=elb.a,M=mat)
-#' elb.b <- quick_elbow(eig,low=.05) # decrease 'low' to select more components
-#' pca.scree.plot(eig,elbow=elb.b,M=mat)
+#' pca.scree.plot(eig, elbow = elb.a, M = mat)
+#' elb.b <- quick_elbow(eig, low = .05) # decrease 'low' to select more components
+#' pca.scree.plot(eig, elbow = elb.b, M = mat)
 #' # random (largely independent) data, usually higher elbow #
-#' mat2 <- generate.test.matrix(5,3)
+#' mat2 <- generate.test.matrix(5, 3)
 #' result2 <- princomp(mat2)
 #' eig2 <- result2$sdev^2
 #' elb2 <- quick_elbow(result2$sdev^2)
-#' pca.scree.plot(eig2,elbow=elb2,M=mat2)
+#' pca.scree.plot(eig2, elbow = elb2, M = mat2)
 quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
   # Ensure below sums to 1
-  ee <- varpc/sum(varpc)
+  ee <- varpc / sum(varpc)
 
   # When no big components, then adjust 'low'
-  while(low>=max(ee)) { low <- low/2 }
-  lowie <- (ee<low) ; highie <- ee>low/8
+  while (low >= max(ee)) {
+    low <- low / 2
+  }
+  lowie <- (ee < low)
+  highie <- ee > low / 8
   low.ones <- which(lowie & highie)
   others <- length(which(!lowie))
-  if(length(low.ones)>0) {
-    if(length(low.ones)==1) {
+  if (length(low.ones) > 0) {
+    if (length(low.ones) == 1) {
       elbow <- low.ones
     } else {
       set <- ee[low.ones]
-      pc.drops <- abs(diff(set))/(set[1:(length(set)-1)])
+      pc.drops <- abs(diff(set)) / (set[1:(length(set) - 1)])
       infz <- is.infinite(pc.drops)
-      elbow <- which(pc.drops==max(pc.drops[!infz],na.rm=T))[1]+others
+      elbow <- which(pc.drops == max(pc.drops[!infz], na.rm = T))[1] + others
     }
   } else {
     # If somehow there are no small eigenvalues, just choose the elbow as the second last
     cat("No eigenvalues were significantly smaller than the previous\n")
     elbow <- length(ee)
   }
-  if(tail(cumsum(ee[1:elbow]),1)>max.pc) {
-    elbow <- which(cumsum(ee)>max.pc)[1]-1
+  if (tail(cumsum(ee[1:elbow]), 1) > max.pc) {
+    elbow <- which(cumsum(ee) > max.pc)[1] - 1
   }
-  if(elbow<1) {
+  if (elbow < 1) {
     warning("Elbow calculation failed, return zero")
     return(0)
   }
@@ -439,14 +451,15 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_qqplot <- function(df){
-
+lfmm_qqplot <- function(df) {
   plt <- ggplot2::ggplot(df, ggplot2::aes(sample = -log10(adjusted.pvalue))) +
     ggplot2::stat_qq() +
     ggplot2::geom_abline(intercept = 0, slope = 1) +
-    ggplot2::facet_wrap( ~ var, nrow = 1) +
-    ggplot2::labs(x = NULL,
-         y = "-log10(p)") +
+    ggplot2::facet_wrap(~var, nrow = 1) +
+    ggplot2::labs(
+      x = NULL,
+      y = "-log10(p)"
+    ) +
     ggplot2::theme_bw() +
     ggplot2::theme(line = ggplot2::element_blank())
 
@@ -463,10 +476,9 @@ lfmm_qqplot <- function(df){
 #'
 #' @family LFMM functions
 #' @examples
-lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
-
+lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Subset variables
-  if(!is.null(var)) df <- df[df$var %in% var, ]
+  if (!is.null(var)) df <- df[df$var %in% var, ]
 
   # Convert to df to not get tidy warnings about uninitialized columns
   df <- data.frame(df)
@@ -479,22 +491,24 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL){
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
     ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
-    ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7,0.7,0.7,0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
+    ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
     ggplot2::xlab("SNPs") +
     ggplot2::ylab("-log10(p)") +
     ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", size = 0.6) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "SNP type")) +
-    ggplot2::facet_wrap( ~ var, nrow = length(unique(df$var))) +
-    ggplot2::xlab("Position") + ggplot2::ylab("-log10(p)") +
+    ggplot2::facet_wrap(~var, nrow = length(unique(df$var))) +
+    ggplot2::xlab("Position") +
+    ggplot2::ylab("-log10(p)") +
     ggplot2::theme_bw(base_size = 11) +
-    ggplot2::theme(legend.position = "right",
-                   legend.background = ggplot2::element_blank(),
-                   panel.grid = ggplot2::element_blank(),
-                   legend.box.background = ggplot2::element_blank(),
-                   plot.background = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
-                   strip.text = ggplot2::element_text(size = 11))
+    ggplot2::theme(
+      legend.position = "right",
+      legend.background = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank(),
+      legend.box.background = ggplot2::element_blank(),
+      plot.background = ggplot2::element_blank(),
+      panel.background = ggplot2::element_blank(),
+      legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
+      strip.text = ggplot2::element_text(size = 11)
+    )
   return(plt)
 }
-

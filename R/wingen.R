@@ -1,4 +1,3 @@
-
 #' wingen function to do everything  (preview and generate moving window maps, krige, and mask)
 #'
 #' @param preview whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)
@@ -23,21 +22,26 @@
 wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
                                  preview = FALSE, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
-                                 masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE){
-
-  if(preview == TRUE){
+                                 masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE) {
+  if (preview == TRUE) {
     if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
     if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
     print(wingen::preview_gd(lyr = lyr, coords = coords, wdim = wdim, fact = fact, sample_count = sample_count, min_n = min_n))
     input <- utils::menu(c("Y", "N"), title = "Would you like to continue running wingen with these parameters?")
-    if (input == 1) {print("OK, running wingen...")}
-    if (input == 2) {stop("Stopping the run")}
+    if (input == 1) {
+      print("OK, running wingen...")
+    }
+    if (input == 2) {
+      stop("Stopping the run")
+    }
   }
 
   if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
   if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
-  map <- wingen::window_gd(gen = gen, coords = coords, lyr = lyr, stat = stat,
-                           wdim = wdim, fact = fact, rarify = rarify)
+  map <- wingen::window_gd(
+    gen = gen, coords = coords, lyr = lyr, stat = stat,
+    wdim = wdim, fact = fact, rarify = rarify
+  )
 
 
   # KRIGING -----------------------------------------------------------------
@@ -59,10 +63,10 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
-  if(!quiet) print(wingen::plot_gd(map, bkg = bkg, index = index))
+  if (!quiet) print(wingen::plot_gd(map, bkg = bkg, index = index))
 
   # Plot sample counts
-  if(plot_count == TRUE) print(wingen::plot_count(map))
+  if (plot_count == TRUE) print(wingen::plot_count(map))
 
   # Return object with results
   return(map)
@@ -83,7 +87,7 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 #' @family wingen functions
 #'
 #' @examples
-krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL){
+krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL) {
   # Perform checks ----------------------------------------------------------
   if (!is.null(agg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = agg_grd, agg_spec = "agg")
   if (!is.null(disagg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = disagg_grd, agg_spec = "disagg")
@@ -111,7 +115,7 @@ krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd =
 #' @family wingen functions
 #'
 #' @examples
-krig_agg_helper <- function(to_krig, agg_disagg, agg_spec = "agg"){
+krig_agg_helper <- function(to_krig, agg_disagg, agg_spec = "agg") {
   if (agg_spec == "agg") terra::aggregate(to_krig, agg_disagg)
   if (agg_spec == "disagg") terra::disagg(to_krig, agg_disagg)
 }

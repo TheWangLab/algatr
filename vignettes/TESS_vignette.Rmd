@@ -174,7 +174,7 @@ Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggp
 -   `"allQ_poly"` plots allQ as polygons for each K-value instead of continuous Q values
 
 ```{r basic ggplot, fig.width = 5, fig.height = 5, fig.align = 'center'}
-par(mfrow = c(2,2), pty = "s", mar = rep(0,4))
+par(mfrow = c(2, 2), pty = "s", mar = rep(0, 4))
 
 tess_ggplot(krig_admix, plot_method = "maxQ")
 tess_ggplot(krig_admix, plot_method = "allQ", minQ = 0.20)
@@ -193,7 +193,7 @@ tess_ggplot(krig_admix, plot_method = "maxQ", ggplot_fill = scale_fill_manual(va
 We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.
 
 ```{r plot all K, fig.width = 10, fig.height = 4, fig.align = 'center', warning = FALSE}
-par(mfrow = c(1, nlyr(krig_admix)), mar = rep(2,4), oma = rep(1,4))
+par(mfrow = c(1, nlyr(krig_admix)), mar = rep(2, 4), oma = rep(1, 4))
 tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
 
@@ -208,14 +208,15 @@ barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", yl
 You can also map kriged Q-values using tess3r with the `plot()` function.
 
 ```{r, fig.width = 5, fig.height = 5, fig.align = 'center', message = FALSE, warning = FALSE}
-plot(qmat, 
-     liz_coords, 
-     method = "map.max", 
-     interpol = FieldsKrigModel(10),  
-     main = "Ancestry coefficients",
-     xlab = "Longitude", ylab = "Latitude", 
-     col.palette = CreatePalette(),
-     resolution = c(300,300), cex = .4)
+plot(qmat,
+  liz_coords,
+  method = "map.max",
+  interpol = FieldsKrigModel(10),
+  main = "Ancestry coefficients",
+  xlab = "Longitude", ylab = "Latitude",
+  col.palette = CreatePalette(),
+  resolution = c(300, 300), cex = .4
+)
 ```
 
 As you can see from the above, interpolation is done using a different method in tess3r, which is why the resulting smoothed surface differs from than produced using algatr.

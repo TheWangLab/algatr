@@ -75,11 +75,12 @@ There are a number of additional arguments within this function, and the wingen 
 First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. We want adjust the window size (using the `wdim` argument) to ensure (to some extent) that our window size is capturing samples as it slides across the landscape. Ideally, `wdim` should be set with the study system in mind (e.g., the dispersal distance or neighborhood size of the species). We will also specify that genetic diversity only be calculated for windows that contain at least two samples (`min_n`). This function will generate two figures: one that allows us to visualize the size of our window compared to the raster layer and sampling coordinates, and also a map of how many samples will be included in each cell's calculation (specified using `sample_count`).
 
 ```{r preview gd, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE, message=FALSE}
-par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
+par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 preview_gd(liz_lyr,
-           liz_coords,
-           wdim = 3, 
-           fact = 0)
+  liz_coords,
+  wdim = 3,
+  fact = 0
+)
 ```
 
 ### Run the moving window
@@ -88,11 +89,12 @@ Next, let's run the moving window function (`window_gd()`) using the parameters 
 
 ```{r window gd, warning=FALSE}
 wgd <- window_gd(liz_vcf,
-          liz_coords,
-          liz_lyr,
-          stat = "pi",
-          wdim = 3,
-          fact = 0)
+  liz_coords,
+  liz_lyr,
+  stat = "pi",
+  wdim = 3,
+  fact = 0
+)
 ```
 
 ## Visualizing wingen results
@@ -104,7 +106,7 @@ wgd <- window_gd(liz_vcf,
 wingen allows for plotting maps in two ways: `plot_gd()` plots the genetic diversity layer, while `plot_count()` plots the sample count layer. We can also provide a background map using the `bkg` argument.
 
 ```{r plot window, warning=FALSE, fig.width=5, fig.height=5, fig.align='center'}
-par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
+par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 # Plot map of pi
 plot_gd(wgd, main = "Moving window pi", bkg = envlayer)
 # Plot sample count map
@@ -125,7 +127,7 @@ summary(kgd)
 Let's look at the plots for the kriged results, and let's avoid including the background shape for now (i.e., no `bkg` argument). Note that the overall shape of this kriged map is rectangular because of the `lyr` raster shape.
 
 ```{r plot krige, fig.height=5, fig.width=5, fig.align='center', warning=FALSE}
-par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
+par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 # Plot kriged map of pi
 plot_gd(kgd, main = "Kriged pi")
 # Plot kriged sample count map
@@ -142,7 +144,7 @@ As you can see, more areas are masked as we increase `minval`.
 mgd_1 <- mask_gd(kgd, kgd[["sample_count"]], minval = 1)
 mgd_2 <- mask_gd(kgd, kgd[["sample_count"]], minval = 2)
 
-par(mfrow = c(1,2), oma = rep(1,4), mar = rep(2,4))
+par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 plot_gd(mgd_1, main = "Kriged & masked pi", bkg = envlayer)
 plot_gd(mgd_2, main = "Kriged & masked pi", bkg = envlayer)
 ```
@@ -189,24 +191,25 @@ Below, we'll run wingen with the following:
 -   Plot kriged and masked sample count (`plot_count = TRUE`)
 
 ```{r wingen do everything, warning=FALSE}
-results <- wingen_do_everything(gen = liz_vcf, 
-                                lyr = liz_lyr, 
-                                coords = liz_coords,
-                                wdim = 3, 
-                                fact = 0, 
-                                sample_count = TRUE,
-                                preview = FALSE,
-                                min_n = 2,
-                                stat = "pi", 
-                                rarify = FALSE,
-                                kriged = TRUE, 
-                                grd = liz_lyr, 
-                                index = 1:2,
-                                agg_grd = NULL, disagg_grd = 4, 
-                                agg_r = NULL, disagg_r = NULL,
-                                masked = TRUE, mask = envlayer, 
-                                bkg = envlayer, plot_count = TRUE)
-
+results <- wingen_do_everything(
+  gen = liz_vcf,
+  lyr = liz_lyr,
+  coords = liz_coords,
+  wdim = 3,
+  fact = 0,
+  sample_count = TRUE,
+  preview = FALSE,
+  min_n = 2,
+  stat = "pi",
+  rarify = FALSE,
+  kriged = TRUE,
+  grd = liz_lyr,
+  index = 1:2,
+  agg_grd = NULL, disagg_grd = 4,
+  agg_r = NULL, disagg_r = NULL,
+  masked = TRUE, mask = envlayer,
+  bkg = envlayer, plot_count = TRUE
+)
 ```
 
 ## Additional documentation and citations

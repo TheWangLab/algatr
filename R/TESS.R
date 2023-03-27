@@ -1,4 +1,3 @@
-
 #' TESS function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
@@ -27,21 +26,19 @@
 #'
 #' @examples
 tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
-                      plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
-                      tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
-                      quiet = FALSE){
-
+                               plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
+                               tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
+                               quiet = FALSE) {
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
   # Convert vcf to dosage
-  if(inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
 
   # Convert coords to matrix
   coords <- as.matrix(coords)
 
   # Test different k values, if more than one provided
-  if(length(Kvals) > 1){
-
+  if (length(Kvals) > 1) {
     # Run TESS K test
     tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
 
@@ -50,18 +47,15 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
 
     # Get tessobj
     tess3_obj <- tess_results[["tess3_obj"]]
-
-    }
+  }
 
   # If only one K value is provided, just use that
-  if(length(Kvals) == 1){
-
+  if (length(Kvals) == 1) {
     # K is just Kvals if there is only one value
     K <- Kvals
 
     # Run tess for given K value
     tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
-
   }
 
   # KRIGE QMATRIX  -----------------------------------------------------------------------------------------------
@@ -70,31 +64,33 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   qmat <- tess3r::qmatrix(tess3_obj, K = K)
 
   # Give warning if K = 1
-  if(K == 1) warning("K = 1, skipping kriging and plotting")
+  if (K == 1) warning("K = 1, skipping kriging and plotting")
 
   # Krige Qmatrix
-  if(K != 1) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
+  if (K != 1) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
   # Plot Q-values
-  if(!quiet) {
-  if(K != 1) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
+  if (!quiet) {
+    if (K != 1) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
 
-  # Make barplot
-  if(K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
+    # Make barplot
+    if (K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
   }
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
 
   # Create list with all outputs
-  tess_results <- list(K = K,
-                       Qmatrix = qmat,
-                       krig_admix = krig_admix,
-                       tess_results = tess3_obj,
-                       coords = coords,
-                       Kvals = Kvals,
-                       grid = grid)
+  tess_results <- list(
+    K = K,
+    Qmatrix = qmat,
+    krig_admix = krig_admix,
+    tess_results = tess3_obj,
+    coords = coords,
+    Kvals = Kvals,
+    grid = grid
+  )
 
   return(tess_results)
 }
@@ -109,8 +105,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
 #' @family TESS functions
 #'
 #' @examples
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE){
-
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE) {
   # Format coordinates
   coords <- as.matrix(coords)
 
@@ -118,23 +113,33 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot CV results
-  if(!quiet) plot(tess3_obj, pch = 19, col = "blue",
-                  xlab = "Number of ancestral populations",
-                  ylab = "Cross-validation score")
+  if (!quiet) {
+    plot(tess3_obj,
+      pch = 19, col = "blue",
+      xlab = "Number of ancestral populations",
+      ylab = "Cross-validation score"
+    )
+  }
 
   # Get best K value
-  if(K_selection == "auto"){K <-  bestK(tess3_obj, Kvals)}
-  if(K_selection == "manual"){K <- as.numeric(readline(prompt = "Enter K Value: "))}
+  if (K_selection == "auto") {
+    K <- bestK(tess3_obj, Kvals)
+  }
+  if (K_selection == "manual") {
+    K <- as.numeric(readline(prompt = "Enter K Value: "))
+  }
 
   # Mark the K-value selected
-  if(!quiet) abline(v = K, col = "red", lty = "dashed")
+  if (!quiet) abline(v = K, col = "red", lty = "dashed")
 
   # Create list with tess3 object and K value
-  tess_results <- list(K = K,
-                    tess3_obj = tess3_obj,
-                    coords = coords,
-                    Kvals = Kvals,
-                    grid = grid)
+  tess_results <- list(
+    K = K,
+    tess3_obj = tess3_obj,
+    coords = coords,
+    Kvals = Kvals,
+    grid = grid
+  )
 
   return(tess_results)
 }
@@ -151,7 +156,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #' @family TESS functions
 #'
 #' @examples
-tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE){
+tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
   # Check CRS
   crs_check(coords, grid)
 
@@ -170,7 +175,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE){
     purrr::map(1:K, krig_K, qmat, krig_grid, krig_df) %>%
     terra::rast() %>%
     # mask with original raster layer because the grid fills in all NAs
-    #( note: we don't remove NAs because it can change the extent)
+    # ( note: we don't remove NAs because it can change the extent)
     terra::mask(grid)
 
   # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
@@ -195,13 +200,12 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE){
 #' @noRd
 #' @family TESS functions
 #'
-krig_K <- function(K, qmat, krig_grid, krig_df){
-
+krig_K <- function(K, qmat, krig_grid, krig_df) {
   # Add Q values to spatial dataframe
-  krig_df$Q <- qmat[,K]
+  krig_df$Q <- qmat[, K]
 
   # Skip if all of the Q values are identical (kriging not possible)
-  if (length(unique(krig_df$Q)) == 1){
+  if (length(unique(krig_df$Q)) == 1) {
     warning(paste0("Only one unique Q value for K = ", K, ", returning NULL (note: may want to consider different K value)"))
     return(NULL)
   }
@@ -232,7 +236,6 @@ krig_K <- function(K, qmat, krig_grid, krig_df){
 #' @export
 #' @noRd
 raster_to_grid <- function(x) {
-
   # Convert raster to dataframe
   grd <- terra::as.data.frame(x, xy = TRUE, na.rm = FALSE)
 
@@ -261,8 +264,7 @@ raster_to_grid <- function(x) {
 #' @export
 #'
 #' @examples
-tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE){
-
+tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE) {
   # Set up ggplot df
   gg_df <- krig_admix %>%
     terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
@@ -272,50 +274,60 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     dplyr::group_by(x, y)
 
   # Use max or all Q
-  if(plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
-  if(plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > 0.20)
+  if (plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
+  if (plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > 0.20)
 
   # Set up base plot
   plt <- ggplot2::ggplot()
 
   # Plot as polygon or continuous Q
-  if(plot_method == "maxQ_poly" | plot_method == "allQ_poly"){
+  if (plot_method == "maxQ_poly" | plot_method == "allQ_poly") {
     plt <- plt + ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K), alpha = 0.5)
   } else {
     plt <- plt +
       ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K, alpha = Q)) +
-      ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1),
-                                guide = ggplot2::guide_legend())
+      ggplot2::scale_alpha_binned(
+        breaks = round(seq(0, 1, by = 0.10), 1),
+        guide = ggplot2::guide_legend()
+      )
   }
 
   # Add color
   plt <- plt + ggplot_fill
 
   # Add themes and coord controls
-  plt <-  plt + ggplot2::coord_equal() + ggplot2::theme_bw()
+  plt <- plt + ggplot2::coord_equal() + ggplot2::theme_bw()
 
   # Add axes
-  if(plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank(),
-                                            panel.grid.major.y = ggplot2::element_blank(),
-                                            panel.grid.minor.x = ggplot2::element_blank(),
-                                            panel.grid.major.x = ggplot2::element_blank(),
-                                            aspect.ratio = 1)
+  if (plot_axes) {
+    plt <- plt + ggplot2::theme(
+      panel.grid.minor.y = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_blank(),
+      panel.grid.minor.x = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      aspect.ratio = 1
+    )
+  }
 
-  if(!plot_axes) plt <- plt + ggplot2::theme(panel.grid.minor.y = ggplot2::element_blank(),
-                                            panel.grid.major.y = ggplot2::element_blank(),
-                                            panel.grid.minor.x = ggplot2::element_blank(),
-                                            panel.grid.major.x = ggplot2::element_blank(),
-                                            axis.title.x = ggplot2::element_blank(),
-                                            axis.text.x = ggplot2::element_blank(),
-                                            axis.ticks.x = ggplot2::element_blank(),
-                                            axis.title.y = ggplot2::element_blank(),
-                                            axis.text.y = ggplot2::element_blank(),
-                                            axis.ticks.y = ggplot2::element_blank(),
-                                            panel.border = ggplot2::element_blank(),
-                                            aspect.ratio = 1)
+  if (!plot_axes) {
+    plt <- plt + ggplot2::theme(
+      panel.grid.minor.y = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_blank(),
+      panel.grid.minor.x = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      panel.border = ggplot2::element_blank(),
+      aspect.ratio = 1
+    )
+  }
 
   # Add coords
-  if(!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
+  if (!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
 
   return(plt)
 }
@@ -333,15 +345,13 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @family TESS functions
 #'
 #' @examples
-tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...){
-
+tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...) {
   # Get K
   K <- terra::nlyr(krig_admix)
 
   # Plot kriged admixture maps while masking small values (e.g. < minQ)
   purrr::walk(1:K, allK_plot_helper, krig_admix, coords = coords, col = col_pal(K), col_breaks = col_breaks, ...)
-
-  }
+}
 
 #' Helper function for all K plotting
 #'
@@ -352,19 +362,21 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 #' @export
 #' @family TESS functions
 #'
-allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...){
-
+allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...) {
   # Suppress irrelevant plot warnings
-  suppressWarnings({terra::plot(krig_admix[[K]],
-               col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
-               range = c(0, max(terra::minmax(krig_admix)["max",])),
-               axes = FALSE,
-               box = FALSE,
-               main = paste0("K = ",K),
-               ...)})
+  suppressWarnings({
+    terra::plot(krig_admix[[K]],
+      col = make_plot_col(K, col, col_breaks, alpha = 1, start_col = rgb(0.94, 0.94, 0.95, 1)),
+      range = c(0, max(terra::minmax(krig_admix)["max", ])),
+      axes = FALSE,
+      box = FALSE,
+      main = paste0("K = ", K),
+      ...
+    )
+  })
 
   # Add coordinates, if provided
-  if(!is.null(coords)) points(coords, pch = 3)
+  if (!is.null(coords)) points(coords, pch = 3)
 }
 
 #' Make color vector for plotting
@@ -378,9 +390,8 @@ allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...)
 #' @noRd
 #' @family TESS functions
 #'
-make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col = rgb(1, 1, 1, alpha)){
-
-  if(poly){
+make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col = rgb(1, 1, 1, alpha)) {
+  if (poly) {
     # Make color palette using only solid color
     plot_col <- col[K]
   } else {
@@ -409,32 +420,30 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 #'
 #' @family TESS functions
 #' @examples
-tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...){
+tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...) {
   # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 
   # Get K
   K <- ncol(qmat)
 
   if (sort_by_Q) {
-    gr = apply(qmat, MARGIN = 1, which.max)
-    gm = max(gr)
-    gr.o = order(sapply(1:gm, FUN = function(g) mean(qmat[,g])))
-    gr = sapply(gr, FUN = function(i) gr.o[i])
-    or = order(gr)
-    Qm = t(qmat[or,])
-    class(Qm) = "matrix"
-    graphics::barplot(Qm, col =  col_pal(K), border = border, space = space, ...)
+    gr <- apply(qmat, MARGIN = 1, which.max)
+    gm <- max(gr)
+    gr.o <- order(sapply(1:gm, FUN = function(g) mean(qmat[, g])))
+    gr <- sapply(gr, FUN = function(i) gr.o[i])
+    or <- order(gr)
+    Qm <- t(qmat[or, ])
+    class(Qm) <- "matrix"
+    graphics::barplot(Qm, col = col_pal(K), border = border, space = space, ...)
     legend("bottomright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
     return(list(order = or))
-  }
-  else {
-    Qm = t(qmat)
-    class(Qm) = "matrix"
-    graphics::barplot(Qm, col =  col_pal(ncol(qmat)), border = border, space = space, ...)
+  } else {
+    Qm <- t(qmat)
+    class(Qm) <- "matrix"
+    graphics::barplot(Qm, col = col_pal(ncol(qmat)), border = border, space = space, ...)
     legend(legend_position, pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
     return(list(order = 1:nrow(qmat)))
   }
-
 }
 
 
@@ -449,11 +458,11 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 #' @family TESS functions
 #'
 #' @examples
-bestK <- function(tess3_obj, Kvals){
+bestK <- function(tess3_obj, Kvals) {
   ce <- list()
-  for(k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
+  for (k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
   ce.K <- c()
-  for(k in Kvals) ce.K[k] <- min(ce[[k]])
+  for (k in Kvals) ce.K[k] <- min(ce[[k]])
   diff <- ce.K[-1] - ce.K[-max(Kvals)]
   slope <- exp(-diff) - 1
   # K is selected based on the smallest slope value in the upper quartile
@@ -467,10 +476,12 @@ bestK <- function(tess3_obj, Kvals){
 #'
 #' @export
 #' @family TESS functions
-tess_col_default <- function(n, alpha = 1){
+tess_col_default <- function(n, alpha = 1) {
   if (n > 9) stop("The default color palette expects less than 9 values")
   tessCP <- CreatePalette()
-  tesscol <- sapply(1:n, function(x, tessCP){tessCP[[x]][9]}, tessCP)
+  tesscol <- sapply(1:n, function(x, tessCP) {
+    tessCP[[x]][9]
+  }, tessCP)
   tesspal <- colorRampPalette(tesscol, interpolate = "linear", alpha = TRUE)
   return(tesspal(n))
 }
@@ -482,8 +493,8 @@ tess_col_default <- function(n, alpha = 1){
 #' @export
 #' @noRd
 #' @family TESS functions
-algatr_col_default <- function(x){
-  if(x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
-  if(x == "base") col <- function (n, alpha = 1, begin = 0, end = 1, direction = 1) viridis::viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
+algatr_col_default <- function(x) {
+  if (x == "ggplot") col <- ggplot2::scale_fill_viridis_d(option = "turbo", begin = 0.1, end = 0.9)
+  if (x == "base") col <- function(n, alpha = 1, begin = 0, end = 1, direction = 1) viridis::viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
   return(col)
 }

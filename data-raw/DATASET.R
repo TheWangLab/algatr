@@ -1,4 +1,3 @@
-
 # Code to create example data -------------------------------------------------------------
 
 # Raw Sceloporus data files from:
@@ -11,7 +10,7 @@
 # Load and save vcf subset
 liz_vcf <- vcfR::read.vcfR("inst/extdata/populations_r20.haplotypes.filtered_m70_randomSNP.vcf")
 # Subsample 1000 SNPs
-liz_vcf <- liz_vcf[1:1000,]
+liz_vcf <- liz_vcf[1:1000, ]
 
 
 # CA shapefile ------------------------------------------------------------
@@ -36,17 +35,17 @@ colnames(liz_coords) <- c("x", "y")
 # Get sample IDs from vcf data
 liz_coords$ID <- colnames(liz_vcf@gt)[-1]
 # Create spatial coordinates
-sp::coordinates(liz_coords) <- ~x+y
+sp::coordinates(liz_coords) <- ~ x + y
 # Add CRS
 raster::crs(liz_coords) <- raster::crs(CA)
 # Only include coordinates within CA
-liz_coords <- liz_coords[CA,]
+liz_coords <- liz_coords[CA, ]
 # Get IDS of coordinates within CA (to use to subset VCF)
 IDS <- liz_coords$ID
 # Create dataframe
 liz_coords <- data.frame(liz_coords)
 # Only keep x and y
-liz_coords <- liz_coords[,c("x","y")]
+liz_coords <- liz_coords[, c("x", "y")]
 usethis::use_data(liz_coords, overwrite = TRUE)
 
 # Subset vcf to match coords
@@ -54,7 +53,7 @@ index <- colnames(liz_vcf@gt) %in% IDS
 # First col is format col
 index[1] <- TRUE
 # Subset vcf to match coords
-liz_vcf <- liz_vcf[ , index]
+liz_vcf <- liz_vcf[, index]
 usethis::use_data(liz_vcf, overwrite = TRUE)
 
 # Check IDs match (remember first col is format)
@@ -75,7 +74,7 @@ CA_env <- raster::readAll(CA_env)
 usethis::use_data(CA_env, overwrite = TRUE)
 
 
-dos <- dos[complete.cases(dos),]
+dos <- dos[complete.cases(dos), ]
 prcomp(~., data.frame(dos))
 
 

@@ -1,4 +1,3 @@
-
 #' Calculate genetic distances
 #'
 #' @param vcf path to vcf file or a `vcfR` type object
@@ -15,11 +14,10 @@
 #'
 #' @return pairwise distance matrix for given distance metric
 #'
-gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL, npc_selection = "auto", criticalpoint = 2.0234){
-
+gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL, npc_selection = "auto", criticalpoint = 2.0234) {
   # Import vcf if provided --------------------------------------------------
 
-  if(!is.null(vcf)) if(!inherits(vcf, "vcfR")) vcf <- vcfR::read.vcfR(vcf)
+  if (!is.null(vcf)) if (!inherits(vcf, "vcfR")) vcf <- vcfR::read.vcfR(vcf)
 
   # Calculate Euclidean distances -------------------------------------------
 
@@ -29,7 +27,7 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
     mat <- as.matrix(gl)
 
     # Perform imputation with warning
-    if(any(is.na(mat))){
+    if (any(is.na(mat))) {
       mat <- simple_impute(mat, median)
       warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
@@ -47,13 +45,13 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
     mat <- as.matrix(gl)
 
     # Perform imputation with warning
-    if(any(is.na(mat))){
+    if (any(is.na(mat))) {
       mat <- simple_impute(mat, median)
       warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
 
     # Check for NAs
-    if(any(is.na(mat))){
+    if (any(is.na(mat))) {
       stop("NA values found in genetic data")
     }
 
@@ -86,20 +84,20 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
 
   # PC-based dist -----------------------------------------------------------
 
-  if (dist_type == "pc"){
+  if (dist_type == "pc") {
     # Convert to genlight
     gl <- vcfR::vcfR2genlight(vcf)
     mat <- as.matrix(gl) # to check for NAs
 
     # Perform imputation with warning
-    if(any(is.na(mat))){
+    if (any(is.na(mat))) {
       mat <- simple_impute(mat, median)
       gl <- adegenet::as.genlight(mat)
       warning("NAs found in genetic data, imputing to median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
 
     # Check for NAs
-    if(any(is.na(mat))){
+    if (any(is.na(mat))) {
       stop("NA values found in genetic data")
     }
 
@@ -127,11 +125,10 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
     }
 
     # Calculate PC-based distance
-    dists <- as.matrix(dist(pc$x[,1:npc], diag = TRUE, upper = TRUE))
+    dists <- as.matrix(dist(pc$x[, 1:npc], diag = TRUE, upper = TRUE))
 
     return(as.data.frame(dists))
   }
-
 }
 
 #' Plot the relationship between two distance metrics
@@ -141,8 +138,7 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
 #' @param metric_name_x name of distance metric for x axis; if DPS used, must be `"dps"`
 #' @param metric_name_y name of distance metric for y axis; if DPS used, must be `"dps"`
 #'
-gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
-
+gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
   # Check to ensure sample IDs match ----------------------------------------
 
   if (all(rownames(dist_x) == rownames(dist_y)) == FALSE) {
@@ -151,9 +147,9 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 
   # Melt data from square to long -------------------------------------------
 
-  melt_x = harrietr::melt_dist(as.matrix(dist_x)) %>%
+  melt_x <- harrietr::melt_dist(as.matrix(dist_x)) %>%
     dplyr::rename(!!metric_name_x := dist)
-  melt_y = harrietr::melt_dist(as.matrix(dist_y)) %>%
+  melt_y <- harrietr::melt_dist(as.matrix(dist_y)) %>%
     dplyr::rename(!!metric_name_y := dist)
 
 
@@ -161,17 +157,17 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 
   if (metric_name_x == "dps" || metric_name_y == "dps") {
     joined <- dplyr::full_join(melt_x, melt_y) %>%
-      dplyr::mutate(rev_dps = (1-dps))
+      dplyr::mutate(rev_dps = (1 - dps))
     joined %>%
-      ggplot2::ggplot(ggplot2::aes_string(x=metric_name_x, y=metric_name_y)) +
-      ggplot2::geom_abline(ggplot2::aes(intercept=0.0, slope=1), color="gray") +
-      ggplot2::geom_point(color="black", size=.2, alpha = .5)
+      ggplot2::ggplot(ggplot2::aes_string(x = metric_name_x, y = metric_name_y)) +
+      ggplot2::geom_abline(ggplot2::aes(intercept = 0.0, slope = 1), color = "gray") +
+      ggplot2::geom_point(color = "black", size = .2, alpha = .5)
   } else {
     joined <- dplyr::full_join(melt_x, melt_y)
     joined %>%
-      ggplot2::ggplot(ggplot2::aes_string(x=metric_name_x, y=metric_name_y)) +
-      ggplot2::geom_abline(ggplot2::aes(intercept=0.0, slope=1), color="gray") +
-      ggplot2::geom_point(color="black", size=.2, alpha = .5)
+      ggplot2::ggplot(ggplot2::aes_string(x = metric_name_x, y = metric_name_y)) +
+      ggplot2::geom_abline(ggplot2::aes(intercept = 0.0, slope = 1), color = "gray") +
+      ggplot2::geom_point(color = "black", size = .2, alpha = .5)
   }
 }
 
@@ -183,9 +179,8 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y){
 #' @export
 #'
 #' @examples
-gen_dist_hm <- function(dist){
-
-  if(!is.null(dist)) if(!inherits(dist, "data.frame")) dist <- as.data.frame(dist)
+gen_dist_hm <- function(dist) {
+  if (!is.null(dist)) if (!inherits(dist, "data.frame")) dist <- as.data.frame(dist)
 
   dist %>%
     tibble::rownames_to_column("sample") %>%

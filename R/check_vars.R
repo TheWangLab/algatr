@@ -1,4 +1,3 @@
-
 #' Check environmental layers for collinearity
 #'
 #' @param envlayers a RasterStack of data layers
@@ -7,7 +6,7 @@
 #' @return a matrix of correlation coefficients
 #'
 #' @export
-check_env <- function(envlayers, threshold = 0.7){
+check_env <- function(envlayers, threshold = 0.7) {
   # TODO: there seems to be a bug in terra with layerCor() where if na.rm = TRUE you get an error
   if (!inherits(envlayers, "Raster")) envlayers <- raster::stack(envlayers)
   cors <- raster::layerStats(envlayers, stat = "pearson", na.rm = TRUE)
@@ -26,11 +25,11 @@ check_env <- function(envlayers, threshold = 0.7){
 #' @return a matrix of correlation coefficients
 #'
 #' @export
-check_vals <- function(envlayers, coords, threshold = 0.7){
+check_vals <- function(envlayers, coords, threshold = 0.7) {
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
   crs_check(coords, envlayers)
   vals <- terra::extract(envlayers, coords)
-  if(length(which(is.na(vals))) > 0) warning("NA values detected in extracted variables.")
+  if (length(which(is.na(vals))) > 0) warning("NA values detected in extracted variables.")
   cors <- cor(vals, use = "na.or.complete", method = "pearson")
   cor_df <- cor_df_helper(cors, threshold)
   corrplot::corrplot.mixed(cors, upper = "ellipse", tl.pos = "lt")
@@ -49,17 +48,17 @@ check_vals <- function(envlayers, coords, threshold = 0.7){
 #' @return a list with (1) a dataframe of significantly correlated variables, (2) a matrix of p-values, (3) a matrix of Mantel's r
 #'
 #' @export
-check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05){
+check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05) {
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
 
   crs_check(coords, envlayers)
 
   vals <- terra::extract(envlayers, coords)
 
-  if(sum(!complete.cases(vals))){
+  if (sum(!complete.cases(vals))) {
     warning("removing ", sum(!complete.cases(vals)), " locations with environmental NA values for Mantel test")
-    vals <- valsNA[complete.cases(vals),]
-    coords <- coords[complete.cases(vals),]
+    vals <- valsNA[complete.cases(vals), ]
+    coords <- coords[complete.cases(vals), ]
   }
 
   edists <- env_dist(vals)
@@ -69,8 +68,8 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
   p <- r <- matrix(nrow = length(all_dists), ncol = length(all_dists))
   rownames(p) <- rownames(r) <- names(all_dists)
 
-  for(i in 1:(length(all_dists) - 1)){
-    for(j in (i+1):length(all_dists)){
+  for (i in 1:(length(all_dists) - 1)) {
+    for (j in (i + 1):length(all_dists)) {
       mantel_result <- vegan::mantel(all_dists[[i]], all_dists[[j]], permutations = 99)
       p[i, j] <- mantel_result$signif
       r[i, j] <- mantel_result$statistic
@@ -78,30 +77,35 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
   }
 
   mantel_df <-
-    data.frame(var1 = rownames(p)[row(p)[upper.tri(p)]],
-               var2 = rownames(p)[col(p)[upper.tri(p)]],
-               p = p[upper.tri(p)],
-               r = r[upper.tri(r)]) %>%
+    data.frame(
+      var1 = rownames(p)[row(p)[upper.tri(p)]],
+      var2 = rownames(p)[col(p)[upper.tri(p)]],
+      p = p[upper.tri(p)],
+      r = r[upper.tri(r)]
+    ) %>%
     dplyr::filter(p < sig)
 
-  if(nrow(mantel_df) == 1) message(paste0("Warning: The distances for 1 pair of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
-  else if(nrow(mantel_df) > 1) message(paste0("Warning: The distances for ", nrow(mantel_df), " pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  if (nrow(mantel_df) == 1) {
+    message(paste0("Warning: The distances for 1 pair of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  } else if (nrow(mantel_df) > 1) message(paste0("Warning: The distances for ", nrow(mantel_df), " pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
   return(list(mantel_df = mantel_df, p = p, r = r))
 }
 
 
 #' Helper function to create correlation dataframe from matrix and filter based on threshold
 #'
-cor_df_helper <- function(cors, threshold){
+cor_df_helper <- function(cors, threshold) {
   cor_df <-
-    data.frame(var1 = rownames(cors)[row(cors)[upper.tri(cors)]],
-               var2 = colnames(cors)[col(cors)[upper.tri(cors)]],
-               r = cors[upper.tri(cors)]) %>%
+    data.frame(
+      var1 = rownames(cors)[row(cors)[upper.tri(cors)]],
+      var2 = colnames(cors)[col(cors)[upper.tri(cors)]],
+      r = cors[upper.tri(cors)]
+    ) %>%
     dplyr::filter(r > threshold)
 
-  if(nrow(cor_df) == 1) message(paste0("Warning: The extracted values for 1 pair of variables had a correlation coefficient > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
-  else if(nrow(cor_df) > 1) message(paste0("Warning: The extracted values for ", nrow(cor_df), " pairs of variables had correlation coefficients > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  if (nrow(cor_df) == 1) {
+    message(paste0("Warning: The extracted values for 1 pair of variables had a correlation coefficient > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
+  } else if (nrow(cor_df) > 1) message(paste0("Warning: The extracted values for ", nrow(cor_df), " pairs of variables had correlation coefficients > ", threshold, ". algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding."))
 
   return(cor_df)
 }
-

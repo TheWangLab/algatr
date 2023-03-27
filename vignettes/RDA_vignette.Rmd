@@ -92,8 +92,9 @@ The main function within algatr to perform an RDA is `rda_run()`, which uses the
 A simple RDA is one in which our model will not account for covariables in the model, and is the default for `rda_run()`. Let's first run a simple RDA on all environmental variables (i.e., no variable selection). This is specified using the `model = "full"` argument.
 
 ```{r full model, warning = FALSE, message = FALSE}
-mod_full <- rda_run(gen, env, 
-               model = "full")
+mod_full <- rda_run(gen, env,
+  model = "full"
+)
 ```
 
 The resulting object is large, containing 12 elements relevant to the RDA. Let's take a look at what function was called. We can see that all environmental variables (CA_rPCA1, 2, and 3) were included in the model, and that geography or structure were not included in the model (and there were no conditioning variables).
@@ -119,11 +120,12 @@ RsquareAdj(mod_full)
 Now, let's run an RDA model with variable selection by specifying the `"best"` model within `rda_run()`. Variable selection occurs using the `ordiR2step()` function in the vegan package, and is a forward selection method that begins with a null model and adds explanatory variables one at a time until genetic variance is maximized. To perform forward selection, we need to specify stopping criteria (i.e., when to stop adding more explanatory variables). There are two primary ways to specify stopping criteria: parameters involved in a permutation-based significance test (two parameters: the limits of permutation p-values for adding (`Pin`) or dropping (`Pout`) a term to the model, and the number of permutations used in the estimation of adjusted R2 (`R2permutations`)), and whether to use the adjusted R2 value as the stopping criterion (`R2scope`; only models with adjusted R2 values lower than specified are accepted).
 
 ```{r best model, warning = FALSE, message = FALSE}
-mod_best <- rda_run(gen, env, 
-               model = "best",
-               Pin = 0.05,
-               R2permutations = 1000,
-               R2scope = T)
+mod_best <- rda_run(gen, env,
+  model = "best",
+  Pin = 0.05,
+  R2permutations = 1000,
+  R2scope = T
+)
 ```
 
 Let's look at our best model, and see how it compares to our full model. There is also an additional element in the `mod_best` object, which are the results from an ANOVA-like permutation test. When we look at the call, we can now see that only environmental PCs 2 and 3 are considered in the model, meaning that PC1 is not considered to be significantly associated with genetic variance. Importantly, our adjusted R2 value is 0.039 (compared to 0.042 for the full model), which tells us that the model with only two of the environmental variables explains nearly as much as the RDA with all three.
@@ -142,9 +144,10 @@ A partial RDA, as described at the beginning of the vignette, is when covariable
 
 ```{r partial rda, warning=FALSE, message=FALSE}
 mod_pRDA_geo <- rda_run(gen, env, liz_coords,
-               model = "full",
-               correctGEO = TRUE,
-               correctPC = FALSE)
+  model = "full",
+  correctGEO = TRUE,
+  correctPC = FALSE
+)
 ```
 
 Let's take a look at our partial RDA results. Note that now, the call includes conditioning variables x and y, which correspond to our latitude and longitude values. Conditioning variables are specified within the `rda()` function using the `Condition()` function. Finally, when we look at the summary of the resulting object, we can see that along with total, constrained, and unconstrained inertia (or variance) as with our simple RDA, there is an additional row for conditioned inertia because our partial RDA includes conditioning variables. Interestingly, the conditioned inertia is higher than constrained inertia, suggesting that geography is more associated with genetic variance than our environmental variables are.
@@ -161,10 +164,11 @@ Lastly, let's run a partial RDA with both geography (`correctGEO = TRUE`) and po
 
 ```{r pRDA struct+geo}
 mod_pRDA_gs <- rda_run(gen, env, liz_coords,
-               model = "full",
-               correctGEO = TRUE,
-               correctPC = TRUE,
-               nPC = 3)
+  model = "full",
+  correctGEO = TRUE,
+  correctPC = TRUE,
+  nPC = 3
+)
 ```
 
 Now, we see that even more inertia/variance is explained by the conditioning variables.
@@ -184,9 +188,10 @@ The call for this full model looks like this: `rda(gen ~ env + covariable, data)
 In algatr, we can run variance partitioning using the function `rda_varpart()`, which will run the full model (as above) and then will run successive pRDAs which are conditioned on three successive sets of variables. These variable sets are significant environmental variables (in our case, environmental PCs 2 and 3), population genetic structure (once again determined using a PC with a user-specified number of PC axes), and geography (sampling coordinates). This function will then provide us with information on how variance is partitioned in the form of a table containing relevant statistics; this table is nearly identical to Table 2 from [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). The `rda_varpart()` parameters are identical to those from `rda_run()`. As with `rda_run()`, we can provide a number for the number of PCs to consider for population structure (`nPC`), or this argument can be set to `"manual"` if a user would like to manually enter a number into the console after viewing the screeplot. We can then use `rda_varpart_table()` to visualize these results in an aesthetically pleasing way; users can specify whether to display the function call in the table (`call_col`; defaults to `FALSE`) and the number of digits to round to `digits` (the default is 2).
 
 ```{r varpart, warning=FALSE, message=FALSE}
-varpart <- rda_varpart(gen, env, liz_coords, 
-                       Pin = 0.05, R2permutations = 1000,
-                       R2scope = T, nPC = 3)
+varpart <- rda_varpart(gen, env, liz_coords,
+  Pin = 0.05, R2permutations = 1000,
+  R2scope = T, nPC = 3
+)
 rda_varpart_table(varpart, call_col = TRUE)
 ```
 
@@ -269,9 +274,11 @@ nrow(q_sig)
 Note the differences between the two methods: using the p-value method, we found many more outlier SNPs than with the Z-scores method (101 vs. 19). Even more outliers were found when only using q-values as a significant threshold (170). We can also see that 19 SNPs were detected using all three methods.
 
 ```{r intersect}
-Reduce(intersect, list(q_sig$snp_names,
-                       rda_sig_p$rda_snps,
-                       rda_sig_z$rda_snps))
+Reduce(intersect, list(
+  q_sig$snp_names,
+  rda_sig_p$rda_snps,
+  rda_sig_z$rda_snps
+))
 ```
 
 ## Visualizing RDA results with `rda_plot()`
@@ -285,7 +292,7 @@ algatr provides options for visualizing RDA results in two ways with the `rda_pl
 Let's build a biplot (or some call it a triplot, since it also shows loadings of environmental variables) with RDA axes 1 and 2, specified using the `rdaplot` argument. In this case, we also need to specify the number of axes to display using the `biplot_axes` argument. The default of `rda_plot()` is to plot all variables, regardless of whether they were considered significant or not.
 
 ```{r biplot}
-rda_plot(mod_best, rda_sig_p$rda_snps, biplot_axes = c(1,2), rdaplot = TRUE, manhattan = FALSE)
+rda_plot(mod_best, rda_sig_p$rda_snps, biplot_axes = c(1, 2), rdaplot = TRUE, manhattan = FALSE)
 
 # In the case of our partial RDA, there was only one RDA axis, so a histogram is generated
 rda_plot(mod_pRDA, rda_sig_z$rda_snps, rdaplot = TRUE, manhattan = FALSE, binwidth = 0.01)
@@ -312,7 +319,7 @@ Now that we've identified outlier loci, it is useful to be able to identify how 
 ```{r simple results}
 # Extract genotypes for outlier SNPs
 rda_snps <- rda_sig_p$rda_snps
-rda_gen <- gen[,rda_snps]
+rda_gen <- gen[, rda_snps]
 
 # Run correlation test
 cor_df <- rda_cor(rda_gen, env)
@@ -357,28 +364,30 @@ The resulting object from `rda_do_everything()` contains:
 Let's first run a simple RDA with variable selection and the p-value outlier method:
 
 ```{r simple RDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
-results <- rda_do_everything(gen, CA_env, liz_coords, 
-                            correctGEO = FALSE, 
-                            correctPC = FALSE,
-                            outlier_method = "p",
-                            sig = 0.05, 
-                            p_adj = "fdr", 
-                            cortest = TRUE,
-                            varpart = FALSE)
+results <- rda_do_everything(gen, CA_env, liz_coords,
+  correctGEO = FALSE,
+  correctPC = FALSE,
+  outlier_method = "p",
+  sig = 0.05,
+  p_adj = "fdr",
+  cortest = TRUE,
+  varpart = FALSE
+)
 ```
 
 Now, let's run a partial RDA, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
 
 ```{r pRDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
 results <- rda_do_everything(gen, env, liz_coords,
-                            model = "full",
-                            correctGEO = TRUE,
-                            correctPC = TRUE,
-                            nPC = 3,
-                            varpart = TRUE,
-                            outlier_method = "z",
-                            z = 3, 
-                            p_adj = "fdr")
+  model = "full",
+  correctGEO = TRUE,
+  correctPC = TRUE,
+  nPC = 3,
+  varpart = TRUE,
+  outlier_method = "z",
+  z = 3,
+  p_adj = "fdr"
+)
 ```
 
 ## Additional documentation and citations

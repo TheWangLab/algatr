@@ -44,7 +44,7 @@ Recall the way genotypes are encoded within a vcf: `"0/0"` denotes individual is
 load_algatr_example()
 
 # Look at genotypes for five individuals at eight sites:
-liz_vcf@gt[1:8,2:6]
+liz_vcf@gt[1:8, 2:6]
 ```
 
 A dosage matrix contains each row as an individual (unlike a vcf) and each column as a site. Importantly, genotypes are now encoded with a single number. For a diploid organism, there are three possibilities for coding genotypes in a dosage matrix: 0, 1, or 2 (corresponding to 0/0, 1/1, and 0/1 from the vcf, respectively). `NA` still represents missing data. We can convert our vcf to a dosage matrix using the `vcf_to_dosage()` function:
@@ -53,7 +53,7 @@ A dosage matrix contains each row as an individual (unlike a vcf) and each colum
 dosage <- vcf_to_dosage(liz_vcf)
 
 # Look at genotypes for five individuals at five sites:
-dosage[1:5,1:8]
+dosage[1:5, 1:8]
 ```
 
 ## Removing sites that are in linkage disequilibrium using `ld_prune()`

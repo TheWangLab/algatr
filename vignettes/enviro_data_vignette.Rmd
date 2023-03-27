@@ -162,7 +162,7 @@ grid.arrange(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
 
 ```{r comp raster}
 # We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
-ggRGB(env_pcs$map,1,2,3, stretch = "lin", q = 0)
+ggRGB(env_pcs$map, 1, 2, 3, stretch = "lin", q = 0)
 ```
 
 ## Create raster from coordinates with wingen: `coords_to_raster()`
@@ -200,9 +200,9 @@ plot(env_dist$CA_rPCA1)
 We can make a heat map in ggplot with the pairwise distances.
 
 ```{r env dist heatmap}
-as.data.frame(env_dist$CA_rPCA1) %>% 
-  rownames_to_column("sample") %>% 
-  gather("sample_comp", "dist", -"sample") %>% 
+as.data.frame(env_dist$CA_rPCA1) %>%
+  rownames_to_column("sample") %>%
+  gather("sample_comp", "dist", -"sample") %>%
   ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
   geom_tile() +
   coord_equal() +
@@ -236,9 +236,9 @@ We can make a heat map in ggplot with the pairwise distances.
 # Make a fun heat map with the pairwise distances
 geo_dist <- as.data.frame(geo_dist)
 colnames(geo_dist) <- rownames(geo_dist)
-geo_dist %>% 
-  rownames_to_column("sample") %>% 
-  gather("sample_comp", "dist", -"sample") %>% 
+geo_dist %>%
+  rownames_to_column("sample") %>%
+  gather("sample_comp", "dist", -"sample") %>%
   ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
   geom_tile() +
   coord_equal() +
@@ -281,9 +281,9 @@ topo_dist <- as.data.frame(topo_dist)
 colnames(topo_dist) <- 1:53
 rownames(topo_dist) <- 1:53
 
-topo_dist %>% 
-  rownames_to_column("sample") %>% 
-  gather("sample_comp", "dist", -"sample") %>% 
+topo_dist %>%
+  rownames_to_column("sample") %>%
+  gather("sample_comp", "dist", -"sample") %>%
   ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
   geom_tile() +
   coord_equal() +

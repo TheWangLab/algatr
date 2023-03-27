@@ -1,4 +1,3 @@
-
 #' Calculate distance between environmental vars
 #'
 #' @param env dataframe or vector of environmental variables for locations
@@ -8,9 +7,9 @@
 #' @export
 #'
 #' @examples
-env_dist <- function(env, stdz = TRUE){
-  if(!is.null(dim)) distmat <- dplyr::as_tibble(env) %>%  purrr::map(env_dist_helper, stdz = stdz)
-  if(is.null(dim)) distmat <- env_dist_helper(env, stdz)
+env_dist <- function(env, stdz = TRUE) {
+  if (!is.null(dim)) distmat <- dplyr::as_tibble(env) %>% purrr::map(env_dist_helper, stdz = stdz)
+  if (is.null(dim)) distmat <- env_dist_helper(env, stdz)
   return(distmat)
 }
 
@@ -22,10 +21,9 @@ env_dist <- function(env, stdz = TRUE){
 #'
 #' @export
 #' @noRd
-env_dist_helper <- function(env, stdz = TRUE){
-
+env_dist_helper <- function(env, stdz = TRUE) {
   # Standardize environmental variables
-  if(stdz) env <- scale(env, center = TRUE, scale = TRUE)
+  if (stdz) env <- scale(env, center = TRUE, scale = TRUE)
 
   distmat <- as.matrix(dist(env, diag = TRUE, upper = TRUE))
 
@@ -48,35 +46,32 @@ env_dist_helper <- function(env, stdz = TRUE){
 #' @export
 #'
 #' @examples
-geo_dist <- function(coords, type = "Euclidean", lyr = NULL){
-
-  if(type == "Euclidean" | type == "euclidean" | type == "linear"){
+geo_dist <- function(coords, type = "Euclidean", lyr = NULL) {
+  if (type == "Euclidean" | type == "euclidean" | type == "linear") {
     # Format coordinates
     coords <- coords_to_sf(coords)
     # Calculate geodesic distance between points
     distmat <- sf::st_distance(coords)
-  }
-  else if(type == "topo" | type == "topographic"){
+  } else if (type == "topo" | type == "topographic") {
     # format coordinates
     coords <- coords_to_df(coords)
 
-    if(is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
+    if (is.null(lyr)) stop("Calculating topographic distances requires a DEM layer for argument lyr.")
     message("Calculating topo distances... This can be time consuming with many points and large rasters.")
 
     # Convert to RasterLayer if SpatRaster object
-    if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
+    if (inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
 
     distmat <- topoDistance::topoDist(lyr, coords, paths = FALSE)
-  }
-  else if(type == "resistance" | type == "cost" | type == "res"){
-    if(is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
+  } else if (type == "resistance" | type == "cost" | type == "res") {
+    if (is.null(lyr)) stop("Calculating resistance distances requires a resistance surface for argument lyr.")
     message("Calculating resistance distances... This can be time consuming with many points and large rasters.")
 
     # format coordinates
     coords <- coords_to_df(coords)
 
     # Convert to RasterLayer if SpatRaster object
-    if(inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
+    if (inherits(lyr, "SpatRaster")) lyr <- raster::raster(lyr)
 
     # Convert resistance surface to conductance surface
     cond.r <- 1 / lyr

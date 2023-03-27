@@ -1,4 +1,3 @@
-
 #' MMRR function to do everything
 #'
 #' @param gendist matrix of genetic distances
@@ -20,17 +19,16 @@
 #' @family MMRR functions
 #'
 #' @examples
-mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all"){
-
+mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
-  if(inherits(env, "Raster")) env <- terra::rast(env)
+  if (inherits(env, "Raster")) env <- terra::rast(env)
 
   # Check coords and env, if env is a raster
   if (inherits(env, "SpatRaster")) crs_check(coords, env) else crs_check(coords)
 
   # If not provided, make env data frame from layers and coords
-  if(inherits(env, "SpatRaster")) env <- terra::extract(env, coords)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords)
 
   # Make env dist matrix
   X <- env_dist(env)
@@ -42,12 +40,12 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if(model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
+  if (model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
 
-  if(model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
+  if (model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
 
   # Print dataframe
-  if(!quiet) print(mmrr_table(results))
+  if (!quiet) print(mmrr_table(results))
 
   return(results)
 }
@@ -63,13 +61,14 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all"){
-
+mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Fit model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
 
   # If NULL, exit with NULL
-  if(is.null(mod)) return(NULL)
+  if (is.null(mod)) {
+    return(NULL)
+  }
 
   # Subset X with significant variables
   X_best <- X[names(mod$coefficients)[-1]]
@@ -81,11 +80,13 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
   coeff_df <- mmrr_df(mod)
 
   # Make results list
-  results <- list(coeff_df = coeff_df,
-                  mod = mod,
-                  Y = Y,
-                  X = X,
-                  X_best = X_best)
+  results <- list(
+    coeff_df = coeff_df,
+    mod = mod,
+    Y = Y,
+    X = X,
+    X_best = X_best
+  )
 
   return(results)
 }
@@ -101,13 +102,14 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all"){
-
+mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
 
   # If NULL, exit with NULL
-  if (is.null(mod)) return(NULL)
+  if (is.null(mod)) {
+    return(NULL)
+  }
 
   # Plot results
   if (!quiet) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
@@ -116,10 +118,12 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type
   coeff_df <- mmrr_df(mod)
 
   # Make results list
-  results <- list(coeff_df = coeff_df,
-                  mod = mod,
-                  Y = Y,
-                  X = X)
+  results <- list(
+    coeff_df = coeff_df,
+    mod = mod,
+    Y = Y,
+    X = X
+  )
 
   return(results)
 }
@@ -131,23 +135,26 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type
 #' @inheritParams mmrr_do_everything
 #'
 #' @family MMRR functions
-mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
+mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE) {
   # Fit full model
   mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
   pvals <- mmrr.model$tpvalue[-1] # Remove intercept p-value
 
   # Eliminate variable with highest p-value, re-fit, and continue until only significant variables remain or no variables remain
-  while((max(pvals) > 0.05) & (length(pvals) > 1)){
+  while ((max(pvals) > 0.05) & (length(pvals) > 1)) {
     print(pvals)
     rem.var <- which(pvals == max(pvals))
     X <- X[-rem.var]
-    if(length(X) == 0) break
+    if (length(X) == 0) break
     mmrr.model <- MMRR(Y, X, nperm = nperm, scale = stdz)
     pvals <- mmrr.model$tpvalue[-1]
   }
 
   # Repetitive test for no significant variables, but just to be sure
-  if(length(X) == 0 | (length(pvals) == 1) & all(pvals > 0.05)){warning("No significant variable combo found, returning NULL object"); mmrr.model <- NULL}
+  if (length(X) == 0 | (length(pvals) == 1) & all(pvals > 0.05)) {
+    warning("No significant variable combo found, returning NULL object")
+    mmrr.model <- NULL
+  }
 
   return(mmrr.model)
 }
@@ -165,11 +172,11 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE){
 #'
 #' @family MMRR functions
 #' @export
-MMRR <- function(Y, X, nperm = 999, scale = TRUE){
+MMRR <- function(Y, X, nperm = 999, scale = TRUE) {
   # Compute regression coefficients and test statistics
   nrowsY <- nrow(Y)
   y <- unfold(Y, scale)
-  if(is.null(names(X)))names(X) <- paste("X", 1:length(X), sep="")
+  if (is.null(names(X))) names(X) <- paste("X", 1:length(X), sep = "")
   Xmats <- sapply(X, unfold, scale = scale)
   fit <- stats::lm(y ~ Xmats)
   coeffs <- fit$coefficients
@@ -177,15 +184,15 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
   r.squared <- summ$r.squared
   tstat <- summ$coefficients[, "t value"]
   Fstat <- summ$fstatistic[1]
-  tprob <- rep(1,length(tstat))
+  tprob <- rep(1, length(tstat))
   Fprob <- 1
 
   # Get confidence interval
   conf_df <- stats::confint(fit, names(fit$coefficients), level = 0.90)
-  rownames(conf_df) <-  c("Intercept", names(X))
+  rownames(conf_df) <- c("Intercept", names(X))
 
   # Perform permutations
-  for(i in 1:nperm){
+  for (i in 1:nperm) {
     rand <- sample(1:nrowsY)
     Yperm <- Y[rand, rand]
     yperm <- unfold(Yperm, scale)
@@ -200,18 +207,20 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
   Fp <- Fprob / (nperm + 1)
   names(r.squared) <- "r.squared"
   names(coeffs) <- c("Intercept", names(X))
-  names(tstat) <- paste(c("Intercept", names(X)), "(t)", sep="")
-  names(tp) <- paste(c("Intercept", names(X)), "(p)", sep="")
+  names(tstat) <- paste(c("Intercept", names(X)), "(t)", sep = "")
+  names(tp) <- paste(c("Intercept", names(X)), "(p)", sep = "")
   names(Fstat) <- "F-statistic"
   names(Fp) <- "F p-value"
 
-  return(list(r.squared = r.squared,
-              coefficients = coeffs,
-              tstatistic = tstat,
-              tpvalue = tp,
-              Fstatistic = Fstat,
-              Fpvalue = Fp,
-              conf_df = conf_df))
+  return(list(
+    r.squared = r.squared,
+    coefficients = coeffs,
+    tstatistic = tstat,
+    tpvalue = tp,
+    Fstatistic = Fstat,
+    Fpvalue = Fp,
+    conf_df = conf_df
+  ))
 }
 
 #' unfold converts the lower diagonal elements of a matrix into a vector
@@ -219,10 +228,10 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE){
 #' @param X is a distance matrix
 #' @param scale if TRUE then matrices will be standardized (defaults to TRUE)
 #' @family MMRR functions
-unfold <- function(X, scale = TRUE){
+unfold <- function(X, scale = TRUE) {
   x <- vector()
-  for(i in 2:nrow(X)) x <- c(x, X[i, 1:i-1])
-  if(scale == TRUE) x <- scale(x, center = TRUE, scale = TRUE)
+  for (i in 2:nrow(X)) x <- c(x, X[i, 1:i - 1])
+  if (scale == TRUE) x <- scale(x, center = TRUE, scale = TRUE)
   return(x)
 }
 
@@ -236,7 +245,7 @@ unfold <- function(X, scale = TRUE){
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_df <- function(mod){
+mmrr_df <- function(mod) {
   coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
   coeff_df$var <- rownames(coeff_df)
   ci_df <- data.frame(mod$conf_df)
@@ -261,16 +270,15 @@ mmrr_df <- function(mod){
 #'
 #' @family MMRR functions
 #' @examples
-mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL){
-
+mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL) {
   # Plot single variable relationships
-  if("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
+  if ("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
 
   # Plot fitted relationship
-  if("all" %in% plot_type | "fitted" %in% plot_type) print(mmrr_plot_fitted(mod, Y, X, stdz = TRUE))
+  if ("all" %in% plot_type | "fitted" %in% plot_type) print(mmrr_plot_fitted(mod, Y, X, stdz = TRUE))
 
   # Plot fitted relationship
-  if("all" %in% plot_type | "cov" %in% plot_type) print(mmrr_plot_cov(X, stdz = TRUE))
+  if ("all" %in% plot_type | "cov" %in% plot_type) print(mmrr_plot_cov(X, stdz = TRUE))
 }
 
 #' Plot single variable relationships
@@ -280,7 +288,7 @@ mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, v
 #' @export
 #' @noRd
 #' @family MMRR functions
-mmrr_plot_vars <- function(Y, X, stdz = TRUE){
+mmrr_plot_vars <- function(Y, X, stdz = TRUE) {
   # Unfold X and Y
   y <- unfold(Y, scale = stdz)
   dfX <- purrr::map_dfc(X, unfold, scale = stdz) %>% purrr::map_dfc(as.numeric)
@@ -310,8 +318,7 @@ mmrr_plot_vars <- function(Y, X, stdz = TRUE){
 #' @family MMRR functions
 #' @export
 #' @noRd
-mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
-
+mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE) {
   # Make model dataframe
   coeff_df <- mmrr_df(mod)
 
@@ -321,10 +328,10 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
     dplyr::mutate(Y = unfold(Y, scale = stdz)) %>%
     tidyr::gather("var", "X", -Y) %>%
     dplyr::left_join(coeff_df, by = "var") %>%
-    dplyr::mutate(coeffX = estimate*X) %>%
+    dplyr::mutate(coeffX = estimate * X) %>%
     dplyr::select(Y, coeffX) %>%
     dplyr::group_by(Y) %>%
-    dplyr::summarise(Yfitted = sum(coeffX, na.rm=T))
+    dplyr::summarise(Yfitted = sum(coeffX, na.rm = T))
 
   # Plot fitted relationship
   plt_fitted <- ggplot2::ggplot(data = df_fitted, ggplot2::aes(x = Yfitted, y = Y)) +
@@ -345,15 +352,16 @@ mmrr_plot_fitted <- function(mod, Y, X, stdz = TRUE){
 #' @family MMRR functions
 #' @export
 #' @noRd
-mmrr_plot_cov <- function(X, stdz = TRUE){
-
+mmrr_plot_cov <- function(X, stdz = TRUE) {
   # Unfold X
   dfX <- purrr::map_dfc(X, unfold, scale = stdz) %>% purrr::map_dfc(as.numeric)
 
   # Plot covariances
-  plt_cor <- GGally::ggpairs(dfX, progress = FALSE,
-                             lower = list(continuous = GGally::wrap("points", col = "#6464c8", alpha = 0.1, cex = 0.9)),
-                             diag = list(continuous = GGally::wrap("densityDiag",  fill = "blue", alpha = 0.1)))
+  plt_cor <- GGally::ggpairs(dfX,
+    progress = FALSE,
+    lower = list(continuous = GGally::wrap("points", col = "#6464c8", alpha = 0.1, cex = 0.9)),
+    diag = list(continuous = GGally::wrap("densityDiag", fill = "blue", alpha = 0.1))
+  )
   plt_cor <- plt_cor + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
 
   return(plt_cor)
@@ -369,25 +377,23 @@ mmrr_plot_cov <- function(X, stdz = TRUE){
 #' @export
 #'
 #' @family MMRR functions
-mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
-
+mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE) {
   mmrr_df <- mmrr_results$coeff_df
   mod <- mmrr_results$mod
 
   # Round decimal places based on digits
-  if(digits) mmrr_df$estimate <- round(mmrr_df$estimate, digits)
+  if (digits) mmrr_df$estimate <- round(mmrr_df$estimate, digits)
   d <- max(abs(min(mmrr_df$estimate)), abs(max(mmrr_df$estimate)))
 
   # Build table
   suppressWarnings({
-    tbl <- mmrr_df  %>%
+    tbl <- mmrr_df %>%
       gt::gt() %>%
-      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d)) %>%
+      gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d, d)) %>%
       gt::sub_missing(missing_text = "")
 
     # Add summary stats to bottom of table
     if (summary_stats) {
-
       stat_names <- c("R-Squared:", "F-Statistic:", "F p-value:")
       stats <- c(mod$r.squared, mod$Fstatistic, mod$Fpvalue)
       mmrr_df <- mmrr_df %>%
@@ -396,22 +402,22 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE){
 
       tbl <- mmrr_df %>%
         gt::gt() %>%
-        gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d,d)) %>%
+        gtExtras::gt_hulk_col_numeric(estimate, trim = TRUE, domain = c(-d, d)) %>%
         gt::sub_missing(missing_text = "") %>%
         gt::tab_row_group(label = NA, id = "model", rows = which(!(mmrr_df$var %in% stat_names))) %>%
         gtExtras::gt_highlight_rows(rows = which(mmrr_df$var %in% stat_names), fill = "white") %>%
         gt::tab_style(
-          style = list(gt::cell_borders(sides = "top", color = "white"),
-                       gt::cell_text(align = "left"),
-                       "padding-top:2px;padding-bottom:2px;"),
+          style = list(
+            gt::cell_borders(sides = "top", color = "white"),
+            gt::cell_text(align = "left"),
+            "padding-top:2px;padding-bottom:2px;"
+          ),
           locations = gt::cells_body(rows = which(mmrr_df$var %in% stat_names))
         )
     }
 
-    if(!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -var, decimals = 2)
-
+    if (!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -var, decimals = 2)
   })
 
   tbl
 }
-

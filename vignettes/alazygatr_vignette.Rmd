@@ -10,8 +10,9 @@ vignette: >
 ```{r color, echo = FALSE, results = FALSE}
 options(crayon.enabled = TRUE)
 
-old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks, 
-                                   which = c("output", "message", "error"))
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
+  which = c("output", "message", "error")
+)
 ```
 
 ```{r setup, include = FALSE, warning = FALSE, message = FALSE}
@@ -27,8 +28,8 @@ First, let's load our test data. For the sake of things running quickly, let's r
 
 ```{r load data}
 load_algatr_example()
-vcf <- liz_vcf[,1:21]
-coords <- liz_coords[1:20,]
+vcf <- liz_vcf[, 1:21]
+coords <- liz_coords[1:20, ]
 envlayers <- CA_env
 ```
 

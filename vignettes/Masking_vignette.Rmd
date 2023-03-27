@@ -48,7 +48,7 @@ load_algatr_example()
 # For the purposes of simplicity, let's just use one of the PCs for mapping:
 envlayers <- CA_env$CA_rPCA1
 
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 # Let's take a look at the map with no masking:
 plot(envlayers, col = viridis(100), axes = FALSE, box = FALSE)
 ```
@@ -62,7 +62,7 @@ plot(envlayers, col = viridis(100), axes = FALSE, box = FALSE)
 We can use the `extrap_mask()` function to mask all areas outside range of environmental values included in data (the `"range"` argument). This argument masks conservatively, meaning that if any area falls outside the range of the data for any variable, the area is masked.
 
 ```{r range mask, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 # Extrapolate env values for given coordinates
 map_mask <- extrap_mask(liz_coords, envlayers, method = "range")
@@ -79,7 +79,7 @@ plot_extrap_mask(envlayers, map_mask, RGB_cols = FALSE, mask_col = rgb(1, 1, 1, 
 We can also mask using the `"sd"` argument, which masks all areas outside of the mean, +/- some number of standard deviations outside the environmental values included in data (normalized using the `nsd` parameter). This method is still as conservative as the `"range"` argument from above.
 
 ```{r sd mask, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 # Let's start with nsd=2
 map_mask <- extrap_mask(liz_coords, envlayers, method = "sd", nsd = 2)
@@ -95,7 +95,7 @@ plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
 We can mask all areas outside of a circular buffer of a fixed width around the coordinates provided using the `"buffer"` argument. Given how the buffer is calculated, this masking is agnostic to environment. We can adjust the size of the circular buffer using the `buffer_width` option.
 
 ```{r buffer mask, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 map_mask <- extrap_mask(liz_coords, envlayers, method = "buffer", buffer_width = 0.25)
 plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
@@ -114,7 +114,7 @@ plot_extrap_mask(envlayers, map_mask, RGB = FALSE, mask_col = rgb(1, 1, 1, alpha
 A convex hull describes the smallest convex polygon that contains sets or points (in this case, sampling coordinates). We can mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument (this largely uses the `gConvexHull()` function in the rgeos package). As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` argument
 
 ```{r chull mask, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 map_mask <- extrap_mask(liz_coords, envlayers, method = "chull")
 plot_extrap_mask(envlayers, map_mask, RGB = FALSE)
@@ -139,11 +139,11 @@ In some cases, if we have no sampling from islands, we do not want those areas m
 First, let's get the shape (polygon) for the state of California. This will include the Channel Islands. We can retrieve administrative boundaries using the `gadm()` function within the geodata package.
 
 ```{r cali polygon, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 states <- getData("GADM", country = "United States", level = 1)
 # states <- gadm("United States", level = 1, path = here())
-cali <- states[states$NAME_1 == "California",]
+cali <- states[states$NAME_1 == "California", ]
 plot(cali)
 ```
 
@@ -152,7 +152,7 @@ plot(cali)
 The `rm_islands()` requires a polygon (in our case, the state of California from above) and the environmental layers we want the island(s) removed from (in our case, `CA_env` or `envlayers`).
 
 ```{r remove islands, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 cali_noislands <- rm_islands(envlayers, cali)
 
@@ -163,7 +163,7 @@ plot(cali_noislands)
 This function works even if we have multiple layers, as with `CA_env`.
 
 ```{r remove islands multilayers, fig.align='center', fig.height=5, fig.width=5}
-par(mar = c(0,0,0,0))
+par(mar = c(0, 0, 0, 0))
 
 cali_noislands <- rm_islands(CA_env, cali)
 
