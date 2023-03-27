@@ -10,7 +10,7 @@ results <- purrr::map(vignettes, ~safe_render(.x, "html_document"))
 names(results) <- basename(vignettes)
 
 # pull out errors
-errors <- map(results, "error") %>% discard(is.null)
+errors <- purrr::map(results, "error") %>% purrr::discard(is.null)
 print(errors)
 
 
