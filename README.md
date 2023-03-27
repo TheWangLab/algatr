@@ -29,7 +29,7 @@ BiocManager::install("ggtree") # required by harrietr
 #install.packages("devtools")
 devtools::install_github("bcm-uga/TESS3_encho_sen")
 devtools::install_github("bleutner/RStoolbox")
-devtools::install_github("bleutner/wingen")
+devtools::install_github("AnushaPB/wingen")
 
 # Then algatr can be installed
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
