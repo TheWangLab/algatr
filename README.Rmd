@@ -49,6 +49,8 @@ devtools::install_github("AnushaPB/wingen")
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
+If you're installing on Ubuntu, you may run into issues installing the rmapshaper package; scroll to the bottom of the README for more information.
+
 ## Introduction
 
 ------------------------------------------------------------------------
@@ -194,3 +196,9 @@ As an example of algatr, let's run through all of its functionality which we've 
 ```{r do everything, warning = FALSE, message = FALSE}
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
 ```
+
+### Installing on Ubuntu
+
+You may run into issues installing the rmapshaper package if you're using a Ubuntu system. If so, run the following line of code before attempting to install the package:
+
+    sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
