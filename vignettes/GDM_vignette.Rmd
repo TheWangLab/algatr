@@ -18,12 +18,9 @@ knitr::opts_chunk$set(
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
-library(gdm)
 library(here)
-library(tidyverse)
 library(raster)
 library(terra)
-library(readr)
 
 devtools::load_all()
 ```

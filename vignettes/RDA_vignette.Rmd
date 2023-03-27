@@ -18,16 +18,12 @@ knitr::opts_chunk$set(
 
 ```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
+library(dplyr)
 library(here)
-library(gt)
-library(vegan)
 library(raster)
-library(robust)
-library(tidyverse)
-# BiocManager::install("qvalue")
-library(qvalue)
-# devtools::install_github("AnushaPB/wingen")
+library(terra)
 library(wingen)
+library(vegan)
 
 devtools::load_all()
 ```
@@ -188,8 +184,9 @@ The call for this full model looks like this: `rda(gen ~ env + covariable, data)
 In algatr, we can run variance partitioning using the function `rda_varpart()`, which will run the full model (as above) and then will run successive pRDAs which are conditioned on three successive sets of variables. These variable sets are significant environmental variables (in our case, environmental PCs 2 and 3), population genetic structure (once again determined using a PC with a user-specified number of PC axes), and geography (sampling coordinates). This function will then provide us with information on how variance is partitioned in the form of a table containing relevant statistics; this table is nearly identical to Table 2 from [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722). The `rda_varpart()` parameters are identical to those from `rda_run()`. As with `rda_run()`, we can provide a number for the number of PCs to consider for population structure (`nPC`), or this argument can be set to `"manual"` if a user would like to manually enter a number into the console after viewing the screeplot. We can then use `rda_varpart_table()` to visualize these results in an aesthetically pleasing way; users can specify whether to display the function call in the table (`call_col`; defaults to `FALSE`) and the number of digits to round to `digits` (the default is 2).
 
 ```{r varpart, warning=FALSE, message=FALSE}
-varpart <- rda_varpart(gen, env, liz_coords, Pin = 0.05, R2permutations = 1000,
-            R2scope = T, nPC = 3)
+varpart <- rda_varpart(gen, env, liz_coords, 
+                       Pin = 0.05, R2permutations = 1000,
+                       R2scope = T, nPC = 3)
 rda_varpart_table(varpart, call_col = TRUE)
 ```
 

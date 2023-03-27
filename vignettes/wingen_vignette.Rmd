@@ -18,15 +18,9 @@ knitr::opts_chunk$set(
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
-# library(remotes)
-# install_github("AnushaPB/wingen")
 library(wingen)
 library(raster)
 library(terra)
-library(vcfR)
-library(viridis)
-library(tigris) # if doing map other way
-library(sf) # if doing map other way
 
 devtools::load_all()
 ```

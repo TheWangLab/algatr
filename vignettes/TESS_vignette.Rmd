@@ -19,31 +19,15 @@ knitr::opts_chunk$set(
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
-library(tidyverse)
-# library(raster)
-library(rgdal)
-library(viridis)
-library(terra)
-# devtools::install_github("bcm-uga/TESS3_encho_sen")
-library(tess3r)
-# devtools::install_github("AnushaPB/wingen")
 library(wingen)
+library(tess3r)
 library(ggplot2)
-
-# Need LEA library for cross entropy
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-#install.packages("BiocManager")
-#BiocManager::install("LEA")
-library(LEA)
+library(terra)
+library(raster)
 
 # for plotting (from TESS)
 source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
 source("http://membres-timc.imag.fr/Olivier.Francois/POPSutilities.R")
-
-# devtools::install_github("cran/automap")
-library(automap)
-library(spatialEco)
-library(rworldmap)
 
 devtools::load_all()
 ```

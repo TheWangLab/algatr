@@ -19,16 +19,7 @@ knitr::opts_chunk$set(
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
-# To install LFMM:
-#devtools::install_github("bcm-uga/lfmm")
-library(lfmm) 
-library(tidyverse)
 library(raster)
-# Libraries for k selection
-library(AssocTests)
-library(tess3r)
-library(adegenet)
-# devtools::install_github("AnushaPB/wingen")
 library(wingen)
 
 devtools::load_all()
