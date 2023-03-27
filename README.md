@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# algatr <img src="man/figures/logo.png" align="right" height="120"/>
+# algatr <img src="man/figures/logo_review.png" align="right" height="120"/>
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
 start-to-finish pipeline to perform various landscape genomics methods
 with their data.
 
-# review <img src="man/algatr_review.png" align="center" height="150"/>
+# <img src="man/figures/algatr_review.png" align="center" width="569" height="107"/>
 
 ## Installation
 
