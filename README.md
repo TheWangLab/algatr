@@ -267,7 +267,7 @@ vignette**](REFER)) and calculating genetic distances (see the
 <table style="width:98%;">
 <colgroup>
 <col style="width: 6%" />
-<col style="width: 39%" />
+<col style="width: 38%" />
 <col style="width: 15%" />
 <col style="width: 25%" />
 <col style="width: 12%" />
