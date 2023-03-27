@@ -11,7 +11,8 @@ tess_ktest(
   grid = NULL,
   tess_method = "projected.ls",
   K_selection = "manual",
-  ploidy = 2
+  ploidy = 2,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ tess_ktest(
 \item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
 
 \item{ploidy}{ploidy of data (defaults to 2)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \description{
 Test multiple K values

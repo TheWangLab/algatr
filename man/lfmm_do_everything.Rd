@@ -19,7 +19,8 @@ lfmm_do_everything(
   low = 0.08,
   max.pc = 0.9,
   perc.pca = 90,
-  max.n.clust = 10
+  max.n.clust = 10,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ pvalues are not calibrated.}
 \item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
 
 \item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \description{
 LFMM function to do everything

@@ -16,7 +16,8 @@ tess_do_everything(
   minQ = 0.1,
   tess_method = "projected.ls",
   ploidy = 2,
-  correct_kriged_Q = TRUE
+  correct_kriged_Q = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -41,12 +42,14 @@ tess_do_everything(
 \item{ploidy}{ploidy of data (defaults to 2)}
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 list with all TESS results, final K value, and final kriged raster
 }
 \description{
-TODO \link{EAC}: ADD QUIET ARG
+TESS function to do everything
 }
 \details{
 TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.

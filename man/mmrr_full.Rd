@@ -4,7 +4,7 @@
 \alias{mmrr_full}
 \title{Run MMRR with all variables}
 \usage{
-mmrr_full(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all")
+mmrr_full(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all")
 }
 \arguments{
 \item{Y}{dependent distance matrix}
@@ -15,7 +15,7 @@ mmrr_full(Y, X, nperm = nperm, stdz = TRUE, plot = TRUE, plot_type = "all")
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{plot}{whether to plot results (default = TRUE)}
+\item{quiet}{whether to plot results (default = FALSE)}
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }

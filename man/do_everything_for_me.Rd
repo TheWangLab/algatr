@@ -4,14 +4,16 @@
 \alias{do_everything_for_me}
 \title{Lazy run of all landscape genomic analyses contained within \code{algatr}}
 \usage{
-do_everything_for_me(vcf, coords, envlayers)
+do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 }
 \arguments{
-\item{vcf}{path to vcf file or a \code{vcfR} type object}
+\item{gen}{path to vcf file or a \code{vcfR} type object}
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
 \item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \description{
 Disclaimer: this is probably a bad idea...

@@ -51,11 +51,13 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
   # MASKING -----------------------------------------------------------------
 
   if (masked == TRUE) {
-    # resample to match
-    if (!compareGeom(mask, map, stopOnError = FALSE)) {
-      mask <- resample(mask, map)
+    if (!inherits(mask, "SpatRaster")) mask <- terra::rast(mask)
+
+    # Resample to match
+    if (!terra::compareGeom(mask, map, stopOnError = FALSE)) {
+      mask <- terra::resample(mask, map)
       warning("Mask warning:")
-      compareGeom(mask, map, stopOnError = FALSE, warncrs = TRUE, messages = TRUE)
+      terra::compareGeom(mask, map, stopOnError = FALSE, warncrs = TRUE, messages = TRUE)
     }
 
     map <- wingen::mask_gd(x = map, y = mask)
