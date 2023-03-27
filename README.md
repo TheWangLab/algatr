@@ -6,8 +6,9 @@
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
 start-to-finish pipeline to perform various landscape genomics methods
-with their data. The algatr package is described in [Chambers, Bishop, &
-Wang 2023](REFER).
+with their data.
+
+# review <img src="man/figures/algatr_review.png" align="center" height="150"/>
 
 ## Installation
 
@@ -35,6 +36,10 @@ devtools::install_github("AnushaPB/wingen")
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
+If you’re installing on Ubuntu, you may run into issues installing the
+rmapshaper package; scroll to the bottom of the README for more
+information.
+
 ## Introduction
 
 ------------------------------------------------------------------------
@@ -57,11 +62,9 @@ algatr makes use of several existing packages and methods, and we
 provide citations to these packages (and corresponding publications)
 whenever possible. Many of these packages have extensive documentation
 and excellent additional resources, which we provide links to in the
-corresponding vignettes.
-
-We have added functionality to each of these methods within algatr which
-we discuss in each of the methods’ vignettes (and in our paper: TODO
-REFER).
+corresponding vignettes. We have added functionality to each of these
+methods within algatr which we discuss in each of the methods’
+vignettes.
 
 Other than input data processing functions, the main functions within
 algatr are named with the pattern `[method]_do_everything()`. As the
@@ -260,9 +263,8 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
 You’ll now want to do some processing of these data, such as file
-conversions and LD-pruning (see the [**data processing
-vignette**](REFER)) and calculating genetic distances (see the
-[**genetic distances vignette**](REFER)).
+conversions and LD-pruning (see the **data processing vignette**) and
+calculating genetic distances (see the **genetic distances vignette**).
 
 <table style="width:98%;">
 <colgroup>
@@ -388,3 +390,11 @@ this function for your analyses.
 ``` r
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
 ```
+
+### Installing on Ubuntu
+
+You may run into issues installing the rmapshaper package if you’re
+using a Ubuntu system. If so, run the following line of code before
+attempting to install the package:
+
+    sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
