@@ -32,7 +32,6 @@ devtools::install_github("bleutner/RStoolbox")
 devtools::install_github("bleutner/wingen")
 
 # Then algatr can be installed
-#install.packages("devtools")
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
