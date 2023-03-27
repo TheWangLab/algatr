@@ -11,12 +11,14 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
 devtools::load_all()
+library(algatr)
 library(raster)
 library(terra)
-library(vcfR)
-library(viridis)
 library(here)
+library(viridis)
+library(vcfR)
 ```
 
 # algatr <img src="man/figures/logo.png" align="right" height="120"/>
@@ -27,10 +29,25 @@ library(here)
 
 ------------------------------------------------------------------------
 
-You can install the development version of algatr from [GitHub](https://github.com/) with:
+You can install the development version of algatr from [GitHub](https://github.com/) using the following code:
 
 ``` r
-# install.packages("devtools")
+# Some dependencies of algatr must first be installed from BiocManager and GitHub:
+#install.packages("BiocManager")
+BiocManager::install("qvalue")
+BiocManager::install("gdsfmt")
+BiocManager::install("SeqArray")
+BiocManager::install("SNPRelate")
+BiocManager::install("LEA") # required by tess3r
+BiocManager::install("ggtree") # required by harrietr
+
+#install.packages("devtools")
+devtools::install_github("bcm-uga/TESS3_encho_sen")
+devtools::install_github("bleutner/RStoolbox")
+devtools::install_github("bleutner/wingen")
+
+# Then algatr can be installed
+#install.packages("devtools")
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
