@@ -1,8 +1,6 @@
 
 #' TESS function to do everything
 #'
-#' TODO [EAC]: ADD QUIET ARG
-#'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords dataframe with x and y coordinates
 #' @param grid SpatRaster for kriging
@@ -15,6 +13,7 @@
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams tess3r::tess3
 #'
 #' @family TESS functions
@@ -29,7 +28,8 @@
 #' @examples
 tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
                       plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
-                      tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE){
+                      tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
+                      quiet = FALSE){
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   if(length(Kvals) > 1){
 
     # Run TESS K test
-    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy)
+    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
 
     # Get K
     K <- tess_results[["K"]]
@@ -78,10 +78,12 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   # PLOTS --------------------------------------------------------------------------------------------------------
 
   # Plot Q-values
+  if(!quiet) {
   if(K != 1) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
 
   # Make barplot
   if(K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
+  }
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
 
@@ -107,7 +109,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
 #' @family TESS functions
 #'
 #' @examples
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2){
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE){
 
   # Format coordinates
   coords <- as.matrix(coords)
@@ -116,16 +118,16 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
 
   # Plot CV results
-  plot(tess3_obj, pch = 19, col = "blue",
-       xlab = "Number of ancestral populations",
-       ylab = "Cross-validation score")
+  if(!quiet) plot(tess3_obj, pch = 19, col = "blue",
+                  xlab = "Number of ancestral populations",
+                  ylab = "Cross-validation score")
 
   # Get best K value
   if(K_selection == "auto"){K <-  bestK(tess3_obj, Kvals)}
   if(K_selection == "manual"){K <- as.numeric(readline(prompt = "Enter K Value: "))}
 
   # Mark the K-value selected
-  abline(v = K, col = "red", lty = "dashed")
+  if(!quiet) abline(v = K, col = "red", lty = "dashed")
 
   # Create list with tess3 object and K value
   tess_results <- list(K = K,

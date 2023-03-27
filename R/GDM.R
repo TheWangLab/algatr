@@ -1,8 +1,6 @@
 
 #' GDM function to do everything (fit model, get coefficients, make and save raster)
 #'
-#' TODO: ADD QUIET ARG
-#'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)

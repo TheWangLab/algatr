@@ -5,6 +5,7 @@
 #' @param kriged whether to smooth out mapped values using kriging using \link[wingen]{krig_gd} (default = FALSE)
 #' @param masked whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)
 #' @param plot_count if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams wingen::preview_gd
 #' @inheritParams wingen::window_gd
 #' @inheritParams wingen::krig_gd
@@ -22,7 +23,7 @@
 wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
                                  gen, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
-                                 masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE){
+                                 masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE){
 
   if(preview == TRUE){
     if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
@@ -49,7 +50,7 @@ wingen_do_everything <- function(preview = FALSE, lyr, coords, wdim = 3, fact = 
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
-  print(wingen::plot_gd(map, bkg = bkg, index = index))
+  if(!quiet) print(wingen::plot_gd(map, bkg = bkg, index = index))
 
   # Plot sample counts
   if(plot_count == TRUE) print(wingen::plot_count(map))

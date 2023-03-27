@@ -48,7 +48,7 @@ gdm_do_everything(
 list with final model, predictor coefficients, and PCA RGB map
 }
 \description{
-TODO: ADD QUIET ARG
+GDM function to do everything (fit model, get coefficients, make and save raster)
 }
 \details{
 GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto-Lugilde, D., & Ferrier, S. (2022). gdm: Generalized dissimilarity modeling. R package version 1.5.0-3.

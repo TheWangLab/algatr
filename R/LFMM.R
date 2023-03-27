@@ -9,6 +9,7 @@
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
 #' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
 #' @param p_adj method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
+#' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #'
@@ -25,7 +26,7 @@
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
                      K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                      p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
-                     low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10){
+                     low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE){
 
   # Get and check environmental data
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -46,20 +47,21 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if(is.null(K)){
     K <- select_K(gen, K_selection = K_selection, coords = coords,
                Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
+               max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust,
+               quiet = quiet)
   }
 
   # Run LFMM
   results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
 
   # Check qqplots
-  print(lfmm_qqplot(results$df))
+  if(!quiet) print(lfmm_qqplot(results$df))
 
   # Make Manhattan plots
-  print(lfmm_manhattanplot(results$df, sig))
+  if(!quiet) print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig, p_adj = p_adj))
+  if(!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig, p_adj = p_adj))
 
   return(results)
 }

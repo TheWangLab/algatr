@@ -25,7 +25,8 @@ wingen_do_everything(
   masked = FALSE,
   mask = NULL,
   bkg = NULL,
-  plot_count = FALSE
+  plot_count = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -66,6 +67,8 @@ wingen_do_everything(
 \item{masked}{whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)}
 
 \item{plot_count}{if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 RasterBrick object final raster

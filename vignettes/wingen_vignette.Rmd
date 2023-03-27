@@ -196,8 +196,7 @@ Below, we'll run wingen with the following:
 ```{r wingen do everything, warning=FALSE}
 results <- wingen_do_everything(preview = FALSE, liz_lyr, liz_coords, wdim = 3, fact = 0, sample_count = TRUE, min_n = 2,
                      liz_vcf, stat = "pi", rarify = FALSE, kriged = TRUE, grd = liz_lyr, index = 1:2,
-                     agg_grd = NULL, disagg_grd = 4, agg_r = NULL, disagg_r = NULL,
-                     masked = TRUE, mask = envlayer, bkg = envlayer, plot_count = TRUE)
+                     agg_grd = NULL, disagg_grd = 4, agg_r = NULL, disagg_r = NULL, plot_count = FALSE)
 ```
 
 ## Additional documentation and citations
