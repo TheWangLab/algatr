@@ -24,6 +24,8 @@ library(vcfR)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data.
 
+# review <img src="man/figures/algatr_review.png" align="center" height="150"/>
+
 ## Installation
 
 ------------------------------------------------------------------------
