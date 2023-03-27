@@ -693,8 +693,8 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
   # Compile df --------------------------------------------------------------
 
   df <- df %>%
-    mutate(prop_expl_var = inertia/max(df$inertia),
-           prop_total_var = inertia/total_inertia)
+    dplyr::mutate(prop_expl_var = inertia/max(df$inertia),
+                  prop_total_var = inertia/total_inertia)
 
   # Add additional rows
   df <-
