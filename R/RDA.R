@@ -636,6 +636,7 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
                       Pin = Pin,
                       R2permutations = R2permutations,
                       R2scope = R2scope)
+
   # Extract sig enviro vars
   sig_vars <- as.character(mod_best$terms)[3]
   if (length(sig_vars) == 0) {
@@ -683,9 +684,9 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC){
   full_inertia = df$inertia[1]
   confounded = as.numeric(
     full_inertia - (df %>%
-                   filter(rownames(df) %in% c('pure_env', 'pure_str', 'pure_geo')) %>%
-                   summarize(sum(inertia)))
-  )
+                    dplyr::filter(rownames(df) %in% c('pure_env', 'pure_str', 'pure_geo')) %>%
+                    dplyr::summarise(sum(inertia)))
+    )
   total_unexpl = total_inertia - full_inertia
   results <- data.frame(total_inertia, full_inertia, confounded, total_unexpl)
 
@@ -756,7 +757,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE){
                     "Prop. of explainable variance", "Prop. of total variance")
 
   df <- df %>%
-    rownames_to_column(var = "Model")
+    tibble::rownames_to_column(var = "Model")
 
   if(!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c("Model", "pRDA model call"), round, digits))
 
@@ -768,7 +769,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE){
       gt::gt() %>%
       gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d,d)) %>%
       gt::sub_missing(missing_text = "") %>%
-      tab_header(title = md("Variance partitioning"))
+      gt::tab_header(title = gt::md("Variance partitioning"))
 
     # Add column with call
     if (call_col) {
@@ -776,7 +777,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE){
         gt::gt() %>%
         gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d,d)) %>%
         gt::sub_missing(missing_text = "") %>%
-        tab_header(title = md("Variance partitioning"))
+        gt::tab_header(title = gt::md("Variance partitioning"))
     }
   })
 
