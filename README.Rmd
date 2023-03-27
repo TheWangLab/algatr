@@ -12,7 +12,6 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
-devtools::load_all()
 library(algatr)
 library(raster)
 library(terra)
@@ -23,7 +22,7 @@ library(vcfR)
 
 # algatr <img src="man/figures/logo.png" align="right" height="120"/>
 
-**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data. The algatr package is described in [Chambers, Bishop, & Wang 2023](REFER).
+**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data.
 
 ## Installation
 
@@ -62,9 +61,7 @@ The methods contained within algatr will perform analyses on:
 
 -   Datasets with individual-based sampling (*it will also work on population-based sampling schemes*)
 
-algatr makes use of several existing packages and methods, and we provide citations to these packages (and corresponding publications) whenever possible. Many of these packages have extensive documentation and excellent additional resources, which we provide links to in the corresponding vignettes.
-
-We have added functionality to each of these methods within algatr which we discuss in each of the methods' vignettes (and in our paper: TODO REFER).
+algatr makes use of several existing packages and methods, and we provide citations to these packages (and corresponding publications) whenever possible. Many of these packages have extensive documentation and excellent additional resources, which we provide links to in the corresponding vignettes. We have added functionality to each of these methods within algatr which we discuss in each of the methods' vignettes.
 
 Other than input data processing functions, the main functions within algatr are named with the pattern `[method]_do_everything()`. As the name implies, these functions will take you from your raw input data through to generating results, tables, and figures from the analysis. For example, `gdm_do_everything()` will run generalized dissimilarity modeling while also generating a GDM map, a table with results, and several other outputs. All of the `[method]_do_everything` functions has a `quiet` argument which, when set to `"TRUE"`, will not automatically print figures and outputs.
 
@@ -148,7 +145,7 @@ Read in your vcf file using the `read.vcfR()` function in the vcfR package. To s
 vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
-You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the [**data processing vignette**](REFER)) and calculating genetic distances (see the [**genetic distances vignette**](REFER)).
+You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the **data processing vignette**) and calculating genetic distances (see the **genetic distances vignette**).
 
 +-----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
 |           | R package                                                         | algatr function          | Input files                               | Required arguments |

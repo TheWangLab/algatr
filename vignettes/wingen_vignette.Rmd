@@ -190,7 +190,7 @@ Below, we'll run wingen with the following:
 
 -   Plot kriged and masked sample count (`plot_count = TRUE`)
 
-```{r wingen do everything, warning=FALSE}
+```{r wingen do everything, warning=FALSE, results='hide'}
 results <- wingen_do_everything(
   gen = liz_vcf,
   lyr = liz_lyr,
