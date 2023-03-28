@@ -1,3 +1,4 @@
+
 #' Check environmental layers for collinearity
 #'
 #' @param envlayers a RasterStack of data layers
@@ -7,7 +8,6 @@
 #'
 #' @export
 check_env <- function(envlayers, threshold = 0.7) {
-  # TODO: there seems to be a bug in terra with layerCor() where if na.rm = TRUE you get an error
   if (!inherits(envlayers, "Raster")) envlayers <- raster::stack(envlayers)
   cors <- raster::layerStats(envlayers, stat = "pearson", na.rm = TRUE)
   cors <- cors$`pearson correlation coefficient`
@@ -27,7 +27,9 @@ check_env <- function(envlayers, threshold = 0.7) {
 #' @export
 check_vals <- function(envlayers, coords, threshold = 0.7) {
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+
   crs_check(coords, envlayers)
+
   vals <- terra::extract(envlayers, coords)
   if (length(which(is.na(vals))) > 0) warning("NA values detected in extracted variables.")
   cors <- cor(vals, use = "na.or.complete", method = "pearson")
