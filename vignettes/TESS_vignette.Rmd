@@ -227,7 +227,7 @@ As you can see from the above, interpolation is done using a different method in
 
 The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided*.
 
-The `tess_do_everything()` function will print out the barplot, the cross-validation scores for the range of K values tested, and the kriged map. It will also print the order in which individuals are ordered in the barplot. The resulting object from this function contains:
+The `tess_do_everything()` function will print out the barplot, the cross-validation scores for the range of K values tested, and the kriged map (if a grid is provided). It will also print the order in which individuals are ordered in the barplot. The resulting object from this function contains:
 
 -   `K`: The best K value based on user-specified K selection
 
