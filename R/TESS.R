@@ -26,7 +26,7 @@
 #' @export
 #'
 #' @examples
-tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
+tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
                                tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
                                quiet = FALSE) {
@@ -67,14 +67,17 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
   # Give warning if K = 1
   if (K == 1) warning("K = 1, skipping kriging and plotting")
 
+  # Give warning if grid is not provided
+  if (is.null(grid)) warning("Grid not provided, skipping kriging")
+
   # Krige Qmatrix
-  if (K != 1) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
+  if (K != 1 & !is.null(grid)) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
   # Plot Q-values
   if (!quiet) {
-    if (K != 1) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
+    if (K != 1 & !is.null(grid)) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
 
     # Make barplot
     if (K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))

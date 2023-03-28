@@ -233,7 +233,7 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 
 -   `Qmatrix`: The matrix of individual ancestry coefficients, or Q values
 
--   `krig_admix`: A RasterBrick object containing the kriged ancestry coefficient values for mapping
+-   `krig_admix`: A RasterBrick object containing the kriged ancestry coefficient values for mapping; if no grid is provided, the function will skip kriging
 
 -   `tess_results`: The tess3r object containing cross-entropy scores for each K value tested
 
@@ -245,7 +245,7 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 
 ```{r do everything, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5, fig.align = 'center'}
 # One could also use krig_raster as the grid object
-results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:5, K_selection = "auto")
+results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:10, K_selection = "auto")
 ```
 
 ## Additional documentation and citations

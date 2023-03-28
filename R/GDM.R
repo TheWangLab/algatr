@@ -40,6 +40,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
     warning("failed to fit best model, rerunning GDM with full model")
     gdm_result <- gdm_run_safely(gendist, coords = coords, env = env, model = "full", sig = sig, nperm = nperm, scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
   }
+
   gdm_result <- gdm_result$result
 
   # If mod is null, exit

@@ -14,7 +14,6 @@ env_dist <- function(env, stdz = TRUE) {
 }
 
 
-
 #' Helper function to convert an environmental vector to a distance matrix
 #'
 #' @inheritParams env_dist
@@ -29,7 +28,6 @@ env_dist_helper <- function(env, stdz = TRUE) {
 
   return(distmat)
 }
-
 
 
 #' Calculate geographic distance between coordinates
