@@ -7,7 +7,7 @@
 tess_do_everything(
   gen,
   coords,
-  grid,
+  grid = NULL,
   Kvals = 1:10,
   K_selection = "manual",
   plot_method = "maxQ",
