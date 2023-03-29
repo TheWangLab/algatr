@@ -170,7 +170,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE){
 
   # mask with original raster layer because the grid fills in all NAs
   #( note: we don't remove NAs because it can change the extent)
-  grid <- resample(grid, krig_admix[[1]])
+  grid <- terra::resample(grid, krig_admix[[1]])
   krig_admix <- terra::mask(krig_admix, grid)
 
   # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
