@@ -1,5 +1,5 @@
 ---
-title: "data_processing"
+title: "Data_processing_vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{data_processing}

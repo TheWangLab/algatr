@@ -1,5 +1,5 @@
 ---
-title: "gen_dist_vignette"
+title: "Gen_dist_vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{gen_dist_vignette}

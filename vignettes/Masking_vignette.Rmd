@@ -1,5 +1,5 @@
 ---
-title: "masking_vignette"
+title: "Masking_vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{masking_vignette}
