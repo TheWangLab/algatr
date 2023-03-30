@@ -74,7 +74,7 @@ There are a number of additional arguments within this function, and the wingen 
 
 First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. We want adjust the window size (using the `wdim` argument) to ensure (to some extent) that our window size is capturing samples as it slides across the landscape. Ideally, `wdim` should be set with the study system in mind (e.g., the dispersal distance or neighborhood size of the species). We will also specify that genetic diversity only be calculated for windows that contain at least two samples (`min_n`). This function will generate two figures: one that allows us to visualize the size of our window compared to the raster layer and sampling coordinates, and also a map of how many samples will be included in each cell's calculation (specified using `sample_count`).
 
-```{r preview gd, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE, message=FALSE}
+```{r preview gd, fig.width = 7, fig.height = 7, fig.align='center', warning=FALSE, message=FALSE}
 par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 preview_gd(liz_lyr,
   liz_coords,
@@ -105,7 +105,7 @@ wgd <- window_gd(liz_vcf,
 
 wingen allows for plotting maps in two ways: `plot_gd()` plots the genetic diversity layer, while `plot_count()` plots the sample count layer. We can also provide a background map using the `bkg` argument.
 
-```{r plot window, warning=FALSE, fig.width=5, fig.height=5, fig.align='center'}
+```{r plot window, warning=FALSE, fig.width=7, fig.height=7, fig.align='center'}
 par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 # Plot map of pi
 plot_gd(wgd, main = "Moving window pi", bkg = envlayer)
@@ -126,7 +126,7 @@ summary(kgd)
 
 Let's look at the plots for the kriged results, and let's avoid including the background shape for now (i.e., no `bkg` argument). Note that the overall shape of this kriged map is rectangular because of the `lyr` raster shape.
 
-```{r plot krige, fig.height=5, fig.width=5, fig.align='center', warning=FALSE}
+```{r plot krige, fig.height=7, fig.width=7, fig.align='center', warning=FALSE}
 par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
 # Plot kriged map of pi
 plot_gd(kgd, main = "Kriged pi")
@@ -140,7 +140,7 @@ Finally, we may want to mask out any areas that we're not interested in using th
 
 As you can see, more areas are masked as we increase `minval`.
 
-```{r mask sample count, fig.align='center', fig.width=5, fig.height=5, warning=FALSE}
+```{r mask sample count, fig.align='center', fig.width=7, fig.height=7, warning=FALSE}
 mgd_1 <- mask_gd(kgd, kgd[["sample_count"]], minval = 1)
 mgd_2 <- mask_gd(kgd, kgd[["sample_count"]], minval = 2)
 
@@ -155,9 +155,9 @@ Next, let's mask out any areas outside of California state boundaries using our 
 
 One thing to keep in mind is that if you are masking using a raster, you need to ensure that pixels match between the object to be masked and the object to use as a mask. If they aren't the same, or if their extents are different, you will either get an error or the map will look wonky. To remedy this, we can use terra's `resample()` function. This function will resample a raster (here, `envlayer`) based on an inputted raster (here, `mgd_1`).
 
-```{r mask sd, fig.height=5, fig.width=5, fig.align='center', warning=FALSE}
+```{r mask sd, fig.height=7, fig.width=7, fig.align='center', warning=FALSE}
 # Resample envlayer based on masked layer
-r <- terra::resample(terra::rast(envlayer), mgd_1)
+r <- terra::resample(envlayer, mgd_1)
 
 # Perform masking
 mgd <- mask_gd(mgd_1, r)
@@ -224,5 +224,5 @@ results <- wingen_do_everything(
 Retrieve wingen's vignette:
 
 ```{r package vignette}
-vignette("wingen-vignette")
+# vignette("wingen-vignette")
 ```

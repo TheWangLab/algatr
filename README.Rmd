@@ -24,7 +24,7 @@ library(vcfR)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data.
 
-# <img src="man/figures/algatr_review.png" align="center" width="700" height="133"/>
+# <img src="man/figures/algatr_review.png" align="center" width="794" height="133"/>
 
 ## Installation
 
@@ -119,7 +119,7 @@ plot(CA_env, col = turbo(100), axes = FALSE)
 
 We can combine all three PCs into a single map by scaling each of the rasters such that they each correspond to either R, G, or B using the `scaleRGB()` function and subsequently map using the `plotRGB()` function.
 
-```{r, RGB plot, fig.width = 5, fig.height = 6, fig.align='center'}
+```{r, RGB plot, fig.height = 3, fig.align='center'}
 env <- scaleRGB(CA_env)
 plotRGB(env, r = 1, g = 2, b = 3)
 
