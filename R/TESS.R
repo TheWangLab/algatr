@@ -177,10 +177,12 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
   # Krige each K value
   krig_admix <-
     purrr::map(1:K, krig_K, qmat, krig_grid, krig_df) %>%
-    terra::rast() %>%
-    # mask with original raster layer because the grid fills in all NAs
-    # ( note: we don't remove NAs because it can change the extent)
-    terra::mask(grid)
+    terra::rast()
+
+  # mask with original raster layer because the grid fills in all NAs
+  #( note: we don't remove NAs because it can change the extent)
+  grid <- terra::resample(grid, krig_admix[[1]])
+  krig_admix <- terra::mask(krig_admix, grid)
 
   # Convert all values in raster greater than 1 to 1 and all values less than 0 to 0
   if (correct_kriged_Q) {
