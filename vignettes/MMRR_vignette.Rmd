@@ -144,7 +144,6 @@ The algatr package also has an option to run all of the above functionality in a
 ### MMRR with all variables
 
 ```{r all vars, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE}
-# TODO [EAC]: error with do everything round() non-numeric arg, also check env
 set.seed(01)
 mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, model = "full")
 ```

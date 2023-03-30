@@ -365,7 +365,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Plot variable vectors
   if (plot_vars & (n_layers == 3)) {
-    # TODO [EAC] need to add quiet here?
     gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes, quiet = quiet)
   }
 
