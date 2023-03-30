@@ -13,7 +13,7 @@ mmrr_do_everything(
   dist_lyr = NULL,
   nperm = 999,
   stdz = TRUE,
-  plot = TRUE,
+  quiet = FALSE,
   plot_type = "all"
 )
 }
@@ -34,7 +34,7 @@ mmrr_do_everything(
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{plot}{whether to plot results (default = TRUE)}
+\item{quiet}{whether to plot results (default = FALSE)}
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }

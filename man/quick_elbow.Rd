@@ -30,19 +30,19 @@ larger of the pair. The largest percentage drop in the series below 'low' \% is 
 }
 \examples{
 # correlated data
-mat <- sim.cor(100,50)
+mat <- sim.cor(100, 50)
 result <- princomp(mat)
 eig <- result$sdev^2
 elb.a <- quick_elbow(eig)
-pca.scree.plot(eig,elbow=elb.a,M=mat)
-elb.b <- quick_elbow(eig,low=.05) # decrease 'low' to select more components
-pca.scree.plot(eig,elbow=elb.b,M=mat)
+pca.scree.plot(eig, elbow = elb.a, M = mat)
+elb.b <- quick_elbow(eig, low = .05) # decrease 'low' to select more components
+pca.scree.plot(eig, elbow = elb.b, M = mat)
 # random (largely independent) data, usually higher elbow #
-mat2 <- generate.test.matrix(5,3)
+mat2 <- generate.test.matrix(5, 3)
 result2 <- princomp(mat2)
 eig2 <- result2$sdev^2
 elb2 <- quick_elbow(result2$sdev^2)
-pca.scree.plot(eig2,elbow=elb2,M=mat2)
+pca.scree.plot(eig2, elbow = elb2, M = mat2)
 }
 \seealso{
 \code{\link{estimate.eig.vpcs}}

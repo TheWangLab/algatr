@@ -36,7 +36,7 @@ There are a few assumptions built into this function that users should be aware 
 Let's load the example dataset and extract environmental variables based on our sampling coordinates. To perform MMRR, we need a genetic distance matrix; please refer to the genetic distances vignette for information on how to generate this in algatr using a vcf file.
 
 ```{r genetic data, warning = FALSE}
-load_example()
+load_algatr_example()
 Y <- as.matrix(liz_gendist)
 ```
 
@@ -46,7 +46,7 @@ Let's calculate environmental distances with our extracted environmental values 
 
 ```{r enviro data}
 # Extract enviro vars
-env <- extract(CA_env, liz_coords)
+env <- raster::extract(CA_env, liz_coords)
 # Calculate environmental distances
 X <- env_dist(env)
 # Add geographic distance to X
@@ -67,7 +67,7 @@ We can run MMRR either by running the full model (with no variable selection) us
 
 -   `stdz`: whether matrices are standardized
 
--   `plot`: whether to plot results
+-   `quiet`: whether to plot results
 
 ### MMRR with all variables
 
@@ -75,7 +75,7 @@ First, let's run the full MMRR model with all variables included (i.e., no varia
 
 ```{r mmrr full}
 set.seed(10)
-results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, plot = FALSE)
+results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
 ```
 
 The results from MMRR "full" contains four elements:
@@ -93,7 +93,7 @@ Now, let's run MMRR with variable selection.
 ```{r mmrr best}
 # Run MMRR with all variables
 set.seed(01)
-results_best <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, plot = FALSE)
+results_best <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
 ```
 
 Once again, the results from `mmrr_best()` contains the same elements as `mmrr_full()`, except that `mmrr_best()` now also has `X_best`, which contains values for significant variables; in this case, the only significant variable found was geographic distance. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance).

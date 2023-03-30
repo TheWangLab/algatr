@@ -22,7 +22,8 @@ rda_do_everything(
   Pin = 0.05,
   R2permutations = 1000,
   R2scope = T,
-  stdz = TRUE
+  stdz = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ rda_do_everything(
 \item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})}
 
 \item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 list containing (1) outlier SNPs, (2) dataframe with correlation test results, if \code{cortest = TRUE}, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if \code{outlier_method = "p"}, and (8) results from variance partitioning analysis, if \code{varpart = TRUE}

@@ -5,14 +5,14 @@
 \title{wingen function to do everything  (preview and generate moving window maps, krige, and mask)}
 \usage{
 wingen_do_everything(
-  preview = FALSE,
+  gen,
   lyr,
   coords,
   wdim = 3,
   fact = 0,
   sample_count = TRUE,
   min_n = 2,
-  gen,
+  preview = FALSE,
   stat = "pi",
   rarify = FALSE,
   kriged = FALSE,
@@ -25,11 +25,12 @@ wingen_do_everything(
   masked = FALSE,
   mask = NULL,
   bkg = NULL,
-  plot_count = FALSE
+  plot_count = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
-\item{preview}{whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)}
+\item{gen}{genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
 
 \item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections)}
 
@@ -43,7 +44,7 @@ wingen_do_everything(
 
 \item{min_n}{min number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)}
 
-\item{gen}{genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
+\item{preview}{whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)}
 
 \item{stat}{genetic diversity statistic to calculate (can either be \code{"pi"} for nucleotide diversity (default), \code{"Ho"} for average observed heterozygosity across all sites, \code{"allelic_richness"} for average number of alleles across all sites, or \code{"biallelic_richness"} to get average allelic richness across all sites for a biallelic dataset (this option is faster than \code{"allelic_richness"}))}
 
@@ -66,6 +67,8 @@ wingen_do_everything(
 \item{masked}{whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)}
 
 \item{plot_count}{if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)}
+
+\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 RasterBrick object final raster

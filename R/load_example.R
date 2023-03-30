@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-load_algatr_example <- function(quiet = FALSE){
+load_algatr_example <- function(quiet = FALSE) {
   # Load all data
   utils::data(list = c("liz_vcf", "liz_coords", "liz_gendist", "CA_env"))
 

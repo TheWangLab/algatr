@@ -8,7 +8,7 @@
 #' @export
 #' @noRd
 #'
-make_stat_vec <- function(stat_name, stat, df){
+make_stat_vec <- function(stat_name, stat, df) {
   stat_vec <- rep(NA, ncol(df))
   stat_vec[1] <- stat_name
   stat_vec[2] <- stat

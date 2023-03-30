@@ -1,8 +1,8 @@
 ---
-title: "gen_dist_vignette"
+title: "Gen_dist_vignette"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Gendist_vignette}
+  %\VignetteIndexEntry{gen_dist_vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 # Calculating genetic distances
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
+library(algatr)
 library(here)
 library(vcfR)
 library(ecodist)
@@ -90,7 +90,7 @@ p_euc_plink <- gen_dist_corr(euc_dists, plink_dists, "Euclidean", "Plink")
 p_pc_plink <- gen_dist_corr(pc_dists, plink_dists, "PC_based", "Plink")
 
 # Show all plots as panels on a single plot
-plot_grid(p_euc_plink, p_pc_plink, nrow=1)
+plot_grid(p_euc_plink, p_pc_plink, nrow = 1)
 ```
 
 ### Plot heatmap of one of the genetic distances with `gen_dist_hm()`

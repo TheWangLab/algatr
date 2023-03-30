@@ -9,7 +9,7 @@ geo_dist(coords, type = "Euclidean", lyr = NULL)
 \arguments{
 \item{coords}{dataframe with x and y coordinates}
 
-\item{type}{The type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.}
+\item{type}{the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.}
 
 \item{lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)}
 }

@@ -1,35 +1,54 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# algatr <img src="man/figures/logo.png" align="right" height="120"/>
+# algatr <img src="man/figures/logo_review.png" align="right" height="140"/>
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
 start-to-finish pipeline to perform various landscape genomics methods
-with their data. The algatr package is described in [Chambers, Bishop, &
-Wang 2022](REFER).
+with their data.
+
+# <img src="man/figures/algatr_review.png" align="center" width="794" height="133"/>
 
 ## Installation
 
 ------------------------------------------------------------------------
 
 You can install the development version of algatr from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/) using the following code:
 
 ``` r
-# install.packages("devtools")
+# Some dependencies of algatr must first be installed from BiocManager and GitHub:
+#install.packages("BiocManager")
+BiocManager::install("qvalue")
+BiocManager::install("gdsfmt")
+BiocManager::install("SeqArray")
+BiocManager::install("SNPRelate")
+BiocManager::install("LEA") # required by tess3r
+BiocManager::install("ggtree") # required by harrietr
+
+#install.packages("devtools")
+devtools::install_github("bcm-uga/TESS3_encho_sen")
+devtools::install_github("bleutner/RStoolbox")
+devtools::install_github("AnushaPB/wingen")
+
+# Then algatr can be installed
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
+
+If you’re installing on Ubuntu, you may run into issues installing the
+rmapshaper package; scroll to the bottom of the README for more
+information.
 
 ## Introduction
 
 ------------------------------------------------------------------------
 
 Landscape genetics (or genomics) combines the fields of landscape
-ecology and population genetics in an effort to understand how
-environmental variation affects spatial genetic variation. Thus, at its
-most basic, any landscape genetics method requires genetic and
-environmental data as input.
+ecology and population genetics to understand how environmental
+variation affects spatial genetic variation. Thus, at its most basic,
+any landscape genetics method requires genetic and environmental data as
+input.
 
 The methods contained within algatr will perform analyses on:
 
@@ -43,39 +62,40 @@ algatr makes use of several existing packages and methods, and we
 provide citations to these packages (and corresponding publications)
 whenever possible. Many of these packages have extensive documentation
 and excellent additional resources, which we provide links to in the
-corresponding vignettes.
-
-We have added functionality to each of these methods within algatr which
-we discuss in each of the methods’ vignettes (and in our paper:
-[Chambers, Bishop, & Wang 2022](REFER)).
+corresponding vignettes. We have added functionality to each of these
+methods within algatr which we discuss in each of the methods’
+vignettes.
 
 Other than input data processing functions, the main functions within
 algatr are named with the pattern `[method]_do_everything()`. As the
 name implies, these functions will take you from your raw input data
 through to generating results, tables, and figures from the analysis.
 For example, `gdm_do_everything()` will run generalized dissimilarity
-modeling, while also generating a GDM map, a table with results, and
-several other outputs. However, to better understand what’s going on
-under the hood of these `[method]_do_everything()` functions, the algatr
-vignettes provide a line-by-line breakdown of the individual functions
-contained within the `[method]_do_everything()` function to (a) increase
-a user’s understanding of how the method actually works, and (b) allow
-users with more customizability in how they run their own analysis, if
-so desired.
+modeling while also generating a GDM map, a table with results, and
+several other outputs. All of the `[method]_do_everything` functions has
+a `quiet` argument which, when set to `"TRUE"`, will not automatically
+print figures and outputs.
+
+However, to better understand what’s going on under the hood of these
+`[method]_do_everything()` functions, the algatr vignettes provide a
+line-by-line breakdown of the individual functions contained within the
+`[method]_do_everything()` function to (a) increase a user’s
+understanding of how the method actually works, and (b) allow users with
+more customizability in how they run their own analysis, if so desired.
 
 When deciding on methods to have within algatr, we found it best to
 first identify the questions that these methods seek to answer, and we
 think this is a good framework for anyone (particularly beginner
-landscape genomicists) to think about landscape genomics methods. These
+landscape genomicists) to think about landscape genomic methods. These
 questions fall into four broad categories of analyses.
 
 <table style="width:99%;">
 <colgroup>
-<col style="width: 26%" />
 <col style="width: 19%" />
-<col style="width: 37%" />
+<col style="width: 21%" />
+<col style="width: 40%" />
 <col style="width: 7%" />
-<col style="width: 8%" />
+<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -88,15 +108,22 @@ questions fall into four broad categories of analyses.
 </thead>
 <tbody>
 <tr class="odd">
-<td>What is the spatial structure of genetic variation?</td>
-<td>Structure</td>
+<td>How do we delineate population units for management?</td>
+<td>Population structure</td>
 <td>TESS (Caye et al. 2016)</td>
 <td>TESS_vignette.Rmd</td>
 <td><code>tess_do_everything()</code></td>
 </tr>
 <tr class="even">
-<td>What are the effects of geography and environment on genetic
-differentiation?</td>
+<td>How is genetic variation distributed?</td>
+<td>Genetic diversity</td>
+<td>Moving windows of genetic diversity; wingen (Bishop et
+al. 2023)</td>
+<td>wingen_vignette.Rmd</td>
+<td><code>wingen_do_everything()</code></td>
+</tr>
+<tr class="odd">
+<td>What are the drivers of population connectivity?</td>
 <td>Isolation by distance/isolation by environment (IBD/IBE)</td>
 <td><p>Multiple matrix regression with randomization; MMRR (Wang
 2013)</p>
@@ -107,9 +134,8 @@ Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
 <td><p><code>mmrr_do_everything()</code></p>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
-<tr class="odd">
-<td>What regions of the genome are associated with climate
-variation?</td>
+<tr class="even">
+<td>How can we protect adaptive genetic variation?</td>
 <td>Genotype-environment associations (GEA)</td>
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
@@ -117,14 +143,6 @@ variation?</td>
 <p>LFMM_vignette.Rmd</p></td>
 <td><p><code>rda_do_everything()</code></p>
 <p><code>lfmm_do_everything()</code></p></td>
-</tr>
-<tr class="even">
-<td>How is genetic diversity distributed across space?</td>
-<td>Genetic diversity</td>
-<td>Moving windows of genetic diversity; wingen (Bishop et
-al. 2023)</td>
-<td>wingen_vignette.Rmd</td>
-<td><code>wingen_do_everything()</code></td>
 </tr>
 </tbody>
 </table>
@@ -185,9 +203,9 @@ plot(CA_env, col = turbo(100), axes = FALSE)
 <img src="man/figures/README-plot rasters-1.png" width="100%" />
 
 We can combine all three PCs into a single map by scaling each of the
-rasters in such a way that they each correspond to either R, G, or B
-using the `scaleRGB()` function, and subsequently map using the
-`plotRGB()` function.
+rasters such that they each correspond to either R, G, or B using the
+`scaleRGB()` function and subsequently map using the `plotRGB()`
+function.
 
 ``` r
 env <- scaleRGB(CA_env)
@@ -245,17 +263,16 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
 You’ll now want to do some processing of these data, such as file
-conversions and LD-pruning (see the [**data processing
-vignette**](https://github.com/TheWangLab/algatr/blob/main/vignettes/data_processing_vignette.Rmd)) and calculating genetic distances (see the
-[**genetic distances vignette**](https://github.com/TheWangLab/algatr/blob/main/vignettes/gen_dist_vignette.Rmd)).
+conversions and LD-pruning (see the **data processing vignette**) and
+calculating genetic distances (see the **genetic distances vignette**).
 
 <table style="width:98%;">
 <colgroup>
 <col style="width: 6%" />
-<col style="width: 40%" />
+<col style="width: 38%" />
 <col style="width: 15%" />
-<col style="width: 26%" />
-<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -263,7 +280,7 @@ vignette**](https://github.com/TheWangLab/algatr/blob/main/vignettes/data_proces
 <th>R package</th>
 <th>algatr function</th>
 <th>Input files</th>
-<th>Required args</th>
+<th>Required arguments</th>
 </tr>
 </thead>
 <tbody>
@@ -277,7 +294,11 @@ href="https://bcm-uga.github.io/TESS3_encho_sen/index.html">tess3r</a></td>
 <li>Environmental layers</li>
 <li>Sampling coordinates</li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gen</code></p></li>
+<li><p><code>coords</code></p></li>
+<li><p><code>Kvals</code></p></li>
+</ul></td>
 </tr>
 <tr class="even">
 <td>MMRR</td>
@@ -288,7 +309,11 @@ href="https://bcm-uga.github.io/TESS3_encho_sen/index.html">tess3r</a></td>
 <li><p>Environmental layers</p></li>
 <li><p>Sampling coordinates</p></li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gendist</code></p></li>
+<li><p><code>coords</code></p></li>
+<li><p><code>env</code></p></li>
+</ul></td>
 </tr>
 <tr class="odd">
 <td>GDM</td>
@@ -300,7 +325,11 @@ href="https://cran.r-project.org/web/packages/gdm/index.html">gdm</a></td>
 <li>Environmental layers</li>
 <li>Sampling coordinates</li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gendist</code></p></li>
+<li><p><code>coords</code></p></li>
+<li><p><code>envlayers</code></p></li>
+</ul></td>
 </tr>
 <tr class="even">
 <td>RDA</td>
@@ -312,7 +341,10 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 <li><p>Environmental layers</p></li>
 <li><p>Sampling coordinates</p></li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gen</code></p></li>
+<li><p><code>env</code></p></li>
+</ul></td>
 </tr>
 <tr class="odd">
 <td>LFMM</td>
@@ -323,7 +355,10 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 <li>Environmental layers</li>
 <li>Sampling coordinates</li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gen</code></p></li>
+<li><p><code>env</code></p></li>
+</ul></td>
 </tr>
 <tr class="even">
 <td>wingen</td>
@@ -334,7 +369,11 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 <li>Raster layer (<em>though not necessary</em>)</li>
 <li>Sampling coordinates</li>
 </ul></td>
-<td></td>
+<td><ul>
+<li><p><code>gen</code></p></li>
+<li><p><code>lyr</code></p></li>
+<li><p><code>coords</code></p></li>
+</ul></td>
 </tr>
 </tbody>
 </table>
@@ -351,3 +390,11 @@ this function for your analyses.
 ``` r
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
 ```
+
+### Installing on Ubuntu
+
+You may run into issues installing the rmapshaper package if you’re
+using a Ubuntu system. If so, run the following line of code before
+attempting to install the package:
+
+    sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
