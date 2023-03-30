@@ -93,8 +93,7 @@ A simple RDA is one in which our model will not account for covariables in the m
 
 ```{r full model, warning = FALSE, message = FALSE}
 mod_full <- rda_run(gen, env,
-  model = "full"
-)
+  model = "full")
 ```
 
 The resulting object is large, containing 12 elements relevant to the RDA. Let's take a look at what function was called. We can see that all environmental variables (CA_rPCA1, 2, and 3) were included in the model, and that geography or structure were not included in the model (and there were no conditioning variables).
@@ -234,7 +233,7 @@ rda_plot(mod_pRDA, axes = "all", binwidth = 20)
 Now, let's discover outliers with the `rda_getoutliers()` function. The method is specified using the `outlier_method` argument, and the number of standard deviations to detect outliers is specified by the `z` argument; it defaults to 3. The resulting object is a dataframe containing the SNP name, the RDA axis it's associated with, and the loading along this axis. A screeplot for the RDA axes is automatically generated (but can be switched off using the `plot` argument).
 
 ```{r z-scores}
-rda_sig_z <- rda_getoutliers(mod_pRDA, naxes = "all", outlier_method = "z", z = 3)
+rda_sig_z <- rda_getoutliers(mod_pRDA, naxes = "all", outlier_method = "z", z = 3, plot = FALSE)
 
 # How many outlier SNPs were detected?
 length(rda_sig_z$rda_snps)
