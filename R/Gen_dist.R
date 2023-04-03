@@ -13,7 +13,7 @@
 #' For calculating proportions of shared alleles, missing values are ignored (i.e., prop shared alleles calculated from present values; no scaling performed)
 #'
 #' @return pairwise distance matrix for given distance metric
-#'
+#' @export
 gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL, npc_selection = "auto", criticalpoint = 2.0234) {
   # Import vcf if provided --------------------------------------------------
 
