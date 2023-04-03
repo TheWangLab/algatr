@@ -138,6 +138,7 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
 #' @param metric_name_x name of distance metric for x axis; if DPS used, must be `"dps"`
 #' @param metric_name_y name of distance metric for y axis; if DPS used, must be `"dps"`
 #'
+#' @export
 gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
   # Check to ensure sample IDs match ----------------------------------------
 
