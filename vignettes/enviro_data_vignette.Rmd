@@ -87,7 +87,7 @@ Notice that `wclim` is a terra `SpatRaster` object. Let's take a look at what th
 
 ```{r wclim}
 # Load wclim object
-load(system.file("extdata", "wclim.RData", package = "algatr"))
+data("wclim")
 # Look at one of the layers, which corresponds to tile_15_wc2.1_30s_bio_1
 wclim[[1]]
 ```
