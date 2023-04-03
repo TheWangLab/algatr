@@ -18,7 +18,6 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 ```{r setup, include = FALSE, warning = FALSE, message = FALSE}
 library(algatr)
 library(terra)
-devtools::load_all()
 ```
 
 Are you a lazy algatr? The `do_everything_for_me()` function runs all six landscape genomic methods in the algatr package (wingen, TESS, GDM, MMRR, RDA, and LFMM) and provides limited options for customizability. This function primarily exists for fun and to demonstrate that algatr really can be run using on a vcf and sampling coordinates; we **do not** encourage researchers to actually perform analyses on their data using this function!

@@ -21,8 +21,6 @@ library(algatr)
 library(here)
 library(raster)
 library(terra)
-
-devtools::load_all()
 ```
 
 **If using GDM, please cite the following: for the GDM method, Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment, and for the `gdm` package, Fitzpatrick M., Mokany K., Manion G., Nieto-Lugilde D., Ferrier S. (2022). gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.**

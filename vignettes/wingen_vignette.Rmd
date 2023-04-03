@@ -21,8 +21,6 @@ library(algatr)
 library(wingen)
 library(raster)
 library(terra)
-
-devtools::load_all()
 ```
 
 **If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods in Ecology and Evolution. DOI: <https://doi.org/10.1111/2041-210X.14090>.**

@@ -23,8 +23,6 @@ library(vcfR)
 library(ecodist)
 library(adegenet)
 library(cowplot)
-
-devtools::load_all()
 ```
 
 For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are specified using the `dist_type` argument and are as follows:

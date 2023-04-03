@@ -29,8 +29,6 @@ library(RStoolbox)
 library(gridExtra)
 library(wingen)
 library(tibble)
-
-devtools::load_all()
 ```
 
 For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
