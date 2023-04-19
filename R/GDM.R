@@ -71,10 +71,12 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
     # replace with 0 for the logical test
     if (length(zero_env) == 0) zero_env <- 0
 
-    if (zero_env == 0)
+    if (zero_env == 0){
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
-    else
+      map <- NULL
+    } else {
       map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
+    }
 
   }
 
