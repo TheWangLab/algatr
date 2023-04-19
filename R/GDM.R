@@ -118,8 +118,8 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
   if (scale_gendist) {
     gendist <- scale01(gendist)
   }
-  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale = TRUE to rescale from 0 to 1")
-  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale_gendist = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale_gendist = TRUE to rescale from 0 to 1")
 
   # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
   site <- 1:nrow(gendist)
