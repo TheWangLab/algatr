@@ -62,7 +62,8 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
     dplyr::filter(predictor != "Geographic") %>%
     # used instead of summarize for cases where Geographic is the only variable
     dplyr::reframe(sum = coefficient) %>%
-    dplyr::pull()
+    dplyr::pull() %>%
+    sum()
 
   # if Geographic is the only variable zero_env will be an empty vector
   # replace with 0 for the logical test
@@ -87,7 +88,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if (geodist_type == "Euclidean" & !is.null(envlayers)) results[["rast"]] <- map else results[["rast"]] <- NULL
+  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) results[["rast"]] <- map else results[["rast"]] <- NULL
 
   return(results)
 }
