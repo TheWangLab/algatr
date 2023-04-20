@@ -56,28 +56,26 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Plot I-splines if output printed
   if (!quiet) gdm_plot_isplines(gdm_result$model)
 
+  # check if all env splines are zero
+  zero_env <-
+    coeff_df %>%
+    dplyr::filter(predictor != "Geographic") %>%
+    # used instead of summarize for cases where Geographic is the only variable
+    dplyr::reframe(sum = coefficient) %>%
+    dplyr::pull()
+
+  # if Geographic is the only variable zero_env will be an empty vector
+  # replace with 0 for the logical test
+  if (length(zero_env) == 0) zero_env <- 0
+  if (zero_env == 0) map <- NULL
+
   # Create and plot map
   if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars & !quiet) {
-
-    # check if all env splines are zero
-    zero_env <-
-      coeff_df %>%
-      dplyr::filter(predictor != "Geographic") %>%
-      # used instead of summarize for cases where Geographic is the only variable
-      dplyr::reframe(sum = coefficient) %>%
-      dplyr::pull()
-
-    # if Geographic is the only variable zero_env will be an empty vector
-    # replace with 0 for the logical test
-    if (length(zero_env) == 0) zero_env <- 0
-
     if (zero_env == 0){
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
-      map <- NULL
     } else {
       map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
     }
-
   }
 
   # Create list to store results
