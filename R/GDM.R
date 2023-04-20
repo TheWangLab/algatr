@@ -70,13 +70,13 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (zero_env == 0) map <- NULL
 
   # Create and plot map
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars & !quiet) {
+  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) {
     if (zero_env == 0){
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
     } else {
       map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
     }
-  } else map <- NULL
+  }
 
   # Create list to store results
   results <- list()
@@ -87,7 +87,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if (geodist_type == "Euclidean" & !is.null(envlayers)) results[["rast"]] <- map
+  if (geodist_type == "Euclidean" & !is.null(envlayers)) results[["rast"]] <- map else results[["rast"]] <- NULL
 
   return(results)
 }
