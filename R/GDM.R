@@ -57,7 +57,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (!quiet) gdm_plot_isplines(gdm_result$model)
 
   # Create and plot map
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & !plot_vars & !quiet) {
+  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars & !quiet) {
 
     # check if all env splines are zero
     zero_env <-
