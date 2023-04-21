@@ -56,8 +56,28 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Plot I-splines if output printed
   if (!quiet) gdm_plot_isplines(gdm_result$model)
 
+  # check if all env splines are zero
+  zero_env <-
+    coeff_df %>%
+    dplyr::filter(predictor != "Geographic") %>%
+    # used instead of summarize for cases where Geographic is the only variable
+    dplyr::reframe(sum = coefficient) %>%
+    dplyr::pull() %>%
+    sum()
+
+  # if Geographic is the only variable zero_env will be an empty vector
+  # replace with 0 for the logical test
+  if (length(zero_env) == 0) zero_env <- 0
+  if (zero_env == 0) map <- NULL
+
   # Create and plot map
-  if (geodist_type == "Euclidean" | is.null(envlayers)) map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
+  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) {
+    if (zero_env == 0){
+      warning("All model splines for environmental variables are zero, skipping creation of GDM map")
+    } else {
+      map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
+    }
+  }
 
   # Create list to store results
   results <- list()
@@ -68,7 +88,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if (geodist_type == "Euclidean" | is.null(envlayers)) results[["rast"]] <- map
+  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) results[["rast"]] <- map else results[["rast"]] <- NULL
 
   return(results)
 }
@@ -87,16 +107,18 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
+  # convert env to spat raster if it is a RasterLayer/RasterStack
+  if (inherits(env, "Raster")) env <- terra::rast(env)
 
-  # Extract environmental data if env is a RasterStack
-  if (inherits(env, "Raster")) env <- terra::extract(env, coords, ID = FALSE)
+  # Extract environmental data if env is a raster
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
 
   # Scale genetic distance data from 0 to 1
   if (scale_gendist) {
     gendist <- scale01(gendist)
   }
-  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale = TRUE to rescale from 0 to 1")
-  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale_gendist = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale_gendist = TRUE to rescale from 0 to 1")
 
   # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
   site <- 1:nrow(gendist)
@@ -334,6 +356,10 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if (n_layers > 3) {
     n_layers <- 3
   }
+
+  # Check if there are only coordinate layers
+  # If there are only coordinate layers (i.e., no env layers) than you cannot create the map
+  if (all(names(rastTrans) %in% c("xCoord", "yCoord"))) stop("All model splines for environmental variables are zero")
 
   # Make PCA raster
   pcaRast <- terra::predict(rastTrans, pcaSamp, index = 1:n_layers)
@@ -610,7 +636,7 @@ stack_to_rgb <- function(s) {
 
 #' Scale raster from 0 to 255
 #'
-#' @param r RasterLayer
+#' @param r SpatRast
 #'
 #' @noRd
 #' @export
@@ -745,3 +771,4 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
+
