@@ -68,7 +68,7 @@ gen[1:5, 1:5]
 
 ### Process environmental data
 
-Let's extract environmental variables using the `extract()` function from the raster package. We also need to standardize environmental varibles. This is particularly important if we are using (for example) bioclimatic variables as input, as units of measurement are completely different (e.g., mm for precipitation vs. degrees celsius for temperature). To do so, we'll use the `scale()` function within the raster package.
+Let's extract environmental variables using the `extract()` function from the raster package. We also need to standardize environmental variables. This is particularly important if we are using (for example) bioclimatic variables as input, as units of measurement are completely different (e.g., mm for precipitation vs. degrees Celsius for temperature). To do so, we'll use the `scale()` function within the raster package.
 
 ```{r enviro data}
 # Extract environmental vars
@@ -90,8 +90,7 @@ The main function within algatr to perform an RDA is `rda_run()`, which uses the
 A simple RDA is one in which our model will not account for covariables in the model, and is the default for `rda_run()`. Let's first run a simple RDA on all environmental variables (i.e., no variable selection). This is specified using the `model = "full"` argument.
 
 ```{r full model, warning = FALSE, message = FALSE}
-mod_full <- rda_run(gen, env,
-  model = "full")
+mod_full <- rda_run(gen, env, model = "full")
 ```
 
 The resulting object is large, containing 12 elements relevant to the RDA. Let's take a look at what function was called. We can see that all environmental variables (CA_rPCA1, 2, and 3) were included in the model, and that geography or structure were not included in the model (and there were no conditioning variables).
