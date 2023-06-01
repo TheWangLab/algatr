@@ -48,7 +48,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
   env <- data.frame(env)
 
   # Format coords
-  coords <- coords_to_df(coords)
+  if (!is.null(coords)) coords <- coords_to_df(coords)
 
   # Modify genetic data -----------------------------------------------------
 
@@ -799,7 +799,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE) {
   df <- df %>%
     tibble::rownames_to_column(var = "Model")
 
-  if (!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c("Model", "pRDA model call"), round, digits))
+  if (!is.null(digits)) df <- df %>% dplyr::mutate(dplyr::across(-c("Model", "pRDA model call"), ~ round(.x, digits)))
 
   d <- max(abs(min(df$Inertia, na.rm = TRUE)), abs(max(df$Inertia, na.rm = TRUE)))
 
@@ -809,7 +809,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE) {
       gt::gt() %>%
       gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d, d)) %>%
       gt::sub_missing(missing_text = "") %>%
-      gt::tab_header(title = gt::md("Variance partitioning"))
+      gt::tab_header(title = "Variance partitioning")
 
     # Add column with call
     if (call_col) {
@@ -817,7 +817,7 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE) {
         gt::gt() %>%
         gtExtras::gt_hulk_col_numeric("Inertia", trim = TRUE, domain = c(-d, d)) %>%
         gt::sub_missing(missing_text = "") %>%
-        gt::tab_header(title = gt::md("Variance partitioning"))
+        gt::tab_header(title = "Variance partitioning")
     }
   })
 
