@@ -148,7 +148,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 
 #' Run RDA
 #'
-#' @inheritParams rda_doEverything
+#' @inheritParams rda_do_everything
 #'
 #' @return RDA model
 #' @export
@@ -479,7 +479,6 @@ rda_ggtidy <- function(mod, rda_snps, axes) {
   return(tidy_list)
 }
 
-
 #' Helper function to plot RDA biplot
 #'
 #' @export
@@ -644,7 +643,7 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 
 #' Partial RDA variance partitioning
 #'
-#' @inheritParams rda_doEverything
+#' @inheritParams rda_do_everything
 #'
 #' @return df with relevant statistics from variance partitioning analysis
 #' @export
