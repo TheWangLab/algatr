@@ -168,6 +168,18 @@ map_mask <- extrap_mask(liz_coords, maprgb, method = "buffer", buffer_width = 1.
 plot_extrap_mask(maprgb, map_mask, RGB = TRUE, mask_col = rgb(1, 1, 1, alpha = 0.6))
 ```
 
+## Cross-validation
+
+
+```{r, fig.width = 10, fig.height = 8}
+plot(coeff_plot)
+```
+
+```{r, fig.width = 2, fig.height = 5}
+plot(error_plot)
+```
+
+
 ## Running GDM with `gdm_do_everything()`
 
 ------------------------------------------------------------------------

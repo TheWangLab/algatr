@@ -51,6 +51,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 
   # Get coefficients from models and print table if specified
   coeff_df <- gdm_df(gdm_result)
+
   if (!quiet) print(gdm_table(gdm_result))
 
   # Plot I-splines if output printed
@@ -223,9 +224,9 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     # Run final model
     gdm_model_final <- gdm::gdm(gdmData_final, geo = geo)
 
-    return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp))
+    return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp, gdmData = gdmData))
   }
-  return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL))
+  return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL, gdmData = gdmData))
 }
 
 
@@ -772,3 +773,122 @@ scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
 
+
+
+#### CROSS VALIDATION
+
+gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "full", sig = 0.05, nperm = 50,
+                       geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = TRUE, plot_vars = TRUE,
+                       quiet = FALSE) {
+
+  # Check CRS of envlayers and coords
+  crs_check(coords, envlayers)
+
+  # If coords not provided, make env dataframe from layers and coords
+  if (is.null(env)) env <- terra::extract(envlayers, coords, ID = FALSE)
+
+  gdm_run_safely <- purrr::safely(gdm_run, quiet = FALSE)
+
+  gdm_result_full <-
+    gdm_run_safely(
+      gendist = gendist,
+      coords = coords,
+      env = env,
+      model = model,
+      sig = sig,
+      nperm = nperm,
+      scale_gendist = scale_gendist,
+      geodist_type = geodist_type,
+      dist_lyr = dist_lyr
+    )
+
+  full_coeffs <-
+    gdm_result_full$result %>%
+    gdm_df()  %>%
+    tidyr::pivot_wider(names_from = predictor, values_from = coefficient)
+
+  full_pred <- data.frame(i = 1:nrow(coords), full = gdm_result_full$result$model$predict)
+
+  gdm.predict(gdm_result_full$result$model, env)
+  gdm_result_uncertainty <-
+    purrr::map(
+      1:nrow(coords),
+      ~ run_lopocv(
+        .x,
+        gendist = gendist,
+        env = env,
+        coords = coords,
+        scale_gendist = scale_gendist,
+        geodist_type = geodist_type,
+        dist_lyr = dist_lyr,
+        full_gdm = gdm_result_full$result
+      )
+    )
+
+  test_df <-
+    gdm_result_uncertainty %>%
+    purrr::map("test_error") %>%
+    dplyr::bind_rows() %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  coeff_error_df <-
+    gdm_result_uncertainty %>%
+    purrr::map("coeffs") %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(dplyr::across(c(colnames(full_coeffs)), ~ err(., full_coeffs[[dplyr::cur_column()]]))) %>%
+    tidyr::pivot_longer(-i, names_to = "variable", values_to = "coeff_error")
+
+  coeff_df <-
+    gdm_result_uncertainty %>%
+    purrr::map("coeffs") %>%
+    dplyr::bind_rows() %>%
+    tidyr::pivot_longer(-i, names_to = "variable", values_to = "coeff") %>%
+    dplyr::full_join(coeff_error_df, by = c("i", "variable")) %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  plt1 <- plot_lopocv(coeff_df, "coeff", option = "mako") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient")
+  plt2 <- plot_lopocv(coeff_df, "coeff_error", option = "rocket") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient error")
+  plt3 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted dissimilarity RMSE")
+
+  coeff_plot <- gridExtra::arrangeGrob(plt1, plt2)
+  plot(coeff_plot)
+
+  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = plt3))
+
+}
+
+
+plot_lopocv <- function(df, var, option){
+  ggplot2::ggplot(data = df, ggplot2::aes(x = x, y = y, col = .data[[var]])) +
+    ggplot2::geom_point(cex = 3, pch = 19) +
+    ggplot2::scale_color_viridis_c(option = option, end = 0.9, name = "value") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.title = ggplot2::element_blank())
+}
+
+run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dist_lyr, full_gdm){
+  gdm_run_safely <- purrr::safely(gdm_run, quiet = FALSE)
+  gdm_result_train <- gdm_run_safely(gendist[-i, -i], coords = coords[-i,], env = env[-i, ], model = "full", scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  if (is.null(gdm_result_train$result)) return(data.frame(i = i))
+
+  coeffs <-
+    gdm_df(gdm_result_train$result) %>%
+    tidyr::pivot_wider(names_from = predictor, values_from = coefficient) %>%
+    dplyr::mutate(i = i)
+
+  pred_test <- predict(gdm_result_train$result$model, full_gdm$gdmData)
+
+  pred <-
+    data.frame(full_gdm$gdmData, pred_test = pred_test, pred_full = full_gdm$model$predicted) %>%
+    dplyr::mutate(error = err(pred_test, pred_full))
+
+  test_error <-
+    pred %>%
+    dplyr::filter((s1.xCoord == coords[i, "x"] & s1.yCoord == coords[i, "y"]) | (s2.xCoord == coords[i, "x"] & s2.yCoord == coords[i, "y"])) %>%
+    dplyr::summarize(rmse = sqrt(mean(error^2, na.rm = TRUE)), mae = mean(error, na.rm = TRUE)) %>%
+    dplyr::mutate(i = i)
+
+  return(list(coeffs = coeffs, test_error = test_error))
+}
+
+err <- function(pred, obs) abs(pred - obs)
