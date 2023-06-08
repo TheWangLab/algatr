@@ -807,13 +807,10 @@ gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "f
     gdm_df()  %>%
     tidyr::pivot_wider(names_from = predictor, values_from = coefficient)
 
-  full_pred <- data.frame(i = 1:nrow(coords), full = gdm_result_full$result$model$predict)
-
-  gdm.predict(gdm_result_full$result$model, env)
   gdm_result_uncertainty <-
     purrr::map(
       1:nrow(coords),
-      ~ run_lopocv(
+      ~ gdm_run_lopocv(
         .x,
         gendist = gendist,
         env = env,
@@ -852,21 +849,13 @@ gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "f
 
   coeff_plot <- gridExtra::arrangeGrob(plt1, plt2)
   plot(coeff_plot)
+  plot(plt3)
 
   return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = plt3))
 
 }
 
-
-plot_lopocv <- function(df, var, option){
-  ggplot2::ggplot(data = df, ggplot2::aes(x = x, y = y, col = .data[[var]])) +
-    ggplot2::geom_point(cex = 3, pch = 19) +
-    ggplot2::scale_color_viridis_c(option = option, end = 0.9, name = "value") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(axis.title = ggplot2::element_blank())
-}
-
-run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dist_lyr, full_gdm){
+gdm_run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dist_lyr, full_gdm){
   gdm_run_safely <- purrr::safely(gdm_run, quiet = FALSE)
   gdm_result_train <- gdm_run_safely(gendist[-i, -i], coords = coords[-i,], env = env[-i, ], model = "full", scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
   if (is.null(gdm_result_train$result)) return(data.frame(i = i))
@@ -889,6 +878,15 @@ run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dis
     dplyr::mutate(i = i)
 
   return(list(coeffs = coeffs, test_error = test_error))
+}
+
+
+plot_lopocv <- function(df, var, option){
+  ggplot2::ggplot(data = df, ggplot2::aes(x = x, y = y, col = .data[[var]])) +
+    ggplot2::geom_point(cex = 3, pch = 19) +
+    ggplot2::scale_color_viridis_c(option = option, end = 0.9, name = "value") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.title = ggplot2::element_blank())
 }
 
 err <- function(pred, obs) abs(pred - obs)

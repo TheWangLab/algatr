@@ -822,3 +822,125 @@ rda_varpart_table <- function(df, digits = 2, call_col = FALSE) {
 
   tbl
 }
+
+
+
+rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, correctPC = FALSE,
+                       outlier_method = "p", sig = 0.05, z = 3,
+                       p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
+                       Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, quiet = FALSE) {
+
+  # Extract environmental data if env is a raster
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+  if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
+
+  # Standardize environmental variables
+  if (stdz) env <- terra::scale(env, center = TRUE, scale = TRUE)
+  env <- data.frame(env)
+
+  # Format coords
+  if (!is.null(coords)) coords <- coords_to_df(coords)
+
+  # Modify genetic data -----------------------------------------------------
+
+  # Convert vcf to dosage
+  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+
+  # Perform imputation with warning
+  if (any(is.na(gen))) {
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
+
+  # Check for NAs
+  if (any(is.na(gen))) {
+    stop("NA values found in gen data")
+  }
+
+  if (any(is.na(env))) {
+    warning("NA values found in env data, removing rows with NAs for RDA")
+    gen <- gen[complete.cases(env), ]
+    coords <- coords[complete.cases(env), ]
+    # NOTE: this must be last
+    env <- env[complete.cases(env), ]
+  }
+
+  # Running RDA ----------------------------------------------------------------------------------------------------------------
+
+  # Run model
+  mod <- rda_run(gen, env, coords,
+                 model = model,
+                 correctGEO = correctGEO,
+                 correctPC = correctPC,
+                 nPC = nPC,
+                 Pin = Pin,
+                 R2permutations = R2permutations,
+                 R2scope = R2scope)
+
+  # If NULL, exit
+  if (is.null(mod)) {
+    warning("Model is NULL, returning NULL object")
+    return(NULL)
+  }
+
+  # Identify candidate SNPs ----------------------------------------------------------------------------------------------------
+
+  # Running with all axes
+  rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, p_adj = p_adj, sig = sig)
+
+  # Get SNPs
+  rda_snps <- rda_sig$rda_snps
+
+  lopocv_results <-
+    purrr::map(
+      1:nrow(gen),
+      ~ rda_lopocv(
+        .x,
+        full_snps = rda_snps,
+        gen = gen,
+        env = env,
+        correctGEO = correctGEO,
+        correctPC = correctPC,
+        nPC = nPC,
+        naxes = naxes,
+        outlier_method = outlier_method,
+        p_adj = p_adj,
+        sig = sig
+      )
+    )
+
+  df <-
+    lopocv_results %>%
+    dplyr::bind_rows() %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  plt1 <- plot_lopocv(summary_df, "TPR", "mako") + ggplot2::ggtitle("Psuedo TPR", subtitle = "(# test positives in full)/(# full positives)")
+  plt2 <- plot_lopocv(summary_df, "FDR", "rocket") + ggplot2::ggtitle("Psuedo FDR", subtitle = "(# test positives not in full)/(# test positives)")
+  plot(gridExtra::grid.arrange(plt1, plt2, nrow = 1))
+
+  return(lopocv = df, plots = list(TPR = plt1, FDR = plt2))
+}
+
+rda_lopocv <- function(i, full_snps, gen, env, coords,
+                       correctGEO, correctPC, nPC,
+                       naxes, outlier_method, p_adj, sig){
+  # Run model
+  mod <- rda_run(gen[-i, ], env[-i, ], coords[-i, ],
+                 model = "full",
+                 correctGEO = correctGEO,
+                 correctPC = correctPC,
+                 nPC = nPC)
+
+  # Running with all axes
+  rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, p_adj = p_adj, sig = sig)
+
+  # Get SNPs
+  test_snps <- rda_sig$rda_snps
+  TP <- sum(test_snps %in% full_snps)
+  FD <- length(test_snps) - TP
+  TPR <- TP / length(full_snps)
+  FDR <- FD / length(test_snps)
+
+  return(data.frame(i = i, TPR = TPR, FDR = FDR))
+}

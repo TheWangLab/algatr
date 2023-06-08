@@ -220,7 +220,8 @@ MMRR <- function(Y, X, nperm = 999, scale = TRUE) {
     tpvalue = tp,
     Fstatistic = Fstat,
     Fpvalue = Fp,
-    conf_df = conf_df
+    conf_df = conf_df,
+    model = stats::lm(y ~ ., data = data.frame(Xmats))
   ))
 }
 
@@ -422,3 +423,112 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE) {
 
   tbl
 }
+
+
+#### CROSS VALIDATION
+
+mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
+
+  # Convert env to SpatRaster if Raster
+  # note: need to check specifically for raster instead of not SpatRaster because it could be a df
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+
+  # Check coords and env, if env is a raster
+  if (inherits(env, "SpatRaster")) crs_check(coords, env) else crs_check(coords)
+
+  # If not provided, make env data frame from layers and coords
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
+
+  # TODO: SCALE HERE BUT NOT ELSEWHERE (!! CHECK THIS !!)
+  if (stdz) env <- scale(env)
+  # Make env dist matrix
+  X <- env_dist(env)
+
+  # Make distance matrix
+  X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+
+  # Make geodist mat
+  Y <- as.matrix(gendist)
+
+  # Run MMRR with full dataset
+  mmrr_results_full <- mmrr_full(Y, X, nperm = nperm, stdz = FALSE, quiet = TRUE)
+  full_coeffs <-
+    mmrr_results_full$coeff_df %>%
+    dplyr::filter(var != "Intercept") %>%
+    dplyr::select(var, estimate) %>%
+    tidyr::pivot_wider(names_from = var, values_from = estimate)
+
+  #LOPOCV
+  mmrr_result_uncertainty <-
+    purrr::map(
+      1:nrow(coords),
+      ~ mmrr_run_lopocv(
+        .x,
+        Y,
+        X,
+        nperm = nperm,
+        stdz = stdz,
+        full_mmrr = mmrr_results_full$mod$model
+      )
+    )
+
+  test_df <-
+    mmrr_result_uncertainty %>%
+    purrr::map("test_error") %>%
+    dplyr::bind_rows() %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  coeff_error_df <-
+    mmrr_result_uncertainty %>%
+    purrr::map("coeffs") %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(dplyr::across(c(colnames(full_coeffs)), ~ err(., full_coeffs[[dplyr::cur_column()]]))) %>%
+    tidyr::pivot_longer(-i, names_to = "variable", values_to = "coeff_error")
+
+  coeff_df <-
+    mmrr_result_uncertainty %>%
+    purrr::map("coeffs") %>%
+    dplyr::bind_rows() %>%
+    tidyr::pivot_longer(-i, names_to = "variable", values_to = "coeff") %>%
+    dplyr::full_join(coeff_error_df, by = c("i", "variable")) %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  plt1 <- plot_lopocv(coeff_df, "coeff", option = "mako") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient")
+  plt2 <- plot_lopocv(coeff_df, "coeff_error", option = "rocket") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient error")
+  plt3 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted dissimilarity RMSE")
+
+  coeff_plot <- gridExtra::arrangeGrob(plt1, plt2)
+  plot(coeff_plot)
+  plot(plt3)
+
+  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = plt3))
+
+}
+
+mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr){
+  test_X <- purrr::map(X, ~.x[i, ])
+  train_X <- purrr::map(X, ~.x[-i, ])
+  mmrr_results <- mmrr_full(Y[-i, -i], train_X, nperm = nperm, stdz = FALSE, quiet = TRUE)
+
+  coeffs <-
+    mmrr_results$coeff_df %>%
+    dplyr::filter(var != "Intercept") %>%
+    dplyr::select(var, estimate) %>%
+    tidyr::pivot_wider(names_from = var, values_from = estimate) %>%
+    dplyr::mutate(i = i)
+
+  x <- data.frame(test_X)
+  pred_full <- predict(mmrr_results_full$mod$model, x)
+  pred_test <- predict(mmrr_results$mod$model, x)
+
+  test_error <-
+    data.frame(pred_test = pred_test, pred_full = pred_full) %>%
+    dplyr::mutate(error = err(pred_test, pred_full)) %>%
+    dplyr::summarize(rmse = sqrt(mean(error^2, na.rm = TRUE)), mae = mean(error, na.rm = TRUE)) %>%
+    dplyr::mutate(i = i)
+
+  return(list(coeffs = coeffs, test_error = test_error))
+}
+
+
+

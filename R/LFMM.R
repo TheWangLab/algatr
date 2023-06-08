@@ -512,3 +512,101 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
     )
   return(plt)
 }
+
+#### CROSS VALIDATION
+
+
+lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
+                        K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
+                        p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
+                        low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
+
+  full <- lfmm_run(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif")
+
+  # Get and check environmental data
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+  if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
+
+  # Convert vcf to dosage matrix
+  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+
+  # Perform imputation with warning
+  if (any(is.na(gen))) {
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
+
+  # PCA to determine number of latent factors
+  # If K is not specified, it is calculated based on given K selection method
+  if (is.null(K)) {
+    K <- select_K(gen,
+                  K_selection = K_selection, coords = coords,
+                  Kvals = Kvals, criticalpoint = criticalpoint, low = low,
+                  max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
+  }
+
+  # Run LFMM
+  results <- lfmm_run(gen, env, K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
+
+  lopocv_results <-
+    purrr::map(
+      1:nrow(gen),
+      ~ lfmm_lopocv(
+        .x,
+        full_snps = results$cand_snps,
+        gen = gen,
+        env = env,
+        K = K,
+        lfmm_method = lfmm_method,
+        p_adj = p_adj,
+        sig = sig,
+        calibrate = calibrate
+      )
+    )
+
+  df <-
+    lopocv_results %>%
+    dplyr::bind_rows() %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  plt1 <- plot_lopocv(df, "TPR", "mako") + ggplot2::ggtitle("Psuedo TPR", subtitle = "(# test positives in full)/(# full positives)") + ggplot2::facet_wrap(~var)
+  plt2 <- plot_lopocv(df, "FDR", "rocket") + ggplot2::ggtitle("Psuedo FDR", subtitle = "(# test positives not in full)/(# test positives)") + ggplot2::facet_wrap(~var)
+  plot(gridExtra::grid.arrange(plt1, plt2))
+
+  summary_df <-
+    df %>%
+    dplyr::group_by(i) %>%
+    dplyr::summarize(TPR = mean(TPR), FDR = mean(FDR)) %>%
+    dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
+
+  plt3 <- plot_lopocv(summary_df, "TPR", "mako") + ggplot2::ggtitle("Psuedo TPR", subtitle = "(# test positives in full)/(# full positives)")
+  plt4 <- plot_lopocv(summary_df, "FDR", "rocket") + ggplot2::ggtitle("Psuedo FDR", subtitle = "(# test positives not in full)/(# test positives)")
+  plot(gridExtra::grid.arrange(plt3, plt4, nrow = 1))
+
+  return(lopocv = df, mean = summary_df, plots = list(TPR = plt1, FDR = plt2, TPR_mean = plt3, FDR_mean = plt4))
+
+}
+
+lfmm_lopocv <- function(i, full_snps, gen, env, K, lfmm_method, p_adj, sig, calibrate){
+  test <- lfmm_run(gen[-i,], env[-i,], K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
+
+  test_snps <- test$cand_snps
+  stats <-
+    purrr::map(unique(full_snps$var), \(x) {
+      var_full_snps <-
+        full_snps %>% dplyr::filter(var == !!x) %>% dplyr::pull(snp)
+      var_test_snps <-
+        test_snps %>% dplyr::filter(var == !!x) %>% dplyr::pull(snp)
+      TP <- sum(var_test_snps %in% var_full_snps)
+      FD <- length(var_test_snps) - TP
+      TPR <- TP / length(var_full_snps)
+      FDR <- FD / length(var_test_snps)
+      return(data.frame(var = x, TPR = TPR, FDR = FDR))
+    }) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(i = i)
+
+  return(stats)
+}
+
