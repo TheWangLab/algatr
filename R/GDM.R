@@ -845,13 +845,15 @@ gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "f
 
   plt1 <- plot_lopocv(coeff_df, "coeff", option = "mako") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient")
   plt2 <- plot_lopocv(coeff_df, "coeff_error", option = "rocket") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient error")
-  plt3 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted dissimilarity RMSE")
+  plt4 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted dissimilarity RMSE")
+  plt3 <- plot_lopocv(test_df, "r", option = "mako") + ggplot2::ggtitle("Predicted dissimilarity correlation")
 
   coeff_plot <- gridExtra::arrangeGrob(plt1, plt2)
+  error_plot <- gridExtra::arrangeGrob(plt3, plt4, nrow = 1)
   plot(coeff_plot)
-  plot(plt3)
+  plot(error_plot)
 
-  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = plt3))
+  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = error_plot))
 
 }
 
@@ -866,15 +868,15 @@ gdm_run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type,
     dplyr::mutate(i = i)
 
   pred_test <- predict(gdm_result_train$result$model, full_gdm$gdmData)
-
+  pred_full <- full_gdm$model$predicted
   pred <-
-    data.frame(full_gdm$gdmData, pred_test = pred_test, pred_full = full_gdm$model$predicted) %>%
+    data.frame(full_gdm$gdmData, pred_test = pred_test, pred_full = pred_full) %>%
     dplyr::mutate(error = err(pred_test, pred_full))
 
   test_error <-
     pred %>%
     dplyr::filter((s1.xCoord == coords[i, "x"] & s1.yCoord == coords[i, "y"]) | (s2.xCoord == coords[i, "x"] & s2.yCoord == coords[i, "y"])) %>%
-    dplyr::summarize(rmse = sqrt(mean(error^2, na.rm = TRUE)), mae = mean(error, na.rm = TRUE)) %>%
+    dplyr::summarize(rmse = sqrt(mean(error^2, na.rm = TRUE)), mae = mean(error, na.rm = TRUE), r = cor(pred_test, pred_full, use = "complete.obs")) %>%
     dplyr::mutate(i = i)
 
   return(list(coeffs = coeffs, test_error = test_error))
