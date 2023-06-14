@@ -912,6 +912,7 @@ rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, cor
 
   df <-
     lopocv_results %>%
+    purrr::map("stats") %>%
     dplyr::bind_rows() %>%
     dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
 
@@ -919,7 +920,14 @@ rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, cor
   plt2 <- plot_lopocv(summary_df, "FDR", "rocket") + ggplot2::ggtitle("Psuedo FDR", subtitle = "(# test positives not in full)/(# test positives)")
   plot(gridExtra::grid.arrange(plt1, plt2, nrow = 1))
 
-  return(lopocv = df, plots = list(TPR = plt1, FDR = plt2))
+  support <-
+    lopocv_results %>%
+    purrr::map("snp_support") %>%
+    dplyr::bind_rows() %>%
+    dplyr::group_by(snps) %>%
+    dplyr::summarize(support = mean(support, na.rm = TRUE), .groups = "keep")
+
+  return(stats = df, support = support, plots = list(TPR = plt1, FDR = plt2))
 }
 
 rda_lopocv <- function(i, full_snps, gen, env, coords,
@@ -941,6 +949,7 @@ rda_lopocv <- function(i, full_snps, gen, env, coords,
   FD <- length(test_snps) - TP
   TPR <- TP / length(full_snps)
   FDR <- FD / length(test_snps)
+  snp_support <- data.frame(i = i, snps = full_snps, support = (full_snps %in% test_snps))
 
-  return(data.frame(i = i, TPR = TPR, FDR = FDR))
+  return(list(stats = data.frame(i = i, var = x, TPR = TPR, FDR = FDR), snp_support = snp_support))
 }
