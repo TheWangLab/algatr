@@ -567,6 +567,7 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
 
   df <-
     lopocv_results %>%
+    purrr::map("stats") %>%
     dplyr::bind_rows() %>%
     dplyr::left_join(data.frame(i = 1:nrow(coords), coords), by = "i")
 
@@ -584,7 +585,14 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
   plt4 <- plot_lopocv(summary_df, "FDR", "rocket") + ggplot2::ggtitle("Psuedo FDR", subtitle = "(# test positives not in full)/(# test positives)")
   plot(gridExtra::grid.arrange(plt3, plt4, nrow = 1))
 
-  return(lopocv = df, mean = summary_df, plots = list(TPR = plt1, FDR = plt2, TPR_mean = plt3, FDR_mean = plt4))
+  support <-
+    lopocv_results %>%
+    purrr::map("snp_support") %>%
+    dplyr::bind_rows() %>%
+    dplyr::group_by(var, snps) %>%
+    dplyr::summarize(support = mean(support, na.rm = TRUE), .groups = "keep")
+
+  return(stats = df, mean_stats = summary_df, support = support, plots = list(TPR = plt1, FDR = plt2, TPR_mean = plt3, FDR_mean = plt4))
 
 }
 
@@ -592,7 +600,7 @@ lfmm_lopocv <- function(i, full_snps, gen, env, K, lfmm_method, p_adj, sig, cali
   test <- lfmm_run(gen[-i,], env[-i,], K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
 
   test_snps <- test$cand_snps
-  stats <-
+  result <-
     purrr::map(unique(full_snps$var), \(x) {
       var_full_snps <-
         full_snps %>% dplyr::filter(var == !!x) %>% dplyr::pull(snp)
@@ -602,11 +610,14 @@ lfmm_lopocv <- function(i, full_snps, gen, env, K, lfmm_method, p_adj, sig, cali
       FD <- length(var_test_snps) - TP
       TPR <- TP / length(var_full_snps)
       FDR <- FD / length(var_test_snps)
-      return(data.frame(var = x, TPR = TPR, FDR = FDR))
-    }) %>%
-    dplyr::bind_rows() %>%
-    dplyr::mutate(i = i)
 
-  return(stats)
+      snp_support <- data.frame(i = i, var = var, snps = var_full_snps, support = (var_full_snps %in% var_test_snps))
+
+      return(list(stats = data.frame(i = i, var = x, TPR = TPR, FDR = FDR), snp_support = snp_support))
+    })
+
+  result <- result %>% purrr::list_transpose() %>% purrr::map(dplyr::bind_rows)
+
+  return(result)
 }
 
