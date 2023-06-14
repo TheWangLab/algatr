@@ -439,8 +439,6 @@ mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Eu
   # If not provided, make env data frame from layers and coords
   if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
 
-  # TODO: SCALE HERE BUT NOT ELSEWHERE (!! CHECK THIS !!)
-  if (stdz) env <- scale(env)
   # Make env dist matrix
   X <- env_dist(env)
 
@@ -451,7 +449,7 @@ mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Eu
   Y <- as.matrix(gendist)
 
   # Run MMRR with full dataset
-  mmrr_results_full <- mmrr_full(Y, X, nperm = nperm, stdz = FALSE, quiet = TRUE)
+  mmrr_results_full <- mmrr_full(Y, X, nperm = nperm, stdz = TRUE, quiet = TRUE)
   full_coeffs <-
     mmrr_results_full$coeff_df %>%
     dplyr::filter(var != "Intercept") %>%
@@ -495,20 +493,22 @@ mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Eu
 
   plt1 <- plot_lopocv(coeff_df, "coeff", option = "mako") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient")
   plt2 <- plot_lopocv(coeff_df, "coeff_error", option = "rocket") + ggplot2::facet_wrap(~variable, nrow = 1) + ggplot2::ggtitle("Model coefficient error")
-  plt3 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted dissimilarity RMSE")
+  plt3 <- plot_lopocv(test_df, "r", option = "mako") + ggplot2::ggtitle("Predicted genetic distance correlation")
+  plt4 <- plot_lopocv(test_df, "rmse", option = "rocket") + ggplot2::ggtitle("Predicted genetic distance RMSE")
 
   coeff_plot <- gridExtra::arrangeGrob(plt1, plt2)
+  error_plot <- gridExtra::arrangeGrob(plt3, plt4, nrow = 1)
   plot(coeff_plot)
-  plot(plt3)
+  plot(error_plot)
 
-  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = plt3))
+  return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = error_plot))
 
 }
 
 mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr){
   test_X <- purrr::map(X, ~.x[i, ])
   train_X <- purrr::map(X, ~.x[-i, ])
-  mmrr_results <- mmrr_full(Y[-i, -i], train_X, nperm = nperm, stdz = FALSE, quiet = TRUE)
+  mmrr_results <- mmrr_full(Y[-i, -i], train_X, nperm = nperm, stdz = TRUE, quiet = TRUE)
 
   coeffs <-
     mmrr_results$coeff_df %>%
@@ -524,7 +524,9 @@ mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr){
   test_error <-
     data.frame(pred_test = pred_test, pred_full = pred_full) %>%
     dplyr::mutate(error = err(pred_test, pred_full)) %>%
-    dplyr::summarize(rmse = sqrt(mean(error^2, na.rm = TRUE)), mae = mean(error, na.rm = TRUE)) %>%
+    dplyr::summarize(r = cor(pred_test, pred_full, use = "complete.obs"),
+                     rmse = sqrt(mean(error^2, na.rm = TRUE)),
+                     mae = mean(error, na.rm = TRUE)) %>%
     dplyr::mutate(i = i)
 
   return(list(coeffs = coeffs, test_error = test_error))
