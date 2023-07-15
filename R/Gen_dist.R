@@ -148,10 +148,22 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
 
   # Melt data from square to long -------------------------------------------
 
-  melt_x <- harrietr::melt_dist(as.matrix(dist_x)) %>%
-    dplyr::rename(!!metric_name_x := dist)
-  melt_y <- harrietr::melt_dist(as.matrix(dist_y)) %>%
-    dplyr::rename(!!metric_name_y := dist)
+  # Assign NAs to upper triangle of square matrix
+  dist_x[upper.tri(dist_x, diag = FALSE)] <- NA
+
+  melt_x <- dist_x %>%
+    tibble::rownames_to_column(var = "comparison") %>%
+    tidyr::pivot_longer(cols = -(comparison)) %>%
+    na.omit() %>%
+    dplyr::filter(comparison != name) %>%
+    dplyr::rename(!!metric_name_x := value)
+
+  melt_y <- dist_y %>%
+    tibble::rownames_to_column(var = "comparison") %>%
+    tidyr::pivot_longer(cols = -(comparison)) %>%
+    na.omit() %>%
+    dplyr::filter(comparison != name) %>%
+    dplyr::rename(!!metric_name_y := value)
 
 
   # Build plots -------------------------------------------------------------
