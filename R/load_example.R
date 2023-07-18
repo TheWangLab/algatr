@@ -4,10 +4,8 @@
 #'
 #' @param quiet whether to load without messages
 #'
-#' @return
+#' @return loads liz_vcf, liz_gendist, liz_coords, and CA_env objects
 #' @export
-#'
-#' @examples
 load_algatr_example <- function(quiet = FALSE) {
   # Load all data
   utils::data(list = c("liz_vcf", "liz_coords", "liz_gendist", "CA_env"))

@@ -8,10 +8,8 @@
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
-#' @return
+#' @return results from all six analyses contained within algatr
 #' @export
-#'
-#' @examples
 do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE) {
 
   # Data processing ---------------------------------------------------------

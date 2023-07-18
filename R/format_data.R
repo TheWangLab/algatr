@@ -31,8 +31,6 @@ vcf_check <- function(x) {
 #'
 #' @return object (of input type) with islands removed
 #' @export
-#'
-#' @examples
 rm_islands <- function(input, shape, min_vertices = 10000) {
   # Convert if SpatVector provided ------------------------------------------
   if (inherits(shape, "SpatVector")) shape <- sf::st_as_sf(shape)
@@ -56,16 +54,13 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
   }
 }
 
-
 #' Impute NA values
 #' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
 #' @param x matrix
 #' @param f function to use for imputation (defaults to median)
 #'
-#' @return
+#' @return matrix of values with missing values imputed
 #' @export
-#'
-#' @examples
 simple_impute <- function(x, FUN = median) {
   x_noNA <- apply(x, 2, impute_helper, FUN)
   return(x_noNA)
@@ -83,10 +78,8 @@ impute_helper <- function(i, FUN = median) {
 #'
 #' @param env object of type SpatRaster or RasterStack
 #'
-#' @return
+#' @return RGB-scaled values
 #' @export
-#'
-#' @examples
 scaleRGB <- function(env) {
   # Convert to SpatRaster if RasterStack provided ---------------------------
   if (!inherits(env, "SpatRaster")) env <- terra::rast(env)
