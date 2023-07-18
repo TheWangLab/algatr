@@ -761,7 +761,7 @@ rda_varpart_helper <- function(mod) {
 #' @param digits number of digits to include (defaults to 2)
 #' @param call_col whether to include column with RDA call (defaults to FALSE)
 #'
-#' @return
+#' @return object of class `gt` with RDA variance partitioning results
 #' @export
 #'
 #' @family RDA functions
