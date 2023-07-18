@@ -95,11 +95,10 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
 #' @param X list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
@@ -233,16 +232,14 @@ unfold <- function(X, scale = TRUE) {
   return(x)
 }
 
-
 #' Make nice dataframe from MMRR results
 #'
 #' @param mod the fitted MMRR model
 #'
-#' @return
+#' @return dataframe of MMRR results
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_df <- function(mod) {
   coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
   coeff_df$var <- rownames(coeff_df)
@@ -263,11 +260,10 @@ mmrr_df <- function(mod) {
 #' @param var_names add variable names to plot (defaults to NULL)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return plots of MMRR single variable relationships, the fitted relationship, and the covariances between predictor variables
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL) {
   # Plot single variable relationships
   if ("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
