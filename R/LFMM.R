@@ -165,7 +165,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #'
 #' @param df df element from \code{\link{lfmm_run}} results
 #' @param sig alpha level for determining candidate snps (defaults to 0.5)
-#' @param sig_only only include SNPs that exceeded the significance threshold in the table
+#' @param sig_only only include SNPs that exceeded the significance threshold in the table (defaults to TRUE)
 #' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
 #' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
