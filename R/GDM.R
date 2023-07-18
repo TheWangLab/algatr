@@ -22,7 +22,6 @@
 #'
 #' @export
 #'
-#' @examples
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
                               quiet = FALSE) {
