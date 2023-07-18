@@ -20,8 +20,6 @@
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
-#' @inheritParams vegan::ordiR2step
-#'
 #' @importFrom vegan rda
 #'
 #' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
