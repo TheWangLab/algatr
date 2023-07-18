@@ -177,7 +177,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' @export
 #'
 #' @family LFMM functions
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE) {
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, rows = NULL, digits = 2, footnotes = TRUE) {
   if (!is.null(var)) df <- df[df$var %in% var, ]
   if (sig_only) df <- df[df$adjusted.pvalue < sig, ]
   if (order) df <- df[order(abs(df$B), decreasing = TRUE), ]
