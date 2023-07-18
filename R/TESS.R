@@ -8,7 +8,6 @@
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param col_breaks number of breaks for plotting (defaults to 20)
-#' @param col_alpha
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
 #' @param ploidy ploidy of data (defaults to 2)
@@ -25,7 +24,7 @@
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
 tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
-                               plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
+                               plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
                                quiet = FALSE) {
   # RUN TESS ---------------------------------------------------------------------------------------------------
