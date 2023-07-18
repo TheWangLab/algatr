@@ -13,7 +13,6 @@
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
-#' @inheritParams tess3r::tess3
 #'
 #' @family TESS functions
 #'
@@ -251,7 +250,6 @@ raster_to_grid <- function(x) {
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param plot_axes whether to plot axes or not (defaults to FALSE)
-#' @inheritParams tess_do_everything
 #'
 #' @family TESS functions
 #'
