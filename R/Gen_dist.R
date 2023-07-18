@@ -188,10 +188,8 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
 #'
 #' @param dist Matrix of genetic distances
 #'
-#' @return
+#' @return heatmap of genetic distances
 #' @export
-#'
-#' @examples
 gen_dist_hm <- function(dist) {
   if (!is.null(dist)) if (!inherits(dist, "data.frame")) dist <- as.data.frame(dist)
 

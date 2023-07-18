@@ -9,6 +9,9 @@ gen_dist_hm(dist)
 \arguments{
 \item{dist}{Matrix of genetic distances}
 }
+\value{
+heatmap of genetic distances
+}
 \description{
 Make heatmap of genetic distances
 }
