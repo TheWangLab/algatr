@@ -11,7 +11,7 @@ lfmm_table(
   top = FALSE,
   order = FALSE,
   var = NULL,
-  nrow = NULL,
+  rows = NULL,
   digits = 2,
   footnotes = TRUE
 )
@@ -29,9 +29,9 @@ lfmm_table(
 
 \item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
 
-\item{digits}{number of decimal points to include (defaults to 2)}
+\item{rows}{number of rows to include in table (defaults to NULL)}
 
-\item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
+\item{digits}{number of decimal points to include (defaults to 2)}
 }
 \value{
 table of LFMM results
