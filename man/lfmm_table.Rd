@@ -29,7 +29,7 @@ lfmm_table(
 
 \item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
 
-\item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
+\item{rows}{number of rows to include in table (defaults to NULL)}
 
 \item{digits}{number of decimal points to include (defaults to 2)}
 }

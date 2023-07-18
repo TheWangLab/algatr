@@ -169,7 +169,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
 #' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
-#' @param rows number of rows to include in table (defaults to NULL; will only include significant SNPs)
+#' @param rows number of rows to include in table (defaults to NULL)
 #' @param digits number of decimal points to include (defaults to 2)
 #' @inheritParams lfmm_do_everything
 #'
@@ -186,9 +186,9 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(B) == max(abs(B)))
   }
-  if (!is.null(nrow)) {
-    if (nrow > nrow(df)) nrow <- nrow(df)
-    df <- df[1:nrow, ]
+  if (!is.null(rows)) {
+    if (rows > nrow(df)) rows <- nrow(df)
+    df <- df[1:rows, ]
   }
 
   df <- df %>%
