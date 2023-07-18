@@ -15,11 +15,9 @@
 #' @details
 #' The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411. doi: https://doi.org/10.1111/evo.12134
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-#'
-#' @examples
 mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
@@ -57,11 +55,10 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #' @param X list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Fit model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)

@@ -60,6 +60,9 @@ pvalues are not calibrated.}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
+\value{
+list with candidate SNPs, model results, and K-value
+}
 \description{
 LFMM function to do everything
 }

@@ -111,7 +111,7 @@ lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
 
 The results object from `lfmm_run()` contains 5 elements:
 
--   `cand_snps`: a list of candidate SNPs that are statistically significantly associated with environmental variables, including all relevant information pertaining to the LFMM analysis (e.g., p-values, fixed effects, etc.)
+-   `lfmm_snps`: a list of candidate SNPs that are statistically significantly associated with environmental variables, including all relevant information pertaining to the LFMM analysis (e.g., p-values, fixed effects, etc.)
 
 -   `df`: all of the SNPs and their associations, including all relevant information pertaining to the LFMM analysis
 
