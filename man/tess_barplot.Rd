@@ -41,6 +41,9 @@ tess_barplot(
 
 \item{...}{other parameters of the function \code{\link{barplot.default}}.}
 }
+\value{
+STRUCTURE-style bar plot of TESS results
+}
 \description{
 Based on code from: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 }
