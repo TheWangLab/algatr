@@ -216,7 +216,6 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   tbl
 }
 
-
 #' K selection
 #'
 #' @param gen genotype matrix
@@ -244,7 +243,6 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 
   return(K)
 }
-
 
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
