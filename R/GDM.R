@@ -21,7 +21,6 @@
 #' @family GDM functions
 #'
 #' @export
-#'
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
                               quiet = FALSE) {
@@ -101,8 +100,6 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #'
 #' @return GDM model
 #' @export
-#'
-#' @examples
 gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
@@ -235,13 +232,9 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 #' @param sig sig level for determining variable significance
 #' @param nperm number of permutations to run for variable testing
 #'
-#' @return
-#'
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
@@ -305,8 +298,6 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, quiet = FALSE) {
   # convert envlayers to SpatRaster
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
@@ -412,8 +403,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_plot_isplines <- function(gdm_model) {
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
 
@@ -442,8 +431,6 @@ gdm_plot_isplines <- function(gdm_model) {
 #' @details code is modified from the `plot.gdm()` function in the gdm package (Fitzpatrick et al. 2022)
 #'
 #' @export
-#'
-#' @examples
 gdm_plot_diss <- function(gdm_model) {
   obs <- tidyr::as_tibble(gdm_model$observed) %>% dplyr::rename(observed = value)
   pred <- tidyr::as_tibble(gdm_model$predicted) %>% dplyr::rename(predicted = value)
@@ -500,8 +487,6 @@ gdm_plot_diss <- function(gdm_model) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE, quiet = FALSE) {
   # Confirm there are exactly 3 axes
   if (terra::nlyr(pcaRastRGB) > 3) {
@@ -660,8 +645,6 @@ raster_to_rgb <- function(r) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_coeffs <- function(gdm_model) {
   # Vector to store coefficient sums
   coefSums <- c()
@@ -690,8 +673,6 @@ gdm_coeffs <- function(gdm_model) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_df <- function(gdm_result) {
   coeff_df <- gdm_coeffs(gdm_result$model)
   if (!is.null(gdm_result$pvalues)) coeff_df$p <- gdm_result$pvalues
@@ -765,8 +746,6 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
