@@ -88,8 +88,6 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 #' @return kriged map
 #' @export
 #' @family wingen functions
-#'
-#' @examples
 krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL) {
   # Perform checks ----------------------------------------------------------
   if (!is.null(agg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = agg_grd, agg_spec = "agg")
@@ -116,8 +114,6 @@ krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd =
 #' @return number of cells contained in final (aggregated or disaggregated) raster layer
 #' @export
 #' @family wingen functions
-#'
-#' @examples
 krig_agg_helper <- function(to_krig, agg_disagg, agg_spec = "agg") {
   if (agg_spec == "agg") terra::aggregate(to_krig, agg_disagg)
   if (agg_spec == "disagg") terra::disagg(to_krig, agg_disagg)

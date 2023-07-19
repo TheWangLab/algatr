@@ -26,6 +26,9 @@ tess_ggplot(
 
 \item{plot_axes}{whether to plot axes or not (defaults to FALSE)}
 }
+\value{
+ggplot object of TESS results
+}
 \description{
 ggplot of TESS results
 }

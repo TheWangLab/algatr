@@ -15,6 +15,9 @@ do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
+\value{
+results from all six analyses contained within algatr
+}
 \description{
 Disclaimer: this is probably a bad idea...
 }

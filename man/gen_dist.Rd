@@ -16,15 +16,15 @@ gen_dist(
 \arguments{
 \item{vcf}{path to vcf file or a \code{vcfR} type object}
 
-\item{dist_type}{the type of genetic distance to calculate (options: "euclidean" (default), "bray_curtis", "dps" for proportion of shared alleles, "plink", or "pc" for PC-based)}
+\item{dist_type}{the type of genetic distance to calculate (options: \code{"euclidean"} (default), \code{"bray_curtis"}, \code{"dps"} for proportion of shared alleles, \code{"plink"}, or \code{"pc"} for PC-based)}
 
-\item{plink_file}{if "plink" dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)}
+\item{plink_file}{if \code{"plink"} dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)}
 
-\item{plink_id_file}{if "plink" dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)}
+\item{plink_id_file}{if \code{"plink"} dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)}
 
-\item{npc_selection}{if "pc" dist_type is used, how to perform K selection (options: "auto" for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or "manual" to examine PC screeplot and enter no. PCs into console)}
+\item{npc_selection}{if \code{dist_type = "pc"}, how to perform K selection (options: \code{"auto"} for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or \code{"manual"} to examine PC screeplot and enter no. PCs into console)}
 
-\item{criticalpoint}{if "pc" dist_type is used with "auto" npc_selection, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)}
+\item{criticalpoint}{if \code{dist_type = "pc"} used with \code{npc_selection = "auto"}, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)}
 }
 \value{
 pairwise distance matrix for given distance metric

@@ -1,11 +1,11 @@
 #' Calculate genetic distances
 #'
 #' @param vcf path to vcf file or a `vcfR` type object
-#' @param dist_type the type of genetic distance to calculate (options: "euclidean" (default), "bray_curtis", "dps" for proportion of shared alleles, "plink", or "pc" for PC-based)
-#' @param plink_file if "plink" dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)
-#' @param plink_id_file if "plink" dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)
-#' @param npc_selection if "pc" dist_type is used, how to perform K selection (options: "auto" for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or "manual" to examine PC screeplot and enter no. PCs into console)
-#' @param criticalpoint if "pc" dist_type is used with "auto" npc_selection, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)
+#' @param dist_type the type of genetic distance to calculate (options: `"euclidean"` (default), `"bray_curtis"`, `"dps"` for proportion of shared alleles, `"plink"`, or `"pc"` for PC-based)
+#' @param plink_file if `"plink"` dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)
+#' @param plink_id_file if `"plink"` dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)
+#' @param npc_selection if `dist_type = "pc"`, how to perform K selection (options: `"auto"` for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or `"manual"` to examine PC screeplot and enter no. PCs into console)
+#' @param criticalpoint if `dist_type = "pc"` used with `npc_selection = "auto"`, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)
 #'
 #' @details
 #' Euclidean and Bray-Curtis distances calculated using the ecodist package: Goslee, S.C. and Urban, D.L. 2007. The ecodist package for dissimilarity-based analysis of ecological data. Journal of Statistical Software 22(7):1-19. DOI:10.18637/jss.v022.i07.
@@ -16,11 +16,9 @@
 #' @export
 gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL, npc_selection = "auto", criticalpoint = 2.0234) {
   # Import vcf if provided --------------------------------------------------
-
   if (!is.null(vcf)) if (!inherits(vcf, "vcfR")) vcf <- vcfR::read.vcfR(vcf)
 
   # Calculate Euclidean distances -------------------------------------------
-
   if (dist_type == "euclidean") {
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
@@ -38,7 +36,6 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
   }
 
   # Calculate Bray-Curtis distances -----------------------------------------
-
   if (dist_type == "bray_curtis") {
     # Convert to genlight and matrix
     gl <- vcfR::vcfR2genlight(vcf)
@@ -61,7 +58,6 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
   }
 
   # Calculate proportion of shared alleles ----------------------------------
-
   if (dist_type == "dps") {
     # Convert to genind
     genind <- vcfR::vcfR2genind(vcf)
@@ -70,7 +66,6 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
   }
 
   # Process Plink distance output files -------------------------------------
-
   if (dist_type == "plink") {
     dists <- as.data.frame(readr::read_tsv(plink_file, col_names = FALSE))
     plink_names <- readr::read_tsv(plink_id_file, col_names = FALSE) %>%
@@ -83,7 +78,6 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
   }
 
   # PC-based dist -----------------------------------------------------------
-
   if (dist_type == "pc") {
     # Convert to genlight
     gl <- vcfR::vcfR2genlight(vcf)
@@ -138,6 +132,7 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
 #' @param metric_name_x name of distance metric for x axis; if DPS used, must be `"dps"`
 #' @param metric_name_y name of distance metric for y axis; if DPS used, must be `"dps"`
 #'
+#' @return scatterplot comparing two user-defined genetic distance metrics
 #' @export
 gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
   # Check to ensure sample IDs match ----------------------------------------
@@ -147,15 +142,24 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
   }
 
   # Melt data from square to long -------------------------------------------
+  # Assign NAs to upper triangle of square matrix
+  dist_x[upper.tri(dist_x, diag = FALSE)] <- NA
 
-  melt_x <- harrietr::melt_dist(as.matrix(dist_x)) %>%
-    dplyr::rename(!!metric_name_x := dist)
-  melt_y <- harrietr::melt_dist(as.matrix(dist_y)) %>%
-    dplyr::rename(!!metric_name_y := dist)
+  melt_x <- dist_x %>%
+    tibble::rownames_to_column(var = "comparison") %>%
+    tidyr::pivot_longer(cols = -(comparison)) %>%
+    na.omit() %>%
+    dplyr::filter(comparison != name) %>%
+    dplyr::rename(!!metric_name_x := value)
 
+  melt_y <- dist_y %>%
+    tibble::rownames_to_column(var = "comparison") %>%
+    tidyr::pivot_longer(cols = -(comparison)) %>%
+    na.omit() %>%
+    dplyr::filter(comparison != name) %>%
+    dplyr::rename(!!metric_name_y := value)
 
   # Build plots -------------------------------------------------------------
-
   if (metric_name_x == "dps" || metric_name_y == "dps") {
     joined <- dplyr::full_join(melt_x, melt_y) %>%
       dplyr::mutate(rev_dps = (1 - dps))
@@ -176,10 +180,8 @@ gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
 #'
 #' @param dist Matrix of genetic distances
 #'
-#' @return
+#' @return heatmap of genetic distances
 #' @export
-#'
-#' @examples
 gen_dist_hm <- function(dist) {
   if (!is.null(dist)) if (!inherits(dist, "data.frame")) dist <- as.data.frame(dist)
 

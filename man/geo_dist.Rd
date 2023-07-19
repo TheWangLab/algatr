@@ -14,7 +14,7 @@ geo_dist(coords, type = "Euclidean", lyr = NULL)
 \item{lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)}
 }
 \value{
-A distance matrix
+geographic distance matrix
 }
 \description{
 Calculate geographic distance between coordinates

@@ -15,11 +15,9 @@
 #' @details
 #' The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411. doi: https://doi.org/10.1111/evo.12134
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-#'
-#' @examples
 mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
@@ -57,11 +55,10 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #' @param X list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Fit model with variable selection
   mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
@@ -98,11 +95,10 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
 #' @param X list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return list with final model results and regression coefficients
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Run full model
   mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
@@ -236,16 +232,14 @@ unfold <- function(X, scale = TRUE) {
   return(x)
 }
 
-
 #' Make nice dataframe from MMRR results
 #'
 #' @param mod the fitted MMRR model
 #'
-#' @return
+#' @return dataframe of MMRR results
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_df <- function(mod) {
   coeff_df <- data.frame(coeff = mod$coefficients, p = mod$tpvalue)
   coeff_df$var <- rownames(coeff_df)
@@ -266,11 +260,10 @@ mmrr_df <- function(mod) {
 #' @param var_names add variable names to plot (defaults to NULL)
 #' @inheritParams mmrr_do_everything
 #'
-#' @return
+#' @return plots of MMRR single variable relationships, the fitted relationship, and the covariances between predictor variables
 #' @export
 #'
 #' @family MMRR functions
-#' @examples
 mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL) {
   # Plot single variable relationships
   if ("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))

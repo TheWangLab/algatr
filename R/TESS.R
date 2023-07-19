@@ -8,13 +8,11 @@
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param col_breaks number of breaks for plotting (defaults to 20)
-#' @param col_alpha
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
-#' @inheritParams tess3r::tess3
 #'
 #' @family TESS functions
 #'
@@ -24,10 +22,8 @@
 #'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
-#'
-#' @examples
 tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
-                               plot_method = "maxQ", col_breaks = 20, col_alpha = 0.5, minQ = 0.10,
+                               plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
                                quiet = FALSE) {
   # RUN TESS ---------------------------------------------------------------------------------------------------
@@ -99,16 +95,13 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   return(tess_results)
 }
 
-
 #' Test multiple K values
 #'
 #' @inheritParams tess_do_everything
-#' @return
+#' @return list with results from testing different K-values
 #' @export
 #'
 #' @family TESS functions
-#'
-#' @examples
 tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE) {
   # Format coordinates
   coords <- as.matrix(coords)
@@ -148,18 +141,15 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   return(tess_results)
 }
 
-
 #' Krige admixture values
 #'
 #' @param qmat qmatrix
 #' @inheritParams tess_do_everything
 #'
-#' @return
+#' @return Raster\* type object of kriged Q values
 #' @export
 #'
 #' @family TESS functions
-#'
-#' @examples
 tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
   # Check CRS
   crs_check(coords, grid)
@@ -205,7 +195,6 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
 #' @export
 #' @noRd
 #' @family TESS functions
-#'
 krig_K <- function(K, qmat, krig_grid, krig_df) {
   # Add Q values to spatial dataframe
   krig_df$Q <- qmat[, K]
@@ -229,7 +218,6 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
 
   return(krig_r)
 }
-
 
 #' Convert a raster to a grid
 #'
@@ -262,14 +250,11 @@ raster_to_grid <- function(x) {
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param plot_axes whether to plot axes or not (defaults to FALSE)
-#' @inheritParams tess_do_everything
 #'
 #' @family TESS functions
 #'
-#' @return
+#' @return ggplot object of TESS results
 #' @export
-#'
-#' @examples
 tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE) {
   # Set up ggplot df
   gg_df <- krig_admix %>%
@@ -338,7 +323,6 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   return(plt)
 }
 
-
 #' Plot all kriged Q values for each K
 #'
 #' @param krig_admix RasterStack returned by \link[algatr]{tess_krig}
@@ -346,11 +330,8 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @param ... Graphical parameters. Any argument that can be passed to image.plot and to base plot
 #' @inheritParams tess_do_everything
 #'
-#' @return
 #' @export
 #' @family TESS functions
-#'
-#' @examples
 tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_default("base"), col_breaks = 20, ...) {
   # Get K
   K <- terra::nlyr(krig_admix)
@@ -367,7 +348,6 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 #'
 #' @export
 #' @family TESS functions
-#'
 allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...) {
   # Suppress irrelevant plot warnings
   suppressWarnings({
@@ -395,7 +375,6 @@ allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...)
 #' @export
 #' @noRd
 #' @family TESS functions
-#'
 make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col = rgb(1, 1, 1, alpha)) {
   if (poly) {
     # Make color palette using only solid color
@@ -421,11 +400,10 @@ make_plot_col <- function(K, col, col_breaks, poly = FALSE, alpha = 0, start_col
 #' @inheritParams graphics::barplot
 #' @param ... other parameters of the function \code{\link{barplot.default}}.
 #'
-#' @return
+#' @return STRUCTURE-style bar plot of TESS results
 #' @export
 #'
 #' @family TESS functions
-#' @examples
 tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q = TRUE, legend = TRUE, legend_position = "bottomright", border = NA, space = 0, ...) {
   # CODE ADAPTED FROM: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plotQ.R
 
@@ -452,18 +430,14 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
   }
 }
 
-
 #' Best K Selection based on cross entropy
 #'
 #' @param tess3_obj list produced by \code{\link{tess3}}
 #' @param Kvals vector of K values for testing
 #'
 #' @note (source: https://chazhyseni.github.io/NALgen/post/determining_bestk/)
-#' @return
 #' @export
 #' @family TESS functions
-#'
-#' @examples
 bestK <- function(tess3_obj, Kvals) {
   ce <- list()
   for (k in Kvals) ce[[k]] <- tess3_obj[[k]]$crossentropy
@@ -475,7 +449,6 @@ bestK <- function(tess3_obj, Kvals) {
   K <- min(which(slope <= quantile(slope)[4]))
   return(K)
 }
-
 
 #' Create default TESS color palette
 #' @param n number of colors to generate (must be less than 9)

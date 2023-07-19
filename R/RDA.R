@@ -20,8 +20,6 @@
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
-#' @inheritParams vegan::ordiR2step
-#'
 #' @importFrom vegan rda
 #'
 #' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
@@ -30,8 +28,6 @@
 #' Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
 #'
 #' @family RDA functions
-#'
-#' @examples
 rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
                               p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
@@ -145,7 +141,6 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
   return(results)
 }
 
-
 #' Run RDA
 #'
 #' @inheritParams rda_do_everything
@@ -154,7 +149,6 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
 #' @export
 #'
 #' @family RDA functions
-#'
 rda_run <- function(gen, env, coords = NULL, model = "full",
                     correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
@@ -203,8 +197,6 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
   return(mod)
 }
 
-
-
 #' Get significant outliers from RDA model
 #'
 #' @param plot whether to produce scree plot of RDA axes (defaults to TRUE)
@@ -214,7 +206,6 @@ rda_run <- function(gen, env, coords = NULL, model = "full",
 #' @export
 #'
 #' @family RDA functions
-#'
 rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.05, z = 3, plot = TRUE) {
   # Running the function with all axes
   if (plot) stats::screeplot(mod, main = "Eigenvalues of constrained axes")
@@ -228,8 +219,6 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
   return(results)
 }
 
-
-
 #' Determine RDA outliers based on p-values
 #'
 #' @inheritParams rda_do_everything
@@ -237,7 +226,6 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 #' @noRd
 #'
 #' @family RDA functions
-#'
 p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
   rdadapt_env <- rdadapt(mod, naxes)
 
@@ -274,7 +262,6 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
 #' @noRd
 #'
 #' @family RDA functions
-#'
 z_outlier_method <- function(mod, naxes, z = 3) {
   load.rda <- vegan::scores(mod, choices = naxes, display = "species")
 
@@ -289,7 +276,6 @@ z_outlier_method <- function(mod, naxes, z = 3) {
 #' @noRd
 #'
 #' @family RDA functions
-#'
 z_outlier_helper <- function(axis, load.rda, z) {
   x <- load.rda[, axis]
   out <- outliers(x, z)
@@ -307,7 +293,6 @@ z_outlier_helper <- function(axis, load.rda, z) {
 #' @noRd
 #'
 #' @family RDA functions
-#'
 outliers <- function(x, z) {
   lims <- mean(x) + c(-1, 1) * z * sd(x) # find loadings +/-z sd from mean loading
   x[x < lims[1] | x > lims[2]] # SNP names in these tails
@@ -402,7 +387,6 @@ rda_cor_helper <- function(envvar, snp) {
 #' @export
 #'
 #' @family RDA functions
-#'
 rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_axes = NULL, sig = 0.05, manhattan = NULL, rdaplot = NULL, binwidth = NULL) {
   # Get axes
   if (axes == "all") axes <- 1:ncol(mod$CCA$v)
@@ -459,7 +443,6 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
     if (manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
   }
 }
-
 
 #' Make dataframe for ggplot from RDA results
 #'
@@ -649,8 +632,6 @@ rda_table <- function(cor_df, sig = 0.05, sig_only = TRUE, top = FALSE, order = 
 #' @export
 #'
 #' @family RDA functions
-#'
-#' @examples
 rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC) {
   moddf <- data.frame(env)
 
@@ -749,8 +730,6 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC) {
   return(df)
 }
 
-
-
 #' Helper function for `rda_varpart()`
 #'
 #' Extracts relevant statistics from variance partitioning analysis
@@ -762,7 +741,6 @@ rda_varpart <- function(gen, env, coords, Pin, R2permutations, R2scope, nPC) {
 #'
 #' @noRd
 #' @family RDA functions
-#' @examples
 rda_varpart_helper <- function(mod) {
   call <- paste(mod$call)[2]
   R2adj <- vegan::RsquareAdj(mod)
@@ -781,12 +759,10 @@ rda_varpart_helper <- function(mod) {
 #' @param digits number of digits to include (defaults to 2)
 #' @param call_col whether to include column with RDA call (defaults to FALSE)
 #'
-#' @return
+#' @return object of class `gt` with RDA variance partitioning results
 #' @export
 #'
 #' @family RDA functions
-#'
-#' @examples
 rda_varpart_table <- function(df, digits = 2, call_col = FALSE) {
   # Replace row and column names
   rownames(df) <- c("Full model", "Pure enviro. model", "Pure pop. structure model", "Pure geography model", "Confounded variance", "Total unexplained variance", "Total inertia")

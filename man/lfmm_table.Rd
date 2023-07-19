@@ -21,7 +21,7 @@ lfmm_table(
 
 \item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
 
-\item{sig_only}{only include SNPs that exceeded the significance threshold in the table}
+\item{sig_only}{only include SNPs that exceeded the significance threshold in the table (defaults to TRUE)}
 
 \item{top}{if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)}
 

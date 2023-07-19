@@ -11,6 +11,9 @@ lfmm_manhattanplot(df, sig, group = NULL, var = NULL)
 
 \item{sig}{significance cutoff}
 }
+\value{
+Manhattan plot
+}
 \description{
 LFMM Manhattan Plot
 }

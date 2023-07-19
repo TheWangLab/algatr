@@ -18,10 +18,8 @@
 #' LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
 #' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860. doi: https://doi.org/10.1093/molbev/msz008
 #'
-#' @return
+#' @return list with candidate SNPs, model results, and K-value
 #' @export
-#'
-#' @examples
 lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
                                K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                                p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
@@ -117,9 +115,9 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
   result_df <- lfmm_df(lfmm_test_result)
 
   # Subset out candidate SNPs
-  cand_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
+  lfmm_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
 
-  return(list(cand_snps = cand_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
+  return(list(lfmm_snps = lfmm_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }
 
 
@@ -131,7 +129,6 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_df <- function(x) {
   # Extract names of elements from lfmm_test_result
   df_names <- names(x)[purrr::map_lgl(x, function(x) !is.null(rownames(x)))]
@@ -148,11 +145,9 @@ lfmm_df <- function(x) {
 #' @param colname names of elements within lfmm_test_result
 #' @param lfmm_test_result LFMM test results
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_test_tidy <- function(colname, lfmm_test_result) {
   x <- lfmm_test_result[[colname]]
   if (is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
@@ -170,7 +165,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #'
 #' @param df df element from \code{\link{lfmm_run}} results
 #' @param sig alpha level for determining candidate snps (defaults to 0.5)
-#' @param sig_only only include SNPs that exceeded the significance threshold in the table
+#' @param sig_only only include SNPs that exceeded the significance threshold in the table (defaults to TRUE)
 #' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
 #' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
@@ -182,7 +177,6 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, rows = NULL, digits = 2, footnotes = TRUE) {
   if (!is.null(var)) df <- df[df$var %in% var, ]
   if (sig_only) df <- df[df$adjusted.pvalue < sig, ]
@@ -222,7 +216,6 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   tbl
 }
 
-
 #' K selection
 #'
 #' @param gen genotype matrix
@@ -238,8 +231,6 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #' @return prints the best K value given the specified K selection procedure
 #' @export
 #' @family LFMM functions
-#'
-#' @examples
 select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
                      low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10) {
   if (K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
@@ -253,16 +244,13 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
   return(K)
 }
 
-
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
 #' @inheritParams AssocTests::tw
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_tw <- function(gen, criticalpoint = 2.0234) {
   # Turn gen into df
   df <- data.frame(gen)
@@ -289,11 +277,9 @@ select_K_tw <- function(gen, criticalpoint = 2.0234) {
 #' @param gen genotype matrix
 #' @inheritParams quick_elbow
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
   # Run PCA
   pc <- prcomp(gen)
@@ -320,11 +306,9 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
 #' @param tess_method method to use for "tess"
 #' @param ploidy ploidy for "tess"
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2) {
   # Run TESS for all K values
   coords <- coords_to_matrix(coords)
@@ -348,11 +332,9 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
 #'
 #' @param gen a genotype matrix
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_fc <- function(gen, perc.pca, max.n.clust) {
   fc <- adegenet::find.clusters(gen,
     pca.select = "percVar",
@@ -441,7 +423,6 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
   return(elbow)
 }
 
-
 #' LFMM QQplot
 #'
 #' @param df dataframe of LFMM test results produced by \code{lfmm_df}
@@ -450,7 +431,6 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_qqplot <- function(df) {
   plt <- ggplot2::ggplot(df, ggplot2::aes(sample = -log10(adjusted.pvalue))) +
     ggplot2::stat_qq() +
@@ -471,11 +451,10 @@ lfmm_qqplot <- function(df) {
 #' @param df dataframe of lfmm test results produced by \code{lfmm_df}
 #' @param sig significance cutoff
 #'
-#' @return
+#' @return Manhattan plot
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Subset variables
   if (!is.null(var)) df <- df[df$var %in% var, ]

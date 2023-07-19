@@ -26,6 +26,9 @@ mmrr_plot(
 
 \item{var_names}{add variable names to plot (defaults to NULL)}
 }
+\value{
+plots of MMRR single variable relationships, the fitted relationship, and the covariances between predictor variables
+}
 \description{
 Plot MMRR results
 }
