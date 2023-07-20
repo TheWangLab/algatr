@@ -508,17 +508,18 @@
     },
     "automap": {
       "Package": "automap",
-      "Version": "1.0-16",
+      "Version": "1.1-9",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "67424a39af147cd059123a8a4eeee7ba",
+      "Hash": "f791ed7473e7bf64af5d18ee97856bd7",
       "Requirements": [
         "ggplot2",
         "gstat",
         "lattice",
-        "maptools",
         "reshape",
-        "sp"
+        "sf",
+        "sp",
+        "stars"
       ]
     },
     "base64enc": {
@@ -1111,14 +1112,6 @@
         "codetools",
         "iterators"
       ]
-    },
-    "foreign": {
-      "Package": "foreign",
-      "Version": "0.8-82",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "32b25c97ce306a760c4d9f787991b5d9",
-      "Requirements": []
     },
     "fs": {
       "Package": "fs",
@@ -1987,18 +1980,6 @@
       "Repository": "CRAN",
       "Hash": "7ce2733a9826b3aeb1775d56fd305472",
       "Requirements": []
-    },
-    "maptools": {
-      "Package": "maptools",
-      "Version": "1.1-5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "fc60ed5a80198b1d049f5209322c875e",
-      "Requirements": [
-        "foreign",
-        "lattice",
-        "sp"
-      ]
     },
     "markdown": {
       "Package": "markdown",
