@@ -31,6 +31,11 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   # Convert vcf to dosage
   if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
 
+  # Convert sf coords to matrix
+  if (inherits(coords, "sf")) {
+    coords <- sf::st_coordinates(coords)
+  }
+
   # Convert coords to matrix
   coords <- as.matrix(coords)
 
