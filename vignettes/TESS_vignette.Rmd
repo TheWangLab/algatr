@@ -159,6 +159,12 @@ algatr has a custom function, `tess_barplot()`, to generate these plots from our
 tess_barplot(qmat)
 ```
 
+We can also build barplots using ggplot2 with the `tess_ggbarplot()` function.
+
+```{r ggbarplot, fig.align = 'center'}
+tess_ggbarplot(qmat, legend = FALSE)
+```
+
 ### Building maps in TESS3 using `tess_ggplot()`
 
 Now let's explore how Q values (ancestry coefficients) are mapped. The `tess_ggplot()` function will take in the kriged admixture values and sampling coordinates (if the user wants points mapped), and provides several options for the plot method (with the `plot_method` argument):

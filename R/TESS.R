@@ -435,6 +435,71 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
   }
 }
 
+#' Create TESS barplot using ggplot2
+#'
+#' @param qmat Q matrix
+#' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
+#' @param sort_by_Q whether to sort bars by Q value (equivalent to \link[tess3r]{barplot} sort.by.Q)
+#' @param legend whether to display legend (defaults to TRUE)
+#'
+#' @return ggplot object of TESS results as a barplot
+#' @export
+tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sort_by_Q = TRUE, legend = TRUE) {
+  # Get K
+  K <- ncol(qmat)
+
+  if (sort_by_Q) {
+    gr <- apply(qmat, MARGIN = 1, which.max)
+    gm <- max(gr)
+    gr.o <- order(sapply(1:gm, FUN = function(g) mean(qmat[, g])))
+    gr <- sapply(gr, FUN = function(i) gr.o[i])
+    or <- order(gr)
+
+    qmat <- as.data.frame(qmat)
+    qmat <- qmat %>%
+      tibble::rownames_to_column(var = "order")
+    qmat <- qmat %>%
+      dplyr::arrange(factor(order, levels = or))
+    qmat$order <- factor(qmat$order, levels = qmat$order)
+  }
+
+  # Make into tidy df
+  gg_df <-
+    qmat %>%
+    tidyr::pivot_longer(names_to = "K_value", values_to = "Q_value",
+                        -c(order))
+
+  # Build plot using helper function
+  plt <- ggbarplot_helper(gg_df) + ggplot_fill
+
+  # Remove legend
+  if (!legend) plt <- plt + ggplot2::theme(legend.position = "none")
+
+  return(plt)
+}
+
+#' Helper function for TESS barplots using ggplot
+#'
+#' @param dat Q matrix
+#'
+#' @return barplot with Q-values and individuals, colorized by K-value
+#' @export
+ggbarplot_helper <- function(dat) {
+  dat %>%
+    ggplot2::ggplot(aes(x = order, y = Q_value, fill = K_value)) +
+    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::scale_y_continuous(expand = c(0,0)) +
+    ggplot2::scale_x_discrete(expand = c(0,0)) +
+    ggplot2::theme(axis.line = ggplot2::element_line(colour = "black"),
+                   axis.text.x = ggplot2::element_blank(),
+                   axis.ticks.x = ggplot2::element_blank(),
+                   axis.title.x = ggplot2::element_blank(),
+                   panel.border = ggplot2::element_rect(fill = NA, colour = "black", linetype = "solid", linewidth = 1.5),
+                   strip.text.y = ggplot2::element_text(size = 30, face = "bold"),
+                   strip.background = ggplot2::element_rect(colour = "white", fill = "white"),
+                   panel.spacing = unit(-0.1, "lines"))
+}
+
 #' Best K Selection based on cross entropy
 #'
 #' @param tess3_obj list produced by \code{\link{tess3}}
