@@ -448,6 +448,10 @@ tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sor
   # Get K
   K <- ncol(qmat)
 
+  dat <- as.data.frame(qmat)
+  dat <- dat %>%
+    tibble::rownames_to_column(var = "order")
+
   if (sort_by_Q) {
     gr <- apply(qmat, MARGIN = 1, which.max)
     gm <- max(gr)
@@ -455,17 +459,14 @@ tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sor
     gr <- sapply(gr, FUN = function(i) gr.o[i])
     or <- order(gr)
 
-    qmat <- as.data.frame(qmat)
-    qmat <- qmat %>%
-      tibble::rownames_to_column(var = "order")
-    qmat <- qmat %>%
+    dat <- dat %>%
       dplyr::arrange(factor(order, levels = or))
-    qmat$order <- factor(qmat$order, levels = qmat$order)
+    dat$order <- factor(dat$order, levels = dat$order)
   }
 
   # Make into tidy df
   gg_df <-
-    qmat %>%
+    dat %>%
     tidyr::pivot_longer(names_to = "K_value", values_to = "Q_value",
                         -c(order))
 
