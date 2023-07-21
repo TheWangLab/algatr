@@ -23,12 +23,10 @@ library(raster)
 library(geodata)
 library(here)
 library(viridis)
-library(ggplot2)
-library(tidyr)
+library(tidyverse)
 library(RStoolbox)
 library(gridExtra)
 library(wingen)
-library(tibble)
 ```
 
 For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:
