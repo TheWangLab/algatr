@@ -3,28 +3,35 @@ library(dplyr)
 d <- renv::dependencies()
 unique(d$Source)
 
-methods <- c("LFMM", "RDA", "GDM", "MMRR", "TESS", "wingen", "masks", "get_worldclim", "Gen_dist", "SNP_LD", "check_vars", "dist", "format_data")
+# / in front of dist because otherwise Gen_dist packages get counted for dist
+methods <- c("LFMM", "RDA", "GDM", "MMRR", "TESS", "wingen", "masks", "get_worldclim", "Gen_dist", "SNP_LD", "check_vars", "/dist", "format_data")
 methods_d <- purrr::map(methods, \(x) {
-  return(d %>% filter(grepl(x, Source)) %>% select(Package) %>% distinct() %>% mutate(method = x))
+  return(d %>% filter(grepl(x, Source)) %>% dplyr::select(Package) %>% distinct() %>% mutate(method = x))
 }) %>% bind_rows()
 
 general_packages <-
   d %>%
-  select(Package) %>%
+  dplyr::select(Package) %>%
   group_by(Package) %>%
   count() %>%
-  arrange(desc(n)) %>%
-  filter(n > 5) %>%
-  select(Package)
+  filter(n > 4) %>%
+  dplyr::select(Package) %>%
+  # remove non-general packages
+  filter(!(Package %in% c("wingen"))) %>%
+  arrange(Package)
 
 methods_d <- methods_d %>% filter(!(Package %in% general_packages$Package))
+view(methods_d)
 
 leftovers <-
   d %>%
+  filter(!(Package %in% c("algatr", "wingen", "knitr", "rmarkdown"))) %>%
   filter(!(Package %in% c(general_packages$Package, methods_d$Package))) %>%
   distinct(Package)
 
+print(leftovers)
+
 # tigris - used only in DATASET
 # fansi - used only in alazygatr
-# usethis, crayon, devtools, renv, BiocManager can all be SUGGESTS
-# RStoolbox only used in the enviro_data_vignette
+# usethis, crayon, devtools, renv, BiocManager - all SUGGESTS
+# RStoolbox - only used in the enviro_data_vignette
