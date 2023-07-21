@@ -11,6 +11,9 @@ env_dist(env, stdz = TRUE)
 
 \item{stdz}{if TRUE then environmental values will be standardized (default = TRUE)}
 }
+\value{
+list of environmental distances between samples (for each environmental variable)
+}
 \description{
 Calculate distance between environmental vars
 }

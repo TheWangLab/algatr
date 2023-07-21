@@ -9,6 +9,9 @@ mmrr_df(mod)
 \arguments{
 \item{mod}{the fitted MMRR model}
 }
+\value{
+dataframe of MMRR results
+}
 \description{
 Make nice dataframe from MMRR results
 }

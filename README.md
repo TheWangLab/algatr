@@ -25,7 +25,6 @@ BiocManager::install("gdsfmt")
 BiocManager::install("SeqArray")
 BiocManager::install("SNPRelate")
 BiocManager::install("LEA") # required by tess3r
-BiocManager::install("ggtree") # required by harrietr
 
 #install.packages("devtools")
 devtools::install_github("bcm-uga/TESS3_encho_sen")

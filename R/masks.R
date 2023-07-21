@@ -13,8 +13,6 @@
 #' 4. chull - uses \code{\link{chull_mask}}, mask all areas outside a convex hull of the points
 #'
 #' @export
-#'
-#' @examples
 extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_width = NULL) {
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
 
@@ -44,7 +42,6 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
   return(map_mask)
 }
 
-
 #' Create raster mask based on range of data
 #'
 #' @describeIn extrap_mask mask based on range of data
@@ -53,8 +50,6 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
 #' @param envlayers stack of rasters with environmental values to base mask on
 #'
 #' @export
-#'
-#' @examples
 range_mask <- function(coords, envlayers) {
   # Extract values at all coords
   vals <- terra::extract(envlayers, coords, ID = FALSE)
@@ -83,7 +78,6 @@ range_mask <- function(coords, envlayers) {
   return(map_mask)
 }
 
-
 #' Create raster mask based on mean and standard deviation of data
 #'
 #' @describeIn extrap_mask mask based on mean and standard deviation of data
@@ -92,10 +86,7 @@ range_mask <- function(coords, envlayers) {
 #' @param envlayers stack of rasters with environmental values to base mask on
 #' @param nsd number of standard deviations to use if using the "sd" method
 #'
-#' @return
 #' @export
-#'
-#' @examples
 sd_mask <- function(coords, envlayers, nsd) {
   vals <- terra::extract(envlayers, coords, ID = FALSE)
   vals <- as.matrix(vals)
@@ -123,7 +114,6 @@ sd_mask <- function(coords, envlayers, nsd) {
   return(map_mask)
 }
 
-
 #' Mask rasters based on buffers around points
 #'
 #' @describeIn extrap_mask mask based on buffers around points
@@ -132,10 +122,7 @@ sd_mask <- function(coords, envlayers, nsd) {
 #' @param envlayers stack of rasters with environmental values to base mask on
 #' @param buffer_width buffer width to supply to \code{gBuffer} if using "buffer" or "chull" method. If "buffer" method is used, defaults to 0.8 and if "chull" method is used, defaults to null (no buffer)
 #'
-#' @return
 #' @export
-#'
-#' @examples
 buffer_mask <- function(coords, envlayers, buffer_width = 0.8) {
   # Create sp coords
   coords <- coords_to_sp(coords)
@@ -155,7 +142,6 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8) {
   return(map_mask)
 }
 
-
 #' Mask rasters based on convex hull around points
 #'
 #' @describeIn extrap_mask mask based on range of data
@@ -164,10 +150,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8) {
 #' @param envlayers stack of rasters with environmental values to base mask on
 #' @param buffer_width buffer width to supply to \code{gBuffer} if using "buffer" method
 #'
-#' @return
 #' @export
-#'
-#' @examples
 chull_mask <- function(coords, envlayers, buffer_width = NULL) {
   # Use one layer as a template
   env <- envlayers[[1]]
@@ -193,7 +176,6 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
   return(map_mask)
 }
 
-
 #' Plot mask on top of map
 #'
 #' @description Plots a raster with another raster "mask" on top of it
@@ -206,7 +188,6 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
 #' @return plot \code{map} with areas masked based on \code{map_mask}
 #' @export
 #'
-#' @examples
 #' @seealso \code{\link{extrap_mask}}
 plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)) {
   if (!inherits(map_r, "SpatRaster")) map_r <- terra::rast(map_r)

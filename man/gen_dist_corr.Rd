@@ -15,6 +15,9 @@ gen_dist_corr(dist_x, dist_y, metric_name_x, metric_name_y)
 
 \item{metric_name_y}{name of distance metric for y axis; if DPS used, must be \code{"dps"}}
 }
+\value{
+scatterplot comparing two user-defined genetic distance metrics
+}
 \description{
 Plot the relationship between two distance metrics
 }

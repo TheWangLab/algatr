@@ -12,7 +12,6 @@ tess_do_everything(
   K_selection = "manual",
   plot_method = "maxQ",
   col_breaks = 20,
-  col_alpha = 0.5,
   minQ = 0.1,
   tess_method = "projected.ls",
   ploidy = 2,

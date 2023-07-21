@@ -9,6 +9,9 @@ load_algatr_example(quiet = FALSE)
 \arguments{
 \item{quiet}{whether to load without messages}
 }
+\value{
+loads liz_vcf, liz_gendist, liz_coords, and CA_env objects
+}
 \description{
 Example dataset from \href{https://doi.org/10.1111/mec.15836}{Bouzid et al. 2022}. The code used to create this dataset can be found under data-raw/DATASET
 }

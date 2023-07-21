@@ -19,6 +19,9 @@ mmrr_best(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all")
 
 \item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }
+\value{
+list with final model results and regression coefficients
+}
 \description{
 Run MMRR with variable selection
 }

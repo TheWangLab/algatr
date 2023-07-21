@@ -32,6 +32,9 @@ tess_ktest(
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
+\value{
+list with results from testing different K-values
+}
 \description{
 Test multiple K values
 }

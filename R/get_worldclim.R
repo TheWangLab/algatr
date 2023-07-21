@@ -10,8 +10,6 @@
 #' The buffer area maintains a large extent for the final cropped data layers around the sample coordinates. e.g. buff = 0.01 creates a 1% buffer area around the coordinates.
 #' @return A SpatRaster of WorldClim layers.
 #' @export
-#'
-#' @examples
 get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE) {
   # Convert coordinates
   coords <- coords_to_df(coords)

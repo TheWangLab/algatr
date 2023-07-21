@@ -3,16 +3,13 @@
 #' @param env dataframe or vector of environmental variables for locations
 #' @param stdz if TRUE then environmental values will be standardized (default = TRUE)
 #'
-#' @return
+#' @return list of environmental distances between samples (for each environmental variable)
 #' @export
-#'
-#' @examples
 env_dist <- function(env, stdz = TRUE) {
   if (!is.null(dim)) distmat <- dplyr::as_tibble(env) %>% purrr::map(env_dist_helper, stdz = stdz)
   if (is.null(dim)) distmat <- env_dist_helper(env, stdz)
   return(distmat)
 }
-
 
 #' Helper function to convert an environmental vector to a distance matrix
 #'
@@ -29,7 +26,6 @@ env_dist_helper <- function(env, stdz = TRUE) {
   return(distmat)
 }
 
-
 #' Calculate geographic distance between coordinates
 #'
 #' @param coords dataframe with x and y coordinates
@@ -40,10 +36,8 @@ env_dist_helper <- function(env, stdz = TRUE) {
 #' Topographic distances are calculated using the topoDistance package: Wang I.J. (2020) Topographic path analysis for modeling dispersal and functional connectivity: calculating topographic distances using the TOPODISTANCE R package. Methods in Ecology and Evolution, 11: 265-272.
 #' Resistance distances are calculated using the gdistance package: van Etten, J. (2017). R package gdistance: Distances and routes on geographical grids. Journal of Statistical Software, 76(1), 1–21.
 #'
-#' @return A distance matrix
+#' @return geographic distance matrix
 #' @export
-#'
-#' @examples
 geo_dist <- function(coords, type = "Euclidean", lyr = NULL) {
   if (type == "Euclidean" | type == "euclidean" | type == "linear") {
     # Format coordinates
@@ -81,7 +75,6 @@ geo_dist <- function(coords, type = "Euclidean", lyr = NULL) {
 
   return(distmat)
 }
-
 
 #' convert coordinates to sf
 #' @noRd
