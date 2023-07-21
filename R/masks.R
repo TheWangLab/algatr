@@ -124,13 +124,11 @@ sd_mask <- function(coords, envlayers, nsd) {
 #'
 #' @export
 buffer_mask <- function(coords, envlayers, buffer_width = 0.8) {
-  # Create sp coords
-  coords <- coords_to_sp(coords)
+  # Create sf coords
+  coords <- coords_to_sf(coords)
 
   # Add a buffer
-  buff <- rgeos::gBuffer(coords, width = buffer_width)
-  # Convert to sf
-  buff <- sf::st_as_sf(buff)
+  buff <- sf::st_buffer(coords, dist = buffer_width)
 
   # Create a mask (just need one of the envlayers to do this since the values don't matter)
   map_mask <- terra::mask(envlayers[[1]], buff, inverse = TRUE)
@@ -155,20 +153,23 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
   # Use one layer as a template
   env <- envlayers[[1]]
 
-  # Create sp coords
-  coords <- coords_to_sp(coords)
+  # Create sf coords
+  coords <- coords_to_sf(coords)
 
   # Add a buffer to coords
   if (!is.null(buffer_width)) {
-    coords <- rgeos::gBuffer(coords, width = buffer_width)
+    coords <- sf::st_buffer(coords, dist = buffer_width)
   }
 
   # Make convex hull
-  chull <- rgeos::gConvexHull(coords)
-  chull <- sf::st_as_sf(chull)
+  chull <- sf::st_convex_hull(sf::st_union(coords))
 
   # Create mask from areas outside of hull
-  env_chull_mask <- terra::mask(env, chull, inverse = TRUE)
+  if (!inherits(env, "SpatRaster")) env <- terra::rast(env)
+
+  # Remove CRS to prevent mask warning caused by NA CRS of chull
+  terra::crs(env) <- NA
+  env_chull_mask <- terra::mask(env, terra::vect(chull), inverse = TRUE)
 
   # Convert to ones
   map_mask <- env_chull_mask * 0 + 1

@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 library(algatr)
 library(raster)
 library(terra)
-library(rgeos)
 library(here)
 library(viridis)
 library(rmapshaper)
@@ -109,7 +108,7 @@ plot_extrap_mask(envlayers, map_mask, RGB = FALSE, mask_col = rgb(1, 1, 1, alpha
 
 ### Convex hull-based mask
 
-A convex hull describes the smallest convex polygon that contains sets or points (in this case, sampling coordinates). We can mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument (this largely uses the `gConvexHull()` function in the rgeos package). As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` argument
+A convex hull describes the smallest convex polygon that contains sets or points (in this case, sampling coordinates). We can mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument (this largely uses the `st_convex_hull()` function in the sf package). As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` argument
 
 ```{r chull mask, fig.align='center', fig.height=5, fig.width=5}
 par(mar = c(0, 0, 0, 0))
