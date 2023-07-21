@@ -1,0 +1,15 @@
+---
+title: "MMRR_test"
+output: html_document
+date: "2023-07-19"
+---
+```{r}
+gendist_flat <- c(unfold(gendist))
+envdist_flat <- c(unfold(envdist))
+mod <- lm(gendist_flat ~ envdist_flat)
+head(mod$residuals)
+length(mod$residuals)
+
+predict(mod, envdist_flat)
+```
+

@@ -73,7 +73,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 
   # Create and plot map
   if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) {
-    if (zero_env == 0){
+    if (zero_env == 0) {
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
     } else {
       map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
@@ -780,7 +780,6 @@ scale01 <- function(x) {
 gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "full", sig = 0.05, nperm = 50,
                        geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = TRUE, plot_vars = TRUE,
                        quiet = FALSE) {
-
   # Check CRS of envlayers and coords
   crs_check(coords, envlayers)
 
@@ -804,7 +803,7 @@ gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "f
 
   full_coeffs <-
     gdm_result_full$result %>%
-    gdm_df()  %>%
+    gdm_df() %>%
     tidyr::pivot_wider(names_from = predictor, values_from = coefficient)
 
   gdm_result_uncertainty <-
@@ -854,13 +853,14 @@ gdm_lopocv <- function(gendist, coords, envlayers = NULL, env = NULL, model = "f
   plot(error_plot)
 
   return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = error_plot))
-
 }
 
-gdm_run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dist_lyr, full_gdm){
+gdm_run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type, dist_lyr, full_gdm) {
   gdm_run_safely <- purrr::safely(gdm_run, quiet = FALSE)
-  gdm_result_train <- gdm_run_safely(gendist[-i, -i], coords = coords[-i,], env = env[-i, ], model = "full", scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
-  if (is.null(gdm_result_train$result)) return(data.frame(i = i))
+  gdm_result_train <- gdm_run_safely(gendist[-i, -i], coords = coords[-i, ], env = env[-i, ], model = "full", scale_gendist = scale_gendist, geodist_type = geodist_type, dist_lyr = dist_lyr)
+  if (is.null(gdm_result_train$result)) {
+    return(data.frame(i = i))
+  }
 
   coeffs <-
     gdm_df(gdm_result_train$result) %>%
@@ -883,7 +883,7 @@ gdm_run_lopocv <- function(i, gendist, coords, env, scale_gendist, geodist_type,
 }
 
 
-plot_lopocv <- function(df, var, option){
+plot_lopocv <- function(df, var, option) {
   ggplot2::ggplot(data = df, ggplot2::aes(x = x, y = y, col = .data[[var]])) +
     ggplot2::geom_point(cex = 3, pch = 19) +
     ggplot2::scale_color_viridis_c(option = option, end = 0.9, name = "value") +

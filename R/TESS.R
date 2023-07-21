@@ -1,4 +1,3 @@
-
 #' TESS function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
@@ -180,7 +179,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
     terra::rast()
 
   # mask with original raster layer because the grid fills in all NAs
-  #( note: we don't remove NAs because it can change the extent)
+  # ( note: we don't remove NAs because it can change the extent)
   grid <- terra::resample(grid, krig_admix[[1]])
   krig_admix <- terra::mask(krig_admix, grid)
 

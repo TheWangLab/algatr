@@ -17,6 +17,7 @@ liz_vcf <- liz_vcf[1:1000, ]
 
 # Get CA shapefile
 # Download states from tigris
+if (!require("tigris")) install.packages("tigris")
 states <- tigris::states(cb = TRUE)
 # Reproject into WGS84 to match coordinates
 states <- sf::st_transform(states, 4326)

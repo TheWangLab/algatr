@@ -1,4 +1,3 @@
-
 #' MMRR function to do everything
 #'
 #' @param gendist matrix of genetic distances
@@ -428,7 +427,6 @@ mmrr_table <- function(mmrr_results, digits = 2, summary_stats = TRUE) {
 #### CROSS VALIDATION
 
 mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
-
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -456,7 +454,7 @@ mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Eu
     dplyr::select(var, estimate) %>%
     tidyr::pivot_wider(names_from = var, values_from = estimate)
 
-  #LOPOCV
+  # LOPOCV
   mmrr_result_uncertainty <-
     purrr::map(
       1:nrow(coords),
@@ -502,12 +500,11 @@ mmrr_lopocv <- function(gendist, coords, env, model = "best", geodist_type = "Eu
   plot(error_plot)
 
   return(list(coeff = coeff_df, error = test_df, coeff_plot = coeff_plot, error_plot = error_plot))
-
 }
 
-mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr){
-  test_X <- purrr::map(X, ~.x[i, ])
-  train_X <- purrr::map(X, ~.x[-i, ])
+mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr) {
+  test_X <- purrr::map(X, ~ .x[i, ])
+  train_X <- purrr::map(X, ~ .x[-i, ])
   mmrr_results <- mmrr_full(Y[-i, -i], train_X, nperm = nperm, stdz = TRUE, quiet = TRUE)
 
   coeffs <-
@@ -524,13 +521,12 @@ mmrr_run_lopocv <- function(i, Y, X, nperm = nperm, stdz = stdz, full_mmrr){
   test_error <-
     data.frame(pred_test = pred_test, pred_full = pred_full) %>%
     dplyr::mutate(error = err(pred_test, pred_full)) %>%
-    dplyr::summarize(r = cor(pred_test, pred_full, use = "complete.obs"),
-                     rmse = sqrt(mean(error^2, na.rm = TRUE)),
-                     mae = mean(error, na.rm = TRUE)) %>%
+    dplyr::summarize(
+      r = cor(pred_test, pred_full, use = "complete.obs"),
+      rmse = sqrt(mean(error^2, na.rm = TRUE)),
+      mae = mean(error, na.rm = TRUE)
+    ) %>%
     dplyr::mutate(i = i)
 
   return(list(coeffs = coeffs, test_error = test_error))
 }
-
-
-

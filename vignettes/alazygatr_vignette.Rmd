@@ -10,6 +10,7 @@ vignette: >
 ```{r color, echo = FALSE, results = FALSE}
 options(crayon.enabled = TRUE)
 
+if (!require(fansi)) install.packages("fansi")
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
   which = c("output", "message", "error")
 )

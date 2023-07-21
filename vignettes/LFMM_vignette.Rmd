@@ -198,6 +198,12 @@ For the ridge method LFMM run, we can see that there are (a) more outliers than 
 lfmm_manhattanplot(ridge_results$df, sig = 0.05)
 ```
 
+## Cross validation
+```{r, fig.width=10, fig.height=11}
+lopocv_result <- lfmm_lopocv(gen = gen, coords = liz_coords, env = CA_env)
+head(lopocv_result$support)
+```
+
 ## Running LFMM with `lfmm_do_everything()`
 
 ------------------------------------------------------------------------

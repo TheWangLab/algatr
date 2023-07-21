@@ -134,6 +134,7 @@ par(mfrow = c(2, 2))
 gdm_plot_isplines(gdm_full$model)
 ```
 
+
 ### Table of GDM statistics
 
 We can generate a nice table with relevant GDM statistics to report using the `gdm_table()` function. To understand the relative contributions explained by IBE (each of the environmental predictor variables) and IBD (geographic distance), we sum the three I-spline coefficients for each variable; non-zero sums are variables that are significantly associated with genetic dissimilarity. The coefficients contained in this table are the sum of the three I-spline coefficients we saw above when we looked at the `coefficients` element within the GDM model.
@@ -169,14 +170,17 @@ plot_extrap_mask(maprgb, map_mask, RGB = TRUE, mask_col = rgb(1, 1, 1, alpha = 0
 ```
 
 ## Cross-validation
+```{r}
+lopocv_result <- gdm_lopocv(liz_gendist, liz_coords, CA_env)
+```
 
 
 ```{r, fig.width = 10, fig.height = 8}
-plot(coeff_plot)
+plot(lopocv_result$coeff_plot)
 ```
 
-```{r, fig.width = 2, fig.height = 5}
-plot(error_plot)
+```{r, fig.width = 9, fig.height = 6}
+plot(lopocv_result$error_plot)
 ```
 
 

@@ -1,0 +1,75 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-07-06"
+---
+```{r}
+BiocManager::install("qvalue")
+BiocManager::install("gdsfmt")
+BiocManager::install("SeqArray")
+BiocManager::install("SNPRelate")
+BiocManager::install("LEA") # required by tess3rt
+BiocManager::install("ggtree") # required by harrietr
+
+#install.packages("devtools")
+devtools::install_github("bcm-uga/TESS3_encho_sen")
+devtools::install_github("bleutner/RStoolbox")
+devtools::install_github("AnushaPB/wingen@dev")
+
+# Then algatr can be installed
+devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+```
+```{r}
+library(wingen)
+library(algatr)
+load_middle_earth_ex()
+hf <- hierfstat::genind2hierfstat(vcfR::vcfR2genind(lotr_vcf), pop = 1)
+hf$pop <- as.numeric(as.character(hf$pop))
+
+```
+
+
+```{r}
+tess <- tess_do_everything(lotr_vcf, lotr_coords, lotr_lyr, K_selection = "auto", Kvals = 1:20)
+pops <- apply(tess$Qmatrix, 1, which.min)
+
+plot(tess$krig_admix)
+
+qmap <- tess$krig_admix
+
+Kmap <- terra::app(qmap, which.min)
+plot(Kmap)
+
+admix_zone = c(0.4, 0.6)
+admix_zones = qmap
+admix_zones[] <- 0
+admix_zones[qmap > 0.5 & qmap < 0.6] <- 1
+plot(admix_zones)
+amap <- terra::app(admix_zones, max, na.rm = TRUE)
+plot(amap)
+
+distmat <- get_resdist(lotr_coords, amap)
+lotr_lyr[] <- distmat[20,]
+plot(lotr_lyr)
+
+plot_gd(wg$Fst_hierfstat)
+
+genind <- vcfR::vcfR2genind(lotr_vcf, pop = pops)
+
+dos <- data.frame(pop = pops, vcf_to_dosage(lotr_vcf))
+
+fst <- function(dos) {
+  if (length(unique(dos[,1])) == 1) return(NA)
+  hierfstat::fst.dosage(dos[,-1], pop = dos[,1])["All"]
+}
+
+#rg <- resist_general(dos, lotr_coords, lotr_lyr, maxdist = 60, distmat = distmat, stat = fst, min_n = 1)
+#plot_gd(rg)
+
+wg <- window_general(dos, lotr_coords, lyr = amap, wdim = 31, stat = fst, min_n = 1)
+amap[amap != 1] <- NA
+mg <- mask_gd(mask_gd(wg, amap), lotr_range)
+ggplot_gd(mg, bkg = lotr_range) + geom_point(data=lotr_coords, aes(x=x,y=y),pch = 3)
+```
+
+metric that looks at heterozygosity within sample vs across samples?

@@ -829,7 +829,6 @@ rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, cor
                        outlier_method = "p", sig = 0.05, z = 3,
                        p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
                        Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, quiet = FALSE) {
-
   # Extract environmental data if env is a raster
   if (inherits(env, "Raster")) env <- terra::rast(env)
   if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
@@ -870,13 +869,14 @@ rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, cor
 
   # Run model
   mod <- rda_run(gen, env, coords,
-                 model = model,
-                 correctGEO = correctGEO,
-                 correctPC = correctPC,
-                 nPC = nPC,
-                 Pin = Pin,
-                 R2permutations = R2permutations,
-                 R2scope = R2scope)
+    model = model,
+    correctGEO = correctGEO,
+    correctPC = correctPC,
+    nPC = nPC,
+    Pin = Pin,
+    R2permutations = R2permutations,
+    R2scope = R2scope
+  )
 
   # If NULL, exit
   if (is.null(mod)) {
@@ -932,13 +932,14 @@ rda_lopocv <- function(gen, env, coords, model = "full", correctGEO = FALSE, cor
 
 rda_lopocv <- function(i, full_snps, gen, env, coords,
                        correctGEO, correctPC, nPC,
-                       naxes, outlier_method, p_adj, sig){
+                       naxes, outlier_method, p_adj, sig) {
   # Run model
   mod <- rda_run(gen[-i, ], env[-i, ], coords[-i, ],
-                 model = "full",
-                 correctGEO = correctGEO,
-                 correctPC = correctPC,
-                 nPC = nPC)
+    model = "full",
+    correctGEO = correctGEO,
+    correctPC = correctPC,
+    nPC = nPC
+  )
 
   # Running with all axes
   rda_sig <- rda_getoutliers(mod, naxes = naxes, outlier_method = outlier_method, p_adj = p_adj, sig = sig)

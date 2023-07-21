@@ -1,12 +1,12 @@
 #' LFMM function to do everything
 #'
-#' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
+#' @param gen genotype dosage matrix (rows = individuals & columns = snp) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
-#' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
+#' @param sig alpha level for determining candidate snp (defaults to 0.05)
 #' @param p_adj method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams lfmm::lfmm_test
@@ -116,10 +116,10 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
   # Make tidy dataframe of results
   result_df <- lfmm_df(lfmm_test_result)
 
-  # Subset out candidate SNPs
-  cand_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
+  # Subset out candidate snp
+  cand_snp <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
 
-  return(list(cand_snps = cand_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
+  return(list(cand_snp = cand_snp, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }
 
 
@@ -169,12 +169,12 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' Create `gt` table of LFMM results
 #'
 #' @param df df element from \code{\link{lfmm_run}} results
-#' @param sig alpha level for determining candidate snps (defaults to 0.5)
-#' @param sig_only only include SNPs that exceeded the significance threshold in the table
-#' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
+#' @param sig alpha level for determining candidate snp (defaults to 0.5)
+#' @param sig_only only include snp that exceeded the significance threshold in the table
+#' @param top if there are snp that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
-#' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
-#' @param rows number of rows to include in table (defaults to NULL; will only include significant SNPs)
+#' @param var display significant snp associated with particular environmental variable (defaults to NULL)
+#' @param rows number of rows to include in table (defaults to NULL; will only include significant snp)
 #' @param digits number of decimal points to include (defaults to 2)
 #' @inheritParams lfmm_do_everything
 #'
@@ -209,13 +209,19 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 
   d <- max(abs(min(df$B, na.rm = TRUE)), abs(max(df$B, na.rm = TRUE)))
 
-  colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
+  if (any("support" == colnames(df), na.rm = TRUE)) {
+    colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value", "CV support")
+  } else {
+    colnames(df) <- c("snp", "variable", "B", "z-score", "p-value", "calibrated z-score", "calibrated p-value", "adjusted p-value")
+  }
 
   suppressWarnings(
     tbl <- df %>%
       gt::gt() %>%
       gtExtras::gt_hulk_col_numeric("B", trim = TRUE, domain = c(-d, d))
   )
+
+  if (any("CV support" == colnames(df))) tbl <- tbl %>% gtExtras::gt_hulk_col_numeric("CV support", trim = TRUE, domain = c(-1,1))
 
   if (footnotes) tbl <- tbl %>% gt::tab_footnote(footnote = "LFMM effect size", locations = gt::cells_column_labels(columns = B))
 
@@ -492,7 +498,7 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
     ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
     ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
-    ggplot2::xlab("SNPs") +
+    ggplot2::xlab("snp") +
     ggplot2::ylab("-log10(p)") +
     ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", size = 0.6) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "SNP type")) +
@@ -520,9 +526,6 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
                         K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                         p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                         low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
-
-  full <- lfmm_run(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif")
-
   # Get and check environmental data
   if (inherits(env, "Raster")) env <- terra::rast(env)
   if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
@@ -541,9 +544,10 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
   # If K is not specified, it is calculated based on given K selection method
   if (is.null(K)) {
     K <- select_K(gen,
-                  K_selection = K_selection, coords = coords,
-                  Kvals = Kvals, criticalpoint = criticalpoint, low = low,
-                  max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust)
+      K_selection = K_selection, coords = coords,
+      Kvals = Kvals, criticalpoint = criticalpoint, low = low,
+      max.pc = max.pc, perc.pca = perc.pca, max.n.clust = max.n.clust
+    )
   }
 
   # Run LFMM
@@ -552,9 +556,9 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
   lopocv_results <-
     purrr::map(
       1:nrow(gen),
-      ~ lfmm_lopocv(
+      ~ lfmm_run_lopocv(
         .x,
-        full_snps = results$cand_snps,
+        full_snp = results$cand_snp,
         gen = gen,
         env = env,
         K = K,
@@ -589,35 +593,45 @@ lfmm_lopocv <- function(gen, env, coords, K = NULL, lfmm_method = "ridge",
     lopocv_results %>%
     purrr::map("snp_support") %>%
     dplyr::bind_rows() %>%
-    dplyr::group_by(var, snps) %>%
-    dplyr::summarize(support = mean(support, na.rm = TRUE), .groups = "keep")
+    dplyr::group_by(var, snp) %>%
+    dplyr::summarize(support = mean(support, na.rm = TRUE), .groups = "keep") %>%
+    # needs to be right_join for correct column order
+    dplyr::right_join(results$df, results_df, by = c("snp", "var")) %>%
+    dplyr::relocate(snp) %>%
+    dplyr::relocate(support, .after = dplyr::last_col())
 
-  return(stats = df, mean_stats = summary_df, support = support, plots = list(TPR = plt1, FDR = plt2, TPR_mean = plt3, FDR_mean = plt4))
+  print(lfmm_table(support, top = TRUE, order = TRUE, nrow = 10, sig = sig))
 
+  return(list(stats = df, mean_stats = summary_df, support = support, plots = list(TPR = plt1, FDR = plt2, TPR_mean = plt3, FDR_mean = plt4)))
 }
 
-lfmm_lopocv <- function(i, full_snps, gen, env, K, lfmm_method, p_adj, sig, calibrate){
-  test <- lfmm_run(gen[-i,], env[-i,], K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
+lfmm_run_lopocv <- function(i, full_snp, gen, env, K, lfmm_method, p_adj, sig, calibrate) {
+  test <- lfmm_run(gen[-i, ], env[-i, ], K = K, lfmm_method = lfmm_method, p_adj = p_adj, sig = sig, calibrate = calibrate)
 
-  test_snps <- test$cand_snps
+  test_snp <- test$cand_snp
   result <-
-    purrr::map(unique(full_snps$var), \(x) {
-      var_full_snps <-
-        full_snps %>% dplyr::filter(var == !!x) %>% dplyr::pull(snp)
-      var_test_snps <-
-        test_snps %>% dplyr::filter(var == !!x) %>% dplyr::pull(snp)
-      TP <- sum(var_test_snps %in% var_full_snps)
-      FD <- length(var_test_snps) - TP
-      TPR <- TP / length(var_full_snps)
-      FDR <- FD / length(var_test_snps)
+    purrr::map(unique(full_snp$var), \(x) {
+      var_full_snp <-
+        full_snp %>%
+        dplyr::filter(var == !!x) %>%
+        dplyr::pull(snp)
+      var_test_snp <-
+        test_snp %>%
+        dplyr::filter(var == !!x) %>%
+        dplyr::pull(snp)
+      TP <- sum(var_test_snp %in% var_full_snp)
+      FD <- length(var_test_snp) - TP
+      TPR <- TP / length(var_full_snp)
+      FDR <- FD / length(var_test_snp)
 
-      snp_support <- data.frame(i = i, var = var, snps = var_full_snps, support = (var_full_snps %in% var_test_snps))
+      snp_support <- data.frame(i = i, var = x, snp = var_full_snp, support = (var_full_snp %in% var_test_snp))
 
       return(list(stats = data.frame(i = i, var = x, TPR = TPR, FDR = FDR), snp_support = snp_support))
     })
 
-  result <- result %>% purrr::list_transpose() %>% purrr::map(dplyr::bind_rows)
+  result <- result %>%
+    purrr::list_transpose() %>%
+    purrr::map(dplyr::bind_rows)
 
   return(result)
 }
-

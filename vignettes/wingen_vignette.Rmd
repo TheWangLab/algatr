@@ -16,6 +16,11 @@ knitr::opts_chunk$set(
 
 # wingen
 
+```{r}
+# install additional required packages
+devtools::github_install("wingen")
+```
+
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(wingen)
