@@ -6,10 +6,10 @@ name: Docker
 # documentation.
 
 on:
-  paths:
+  push:
+    paths:
       - "R/**.R"
       - .github/workflows/docker-publish.yml
-  push:
     branches: [ "dependencies" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
