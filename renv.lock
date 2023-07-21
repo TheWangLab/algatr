@@ -4,23 +4,23 @@
     "Repositories": [
       {
         "Name": "BioCsoft",
-        "URL": "https://bioconductor.org/packages/3.15/bioc"
+        "URL": "https://bioconductor.org/packages/3.17/bioc"
       },
       {
         "Name": "BioCann",
-        "URL": "https://bioconductor.org/packages/3.15/data/annotation"
+        "URL": "https://bioconductor.org/packages/3.17/data/annotation"
       },
       {
         "Name": "BioCexp",
-        "URL": "https://bioconductor.org/packages/3.15/data/experiment"
+        "URL": "https://bioconductor.org/packages/3.17/data/experiment"
       },
       {
         "Name": "BioCworkflows",
-        "URL": "https://bioconductor.org/packages/3.15/workflows"
+        "URL": "https://bioconductor.org/packages/3.17/workflows"
       },
       {
         "Name": "BioCbooks",
-        "URL": "https://bioconductor.org/packages/3.15/books"
+        "URL": "https://bioconductor.org/packages/3.17/books"
       },
       {
         "Name": "CRAN",
@@ -29,7 +29,7 @@
     ]
   },
   "Bioconductor": {
-    "Version": "3.14"
+    "Version": "3.17"
   },
   "Packages": {
     "AssocTests": {
@@ -1163,6 +1163,16 @@
       ],
       "Hash": "451e5edf411987991ab6a5410c45011f"
     },
+    "dotCall64": {
+      "Package": "dotCall64",
+      "Version": "1.0-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "6aa9e277302190b6c618af042d904bdf"
+    },
     "downlit": {
       "Package": "downlit",
       "Version": "0.4.3",
@@ -1363,6 +1373,20 @@
       "Repository": "CRAN",
       "Hash": "f7736a18de97dea803bde0a2daaafb27"
     },
+    "fields": {
+      "Package": "fields",
+      "Version": "14.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "maps",
+        "methods",
+        "spam",
+        "viridis"
+      ],
+      "Hash": "75f08bec9520d29ff8c3b37276eb3da7"
+    },
     "fit.models": {
       "Package": "fit.models",
       "Version": "0.64",
@@ -1415,6 +1439,19 @@
       ],
       "Hash": "618609b42c9406731ead03adf5379850"
     },
+    "foreign": {
+      "Package": "foreign",
+      "Version": "0.8-84",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "467ec0ca895d4e61a22cfbac9bccddf8"
+    },
     "fs": {
       "Package": "fs",
       "Version": "1.6.2",
@@ -1425,6 +1462,22 @@
         "methods"
       ],
       "Hash": "94af08e0aa9675a16fadbb3aaaa90d2a"
+    },
+    "furrr": {
+      "Package": "furrr",
+      "Version": "0.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "future",
+        "globals",
+        "lifecycle",
+        "purrr",
+        "rlang",
+        "vctrs"
+      ],
+      "Hash": "da7a4c32196cb2262a41dd5a25d486ff"
     },
     "future": {
       "Package": "future",
@@ -2243,6 +2296,36 @@
         "R"
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
+    },
+    "maps": {
+      "Package": "maps",
+      "Version": "3.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "utils"
+      ],
+      "Hash": "644a88fb036ab50cee0b715394eefa1a"
+    },
+    "maptools": {
+      "Package": "maptools",
+      "Version": "1.1-7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "foreign",
+        "grDevices",
+        "grid",
+        "lattice",
+        "methods",
+        "sp",
+        "stats",
+        "utils"
+      ],
+      "Hash": "14bf7aecce168085c4acb0acee2ad82d"
     },
     "markdown": {
       "Package": "markdown",
@@ -3201,6 +3284,20 @@
       ],
       "Hash": "a9881dfed103e83f9de151dc17002cd1"
     },
+    "rworldmap": {
+      "Package": "rworldmap",
+      "Version": "1.3-6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "fields",
+        "maptools",
+        "methods",
+        "sp"
+      ],
+      "Hash": "b34f146159f7c6c4331caff2062cd5e9"
+    },
     "s2": {
       "Package": "s2",
       "Version": "1.1.4",
@@ -3419,6 +3516,19 @@
         "zoo"
       ],
       "Hash": "41cffbee686c1dd9b3ee852e43dccda1"
+    },
+    "spam": {
+      "Package": "spam",
+      "Version": "2.9-1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "dotCall64",
+        "grid",
+        "methods"
+      ],
+      "Hash": "2024a309411ff865488552f108c68333"
     },
     "spatial": {
       "Package": "spatial",
