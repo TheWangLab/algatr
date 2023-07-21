@@ -14,6 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For LFMM:
+if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
+if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
+if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
+if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+
+```
+
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}

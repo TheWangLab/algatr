@@ -14,11 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For GDM:
+if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
+if (!require("gdm", quietly = TRUE)) install.packages("gdm")
+```
+
 # Generalized dissimilarity modeling (GDM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
-library(here)
 library(raster)
 library(terra)
 ```
