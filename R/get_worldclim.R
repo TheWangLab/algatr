@@ -12,7 +12,7 @@
 #' @export
 get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE) {
   # Raster of worldclim tiles
-  r <- terra::rast(vals = 1:60, nrows = 5, ncols = 12, ext = raster::extent(c(-180, 180, -90, 90)))
+  r <- terra::rast(vals = 1:72, nrows = 6, ncols = 12, ext = terra::ext(c(-180, 180, -90, 90)))
 
   # Make sf object with convex hull of coords
   coords <- coords_to_sf(coords)
