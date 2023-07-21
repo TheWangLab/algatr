@@ -29,7 +29,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
   # Convert vcf to dosage
-  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Convert coords to matrix
   coords <- as.matrix(coords)

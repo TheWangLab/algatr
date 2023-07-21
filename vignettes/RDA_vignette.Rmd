@@ -22,7 +22,6 @@ library(dplyr)
 library(here)
 library(raster)
 library(terra)
-library(wingen)
 library(vegan)
 ```
 
@@ -52,7 +51,7 @@ Running an RDA requires two data files for input: a genotype dosage matrix (the 
 
 ```{r gen data, warning = FALSE}
 load_algatr_example()
-# Convert from vcf to dosage matrix using the wingen package:
+# Convert from vcf to dosage matrix:
 gen <- vcf_to_dosage(liz_vcf)
 ```
 

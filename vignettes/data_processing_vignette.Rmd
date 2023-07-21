@@ -22,7 +22,6 @@ library(here)
 library(vcfR)
 library(SNPRelate)
 library(SeqArray)
-library(wingen)
 ```
 
 For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
