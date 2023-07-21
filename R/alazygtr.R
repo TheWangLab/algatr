@@ -1,4 +1,3 @@
-
 #' Lazy run of all landscape genomic analyses contained within `algatr`
 #'
 #' Disclaimer: this is probably a bad idea...
@@ -13,7 +12,6 @@
 #'
 #' @examples
 do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE) {
-
   # Data processing ---------------------------------------------------------
 
   gendist <- gen_dist(gen, dist_type = "dps")
