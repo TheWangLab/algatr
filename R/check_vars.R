@@ -1,4 +1,3 @@
-
 #' Check environmental layers for collinearity
 #'
 #' @param envlayers a RasterStack of data layers
