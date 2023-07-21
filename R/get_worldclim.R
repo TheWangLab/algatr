@@ -11,21 +11,15 @@
 #' @return A SpatRaster of WorldClim layers.
 #' @export
 get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE) {
-  # Convert coordinates
-  coords <- coords_to_df(coords)
-
   # Raster of worldclim tiles
   r <- terra::rast(vals = 1:60, nrows = 5, ncols = 12, ext = raster::extent(c(-180, 180, -90, 90)))
 
   # Make sf object with convex hull of coords
-  ch_pts <- grDevices::chull(coords)
-  ch_poly <- sp::Polygon(coords[ch_pts, ])
-  ch_polys <- sp::Polygons(list(ch_poly), ID = "chull")
-  ch_spolys <- sp::SpatialPolygons(list(ch_polys))
-  ch_sf <- sf::st_as_sf(ch_spolys)
+  coords <- coords_to_sf(coords)
+  ch_sf <- sf::st_convex_hull(sf::st_union(coords))
 
   # Identify WorldClim tiles to download
-  r_nums <- terra::extract(r, ch_sf, ID = FALSE)
+  r_nums <- terra::extract(r, terra::vect(ch_sf), ID = FALSE)
   r_xy <- terra::xyFromCell(r, r_nums[[1]])
 
   folder <- paste0(getwd(), "/tmp")
@@ -45,7 +39,7 @@ get_worldclim <- function(coords, res = 0.5, buff = 0.01, save_output = FALSE) {
   }
 
   # Define crop area based on buffer size
-  buff_ext <- as.vector(terra::ext(coords_to_sf(coords)))
+  buff_ext <- as.vector(terra::ext(coords))
   ext_vals <- c()
   if (buff_ext["xmin"] < 0) {
     ext_vals[1] <- buff_ext["xmin"] * (1 + buff)
