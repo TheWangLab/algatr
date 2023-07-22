@@ -5,6 +5,7 @@ on:
       - "R/**.R"
       - .github/workflows/docker-image.yml
       - renv.lock
+      - Dockerfile
     branches: [ "dependencies" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
