@@ -2,6 +2,8 @@
 output: github_document
 ---
 
+[![Docker](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
@@ -29,12 +31,6 @@ library(vcfR)
 ## Installation
 
 ------------------------------------------------------------------------
-
-You can install the development version of algatr from [GitHub](https://github.com/) using the following code:
-
-``` r
-devtools::install_github("TheWangLab/algatr", build_vignettes = FALSE)
-```
 
 algatr depends on many packages for all of the different methods implemented. In order to ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method must be installed separately from algatr. This is also helpful if you are only interested in using a subset of the methods provided and don't want to install a bunch of unnecessary extra packages. Below we list the packages that you need to install for each part of algatr.
 
@@ -102,10 +98,15 @@ if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
 if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
 
 ```
-
 If you're installing on Ubuntu, you may run into issues installing the rmapshaper package; scroll to the bottom of the README for more information.
 
-Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/). First, install Docker, then you can start algatr within a Docker container: 
+Once you have installed these dependencies, you can install algatr using the following code:
+
+``` r
+devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+```
+
+Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/), in which case prior installation of package dependencies is not required. First, install Docker, then you can start algatr within a Docker container: 
 ```bash
 docker run --rm -ti ghcr.io/thewanglab/algatr
 ```

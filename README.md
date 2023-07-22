@@ -1,4 +1,6 @@
 
+[![Docker](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # algatr <img src="man/figures/logo_review.png" align="right" height="140"/>
