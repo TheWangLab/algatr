@@ -23,6 +23,6 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ghcr.io/AnushaPB/algatr:latest
+        run: docker build . --file Dockerfile --tag ghcr.io/anushabishop/algatr:latest
       - name: Publish
-        run: docker push ghcr.io/AnushaPB/algatr:latest
+        run: docker push ghcr.io/anushabishop/algatr:latest
