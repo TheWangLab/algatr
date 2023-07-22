@@ -98,21 +98,20 @@ rmapshaper package; scroll to the bottom of the README for more
 information.
 
 Alternatively, algatr can be run using
-[Docker](https://docs.docker.com/get-started/).
-[Docker](https://docs.docker.com/get-started/) must first be installed
-and then you can start algatr within a Docker container:
+[Docker](https://docs.docker.com/get-started/). First, install Docker,
+then you can start algatr within a Docker container:
 
 ``` bash
-docker run --rm -ti anushabishop/algatr
+docker run --rm -ti ghcr.io/thewanglab/algatr
 ```
 
 You can also run it in an RStudio instance:
 
 ``` bash
-docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 anushabishop/algatr
+docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/algatr
 ```
 
-Open localhost:8787 in your browser and log in with user:algatr and
+Open localhost:8787 in your browser and log in with username:rstudio and
 password:yourpassword (substitute yourpassword for whatever password you
 would like)
 
