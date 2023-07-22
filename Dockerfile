@@ -2,6 +2,9 @@
 # Start with geospatial v 4.3.1
 FROM rocker/geospatial:4.3.1
 
+# Relabel docker
+LABEL org.opencontainers.image.description=""
+
 # Install some linux libraries that R packages need
 #RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libz-dev libgdal-dev libudunits2-dev libgsl-dev libfontcontig1-dev
 
