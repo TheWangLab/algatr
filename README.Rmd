@@ -105,7 +105,7 @@ if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/winge
 
 If you're installing on Ubuntu, you may run into issues installing the rmapshaper package; scroll to the bottom of the README for more information.
 
-Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/). [Docker](https://docs.docker.com/get-started/) must first be installed and then you can start algatr within a Docker container: 
+Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/). First, install Docker, then you can start algatr within a Docker container: 
 ```bash
 docker run --rm -ti anushabishop/algatr
 ```
