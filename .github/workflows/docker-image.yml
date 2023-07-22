@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - "R/**.R"
-      - .github/workflows/docker-publish.yml
+      - .github/workflows/docker-image.yml
     branches: [ "dependencies" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
