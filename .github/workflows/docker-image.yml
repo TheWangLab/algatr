@@ -1,9 +1,10 @@
-name: Docker Image CI
+name: Docker
 on:
   push:
     paths:
       - "R/**.R"
       - .github/workflows/docker-image.yml
+      - renv.lock
     branches: [ "dependencies" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
