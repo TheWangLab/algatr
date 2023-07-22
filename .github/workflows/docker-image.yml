@@ -1,6 +1,15 @@
 name: Docker Image CI
 on:
-  workflow_dispatch: null
+  push:
+    paths:
+      - "R/**.R"
+      - .github/workflows/docker-publish.yml
+    branches: [ "dependencies" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "dependencies" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
