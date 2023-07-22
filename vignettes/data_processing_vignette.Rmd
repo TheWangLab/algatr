@@ -2,7 +2,7 @@
 title: "data_processing_vignette"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{data_processing}
+  %\VignetteIndexEntry{data_processing_vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
