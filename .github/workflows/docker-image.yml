@@ -1,0 +1,19 @@
+name: Docker Image CI
+on:
+  workflow_dispatch: null
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ghcr.io/AnushaPB/algatr:latest
+      - name: Publish
+        run: docker push ghcr.io/AnushaPB/algatr:latest
