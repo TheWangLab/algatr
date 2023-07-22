@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "R/**.R"
+      - "vignettes/**.Rmd"
       - .github/workflows/docker-image.yml
       - renv.lock
       - Dockerfile
