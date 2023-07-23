@@ -5,9 +5,6 @@ FROM rocker/geospatial:4.3.1
 # Relabel docker
 LABEL org.opencontainers.image.description=""
 
-# Set notebook user
-ENV NB_USER=algatr
-
 # Use renv version 0.17.3
 ENV RENV_VERSION 0.17.3
 
