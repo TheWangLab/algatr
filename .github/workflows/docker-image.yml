@@ -7,11 +7,11 @@ on:
       - .github/workflows/docker-image.yml
       - renv.lock
       - Dockerfile
-    branches: [ "dependencies" ]
+    branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "dependencies" ]
+    branches: [ "main" ]
 
 jobs:
   build:
