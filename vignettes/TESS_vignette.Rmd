@@ -97,7 +97,7 @@ tess3_result <- tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_s
 
 The `tess3_result` object contains results for the best-supported K value, including:
 
--   `K`: The value of the best-supported K (3, in this case); this is assigned a value of `NA` if manual selection is done
+-   `K`: The value of the best-supported K (3, in this case)
 
 -   `tess3_obj`: Results from the cross-validation analysis of all values of K
 
