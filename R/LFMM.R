@@ -220,13 +220,13 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
 #'
 #' @param gen genotype matrix
 #' @param K_selection method for performing K selection (options: "tracy_widom" (default), "quick_elbow", or "tess")
-#' @param coords if "tess" method is used, coordinates for TESS based K selection (defaults to NULL)
+#' @param coords if `K_selection = "tess"` used, coordinates for TESS based K selection (defaults to NULL)
 #' @param Kvals values of K to test if using "tess" method of K selection (defaults to 1:10)
-#' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
-#' @param low if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
-#' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
-#' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
-#' @param max.n.clust if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
+#' @param criticalpoint if `K_selection = "tracy_widom"`, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
+#' @param low if `K_selection = "quick_elbow"`, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
+#' @param max.pc if `K_selection = "quick_elbow"`, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
+#' @param perc.pca if `K_selection = "find_clusters"`, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
+#' @param max.n.clust if `K_selection = "find_clusters"`, an integer indicating the maximum number of clusters to try. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
 #'
 #' @return prints the best K value given the specified K selection procedure
 #' @export
@@ -246,7 +246,8 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
-#' @inheritParams AssocTests::tw
+#'
+#' @note uses the \link[AssocTests]{tw} function
 #'
 #' @export
 #'
@@ -275,7 +276,6 @@ select_K_tw <- function(gen, criticalpoint = 2.0234) {
 
 #' @describeIn select_K select K using PCA and \code{quick_elbow} method
 #' @param gen genotype matrix
-#' @inheritParams quick_elbow
 #'
 #' @export
 #'
@@ -297,7 +297,6 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
 
   return(K)
 }
-
 
 #' @describeIn select_K select K using TESS and \code{bestK} method
 #' @param gen genotype matrix
@@ -327,10 +326,11 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
   return(K)
 }
 
-
 #' @describeIn select_K select K using find.clusters method
 #'
 #' @param gen a genotype matrix
+#'
+#' @note uses the \link[adegenet]{find.clusters} function
 #'
 #' @export
 #'
