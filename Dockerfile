@@ -22,4 +22,4 @@ COPY renv.lock renv.lock
 RUN Rscript -e 'renv::restore()'
 
 # Install the algatr package from GitHub
-RUN Rscript -e 'remotes::install_github("TheWangLab/algatr@dependencies", build_vignettes = TRUE)'
+RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = TRUE)'
