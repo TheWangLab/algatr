@@ -122,7 +122,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
       ylab = "Cross-validation score",
       xlim = c(1, 10)
     )
-    axis(side = 1, at = 1:length(tess3_obj))
+    axis(side = 1, at = Kvals)
   }
 
   # Get best K value
