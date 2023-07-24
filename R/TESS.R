@@ -119,8 +119,10 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
     plot(tess3_obj,
       pch = 19, col = "blue",
       xlab = "Number of ancestral populations",
-      ylab = "Cross-validation score"
+      ylab = "Cross-validation score",
+      xlim = c(1, 10)
     )
+    axis(side = 1, at = 1:length(tess3_obj))
   }
 
   # Get best K value
