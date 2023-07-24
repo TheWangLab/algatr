@@ -44,7 +44,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 
   # Print dataframe
   if (!quiet) {
-    mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
+    mmrr_plot(Y = Y, X = X, mod = results$mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
     print(mmrr_table(results))
   }
 
