@@ -160,7 +160,7 @@ As was briefly mentioned in the environmental data vignette, the `geo_dist()` fu
 
 Although algatr does not have the explicit functionality to quantify and visualize IBR, we can investigate IBR using MMRR given that this method conducts a multiple Mantel test given some distance metric. Thus, it is possible to run `geo_dist()` specifying `lyr` with your resistance raster and use the resulting distances as input into MMRR. The following is a *toy* example of how this could be done. For the sake of computational time, we'll make a fake resistance surface using wingen's `coords_to_raster()` function.
 
-```{r toy resist surface}
+```{r toy resist surface, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE}
 library(wingen)
 lyr <- coords_to_raster(liz_coords, buffer = 2, res = 1)
 plot(lyr)
