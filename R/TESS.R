@@ -78,10 +78,11 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 
   # Plot Q-values
   if (!quiet) {
+    # Make map
     if (K != 1 & !is.null(grid)) print(tess_ggplot(krig_admix, coords, plot_method = plot_method, ggplot_fill = algatr_col_default("ggplot")))
 
     # Make barplot
-    if (K != 1) print(tess_barplot(qmat = qmat, col_pal = algatr_col_default("base")))
+    if (K != 1) print(tess_ggbarplot(qmat = qmat, ggplot_fill = algatr_col_default("ggplot")))
   }
 
   # OUTPUTS ------------------------------------------------------------------------------------------------------
