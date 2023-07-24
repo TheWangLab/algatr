@@ -39,8 +39,12 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if (model == "best") results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "best")
-  if (model == "full") results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "full")
+  results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = model)
+
+  if (is.null(results$X_best) & model == "best") {
+    warning("failed to fit best model, rerunning MMRR with full model")
+    results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "full")
+  }
 
   # Print dataframe
   if (!quiet) {
