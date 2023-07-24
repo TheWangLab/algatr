@@ -4,13 +4,14 @@
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
+#' @param geo whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
-#' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
-#' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
+#' @param geodist_type if `geo = TRUE`, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
+#' @param dist_lyr if `geodist_type = "topographic"`, DEM raster for calculating topographic distances or if `geodist_type = "resistance"`, resistance raster for calculating resistance distances
 #' @param quiet whether to plot results (default = FALSE)
-#' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
+#' @param plot_type if `quiet = FALSE`, which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @details
 #' The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411. doi: https://doi.org/10.1111/evo.12134
@@ -18,7 +19,7 @@
 #' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
+mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -33,7 +34,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   X <- env_dist(env)
 
   # Make distance matrix
-  X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+  if (geo) X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
 
   # Make geodist mat
   Y <- as.matrix(gendist)

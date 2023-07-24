@@ -242,7 +242,7 @@ The `geo_dist()` function allows users to choose from five environmental distanc
 
 -   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model (DEM) raster specified with the `lyr` argument
 
--   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a digital elevation model raster specified with the `lyr` argument
+-   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a resistance raster specified with the `lyr` argument
 
 ### Euclidean distances
 
