@@ -32,7 +32,7 @@ library(vcfR)
 
 ------------------------------------------------------------------------
 
-algatr depends on many packages for all of the different methods implemented. In order to ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method must be installed separately from algatr. This is also helpful if you are only interested in using a subset of the methods provided and don't want to install a bunch of unnecessary extra packages. Below we list the packages that you need to install for each part of algatr.
+The algatr package depends on many packages for all of the different methods implemented. To ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method must be installed separately from algatr. This is also helpful if you're only interested in using a subset of the methods provided and don't want to install unnecessary packages. Below, we list the packages that you need to install for each part of algatr.
 
 ``` r
 # Install packages for installing other packages
@@ -97,25 +97,28 @@ if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
 # For wingen:
 if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
-
 ```
+
 If you're installing on Ubuntu, you may run into issues installing the rmapshaper package; scroll to the bottom of the README for more information.
 
-Once you have installed these dependencies, you can install algatr using the following code:
+Once you have installed the above dependencies, you can install algatr using the following code:
 
 ``` r
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
-Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/), in which case prior installation of package dependencies is not required. First, install Docker, then you can start algatr within a Docker container: 
-```bash
+Alternatively, algatr can be run using [Docker](https://docs.docker.com/get-started/), in which case prior installation of package dependencies is not required. First, install Docker, and then start algatr within a Docker container:
+
+``` bash
 docker run --rm -ti ghcr.io/thewanglab/algatr
 ```
 
-You can also run it in an RStudio instance:
-```bash
+You can also run the container in an RStudio instance:
+
+``` bash
 docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/algatr
 ```
+
 Open localhost:8787 in your browser and log in with username:rstudio and password:yourpassword (substitute yourpassword for whatever password you would like)
 
 ## Introduction
@@ -134,25 +137,25 @@ algatr makes use of several existing packages and methods, and we provide citati
 
 Other than input data processing functions, the main functions within algatr are named with the pattern `[method]_do_everything()`. As the name implies, these functions will take you from your raw input data through to generating results, tables, and figures from the analysis. For example, `gdm_do_everything()` will run generalized dissimilarity modeling while also generating a GDM map, a table with results, and several other outputs. All of the `[method]_do_everything` functions has a `quiet` argument which, when set to `"TRUE"`, will not automatically print figures and outputs.
 
-However, to better understand what's going on under the hood of these `[method]_do_everything()` functions, the algatr vignettes provide a line-by-line breakdown of the individual functions contained within the `[method]_do_everything()` function to (a) increase a user's understanding of how the method actually works, and (b) allow users with more customizability in how they run their own analysis, if so desired.
+To better understand what's going on under the hood of these `[method]_do_everything()` functions, the algatr vignettes provide a line-by-line breakdown of the individual user-facing functions contained within the `[method]_do_everything()` function to (a) increase a user's understanding of how the method actually works, and (b) allow users with more customizability in how they run their own analysis, if so desired. **We strongly encourage all researchers to only use the** `[method]_do_everything()` **functions as an initial first-pass examination of their data; users should follow the workflows provided in the vignettes for more nuanced parameter control and to generally better understand how each of these methods works.**
 
-When deciding on methods to have within algatr, we found it best to first identify the questions that these methods seek to answer, and we think this is a good framework for anyone (particularly beginner landscape genomicists) to think about landscape genomic methods. These questions fall into four broad categories of analyses.
+When deciding on methods to have within algatr, we found it best to first identify the questions that these methods seek to answer, and we think this is a good framework for anyone (particularly beginner landscape genomicists) to think about landscape genomic methods. These questions fall into four broad categories of analyses:
 
-+------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
-| Question                                             | Category                                                 | Method                                                                                                         | Vignette            | algatr function          |
-+======================================================+==========================================================+================================================================================================================+=====================+==========================+
-| How do we delineate population units for management? | Population structure                                     | TESS (Caye et al. 2016)                                                                                        | TESS_vignette.Rmd   | `tess_do_everything()`   |
-+------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
-| How is genetic variation distributed?                | Genetic diversity                                        | Moving windows of genetic diversity; wingen (Bishop et al. 2023)                                               | wingen_vignette.Rmd | `wingen_do_everything()` |
-+------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
-| What are the drivers of population connectivity?     | Isolation by distance/isolation by environment (IBD/IBE) | Multiple matrix regression with randomization; MMRR (Wang 2013)                                                | MMRR_vignette.Rmd   | `mmrr_do_everything()`   |
-|                                                      |                                                          |                                                                                                                |                     |                          |
-|                                                      |                                                          | Generalized dissimilarity modeling; GDM (Ferrier et al. 2007; Freedman et al. 2010; Fitzpatrick & Keller 2015) | GDM_vignette.Rmd    | `gdm_do_everything()`    |
-+------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
-| How can we protect adaptive genetic variation?       | Genotype-environment associations (GEA)                  | Redundancy analysis; RDA (Capblancq & Forester 2021)                                                           | RDA_vignette.Rmd    | `rda_do_everything()`    |
-|                                                      |                                                          |                                                                                                                |                     |                          |
-|                                                      |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | LFMM_vignette.Rmd   | `lfmm_do_everything()`   |
-+------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| Question                                                    | Category                                                 | Method                                                                                                         | Vignette            | algatr function          |
++=============================================================+==========================================================+================================================================================================================+=====================+==========================+
+| How do we delineate population units for management?        | Population structure                                     | TESS (Caye et al. 2016)                                                                                        | TESS_vignette.Rmd   | `tess_do_everything()`   |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| How is genetic variation distributed?                       | Genetic diversity                                        | Moving windows of genetic diversity; wingen (Bishop et al. 2023)                                               | wingen_vignette.Rmd | `wingen_do_everything()` |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| What are the drivers of population connectivity?            | Isolation by distance/isolation by environment (IBD/IBE) | Multiple matrix regression with randomization; MMRR (Wang 2013)                                                | MMRR_vignette.Rmd   | `mmrr_do_everything()`   |
+|                                                             |                                                          |                                                                                                                |                     |                          |
+|                                                             |                                                          | Generalized dissimilarity modeling; GDM (Ferrier et al. 2007; Freedman et al. 2010; Fitzpatrick & Keller 2015) | GDM_vignette.Rmd    | `gdm_do_everything()`    |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
+| How can we identify and protect adaptive genetic variation? | Genotype-environment associations (GEA)                  | Redundancy analysis; RDA (Capblancq & Forester 2021)                                                           | RDA_vignette.Rmd    | `rda_do_everything()`    |
+|                                                             |                                                          |                                                                                                                |                     |                          |
+|                                                             |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | LFMM_vignette.Rmd   | `lfmm_do_everything()`   |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+---------------------+--------------------------+
 
 ### The example dataset
 
@@ -247,7 +250,7 @@ You'll now want to do some processing of these data, such as file conversions an
 |           |                                                                   |                          | -   Environmental layers                  |                    |
 |           |                                                                   |                          | -   Sampling coordinates                  | -   `env`          |
 +-----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
-| wingen    | wingen                                                            | `wingen_do_everything()` | -   VCF file                              | -   `gen`          |
+| wingen    | [wingen](https://github.com/AnushaPB/wingen)                      | `wingen_do_everything()` | -   VCF file                              | -   `gen`          |
 |           |                                                                   |                          | -   Raster layer (*though not necessary*) |                    |
 |           |                                                                   |                          | -   Sampling coordinates                  | -   `lyr`          |
 |           |                                                                   |                          |                                           |                    |
@@ -268,4 +271,6 @@ As an example of algatr, let's run through all of its functionality which we've 
 
 You may run into issues installing the rmapshaper package if you're using a Ubuntu system. If so, run the following line of code before attempting to install the package:
 
-    sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
+```         
+sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
+```

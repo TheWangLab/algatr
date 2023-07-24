@@ -16,20 +16,13 @@ with their data.
 
 ------------------------------------------------------------------------
 
-You can install the development version of algatr from
-[GitHub](https://github.com/) using the following code:
-
-``` r
-devtools::install_github("TheWangLab/algatr", build_vignettes = FALSE)
-```
-
-algatr depends on many packages for all of the different methods
-implemented. In order to ensure that algatr can still be installed even
+The algatr package depends on many packages for all of the different
+methods implemented. To ensure that algatr can still be installed even
 if one of the many dependencies breaks, the packages required for each
 method must be installed separately from algatr. This is also helpful if
-you are only interested in using a subset of the methods provided and
-don’t want to install a bunch of unnecessary extra packages. Below we
-list the packages that you need to install for each part of algatr.
+you’re only interested in using a subset of the methods provided and
+don’t want to install unnecessary packages. Below, we list the packages
+that you need to install for each part of algatr.
 
 ``` r
 # Install packages for installing other packages
@@ -90,6 +83,7 @@ if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
 if (!require("fields", quietly = TRUE)) install.packages("fields")
 if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
 if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
 # For wingen:
 if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
@@ -99,15 +93,23 @@ If you’re installing on Ubuntu, you may run into issues installing the
 rmapshaper package; scroll to the bottom of the README for more
 information.
 
+Once you have installed the above dependencies, you can install algatr
+using the following code:
+
+``` r
+devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+```
+
 Alternatively, algatr can be run using
-[Docker](https://docs.docker.com/get-started/). First, install Docker,
-then you can start algatr within a Docker container:
+[Docker](https://docs.docker.com/get-started/), in which case prior
+installation of package dependencies is not required. First, install
+Docker, and then start algatr within a Docker container:
 
 ``` bash
 docker run --rm -ti ghcr.io/thewanglab/algatr
 ```
 
-You can also run it in an RStudio instance:
+You can also run the container in an RStudio instance:
 
 ``` bash
 docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/algatr
@@ -153,24 +155,29 @@ several other outputs. All of the `[method]_do_everything` functions has
 a `quiet` argument which, when set to `"TRUE"`, will not automatically
 print figures and outputs.
 
-However, to better understand what’s going on under the hood of these
+To better understand what’s going on under the hood of these
 `[method]_do_everything()` functions, the algatr vignettes provide a
-line-by-line breakdown of the individual functions contained within the
-`[method]_do_everything()` function to (a) increase a user’s
+line-by-line breakdown of the individual user-facing functions contained
+within the `[method]_do_everything()` function to (a) increase a user’s
 understanding of how the method actually works, and (b) allow users with
 more customizability in how they run their own analysis, if so desired.
+**We strongly encourage all researchers to only use the**
+`[method]_do_everything()` **functions as an initial first-pass
+examination of their data; users should follow the workflows provided in
+the vignettes for more nuanced parameter control and to generally better
+understand how each of these methods works.**
 
 When deciding on methods to have within algatr, we found it best to
 first identify the questions that these methods seek to answer, and we
 think this is a good framework for anyone (particularly beginner
 landscape genomicists) to think about landscape genomic methods. These
-questions fall into four broad categories of analyses.
+questions fall into four broad categories of analyses:
 
 <table style="width:99%;">
 <colgroup>
-<col style="width: 19%" />
 <col style="width: 21%" />
-<col style="width: 40%" />
+<col style="width: 20%" />
+<col style="width: 39%" />
 <col style="width: 7%" />
 <col style="width: 9%" />
 </colgroup>
@@ -212,7 +219,7 @@ Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
 <tr class="even">
-<td>How can we protect adaptive genetic variation?</td>
+<td>How can we identify and protect adaptive genetic variation?</td>
 <td>Genotype-environment associations (GEA)</td>
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
@@ -439,7 +446,7 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 </tr>
 <tr class="even">
 <td>wingen</td>
-<td>wingen</td>
+<td><a href="https://github.com/AnushaPB/wingen">wingen</a></td>
 <td><code>wingen_do_everything()</code></td>
 <td><ul>
 <li>VCF file</li>
