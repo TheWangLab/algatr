@@ -167,7 +167,7 @@ plot(lyr)
 points(liz_coords)
 
 # Add resistance distances as an additional variable in MMRR input
-X[["resist"]] <- geo_dist(liz_coords, type = "resistance", lyr = raster(lyr))
+X[["resistdist"]] <- geo_dist(liz_coords, type = "resistance", lyr = raster(lyr))
 ```
 
 Now, we can run MMRR as we did above but including resistance-based distances in our input data.
