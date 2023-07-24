@@ -107,6 +107,8 @@ The `tess3_result` object contains results for the best-supported K value, inclu
 
 -   `grid`: The RasterLayer upon which ancestry coefficients are mapped; `NULL` in this case
 
+-   `pops`: Population assignments (determined based on the maximum Q value) for each individual for the best K value
+
 ### Running TESS with no K selection
 
 If you want to run TESS without any K selection, you could just run TESS as normal by doing the following:

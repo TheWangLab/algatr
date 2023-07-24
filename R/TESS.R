@@ -49,6 +49,9 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 
     # Get tessobj
     tess3_obj <- tess_results[["tess3_obj"]]
+
+    # Get population assignments
+    pops <- tess_results[["pops"]]
   }
 
   # If only one K value is provided, just use that
@@ -58,6 +61,9 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 
     # Run tess for given K value
     tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+
+    # Get population assignments
+    pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = Kvals)
   }
 
   # KRIGE QMATRIX  -----------------------------------------------------------------------------------------------
@@ -95,7 +101,8 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
     tess_results = tess3_obj,
     coords = coords,
     Kvals = Kvals,
-    grid = grid
+    grid = grid,
+    pops = pops
   )
 
   return(tess_results)
@@ -137,13 +144,17 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   # Mark the K-value selected
   if (!quiet) abline(v = K, col = "red", lty = "dashed")
 
+  # Get population assignments
+  pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = K)
+
   # Create list with tess3 object and K value
   tess_results <- list(
     K = K,
     tess3_obj = tess3_obj,
     coords = coords,
     Kvals = Kvals,
-    grid = grid
+    grid = grid,
+    pops = pops
   )
 
   return(tess_results)
@@ -350,6 +361,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #'
 #' @return legend for kriged map from TESS
 #' @export
+#' @family TESS functions
 krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
   if (plot_method == "maxQ") vals <- seq(0, 1, by = 0.10)
   if (plot_method == "allQ") vals <- seq(minQ, 1, by = 0.10)
@@ -488,6 +500,8 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
 #' @param legend whether to display legend (defaults to TRUE)
 #'
 #' @return ggplot object of TESS results as a barplot
+#'
+#' @family TESS functions
 #' @export
 tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sort_by_Q = TRUE, legend = TRUE) {
   # Get K
@@ -529,6 +543,8 @@ tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sor
 #' @param dat Q matrix
 #'
 #' @return barplot with Q-values and individuals, colorized by K-value
+#'
+#' @family TESS functions
 #' @export
 ggbarplot_helper <- function(dat) {
   dat %>%
@@ -564,6 +580,38 @@ bestK <- function(tess3_obj, Kvals) {
   # K is selected based on the smallest slope value in the upper quartile
   K <- min(which(slope <= quantile(slope)[4]))
   return(K)
+}
+
+#' Helper function to get population assignments for best K
+#'
+#' @param gen genotype dosage matrix (rows = individuals & columns = SNPs) or `vcfR` object
+#' @param tess3_obj list produced by \code{\link{tess3}}
+#' @param K K value
+#'
+#' @return population assignments for each individual based on max Q values
+#'
+#' @export
+#' @family TESS functions
+pops_helper <- function(gen, tess3_obj, K) {
+  # Get individual names for population assignments
+  if (inherits(gen, "vcfR")) names <- colnames(gen@gt[,-1])
+  if (inherits(gen, "matrix")) names <- rownames(gen)
+
+  # Get qmatrix and make into df
+  qmat <- tess3r::qmatrix(tess3_obj, K = K)
+  qmat <- as.data.frame(qmat)
+  # Replace Vs with Ks for clarity
+  colnames(qmat) <- stringr::str_replace_all(colnames(qmat), "V", "K")
+
+  pops <- dplyr::bind_cols(names, qmat) %>%
+    dplyr::rename(individual = `...1`)
+
+  # Get population assignment based on max Q value
+  pops %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(pop_assignment = which.max(dplyr::c_across(-individual)))
+
+  return(pops)
 }
 
 #' Create default TESS color palette

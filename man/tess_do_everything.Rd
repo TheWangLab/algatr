@@ -58,9 +58,12 @@ See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). 
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
 \code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_ktest}()},

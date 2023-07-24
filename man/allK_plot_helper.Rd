@@ -25,10 +25,13 @@ Helper function for all K plotting
 \seealso{
 Other TESS functions: 
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
 \code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_ktest}()},
