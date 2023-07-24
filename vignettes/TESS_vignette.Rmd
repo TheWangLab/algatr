@@ -43,6 +43,7 @@ library(raster)
 library(fields)
 library(rworldmap)
 library(automap)
+library(cowplot)
 
 # for plotting (from TESS)
 source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
