@@ -93,6 +93,7 @@ if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
 if (!require("fields", quietly = TRUE)) install.packages("fields")
 if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
 if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
 # For wingen:
 if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
