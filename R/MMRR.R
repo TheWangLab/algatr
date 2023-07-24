@@ -39,12 +39,15 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   Y <- as.matrix(gendist)
 
   # Run MMRR
+  # TODO adjust below to mmrr_run
   if (model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
-
   if (model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
 
   # Print dataframe
-  if (!quiet) print(mmrr_table(results))
+  if (!quiet) {
+    mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
+    print(mmrr_table(results))
+  }
 
   return(results)
 }
@@ -70,9 +73,6 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
 
   # Subset X with significant variables
   X_best <- X[names(mod$coefficients)[-1]]
-
-  # Plot results
-  if (!quiet) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice dataframe
   coeff_df <- mmrr_df(mod)
@@ -131,6 +131,7 @@ mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type
 #' @param X is a list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
+#' @export
 #' @family MMRR functions
 mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE) {
   # Fit full model
