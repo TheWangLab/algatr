@@ -32,21 +32,21 @@ wingen_do_everything(
 \arguments{
 \item{gen}{genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
 
-\item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections)}
+\item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections). For \code{method = "resist"} this should also be the conductivity layer (see \link[wingen]{resist_gd})}
 
 \item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
-\item{wdim}{dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window)}
+\item{wdim}{if \code{method = "window"}, dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window)}
 
 \item{fact}{aggregation factor to apply to \code{lyr} (defaults to 0; \emph{note:} increasing this value reduces computational time)}
 
 \item{sample_count}{whether to create plot of sample counts for each cell (defaults to TRUE)}
 
-\item{min_n}{min number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)}
+\item{min_n}{minimum number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)}
 
 \item{preview}{whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)}
 
-\item{stat}{genetic diversity statistic to calculate (can either be \code{"pi"} for nucleotide diversity (default), \code{"Ho"} for average observed heterozygosity across all sites, \code{"allelic_richness"} for average number of alleles across all sites, or \code{"biallelic_richness"} to get average allelic richness across all sites for a biallelic dataset (this option is faster than \code{"allelic_richness"}))}
+\item{stat}{genetic diversity statistic(s) to calculate (see Details, defaults to \code{"pi"}). Can be a single statistic or a vector of statistics}
 
 \item{rarify}{if rarify = TRUE, rarefaction is performed (defaults to FALSE)}
 

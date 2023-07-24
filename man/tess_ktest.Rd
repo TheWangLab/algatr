@@ -42,6 +42,7 @@ Test multiple K values
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{krig_legend}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},

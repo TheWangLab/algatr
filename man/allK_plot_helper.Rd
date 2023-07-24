@@ -25,6 +25,7 @@ Helper function for all K plotting
 \seealso{
 Other TESS functions: 
 \code{\link{bestK}()},
+\code{\link{krig_legend}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},

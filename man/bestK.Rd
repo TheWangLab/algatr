@@ -20,6 +20,7 @@ Best K Selection based on cross entropy
 \seealso{
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
+\code{\link{krig_legend}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},

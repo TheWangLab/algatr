@@ -6,9 +6,9 @@
 #' @param grid SpatRaster for kriging
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
-#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param col_breaks number of breaks for plotting (defaults to 20)
-#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @param minQ threshold for minimum Q value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
@@ -251,27 +251,28 @@ raster_to_grid <- function(x) {
 #'
 #' @param krig_admix SpatRaster returned by \link[algatr]{tess_krig}
 #' @param coords dataframe with x and y coordinates for plotting (optional)
-#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
+#' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
 #' @param ggplot_fill any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})
-#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
+#' @param minQ threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"} is used (defaults to 0.10)
 #' @param plot_axes whether to plot axes or not (defaults to FALSE)
+#' @param rel_widths if \code{plot_method = "maxQ"} or \code{plot_method = "allQ"} is used, sets relative widths of kriged TESS map and legend (defaults to 3:1), from \link[cowplot]{plot_grid}
 #'
 #' @family TESS functions
 #'
 #' @return ggplot object of TESS results
 #' @export
-tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE) {
+tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE, rel_widths = c(3, 1)) {
   # Set up ggplot df
   gg_df <- krig_admix %>%
     terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
     tidyr::as_tibble() %>%
-    tidyr::gather("K", "Q", -c(x, y)) %>%
+    tidyr::pivot_longer(names_to = "K", values_to = "Q", -c(x, y)) %>%
     dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
     dplyr::group_by(x, y)
 
   # Use max or all Q
   if (plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
-  if (plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > 0.20)
+  if (plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > minQ)
 
   # Set up base plot
   plt <- ggplot2::ggplot()
@@ -282,10 +283,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   } else {
     plt <- plt +
       ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K, alpha = Q)) +
-      ggplot2::scale_alpha_binned(
-        breaks = round(seq(0, 1, by = 0.10), 1),
-        guide = ggplot2::guide_legend()
-      )
+      ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1))
   }
 
   # Add color
@@ -325,7 +323,51 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   # Add coords
   if (!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
 
+  # Produce plot with krig_legend for "allQ" or "maxQ"
+  if (plot_method == "allQ" | plot_method == "maxQ") {
+    # Remove existing legend
+    plt <- plt +
+      ggplot2::theme(legend.position = "none")
+
+    # Add secondary plot (which will become the legend) with combined K and Q values using helper function
+    plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
+
+    plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
+  }
+
   return(plt)
+}
+
+#' Helper function to make a custom legend for TESS maps
+#'
+#' @param gg_df dataframe in tidy format of Q values from \link[algatr]{tess_ggplot}
+#' @inheritParams tess_ggplot
+#'
+#' @family TESS functions
+#'
+#' @return legend for kriged map from TESS
+#' @export
+krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
+  if (plot_method == "maxQ") vals <- seq(0, 1, by = 0.10)
+  if (plot_method == "allQ") vals <- seq(minQ, 1, by = 0.10)
+  kvals <- 1:length(unique(gg_df$K))
+  dat <- as.data.frame(tidyr::expand_grid(vals, kvals))
+  dat$kvals <- as.character(dat$kvals)
+  dat$vals <- as.character(dat$vals)
+
+  plt_leg <-
+    dat %>%
+    ggplot2::ggplot(ggplot2::aes(x = kvals, y = vals, fill = kvals, alpha = vals, group = kvals)) +
+    ggplot2::geom_raster() +
+    ggplot2::scale_y_discrete(expand = c(0, 0), name = "Q", breaks = vals) +
+    ggplot2::scale_x_discrete(expand = c(0, 0), name = "K", breaks = kvals, labels = kvals) +
+    ggplot2::coord_fixed(ratio = 1) +
+    cowplot::theme_cowplot() %+replace% ggplot2::theme(legend.position = "none",
+                                                       axis.ticks = ggplot2::element_blank(),
+                                                       axis.line = ggplot2::element_blank()) +
+    ggplot_fill
+
+  return(plt_leg)
 }
 
 #' Plot all kriged Q values for each K

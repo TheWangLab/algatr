@@ -51,6 +51,7 @@ Based on code from: https://github.com/bcm-uga/TESS3_encho_sen/blob/master/R/plo
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{krig_legend}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
 \code{\link{tess_ggplot}()},
