@@ -39,9 +39,8 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  # TODO adjust below to mmrr_run
-  if (model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
-  if (model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
+  if (model == "best") results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "best")
+  if (model == "full") results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "full")
 
   # Print dataframe
   if (!quiet) {
@@ -52,7 +51,7 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   return(results)
 }
 
-#' Run MMRR with variable selection
+#' Run MMRR and return model object
 #'
 #' @param Y dependent distance matrix
 #' @param X list of independent distance matrices (with optional names)
@@ -60,19 +59,25 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #'
 #' @return list with final model results and regression coefficients
 #' @export
-#'
 #' @family MMRR functions
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
-  # Fit model with variable selection
-  mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
+mmrr_run <- function(Y, X, nperm = 999, stdz = TRUE, model = "best") {
+  if (model == "best") {
+    # Fit model with variable selection
+    mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
+
+    # Subset X with significant variables
+    X_best <- X[names(mod$coefficients)[-1]]
+  }
+
+  if (model == "full") {
+    mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
+    X_best <- NULL
+  }
 
   # If NULL, exit with NULL
   if (is.null(mod)) {
     return(NULL)
   }
-
-  # Subset X with significant variables
-  X_best <- X[names(mod$coefficients)[-1]]
 
   # Make nice dataframe
   coeff_df <- mmrr_df(mod)
@@ -84,42 +89,6 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
     Y = Y,
     X = X,
     X_best = X_best
-  )
-
-  return(results)
-}
-
-#' Run MMRR with all variables
-#'
-#' @param Y dependent distance matrix
-#' @param X list of independent distance matrices (with optional names)
-#' @inheritParams mmrr_do_everything
-#'
-#' @return list with final model results and regression coefficients
-#' @export
-#'
-#' @family MMRR functions
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all") {
-  # Run full model
-  mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
-
-  # If NULL, exit with NULL
-  if (is.null(mod)) {
-    return(NULL)
-  }
-
-  # Plot results
-  if (!quiet) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
-
-  # Make nice dataframe
-  coeff_df <- mmrr_df(mod)
-
-  # Make results list
-  results <- list(
-    coeff_df = coeff_df,
-    mod = mod,
-    Y = Y,
-    X = X
   )
 
   return(results)
@@ -368,7 +337,7 @@ mmrr_plot_cov <- function(X, stdz = TRUE) {
 #' @param digits the number of decimal places to round to
 #' @param summary_stats whether to add summary statistics (R-squared, F-statistic, F p-value) to bottom of table (defaults to TRUE)
 #'
-#' @return An object of class `gt_tbl`
+#' @return an object of class `gt_tbl`
 #' @export
 #'
 #' @family MMRR functions

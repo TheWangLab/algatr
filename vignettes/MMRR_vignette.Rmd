@@ -61,7 +61,7 @@ X[["geodist"]] <- geo_dist(liz_coords)
 
 ------------------------------------------------------------------------
 
-We can run MMRR either by running the full model (with no variable selection) using the `mmrr_full()` function, or by running a variable selection procedure using backwards elimination using the `mmrr_best()` function. Regardless of the function, the arguments are the same:
+We can run MMRR using the `mmrr_run()` function. We can either run the full model (with no variable selection) by setting `model = "full"`, or by running a variable selection procedure using backwards elimination by setting `model = "best"` within this function. The arguments to `mmrr_run()` are as follows:
 
 -   `Y`: matrix of genetic distances
 
@@ -71,18 +71,16 @@ We can run MMRR either by running the full model (with no variable selection) us
 
 -   `stdz`: whether matrices are standardized
 
--   `quiet`: whether to plot results
-
 ### MMRR with all variables
 
 First, let's run the full MMRR model with all variables included (i.e., no variable selection).
 
 ```{r mmrr full}
 set.seed(10)
-results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
+results_full <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "full")
 ```
 
-The results from MMRR "full" contains four elements:
+The results from running the "full" MMRR model contains four elements:
 
 -   `coeff_df`: a dataframe with statistics relating to each variable's distance related to genetic distance, including coefficient values for each environmental variable and geographic distance
 
@@ -97,10 +95,10 @@ Now, let's run MMRR with variable selection.
 ```{r mmrr best}
 # Run MMRR with all variables
 set.seed(01)
-results_best <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
+results_best <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "best")
 ```
 
-Once again, the results from `mmrr_best()` contains the same elements as `mmrr_full()`, except that `mmrr_best()` now also has `X_best`, which contains values for significant variables; in this case, the only significant variable found was geographic distance. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance).
+Once again, the results from running `mmrr_run()` with model selection contains the same elements as "full", except that the "best" model result now also has an `X_best` element, which contains values for significant variables; in this case, the only significant variable found was geographic distance. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance).
 
 ## Visualizing MMRR results
 

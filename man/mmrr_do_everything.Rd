@@ -50,10 +50,9 @@ The MMRR method is described here: Wang, I.J. (2013). Examining the full effects
 \seealso{
 Other MMRR functions: 
 \code{\link{MMRR}()},
-\code{\link{mmrr_best}()},
 \code{\link{mmrr_df}()},
-\code{\link{mmrr_full}()},
 \code{\link{mmrr_plot}()},
+\code{\link{mmrr_run}()},
 \code{\link{mmrr_table}()},
 \code{\link{mmrr_var_sel}()},
 \code{\link{unfold}()}
