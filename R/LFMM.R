@@ -30,7 +30,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
 
   # Convert vcf to dosage matrix
-  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Perform imputation with warning
   if (any(is.na(gen))) {
@@ -58,7 +58,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if (!quiet) print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  if (!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig))
+  if (!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, rows = 10, sig = sig))
 
   return(results)
 }

@@ -14,13 +14,27 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For LFMM:
+if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
+if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
+if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
+if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+
+```
+
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 library(raster)
-library(wingen)
 ```
 
 **If using LFMM, please cite the following: for the LFMM method, Caye et al. 2019. For the `lfmm` package, please cite Jumentier B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.**
@@ -35,7 +49,7 @@ To perform an LFMM analysis ([Caye et al. 2019](https://academic.oup.com/mbe/art
 
 ### Read in and process data files
 
-To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function in the wingen package, and extract environmental variables based on our sampling coordinates.
+To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental variables based on our sampling coordinates.
 
 ```{r data, warning = FALSE}
 load_algatr_example()

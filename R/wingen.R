@@ -26,7 +26,7 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
                                  masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE) {
   if (preview == TRUE) {
     if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
-    if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
+    if (terra::ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
     print(wingen::preview_gd(lyr = lyr, coords = coords, wdim = wdim, fact = fact, sample_count = sample_count, min_n = min_n))
     input <- utils::menu(c("Y", "N"), title = "Would you like to continue running wingen with these parameters?")
     if (input == 1) {
@@ -38,7 +38,7 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
   }
 
   if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
-  if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
+  if (terra::ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
   map <- wingen::window_gd(
     gen = gen, coords = coords, lyr = lyr, stat = stat,
     wdim = wdim, fact = fact, rarify = rarify

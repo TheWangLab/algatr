@@ -14,6 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For TESS:
+if (!require("automap", quietly = TRUE)) install.packages("automap")
+if (!require("graphics", quietly = TRUE)) install.packages("graphics")
+if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
+if (!require("fields", quietly = TRUE)) install.packages("fields")
+if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
+if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+```
+
 # TESS
 
 ```{r setup, warning = FALSE, message = FALSE}
@@ -24,6 +39,9 @@ library(tess3r)
 library(ggplot2)
 library(terra)
 library(raster)
+library(fields)
+library(rworldmap)
+library(automap)
 
 # for plotting (from TESS)
 source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
@@ -40,7 +58,7 @@ For additional information on the original development and implementation of the
 
 ### Read in and process input data
 
-Running TESS3 requires three data files: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function in the wingen package to convert a vcf to a dosage matrix.
+Running TESS3 requires three data files: a genotype dosage matrix (the `gen` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument). We can use a vcf and the `vcf_to_dosage()` function to convert a vcf to a dosage matrix.
 
 ```{r data}
 load_algatr_example()
@@ -50,7 +68,7 @@ head(liz_coords)
 ```
 
 ```{r dosage}
-# Convert vcf to genotype matrix using wingen
+# Convert vcf to genotype matrix
 liz_dosage <- vcf_to_dosage(liz_vcf)
 ```
 

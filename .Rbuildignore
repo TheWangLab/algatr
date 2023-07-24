@@ -9,3 +9,4 @@
 ^knit_everything_for_me\.R$
 ^doc$
 ^Meta$
+^scan_dependencies\.R$

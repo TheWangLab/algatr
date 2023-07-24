@@ -16,20 +16,14 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Depends: 
-    R (>= 2.10)
-LazyData: true
-Imports: 
+    rmarkdown,
     adegenet,
     AssocTests,
     automap,
+    BiocManager,
     corrplot,
     cowplot,
-    crayon,
     devtools,
-    dplyr,
     ecodist,
     fansi,
     gdistance,
@@ -37,39 +31,42 @@ Imports:
     gdsfmt,
     geodata,
     GGally,
-    ggplot2,
     ggrepel,
     graphics,
-    grDevices,
-    gridExtra,
-    gt,
-    gtExtras,
-    harrietr,
-    here,
     lfmm,
-    purrr,
     qvalue,
-    raster,
     readr,
     renv,
-    rgeos,
     rmapshaper,
     robust,
     RStoolbox,
     SeqArray,
-    sf,
     SNPRelate,
+    tess3r,
+    tibble,
+    topoDistance,
+    usethis,
+    vegan,
+    wingen
+VignetteBuilder: knitr
+Depends: 
+    R (>= 3.5.0)
+LazyData: true
+Imports: 
+    crayon,
+    dplyr,
+    ggplot2,
+    gt,
+    gtExtras,
+    here,
+    purrr,
+    raster,
+    sf,
     sp,
     stats,
     terra,
-    tess3r,
-    tibble,
     tidyr,
-    tigris,
-    topoDistance,
-    usethis,
     utils,
     vcfR,
-    vegan,
-    viridis,
-    wingen
+    viridis
+    
