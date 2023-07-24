@@ -120,7 +120,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
       pch = 19, col = "blue",
       xlab = "Number of ancestral populations",
       ylab = "Cross-validation score",
-      xlim = c(1, 10)
+      xaxt = "n"
     )
     axis(side = 1, at = Kvals)
   }
