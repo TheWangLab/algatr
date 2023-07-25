@@ -4,7 +4,7 @@
 \alias{snmf_bestK}
 \title{Helper function to select "best" K based on minimizing cross-entropy criteria from SNMF results}
 \usage{
-snmf_bestK(snmf_proj, K, quiet = TRUE)
+snmf_bestK(snmf_proj, K, quiet)
 }
 \arguments{
 \item{snmf_proj}{object of type snmfProject}
