@@ -159,7 +159,7 @@ plot_crossent <- function(ce_values) {
       ggplot2::theme_bw() +
       ggplot2::ylab("Cross entropy value") +
       ggplot2::xlab("Run") +
-      facet_grid(~K_value)
+      ggplot2::facet_grid(~K_value)
     print(plt)
   }
 }
