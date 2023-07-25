@@ -23,12 +23,17 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
 if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
 if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
+if (!require("LEA", quietly = TRUE)) install.packages("LEA")
 ```
 
 # Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
+library(here)
+library(purrr)
+library(dplyr)
+library(ggplot2)
 ```
 
 For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
@@ -59,6 +64,16 @@ dosage <- vcf_to_dosage(liz_vcf)
 # Look at genotypes for five individuals at five sites:
 dosage[1:5, 1:8]
 ```
+
+## Imputation of missing values
+
+*TODO EAC FILL IN*
+
+```{r simple impute}
+
+```
+
+
 
 ## Removing sites that are in linkage disequilibrium using `ld_prune()`
 
