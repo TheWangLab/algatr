@@ -50,7 +50,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   }
 
   # Look through directories
-  bestK <- snmf_bestK(snmf_proj, K, quiet = quiet)
+  bestK <- snmf_bestK(snmf_proj, K = K, quiet = quiet)
 
   # Impute missing values based on snmf groupings
   LEA::impute(object = snmf_proj, input.file = here(paste0(filename, ".geno")), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
@@ -86,7 +86,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
 #' @return list with best K-value and run number
 #' @export
 #' @family Imputation functions
-snmf_bestK <- function(snmf_proj, K, quiet = TRUE) {
+snmf_bestK <- function(snmf_proj, K, quiet) {
   if (length(K) == 1) {
     bestrun <- which.min(LEA::cross.entropy(snmf_proj, K = K))
     results <- list(K_value = K, run = bestrun)
@@ -106,7 +106,8 @@ snmf_bestK <- function(snmf_proj, K, quiet = TRUE) {
 
     if (!quiet) {
       if (length(unique(ce_values$run)) == 1) {
-        ce_values %>%
+        plt <-
+          ce_values %>%
           dplyr::group_by(K_value) %>%
           dplyr::slice(which.min(cross_entropy)) %>%
           ggplot2::ggplot(ggplot2::aes(x = K_value, y = cross_entropy)) +
@@ -118,7 +119,8 @@ snmf_bestK <- function(snmf_proj, K, quiet = TRUE) {
       }
 
       if (length(unique(ce_values$run)) > 1) {
-        ce_values %>%
+        plt <-
+          ce_values %>%
           ggplot2::ggplot(ggplot2::aes(x = run, y = cross_entropy)) +
           ggplot2::geom_point(size = 3, color = "red") +
           ggplot2::theme_bw() +
@@ -126,6 +128,7 @@ snmf_bestK <- function(snmf_proj, K, quiet = TRUE) {
           ggplot2::xlab("Run") +
           facet_grid(~K_value)
       }
+      print(plt)
     }
   }
   return(results)

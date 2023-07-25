@@ -135,8 +135,10 @@ gen_dist <- function(vcf = NULL, dist_type = "euclidean", plink_file = NULL, pli
 #' @return scatterplot comparing two user-defined genetic distance metrics
 #' @export
 gen_dist_corr <- function(dist_x, dist_y, metric_name_x, metric_name_y) {
-  # Check to ensure sample IDs match ----------------------------------------
+  if (!is.null(dist_x)) if (!inherits(dist_x, "data.frame")) dist_x <- as.data.frame(dist_x)
+  if (!is.null(dist_y)) if (!inherits(dist_y, "data.frame")) dist_y <- as.data.frame(dist_y)
 
+  # Check to ensure sample IDs match ----------------------------------------
   if (all(rownames(dist_x) == rownames(dist_y)) == FALSE) {
     stop("Sample IDs do not match")
   }
