@@ -52,6 +52,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   # Look through directories
   bestK <- snmf_bestK(snmf_proj, K = K, quiet = quiet)
 
+  if (!quiet) {
+    print(plot_crossent(bestK$ce_values))
+  }
+
   # Impute missing values based on snmf groupings
   LEA::impute(object = snmf_proj, input.file = here(paste0(filename, ".geno")), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
 
@@ -83,7 +87,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
 #' @param K integer corresponding to K-value
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
 #'
-#' @return list with best K-value and run number
+#' @return list with best K-value and run number and all cross-entropy scores
 #' @export
 #' @family Imputation functions
 snmf_bestK <- function(snmf_proj, K, quiet) {
@@ -102,33 +106,10 @@ snmf_bestK <- function(snmf_proj, K, quiet) {
     ce_values$K_value <- stringr::str_replace_all(ce_values$K_value, "K...", "")
 
     best <- ce_values %>% dplyr::slice(which.min(cross_entropy))
-    results <- list(K_value = best$K_value, bestrun = best$run)
+    results <- list(K_value = best$K_value, bestrun = best$run, ce_values = ce_values)
 
     if (!quiet) {
-      if (length(unique(ce_values$run)) == 1) {
-        plt <-
-          ce_values %>%
-          dplyr::group_by(K_value) %>%
-          dplyr::slice(which.min(cross_entropy)) %>%
-          ggplot2::ggplot(ggplot2::aes(x = K_value, y = cross_entropy)) +
-          ggplot2::geom_point(size = 3, color = "red") +
-          ggplot2::theme_bw() +
-          ggplot2::ylab("Cross entropy value") +
-          ggplot2::xlab("K value") +
-          ggplot2::geom_vline(xintercept = best$K_value, linetype = "dashed", color = "blue")
-      }
-
-      if (length(unique(ce_values$run)) > 1) {
-        plt <-
-          ce_values %>%
-          ggplot2::ggplot(ggplot2::aes(x = run, y = cross_entropy)) +
-          ggplot2::geom_point(size = 3, color = "red") +
-          ggplot2::theme_bw() +
-          ggplot2::ylab("Cross entropy value") +
-          ggplot2::xlab("Run") +
-          facet_grid(~K_value)
-      }
-      print(plt)
+      print(plot_crossent(ce_values))
     }
   }
   return(results)
@@ -147,6 +128,40 @@ snmf_crossent_helper <- function(snmf_proj, K, select_min = TRUE) {
   if (select_min) results <- which.min(LEA::cross.entropy(snmf_proj, K = K))
   if (!select_min) results <- LEA::cross.entropy(snmf_proj, K = K)
   return(results)
+}
+
+#' Helper function to plot cross entropy scores from SNMF
+#'
+#' @param ce_values df with run, K-value, and cross entropy created in \link[algatr]{snmf_bestK}
+#'
+#' @return ggplots of cross entropy values compared to K-values (and across runs)
+#' @export
+plot_crossent <- function(ce_values) {
+  if (length(unique(ce_values$run)) == 1) {
+    plt <-
+      ce_values %>%
+      dplyr::group_by(K_value) %>%
+      dplyr::slice(which.min(cross_entropy)) %>%
+      ggplot2::ggplot(ggplot2::aes(x = K_value, y = cross_entropy)) +
+      ggplot2::geom_point(size = 3, color = "red") +
+      ggplot2::theme_bw() +
+      ggplot2::ylab("Cross entropy value") +
+      ggplot2::xlab("K value") +
+      ggplot2::geom_vline(xintercept = best$K_value, linetype = "dashed", color = "blue")
+    print(plt)
+  }
+
+  if (length(unique(ce_values$run)) > 1) {
+    plt <-
+      ce_values %>%
+      ggplot2::ggplot(ggplot2::aes(x = run, y = cross_entropy)) +
+      ggplot2::geom_point(size = 3, color = "red") +
+      ggplot2::theme_bw() +
+      ggplot2::ylab("Cross entropy value") +
+      ggplot2::xlab("Run") +
+      facet_grid(~K_value)
+    print(plt)
+  }
 }
 
 #' Convert dosage matrix or vcf to geno type object (N.B.: this only works for diploids!)
