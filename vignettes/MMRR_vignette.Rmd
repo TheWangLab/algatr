@@ -15,6 +15,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+
 # For MMRR:
 if (!require("GGally", quietly = TRUE)) install.packages("GGally")
 ```
@@ -158,16 +161,19 @@ The resistance surface can be generated using species distribution models, habit
 
 As was briefly mentioned in the environmental data vignette, the `geo_dist()` function is able to calculate resistance-based distances, largely using the [gdistance](https://cran.r-project.org/web/packages/gdistance/index.html) package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)). Importantly, a user must provide a resistance surface using whichever their preferred method is by specifying the `lyr` argument. The function then creates a transition surface and calculates circuit distances (random-walk commute distances) using the `gdistance::commuteDistance()` function.
 
-Although algatr does not have the explicit functionality to quantify and visualize IBR, we can investigate IBR using MMRR given that this method conducts a multiple Mantel test given some distance metric. Thus, it is possible to run `geo_dist()` specifying `lyr` with your resistance raster and use the resulting distances as input into MMRR. The following is a *toy* example of how this could be done. For the sake of computational time, we'll make a fake resistance surface using wingen's `coords_to_raster()` function.
+Although algatr does not have the explicit functionality to quantify and visualize IBR, we can investigate IBR using MMRR given that this method conducts a multiple Mantel test given some distance metric. Thus, it is possible to run `geo_dist()` specifying `lyr` with your resistance raster and use the resulting distances as input into MMRR. The following is a *toy* example of how this could be done. For this example we'll pretend our resistance surface is one of our environmental layers (where greater values indicate more resistance) and use it to calculate our resistance distances. 
 
 ```{r toy resist surface, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE}
-library(wingen)
-lyr <- coords_to_raster(liz_coords, buffer = 2, res = 1)
+# here we aggregate the layer for computational speed
+lyr <- aggregate(CA_env$CA_rPCA1, 50)
 plot(lyr)
 points(liz_coords)
 
-# Add resistance distances as an additional variable in MMRR input
-X[["resistdist"]] <- geo_dist(liz_coords, type = "resistance", lyr = raster(lyr))
+# Recreate MMRR input with resistance distances
+# Calculate environmental distances
+X <- env_dist(env)
+# Add geographic distance to X
+X[["resistdist"]] <- geo_dist(liz_coords, type = "resistance", lyr = lyr)
 ```
 
 Now, we can run MMRR as we did above but including resistance-based distances in our input data.
