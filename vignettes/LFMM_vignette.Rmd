@@ -14,13 +14,27 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For LFMM:
+if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
+if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
+if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
+if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+
+```
+
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 library(raster)
-library(wingen)
 ```
 
 **If using LFMM, please cite the following: for the LFMM method, Caye et al. 2019. For the `lfmm` package, please cite Jumentier B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.**
@@ -29,13 +43,13 @@ LFMM ([Frichot et al. 2013](https://academic.oup.com/mbe/article/30/7/1687/97209
 
 There are a variety of ways to determine the best number of latent factors in LFMM (which are called K values, although these are *not* the same as TESS K values). algatr provides the option to test using four such methods: (1) Tracy-Widom test; (2) quick elbow test (i.e., scree test); (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure); and (4) K-means clustering. We will explore each of these, and compare results, in this vignette.
 
-Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. For example, algatr contains the `str_impute()` function to impute missing values based on population structure using the `LEA::impute()` function. However, here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses (please use `str_impute()` instead!).
 
 To perform an LFMM analysis ([Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100)), algatr uses the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details). Despite its name, this package implements the LFMM2 method, which is similar to the original LFMM algorithm, but is computationally faster. The LEA package ([Frichot & Francois 2015](https://rdrr.io/bioc/LEA/)) also provides a wrapper for lfmm2 using the `lfmm2()` function.
 
 ### Read in and process data files
 
-To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function in the wingen package, and extract environmental variables based on our sampling coordinates.
+To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental variables based on our sampling coordinates.
 
 ```{r data, warning = FALSE}
 load_algatr_example()

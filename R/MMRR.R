@@ -4,13 +4,14 @@
 #' @param gendist matrix of genetic distances
 #' @param coords dataframe with x and y coordinates
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
+#' @param geo whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
-#' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
-#' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
+#' @param geodist_type if `geo = TRUE`, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
+#' @param dist_lyr if `geodist_type = "topographic"`, DEM raster for calculating topographic distances or if `geodist_type = "resistance"`, resistance raster for calculating resistance distances
 #' @param quiet whether to plot results (default = FALSE)
-#' @param plot_type which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
+#' @param plot_type if `quiet = FALSE`, which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @details
 #' The MMRR method is described here: Wang, I.J. (2013). Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(12):3403-3411. doi: https://doi.org/10.1111/evo.12134
@@ -18,7 +19,7 @@
 #' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
+mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -33,23 +34,29 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
   X <- env_dist(env)
 
   # Make distance matrix
-  X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+  if (geo) X[["geodist"]] <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
 
   # Make geodist mat
   Y <- as.matrix(gendist)
 
   # Run MMRR
-  if (model == "best") results <- mmrr_best(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
+  results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = model)
 
-  if (model == "full") results <- mmrr_full(Y, X, nperm = nperm, stdz = stdz, quiet = quiet, plot_type = plot_type)
+  if (is.null(results$X_best) & model == "best") {
+    warning("failed to fit best model, rerunning MMRR with full model")
+    results <- mmrr_run(Y, X, nperm = nperm, stdz = stdz, model = "full")
+  }
 
   # Print dataframe
-  if (!quiet) print(mmrr_table(results))
+  if (!quiet) {
+    mmrr_plot(Y = Y, X = X, mod = results$mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
+    print(mmrr_table(results))
+  }
 
   return(results)
 }
 
-#' Run MMRR with variable selection
+#' Run MMRR and return model object
 #'
 #' @param Y dependent distance matrix
 #' @param X list of independent distance matrices (with optional names)
@@ -57,22 +64,25 @@ mmrr_do_everything <- function(gendist, coords, env, model = "best", geodist_typ
 #'
 #' @return list with final model results and regression coefficients
 #' @export
-#'
 #' @family MMRR functions
-mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
-  # Fit model with variable selection
-  mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
+mmrr_run <- function(Y, X, nperm = 999, stdz = TRUE, model = "best") {
+  if (model == "best") {
+    # Fit model with variable selection
+    mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
+
+    # Subset X with significant variables
+    X_best <- X[names(mod$coefficients)[-1]]
+  }
+
+  if (model == "full") {
+    mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
+    X_best <- NULL
+  }
 
   # If NULL, exit with NULL
   if (is.null(mod)) {
     return(NULL)
   }
-
-  # Subset X with significant variables
-  X_best <- X[names(mod$coefficients)[-1]]
-
-  # Plot results
-  if (!quiet) mmrr_plot(Y = Y, X = X_best, mod = mod, plot_type = plot_type, stdz = stdz)
 
   # Make nice dataframe
   coeff_df <- mmrr_df(mod)
@@ -89,48 +99,13 @@ mmrr_best <- function(Y, X, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type =
   return(results)
 }
 
-#' Run MMRR with all variables
-#'
-#' @param Y dependent distance matrix
-#' @param X list of independent distance matrices (with optional names)
-#' @inheritParams mmrr_do_everything
-#'
-#' @return list with final model results and regression coefficients
-#' @export
-#'
-#' @family MMRR functions
-mmrr_full <- function(Y, X, nperm = nperm, stdz = TRUE, quiet = FALSE, plot_type = "all") {
-  # Run full model
-  mod <- MMRR(Y, X, nperm = nperm, scale = stdz)
-
-  # If NULL, exit with NULL
-  if (is.null(mod)) {
-    return(NULL)
-  }
-
-  # Plot results
-  if (!quiet) mmrr_plot(Y = Y, X = X, mod = mod, plot_type = plot_type, stdz = stdz)
-
-  # Make nice dataframe
-  coeff_df <- mmrr_df(mod)
-
-  # Make results list
-  results <- list(
-    coeff_df = coeff_df,
-    mod = mod,
-    Y = Y,
-    X = X
-  )
-
-  return(results)
-}
-
 #' mmrr_var_sel performs MMRR with backward elimination variable selection
 #'
 #' @param Y is a dependent distance matrix
 #' @param X is a list of independent distance matrices (with optional names)
 #' @inheritParams mmrr_do_everything
 #'
+#' @export
 #' @family MMRR functions
 mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE) {
   # Fit full model
@@ -367,7 +342,7 @@ mmrr_plot_cov <- function(X, stdz = TRUE) {
 #' @param digits the number of decimal places to round to
 #' @param summary_stats whether to add summary statistics (R-squared, F-statistic, F p-value) to bottom of table (defaults to TRUE)
 #'
-#' @return An object of class `gt_tbl`
+#' @return an object of class `gt_tbl`
 #' @export
 #'
 #' @family MMRR functions

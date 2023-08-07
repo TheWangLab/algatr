@@ -14,20 +14,35 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+```{r, eval = FALSE}
+# Install packages for installing other packages
+if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+
+# For environmental and geographic data processing:
+if (!require("RStoolbox", quietly = TRUE))devtools::install_github("bleutner/RStoolbox")
+if (!require("geodata", quietly = TRUE)) install.packages("geodata")
+if (!require("corrplot", quietly = TRUE)) install.packages("corrplot")
+if (!require("vegan", quietly = TRUE)) install.packages("vegan")
+if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
+if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
+if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
+if (!require("wingen", quietly = TRUE)) devtools::github_install("wingen")
+```
+
 # Processing environmental data for landscape genomics
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(terra)
 library(raster)
-library(geodata)
-library(here)
-library(viridis)
-library(ggplot2)
-library(tidyr)
 library(RStoolbox)
-library(gridExtra)
+library(ggplot2)
+library(geodata)
+library(viridis)
 library(wingen)
+library(tidyr)
 library(tibble)
 ```
 
@@ -160,7 +175,10 @@ env_pcs <- rasterPCA(wclim, spca = TRUE)
 
 # Let's take a look at the results for the top three PCs
 plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
-grid.arrange(plots[[1]], plots[[2]], plots[[3]], ncol = 1)
+
+plots[[1]] 
+plots[[2]] 
+plots[[3]]
 ```
 
 ```{r comp raster}
@@ -205,7 +223,7 @@ We can make a heat map in ggplot with the pairwise distances.
 ```{r env dist heatmap}
 as.data.frame(env_dist$CA_rPCA1) %>%
   rownames_to_column("sample") %>%
-  gather("sample_comp", "dist", -"sample") %>%
+  pivot_longer(-"sample", names_to = "sample_comp", values_to = "dist") %>%
   ggplot(aes(x = as.numeric(sample), y = as.numeric(sample_comp), fill = dist)) +
   geom_tile() +
   coord_equal() +
@@ -224,7 +242,7 @@ The `geo_dist()` function allows users to choose from five environmental distanc
 
 -   Topographic distances (`"topo"` or `"topographic"`) using the topoDistance package ([Wang 2020](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13317)); requires a digital elevation model (DEM) raster specified with the `lyr` argument
 
--   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a digital elevation model raster specified with the `lyr` argument
+-   Resistance distances (`"resistance"`, `"cost"`, or `"res"`) using the gdistance package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)); requires a resistance raster specified with the `lyr` argument
 
 ### Euclidean distances
 
@@ -257,7 +275,7 @@ We can also calculate topographic distances, but need to provide a digital eleva
 ```{r download DEM}
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
-dem <- elevation_30s(country = "USA", path = here())
+dem <- elevation_30s(country = "USA", path = getwd())
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)

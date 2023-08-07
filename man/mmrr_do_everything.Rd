@@ -8,6 +8,7 @@ mmrr_do_everything(
   gendist,
   coords,
   env,
+  geo = TRUE,
   model = "best",
   geodist_type = "Euclidean",
   dist_lyr = NULL,
@@ -24,11 +25,13 @@ mmrr_do_everything(
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
+\item{geo}{whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)}
+
 \item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
 
-\item{geodist_type}{the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances}
+\item{geodist_type}{if \code{geo = TRUE}, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances}
 
-\item{dist_lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances}
+\item{dist_lyr}{if \code{geodist_type = "topographic"}, DEM raster for calculating topographic distances or if \code{geodist_type = "resistance"}, resistance raster for calculating resistance distances}
 
 \item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
 
@@ -36,7 +39,7 @@ mmrr_do_everything(
 
 \item{quiet}{whether to plot results (default = FALSE)}
 
-\item{plot_type}{which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
+\item{plot_type}{if \code{quiet = FALSE}, which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))}
 }
 \value{
 list with final model results and regression coefficients
@@ -50,10 +53,9 @@ The MMRR method is described here: Wang, I.J. (2013). Examining the full effects
 \seealso{
 Other MMRR functions: 
 \code{\link{MMRR}()},
-\code{\link{mmrr_best}()},
 \code{\link{mmrr_df}()},
-\code{\link{mmrr_full}()},
 \code{\link{mmrr_plot}()},
+\code{\link{mmrr_run}()},
 \code{\link{mmrr_table}()},
 \code{\link{mmrr_var_sel}()},
 \code{\link{unfold}()}

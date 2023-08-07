@@ -49,7 +49,7 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
   # Modify genetic data -----------------------------------------------------
 
   # Convert vcf to dosage
-  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Perform imputation with warning
   if (any(is.na(gen))) {
