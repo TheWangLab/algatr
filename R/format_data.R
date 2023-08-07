@@ -22,7 +22,6 @@ vcf_check <- function(x) {
   return(vcf)
 }
 
-
 #' Remove islands from mapping
 #'
 #' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
@@ -52,26 +51,6 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
     coords_noIsland <- coords[coords$ID %in% IDs, ]
     return(coords_noIsland)
   }
-}
-
-#' Impute NA values
-#' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
-#' @param x matrix
-#' @param f function to use for imputation (defaults to median)
-#'
-#' @return matrix of values with missing values imputed
-#' @export
-simple_impute <- function(x, FUN = median) {
-  x_noNA <- apply(x, 2, impute_helper, FUN)
-  return(x_noNA)
-}
-
-#' Helper function for imputation
-#' @export
-#' @noRd
-impute_helper <- function(i, FUN = median) {
-  i[which(is.na(i))] <- FUN(i[-which(is.na(i))], na.rm = TRUE)
-  return(i)
 }
 
 #' Scale three layers of environmental data to R, G, and B for mapping
