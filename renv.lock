@@ -687,13 +687,10 @@
         "graphics",
         "gstat",
         "lattice",
-        "methods",
         "reshape",
         "sf",
         "sp",
         "stars"
-      ],
-      "Hash": "f791ed7473e7bf64af5d18ee97856bd7"
     },
     "base64enc": {
       "Package": "base64enc",
@@ -1438,19 +1435,6 @@
         "utils"
       ],
       "Hash": "618609b42c9406731ead03adf5379850"
-    },
-    "foreign": {
-      "Package": "foreign",
-      "Version": "0.8-84",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "methods",
-        "stats",
-        "utils"
-      ],
-      "Hash": "467ec0ca895d4e61a22cfbac9bccddf8"
     },
     "fs": {
       "Package": "fs",
@@ -2308,24 +2292,6 @@
         "utils"
       ],
       "Hash": "644a88fb036ab50cee0b715394eefa1a"
-    },
-    "maptools": {
-      "Package": "maptools",
-      "Version": "1.1-7",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "foreign",
-        "grDevices",
-        "grid",
-        "lattice",
-        "methods",
-        "sp",
-        "stats",
-        "utils"
-      ],
-      "Hash": "14bf7aecce168085c4acb0acee2ad82d"
     },
     "markdown": {
       "Package": "markdown",

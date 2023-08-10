@@ -43,15 +43,15 @@ select_K_fc(gen, perc.pca, max.n.clust)
 
 \item{Kvals}{values of K to test for "tess"}
 
-\item{criticalpoint}{if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
+\item{criticalpoint}{if \code{K_selection = "tracy_widom"}, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
 
-\item{low}{if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
+\item{low}{if \code{K_selection = "quick_elbow"}, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
 
-\item{max.pc}{if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
+\item{max.pc}{if \code{K_selection = "quick_elbow"}, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
 
-\item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
+\item{perc.pca}{if \code{K_selection = "find_clusters"}, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
 
-\item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
+\item{max.n.clust}{if \code{K_selection = "find_clusters"}, an integer indicating the maximum number of clusters to try. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 
 \item{tess_method}{method to use for "tess"}
 
@@ -74,6 +74,11 @@ K selection
 \item \code{select_K_fc()}: select K using find.clusters method
 
 }}
+\note{
+uses the \link[AssocTests]{tw} function
+
+uses the \link[adegenet]{find.clusters} function
+}
 \seealso{
 Other LFMM functions: 
 \code{\link{lfmm_df}()},

@@ -117,7 +117,7 @@ tess3_result <- tess_ktest(liz_dosage, liz_coords, Kvals = 1:10, ploidy = 2, K_s
 
 The `tess3_result` object contains results for the best-supported K value, including:
 
--   `K`: The value of the best-supported K (3, in this case); this is assigned a value of `NA` if manual selection is done
+-   `K`: The value of the best-supported K (3, in this case)
 
 -   `tess3_obj`: Results from the cross-validation analysis of all values of K
 
@@ -126,6 +126,8 @@ The `tess3_result` object contains results for the best-supported K value, inclu
 -   `Kvals`: The range of K values that were tested
 
 -   `grid`: The RasterLayer upon which ancestry coefficients are mapped; `NULL` in this case
+
+-   `pops`: Population assignments (determined based on the maximum Q value) for each individual for the best K value
 
 ### Running TESS with no K selection
 
@@ -177,6 +179,12 @@ algatr has a custom function, `tess_barplot()`, to generate these plots from our
 
 ```{r barplot, fig.align = 'center'}
 tess_barplot(qmat)
+```
+
+We can also build barplots using ggplot2 with the `tess_ggbarplot()` function.
+
+```{r ggbarplot, fig.align = 'center'}
+tess_ggbarplot(qmat, legend = FALSE)
 ```
 
 ### Building maps in TESS3 using `tess_ggplot()`
