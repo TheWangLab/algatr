@@ -171,17 +171,17 @@ krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
 
 ------------------------------------------------------------------------
 
-### Barplot of Q values
+### Bar plot of Q values
 
-A typical representation for population structure results is a STRUCTURE-style barplot, in which each stacked bar represents an individual and the proportion of stacked color represents the proportion of ancestry assigned to that individual for each cluster (or K value). In our case, we have K=3, so there will be three colors representing each of these K values.
+A typical representation for population structure results is a STRUCTURE-style bar plot, in which each stacked bar represents an individual and the proportion of stacked color represents the proportion of ancestry assigned to that individual for each cluster (or K value). In our case, we have K=3, so there will be three colors representing each of these K values.
 
-algatr has a custom function, `tess_barplot()`, to generate these plots from our TESS results. This automatically sort individuals based on their Q values (although this can be modified using the `sort_by_Q` argument, if so desired); the outputted "order" message indicates how individuals are ordered in the barplot.
+algatr has a custom function, `tess_barplot()`, to generate these plots from our TESS results. This automatically sort individuals based on their Q values (although this can be modified using the `sort_by_Q` argument, if so desired); the outputted "order" message indicates how individuals are ordered in the bar plot.
 
 ```{r barplot, fig.align = 'center'}
 tess_barplot(qmat)
 ```
 
-We can also build barplots using ggplot2 with the `tess_ggbarplot()` function.
+We can also build bar plots using ggplot2 with the `tess_ggbarplot()` function.
 
 ```{r ggbarplot, fig.align = 'center'}
 tess_ggbarplot(qmat, legend = FALSE)
