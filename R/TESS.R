@@ -42,7 +42,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   # Test different k values, if more than one provided
   if (length(Kvals) > 1) {
     # Run TESS K test
-    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
+    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
 
     # Get K
     K <- tess_results[["K"]]
@@ -60,7 +60,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
     K <- Kvals
 
     # Run tess for given K value
-    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
 
     # Get population assignments
     pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = Kvals)
@@ -115,12 +115,12 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #' @export
 #'
 #' @family TESS functions
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE) {
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
   # Format coordinates
   coords <- as.matrix(coords)
 
   # Run tess for all K values
-  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
 
   # Plot CV results
   if (!quiet) {
