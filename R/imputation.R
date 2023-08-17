@@ -24,7 +24,7 @@ impute_helper <- function(i, FUN = median) {
 #'
 #' @param gen a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
-#' @param save_output name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to NULL, in which no files are saved)
+#' @param save_output name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #' if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
 #' gen <- load.snmfProject("example.snmfProject")
 #'
@@ -33,9 +33,8 @@ impute_helper <- function(i, FUN = median) {
 #' @return dosage matrix with imputed missing values
 #' @export
 #' @family Imputation functions
-str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new", quiet = TRUE, save_output = NULL) {
-  if (!is.null(save_output)) filename <- save_output
-  if (is.null(save_output)) filename <- "tmp"
+str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new", quiet = TRUE, save_output = FALSE, output_filename = NULL) {
+  if (is.null(output_filename)) filename <- "tmp" else filename <- output_filename
 
   if (inherits(gen, "snmfProject")) snmf_proj <- gen
 
@@ -43,10 +42,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   if (!inherits(gen, "snmfProject")) {
     geno <- gen_to_geno(gen)
     # SNMF requires an input file saved to file (cannot accept an R object)
-    LEA::write.geno(geno, here(paste0(filename, ".geno")))
+    LEA::write.geno(geno, here::here(paste0(filename, ".geno")))
 
     # Run SNMF
-    snmf_proj <- LEA::snmf(input.file = here(paste0(filename, ".geno")), K = K, entropy = entropy, repetitions = repetitions, project = project)
+    snmf_proj <- LEA::snmf(input.file = here::here(paste0(filename, ".geno")), K = K, entropy = entropy, repetitions = repetitions, project = project)
   }
 
   # Look through directories
@@ -69,14 +68,14 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   imputed <- geno_to_dosage(imputed)
 
   # Remove created files
-  if (is.null(save_output)) {
+  if (!save_output) {
     # Removes snmf project and associated snmf files
-    LEA::remove.snmfProject(paste0(filename, ".snmfProject"))
+    LEA::remove.snmfProject(here::here(paste0(filename, ".snmfProject")))
 
     # Delete other associated files
-    unlink(here(paste0(filename, ".geno")))
-    unlink(here(paste0(filename, ".lfmm")))
-    unlink(here(paste0(filename, ".lfmm_imputed.lfmm")))
+    unlink(here::here(paste0(filename, ".geno")))
+    unlink(here::here(paste0(filename, ".lfmm")))
+    unlink(here::here(paste0(filename, ".lfmm_imputed.lfmm")))
   }
   return(imputed)
 }
