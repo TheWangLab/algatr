@@ -236,6 +236,23 @@
       ],
       "Hash": "6314fc110e09548ba889491db6ae67fb"
     },
+    "LEA": {
+      "Package": "LEA",
+      "Version": "3.12.2",
+      "Source": "Bioconductor",
+      "git_url": "https://git.bioconductor.org/packages/LEA",
+      "git_branch": "RELEASE_3_17",
+      "git_last_commit": "da274ca",
+      "git_last_commit_date": "2023-05-01",
+      "Requirements": [
+        "R",
+        "graphics",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "e1be9f7cacf16b4615b6d70fd701de5c"
+    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-60",
@@ -687,10 +704,13 @@
         "graphics",
         "gstat",
         "lattice",
+        "methods",
         "reshape",
         "sf",
         "sp",
         "stars"
+      ],
+      "Hash": "f791ed7473e7bf64af5d18ee97856bd7"
     },
     "base64enc": {
       "Package": "base64enc",
@@ -1435,6 +1455,19 @@
         "utils"
       ],
       "Hash": "618609b42c9406731ead03adf5379850"
+    },
+    "foreign": {
+      "Package": "foreign",
+      "Version": "0.8-84",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "467ec0ca895d4e61a22cfbac9bccddf8"
     },
     "fs": {
       "Package": "fs",
@@ -2292,6 +2325,24 @@
         "utils"
       ],
       "Hash": "644a88fb036ab50cee0b715394eefa1a"
+    },
+    "maptools": {
+      "Package": "maptools",
+      "Version": "1.1-7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "foreign",
+        "grDevices",
+        "grid",
+        "lattice",
+        "methods",
+        "sp",
+        "stats",
+        "utils"
+      ],
+      "Hash": "14bf7aecce168085c4acb0acee2ad82d"
     },
     "markdown": {
       "Package": "markdown",
@@ -4040,8 +4091,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "wingen",
       "RemoteUsername": "AnushaPB",
-      "RemoteRef": "dev",
-      "RemoteSha": "fea3e20db10a15c6bf998893345a95a2a59a9d7b",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "2c542882ef9448318e867c4af844133c5c8f19c3",
       "Requirements": [
         "R",
         "Rcpp",
@@ -4072,7 +4123,7 @@
         "vcfR",
         "viridis"
       ],
-      "Hash": "0b575b1cb276229afdca492d2904b3e9"
+      "Hash": "4bf2b0dec32ac6777bb1b769fb2fef91"
     },
     "withr": {
       "Package": "withr",
