@@ -144,7 +144,7 @@ mmrr_table(results_full, digits = 2, summary_stats = TRUE)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function runs MMRR while specifying whether a user would like to run variable selection or not (using the `model` argument), producing a table and all plots automatically. It will automatically extract environmental variables based on coordinates and  calculate environmental distances from these data. Users can also choose to include geographic distances within the independent variable matrix by setting `geo = TRUE` (the default setting).
+The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function runs MMRR while specifying whether a user would like to run variable selection or not (using the `model` argument), producing a table and all plots automatically. It will automatically extract environmental variables based on coordinates and  calculate environmental distances from these data. Users can also choose to include geographic distances within the independent variable matrix by setting `geo = TRUE` (the default setting). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 ### MMRR with all variables
 

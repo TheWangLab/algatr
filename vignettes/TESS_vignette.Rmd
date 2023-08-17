@@ -251,7 +251,7 @@ As you can see from the above, interpolation is done using a different method in
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided*.
+The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided*. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 The `tess_do_everything()` function will print out the barplot, the cross-validation scores for the range of K values tested, and the kriged map (if a grid is provided). It will also print the order in which individuals are ordered in the barplot. The resulting object from this function contains:
 
@@ -279,7 +279,7 @@ results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1
 ------------------------------------------------------------------------
 
 |                       | Citation/URL                                                                                                                                                                      | Details                                         |
-|------------------|-----------------------------|-------------------------|
+|-------------------|-----------------------------|-------------------------|
 | Main literature       | [Caye et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12471); vignette available [here](https://bcm-uga.github.io/TESS3_encho_sen/articles/main-vignette.html) | Citation for TESS3                              |
 | Associated literature | [François et al. 2006](https://academic.oup.com/genetics/article/174/2/805/6061653?login=false)                                                                                   | Details on algorithm used by TESS               |
 | Associated literature | [Chen et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1471-8286.2007.01769.x)                                                                                          | Details on algorithm used by TESS               |
