@@ -4,6 +4,7 @@
 #' @param lyr RasterLayer or SpatRaster
 #'
 #' @return NULL
+#' @export
 #'
 #' @noRd
 crs_check <- function(coords = NULL, lyr = NULL) {

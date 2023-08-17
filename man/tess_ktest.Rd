@@ -10,6 +10,7 @@ tess_ktest(
   Kvals = 1:10,
   grid = NULL,
   tess_method = "projected.ls",
+  lambda = 1,
   K_selection = "manual",
   ploidy = 2,
   quiet = FALSE
