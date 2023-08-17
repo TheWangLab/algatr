@@ -24,6 +24,9 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
                                K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                                p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                                low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
+
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Get and check environmental data
   if (inherits(env, "Raster")) env <- terra::rast(env)
   if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)

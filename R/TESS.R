@@ -26,6 +26,8 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
                                quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
   # Convert vcf to dosage

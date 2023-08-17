@@ -24,6 +24,8 @@
 gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
                               quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Check CRS of envlayers and coords
   crs_check(coords, envlayers)
 

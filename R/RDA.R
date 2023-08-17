@@ -32,6 +32,8 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGE
                               outlier_method = "p", sig = 0.05, z = 3,
                               p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Modify environmental data --------------------------------------------------------------------------------------------------
 
   # Extract environmental data if env is a raster
