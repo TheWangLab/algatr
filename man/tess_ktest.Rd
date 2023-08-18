@@ -10,6 +10,7 @@ tess_ktest(
   Kvals = 1:10,
   grid = NULL,
   tess_method = "projected.ls",
+  lambda = 1,
   K_selection = "manual",
   ploidy = 2,
   quiet = FALSE
@@ -25,6 +26,8 @@ tess_ktest(
 \item{grid}{SpatRaster for kriging}
 
 \item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
+
+\item{lambda}{numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.}
 
 \item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
 

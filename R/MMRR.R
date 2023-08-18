@@ -20,6 +20,8 @@
 #' @export
 #' @family MMRR functions
 mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Convert env to SpatRaster if Raster
   # note: need to check specifically for raster instead of not SpatRaster because it could be a df
   if (inherits(env, "Raster")) env <- terra::rast(env)

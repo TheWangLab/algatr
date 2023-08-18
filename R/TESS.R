@@ -10,6 +10,7 @@
 #' @param col_breaks number of breaks for plotting (defaults to 20)
 #' @param minQ threshold for minimum Q value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
+#' @param lambda numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
@@ -24,8 +25,10 @@
 #' @export
 tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
-                               tess_method = "projected.ls", ploidy = 2, correct_kriged_Q = TRUE,
+                               tess_method = "projected.ls", lambda = 1, ploidy = 2, correct_kriged_Q = TRUE,
                                quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # RUN TESS ---------------------------------------------------------------------------------------------------
 
   # Convert vcf to dosage
@@ -42,7 +45,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   # Test different k values, if more than one provided
   if (length(Kvals) > 1) {
     # Run TESS K test
-    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
+    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
 
     # Get K
     K <- tess_results[["K"]]
@@ -60,7 +63,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
     K <- Kvals
 
     # Run tess for given K value
-    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
 
     # Get population assignments
     pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = Kvals)
@@ -115,12 +118,12 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #' @export
 #'
 #' @family TESS functions
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", K_selection = "manual", ploidy = 2, quiet = FALSE) {
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
   # Format coordinates
   coords <- as.matrix(coords)
 
   # Run tess for all K values
-  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, ploidy = ploidy)
+  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
 
   # Plot CV results
   if (!quiet) {
@@ -362,6 +365,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @return legend for kriged map from TESS
 #' @export
 #' @family TESS functions
+#' @importFrom ggplot2 '%+replace%'
 krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
   if (plot_method == "maxQ") vals <- seq(0, 1, by = 0.10)
   if (plot_method == "allQ") vals <- seq(minQ, 1, by = 0.10)
@@ -548,7 +552,7 @@ tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sor
 #' @export
 ggbarplot_helper <- function(dat) {
   dat %>%
-    ggplot2::ggplot(aes(x = order, y = Q_value, fill = K_value)) +
+    ggplot2::ggplot(ggplot2::aes(x = order, y = Q_value, fill = K_value)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_y_continuous(expand = c(0,0)) +
     ggplot2::scale_x_discrete(expand = c(0,0)) +
@@ -559,7 +563,7 @@ ggbarplot_helper <- function(dat) {
                    panel.border = ggplot2::element_rect(fill = NA, colour = "black", linetype = "solid", linewidth = 1.5),
                    strip.text.y = ggplot2::element_text(size = 30, face = "bold"),
                    strip.background = ggplot2::element_rect(colour = "white", fill = "white"),
-                   panel.spacing = unit(-0.1, "lines"))
+                   panel.spacing = ggplot2::unit(-0.1, "lines"))
 }
 
 #' Best K Selection based on cross entropy

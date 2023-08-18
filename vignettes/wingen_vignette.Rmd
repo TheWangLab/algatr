@@ -176,7 +176,7 @@ plot_gd(mgd, main = "Kriged & masked pi", bkg = r)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `wingen_do_everything()`. If you want to take a look at the preview first, you can set `preview = TRUE`; to krige, set `kriged = TRUE`, and to mask, set `masked = TRUE`. If `preview` is set to TRUE, the preview plot will be printed and a user can enter into the console whether they would like to continue the wingen run with existing parameter settings, or else halt the run.
+The algatr package also has an option to run all of the above functionality in a single function, `wingen_do_everything()`. If you want to take a look at the preview first, you can set `preview = TRUE`; to krige, set `kriged = TRUE`, and to mask, set `masked = TRUE`. If `preview` is set to TRUE, the preview plot will be printed and a user can enter into the console whether they would like to continue the wingen run with existing parameter settings, or else halt the run. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 **WARNING: Many wingen arguments are excluded from `wingen_do_everything()` to reduce the number of arguments in the function. Thus, we strongly advise against using this function for actual analyses and encourage users to explore and test the individual wingen functions given their datasets.**
 

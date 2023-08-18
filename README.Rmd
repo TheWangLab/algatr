@@ -60,7 +60,7 @@ if (!require("vegan", quietly = TRUE)) install.packages("vegan")
 if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
 if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
 if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-if (!require("wingen", quietly = TRUE)) devtools::github_install("wingen")
+if (!require("wingen", quietly = TRUE)) devtools::install_github("wingen")
 
 # For LFMM:
 if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
@@ -96,7 +96,7 @@ if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
 if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
 # For wingen:
-if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
+if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
 ```
 
 If you're installing on Ubuntu, you may run into issues installing the rmapshaper package; scroll to the bottom of the README for more information.

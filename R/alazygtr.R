@@ -12,6 +12,8 @@
 #' @export
 do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE) {
 
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Data processing ---------------------------------------------------------
 
   gendist <- gen_dist(gen, dist_type = "dps")

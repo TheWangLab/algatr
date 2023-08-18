@@ -94,7 +94,7 @@ terra::plot(krig_raster, col = mako(100), axes = FALSE)
 
 ------------------------------------------------------------------------
 
-algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset. Users have the option to select the algorithm with which TESS will be run using the `tess_method` argument; options for the argument are either projected least squares algorithm (`"projected.ls"`; the default) or an alternating quadratic programming algorithm (`"qp"`).
+algatr allows users with the option to test a range of K values using the `tess_ktest()` function. K selection is often accomplished by minimizing the cross entropy, but this can over-simplify K selection. The `tess_ktest()` function allows users to specify how K selection is done using the `K_selection` argument; users can set the K values manually (`"manual"`) or using an automatic approach described below (`"auto"`). `tess_ktest()` runs TESS for each value of K within the user-specified range, and outputs cross-validation scores for different K values which allows a user to select the "best" K for their dataset. Users have the option to select the algorithm with which TESS will be run using the `tess_method` argument; options for the argument are either projected least squares algorithm (`"projected.ls"`; the default) or an alternating quadratic programming algorithm (`"qp"`). Finally, as mentioned at the beginning of the vignette, TESS is spatially explicit meaning that it can take into account the distance between samples. The degree to which users suspect spatial autocorrelation between data points can be controlled using the spatial regularization (alpha) parameter, specified with the `lambda` argument. Values closer to 1 samples geographically closer are also suspected to be more genetically similar while values closer to 0 imply that there is little spatial autocorrelation.
 
 ### Manual K selection
 
@@ -251,7 +251,7 @@ As you can see from the above, interpolation is done using a different method in
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided*.
+The algatr package also has an option to run all of the above functionality in a single function, `tess_do_everything()`. *N.B.: the `tess_do_everything()` function does not require a dosage matrix; it will do the conversion automatically if a vcf is provided*. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 The `tess_do_everything()` function will print out the barplot, the cross-validation scores for the range of K values tested, and the kriged map (if a grid is provided). It will also print the order in which individuals are ordered in the barplot. The resulting object from this function contains:
 
@@ -279,7 +279,7 @@ results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1
 ------------------------------------------------------------------------
 
 |                       | Citation/URL                                                                                                                                                                      | Details                                         |
-|------------------|-----------------------------|-------------------------|
+|-------------------|-----------------------------|-------------------------|
 | Main literature       | [Caye et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.12471); vignette available [here](https://bcm-uga.github.io/TESS3_encho_sen/articles/main-vignette.html) | Citation for TESS3                              |
 | Associated literature | [François et al. 2006](https://academic.oup.com/genetics/article/174/2/805/6061653?login=false)                                                                                   | Details on algorithm used by TESS               |
 | Associated literature | [Chen et al. 2007](https://onlinelibrary.wiley.com/doi/10.1111/j.1471-8286.2007.01769.x)                                                                                          | Details on algorithm used by TESS               |

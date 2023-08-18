@@ -182,7 +182,7 @@ plot_extrap_mask(maprgb, map_mask, RGB = TRUE, mask_col = rgb(1, 1, 1, alpha = 0
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `gdm_do_everything()`. This function will output the fitted I-splines, table, map, and PCA. The resulting object looks identical to the output object from `gdm_run()`.
+The algatr package also has an option to run all of the above functionality in a single function, `gdm_do_everything()`. This function will output the fitted I-splines, table, map, and PCA. The resulting object looks identical to the output object from `gdm_run()`. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 Running a GDM with `gdm_do_everything()` requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 

@@ -346,7 +346,7 @@ rda_table(cor_df, var = "CA_rPCA2", nrow = 5)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but can also generate figures, the correlation test table (`cortest`; default is TRUE), and variance partitioning (`varpart`; default is FALSE).
+The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but can also generate figures, the correlation test table (`cortest`; default is TRUE), and variance partitioning (`varpart`; default is FALSE). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 The resulting object from `rda_do_everything()` contains:
 

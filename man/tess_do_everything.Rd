@@ -14,6 +14,7 @@ tess_do_everything(
   col_breaks = 20,
   minQ = 0.1,
   tess_method = "projected.ls",
+  lambda = 1,
   ploidy = 2,
   correct_kriged_Q = TRUE,
   quiet = FALSE
@@ -37,6 +38,8 @@ tess_do_everything(
 \item{minQ}{threshold for minimum Q value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
 
 \item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
+
+\item{lambda}{numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.}
 
 \item{ploidy}{ploidy of data (defaults to 2)}
 

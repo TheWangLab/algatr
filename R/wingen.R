@@ -24,6 +24,8 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
                                  preview = FALSE, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
                                  masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   if (preview == TRUE) {
     if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
     if (terra::ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
