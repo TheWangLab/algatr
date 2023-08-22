@@ -41,6 +41,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 
   # Convert coords to matrix
   coords <- as.matrix(coords)
+  colnames(coords) <- c("x", "y")
 
   # Test different k values, if more than one provided
   if (length(Kvals) > 1) {
@@ -119,8 +120,15 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #'
 #' @family TESS functions
 tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
+
+  # Convert sf coords to matrix
+  if (inherits(coords, "sf")) {
+    coords <- sf::st_coordinates(coords)
+  }
+
   # Format coordinates
   coords <- as.matrix(coords)
+  colnames(coords) <- c("x", "y")
 
   # Run tess for all K values
   tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
@@ -645,3 +653,4 @@ algatr_col_default <- function(x) {
   if (x == "base") col <- function(n, alpha = 1, begin = 0, end = 1, direction = 1) viridis::viridis(n, alpha, begin = 0.1, end = 0.9, direction, option = "turbo")
   return(col)
 }
+
