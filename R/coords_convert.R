@@ -32,7 +32,7 @@ coords_to_sp <- function(coords) {
 
 # convert from matrix/data.frame/sf to formatted df
 coords_to_df <- function(coords) {
-  if (inherits(coords, "sf")) coords <- data.frame(coords_to_sp(coords)) %>% dplyr::select(-optional)
+  if (inherits(coords, "sf")) coords <- sf::st_coordinates(coords)
   if (is.matrix(coords)) coords <- data.frame(coords)
   colnames(coords) <- c("x", "y")
   return(coords)
