@@ -4,7 +4,7 @@
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #' @param env dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"
 #' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)
 #' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
@@ -21,7 +21,7 @@
 #' @family GDM functions
 #'
 #' @export
-gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
+gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "full", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
                               quiet = FALSE) {
   message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
@@ -102,7 +102,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #'
 #' @return GDM model
 #' @export
-gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50, scale_gendist = FALSE,
+gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
   # convert env to spat raster if it is a RasterLayer/RasterStack

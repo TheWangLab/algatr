@@ -5,7 +5,7 @@
 #' @param coords dataframe with x and y coordinates
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param geo whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)
-#' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); default = "best"
+#' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); defaults to "full"
 #' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
 #' @param geodist_type if `geo = TRUE`, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
@@ -19,7 +19,7 @@
 #' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "best", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
+mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "full", geodist_type = "Euclidean", dist_lyr = NULL, nperm = 999, stdz = TRUE, quiet = FALSE, plot_type = "all") {
   message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
 
   # Convert env to SpatRaster if Raster
@@ -67,7 +67,7 @@ mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "best",
 #' @return list with final model results and regression coefficients
 #' @export
 #' @family MMRR functions
-mmrr_run <- function(Y, X, nperm = 999, stdz = TRUE, model = "best") {
+mmrr_run <- function(Y, X, nperm = 999, stdz = TRUE, model = "full") {
   if (model == "best") {
     # Fit model with variable selection
     mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)

@@ -30,7 +30,8 @@ if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")
 # Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+# library(algatr)
+devtools::load_all()
 library(here)
 library(purrr)
 library(dplyr)
@@ -102,7 +103,7 @@ There are a number of arguments in the `str_impute()` function, most of which in
 
 -   `save_output` specifies whether you would like output files to be saved to file (a string) or not (left NULL; this is the default). If a string is provided, output files will be saved with this argument's string as a prefix. Files to be saved include SNMF results, the original dosage matrix as .geno and .lfmm files, and an imputed .lfmm file
 
-```{r str impute, message = FALSE, results = FALSE, warning = FALSE}
+```{r str impute, message = FALSE, results = FALSE, warning = FALSE, fig.align = 'center'}
 str_dos <- str_impute(gen = dosage, K = 1:3, entropy = TRUE, repetitions = 3, quiet = FALSE, save_output = FALSE)
 ```
 
@@ -152,12 +153,12 @@ An alternate way to visualize matrices that can be helpful when you have many ov
 
 Let's take a look at this style of plot using the comparison between imputed genetic distances we generated earlier in this vignette. To makes things easy, let's re-run the `gen_dist_corr()` function and extract the data from the output. This way, it's already been processed for us.
 
-```{r dependencies}
+```{r dependencies, message = FALSE, warning = FALSE}
 if (!require("hexbin", quietly = TRUE)) install.packages("hexbin")
 library(hexbin)
 ```
 
-```{r geom hex}
+```{r geom hex, message = FALSE, warning = FALSE, fig.align = 'center'}
 # Gather data
 plot <- gen_dist_corr(dist_x = simple_dist, dist_y = str_dist, metric_name_x = "simple", metric_name_y = "SNMF")
 
