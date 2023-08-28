@@ -9,7 +9,7 @@ gdm_do_everything(
   coords,
   envlayers = NULL,
   env = NULL,
-  model = "best",
+  model = "full",
   sig = 0.05,
   nperm = 50,
   geodist_type = "Euclidean",
@@ -28,7 +28,7 @@ gdm_do_everything(
 
 \item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"}
 
 \item{sig}{alpha value for significance threshold (defaults to 0.05); only used if model = "best"}
 

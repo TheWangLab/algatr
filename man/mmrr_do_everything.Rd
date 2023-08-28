@@ -9,7 +9,7 @@ mmrr_do_everything(
   coords,
   env,
   geo = TRUE,
-  model = "best",
+  model = "full",
   geodist_type = "Euclidean",
   dist_lyr = NULL,
   nperm = 999,
@@ -27,7 +27,7 @@ mmrr_do_everything(
 
 \item{geo}{whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)}
 
-\item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
+\item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); defaults to "full"}
 
 \item{geodist_type}{if \code{geo = TRUE}, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances}
 

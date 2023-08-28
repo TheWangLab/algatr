@@ -4,7 +4,7 @@
 \alias{mmrr_run}
 \title{Run MMRR and return model object}
 \usage{
-mmrr_run(Y, X, nperm = 999, stdz = TRUE, model = "best")
+mmrr_run(Y, X, nperm = 999, stdz = TRUE, model = "full")
 }
 \arguments{
 \item{Y}{dependent distance matrix}
@@ -15,7 +15,7 @@ mmrr_run(Y, X, nperm = 999, stdz = TRUE, model = "best")
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
-\item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); default = "best"}
+\item{model}{whether to fit the model with all variables (\code{"full"}) or to perform variable selection to determine the best set of variables (\code{"best"}); defaults to "full"}
 }
 \value{
 list with final model results and regression coefficients

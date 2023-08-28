@@ -8,7 +8,7 @@ rda_do_everything(
   gen,
   env,
   coords = NULL,
-  model = "best",
+  model = "full",
   correctGEO = FALSE,
   correctPC = FALSE,
   outlier_method = "p",
@@ -33,7 +33,7 @@ rda_do_everything(
 
 \item{coords}{dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"}
 
 \item{correctGEO}{whether to condition on geographic coordinates}
 

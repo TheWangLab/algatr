@@ -11,7 +11,8 @@ str_impute(
   repetitions = 10,
   project = "new",
   quiet = TRUE,
-  save_output = NULL
+  save_output = FALSE,
+  output_filename = NULL
 )
 }
 \arguments{
@@ -43,7 +44,7 @@ str_impute(
 
 \item{quiet}{whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
 
-\item{save_output}{name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to NULL, in which no files are saved)
+\item{save_output}{name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
 gen <- load.snmfProject("example.snmfProject")}
 }
