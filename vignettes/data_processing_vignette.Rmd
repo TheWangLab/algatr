@@ -144,6 +144,30 @@ The way to call this function is as follows:
 
 We will not be running this function within the vignette to avoid generating intermediate files, but the example line above creates a new directory called liz_LDpruned, and it contains five files: a LOGFILE, with information on how many sites were pruned and how many remain, three gds files (pre- and post-pruned SNP GDS files and a GDS SeqArray file), and the pruned vcf. All of these output files are named such that the `ld.threshold` and `slide.max.n` parameter settings are contained in file names.
 
+## Additional options for data visualization
+
+------------------------------------------------------------------------
+
+An alternate way to visualize matrices that can be helpful when you have many overlapping data points is using the `geom_hex()` function in the ggplot2 package. This plotting style bins data points into hexagons that are colorized based on the number of data points contained within the hexagon.
+
+Let's take a look at this style of plot using the comparison between imputed genetic distances we generated earlier in this vignette. To makes things easy, let's re-run the `gen_dist_corr()` function and extract the data from the output. This way, it's already been processed for us.
+
+```{r dependencies}
+if (!require("hexbin", quietly = TRUE)) install.packages("hexbin")
+library(hexbin)
+```
+
+```{r geom hex}
+# Gather data
+plot <- gen_dist_corr(dist_x = simple_dist, dist_y = str_dist, metric_name_x = "simple", metric_name_y = "SNMF")
+
+# Now, build plot
+ggplot(plot$data, aes(x = simple, y = SNMF) ) +
+  geom_hex() +
+  theme_bw() +
+  scale_fill_continuous(type = "viridis")
+```
+
 ## Additional documentation and citations
 
 ------------------------------------------------------------------------
