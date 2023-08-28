@@ -21,12 +21,10 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 # For LFMM:
 if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
 if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
 if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
-if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
-
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
 ```
 
 # Latent factor mixed models (LFMM)

@@ -21,7 +21,7 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 # For genetic data processing (genetic distance only)
 if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
 if (!require("readr", quietly = TRUE)) install.packages("readr")
 if (!require("tibble", quietly = TRUE)) install.packages("tibble")
 if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")

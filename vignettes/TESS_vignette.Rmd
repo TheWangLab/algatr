@@ -26,7 +26,6 @@ if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-u
 if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
 if (!require("fields", quietly = TRUE)) install.packages("fields")
 if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
-if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
 if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 ```
 
