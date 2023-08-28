@@ -10,7 +10,7 @@
 start-to-finish pipeline to perform various landscape genomics methods
 with their data.
 
-# <img src="man/figures/algatr_review.png" align="center" width="794" height="133"/>
+# <img src="man/figures/algatr_review.png" align="center" width="687" height="110"/>
 
 ## Installation
 
@@ -25,19 +25,19 @@ don’t want to install unnecessary packages. Below, we list the packages
 that you need to install for each part of algatr.
 
 ``` r
-# Install packages for installing other packages
+# Install packages for installing other packages:
 if (!require("devtools", quietly = TRUE)) install.packages("devtools")
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
-# For genetic distance processing
+# For genetic distance processing:
 if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
 if (!require("readr", quietly = TRUE)) install.packages("readr")
 if (!require("tibble", quietly = TRUE)) install.packages("tibble")
 if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")
 if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
-# For genetic data processing
+# For genetic data processing:
 if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
 if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
 if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
@@ -50,15 +50,14 @@ if (!require("vegan", quietly = TRUE)) install.packages("vegan")
 if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
 if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
 if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-if (!require("wingen", quietly = TRUE)) devtools::github_install("wingen")
+if (!require("wingen", quietly = TRUE)) devtools::install_github("wingen")
 
 # For LFMM:
 if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("Assoctests", quietly = TRUE)) install.packages("Assoctests")
+if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
 if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
 if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
-if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
+if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
 
 # For RDA:
 if (!require("ggrepel", quietly = TRUE)) install.packages("ggrepel")
@@ -79,14 +78,12 @@ if (!require("automap", quietly = TRUE)) install.packages("automap")
 if (!require("graphics", quietly = TRUE)) install.packages("graphics")
 if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") # required by tess3r
 if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
 if (!require("fields", quietly = TRUE)) install.packages("fields")
 if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
-if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
 if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
 
 # For wingen:
-if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
+if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
 ```
 
 If you’re installing on Ubuntu, you may run into issues installing the
@@ -175,11 +172,11 @@ questions fall into four broad categories of analyses:
 
 <table style="width:99%;">
 <colgroup>
-<col style="width: 21%" />
-<col style="width: 20%" />
-<col style="width: 39%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 30%" />
+<col style="width: 27%" />
 <col style="width: 7%" />
-<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -195,7 +192,8 @@ questions fall into four broad categories of analyses:
 <td>How do we delineate population units for management?</td>
 <td>Population structure</td>
 <td>TESS (Caye et al. 2016)</td>
-<td>TESS_vignette.Rmd</td>
+<td><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/TESS_vignette.Rmd">TESS_vignette.Rmd</a></td>
 <td><code>tess_do_everything()</code></td>
 </tr>
 <tr class="even">
@@ -203,7 +201,8 @@ questions fall into four broad categories of analyses:
 <td>Genetic diversity</td>
 <td>Moving windows of genetic diversity; wingen (Bishop et
 al. 2023)</td>
-<td>wingen_vignette.Rmd</td>
+<td><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/wingen_vignette.Rmd">wingen_vignette.Rmd</a></td>
 <td><code>wingen_do_everything()</code></td>
 </tr>
 <tr class="odd">
@@ -213,8 +212,10 @@ al. 2023)</td>
 2013)</p>
 <p>Generalized dissimilarity modeling; GDM (Ferrier et al. 2007;
 Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
-<td><p>MMRR_vignette.Rmd</p>
-<p>GDM_vignette.Rmd</p></td>
+<td><p><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/MMRR_vignette.Rmd">MMRR_vignette.Rmd</a></p>
+<p><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/GDM_vignette.Rmd">GDM_vignette.Rmd</a></p></td>
 <td><p><code>mmrr_do_everything()</code></p>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
@@ -223,8 +224,10 @@ Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
 <td>Genotype-environment associations (GEA)</td>
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
-<td><p>RDA_vignette.Rmd</p>
-<p>LFMM_vignette.Rmd</p></td>
+<td><p><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/RDA_vignette.Rmd">RDA_vignette.Rmd</a></p>
+<p><a
+href="https://github.com/TheWangLab/algatr/blob/main/vignettes/LFMM_vignette.Rmd">LFMM_vignette.Rmd</a></p></td>
 <td><p><code>rda_do_everything()</code></p>
 <p><code>lfmm_do_everything()</code></p></td>
 </tr>
