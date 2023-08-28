@@ -3,7 +3,7 @@
 #' @param gen genotype dosage matrix (rows = individuals & columns = SNPs) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param coords dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "best"
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"
 #' @param correctGEO whether to condition on geographic coordinates
 #' @param correctPC whether to condition on PCs from PCA of genotypes
 #' @param outlier_method method to determine outliers. Can either be "p" to use the p-value method from [here](https://github.com/Capblancq/RDA-landscape-genomics) or "z" to use the z-score based method from [here](https://popgen.nescent.org/2018-03-27_RDA_GEA.html)
@@ -28,7 +28,7 @@
 #' Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
 #'
 #' @family RDA functions
-rda_do_everything <- function(gen, env, coords = NULL, model = "best", correctGEO = FALSE, correctPC = FALSE,
+rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE,
                               outlier_method = "p", sig = 0.05, z = 3,
                               p_adj = "fdr", cortest = TRUE, nPC = 3, varpart = FALSE, naxes = "all",
                               Pin = 0.05, R2permutations = 1000, R2scope = T, stdz = TRUE, quiet = FALSE) {
