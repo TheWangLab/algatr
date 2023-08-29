@@ -5,8 +5,8 @@ FROM rocker/geospatial:4.3.1
 # Relabel docker
 LABEL org.opencontainers.image.description=""
 
-# Use renv version 0.17.3
-ENV RENV_VERSION 0.17.3
+# Use renv version 1.0.2
+ENV RENV_VERSION 1.0.2
 
 # Install renv
 RUN Rscript -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
