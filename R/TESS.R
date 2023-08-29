@@ -619,7 +619,7 @@ pops_helper <- function(gen, tess3_obj, K) {
     dplyr::rename(individual = `...1`)
 
   # Get population assignment based on max Q value
-  pops %>%
+  pops <- pops %>%
     dplyr::rowwise() %>%
     dplyr::mutate(pop_assignment = which.max(dplyr::c_across(-individual)))
 
