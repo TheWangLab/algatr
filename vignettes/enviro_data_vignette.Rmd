@@ -21,7 +21,7 @@ if (!require("devtools", quietly = TRUE)) install.packages("devtools")
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 
 # For environmental and geographic data processing:
-if (!require("RStoolbox", quietly = TRUE))devtools::install_github("bleutner/RStoolbox")
+if (!require("RStoolbox", quietly = TRUE)) devtools::install_github("bleutner/RStoolbox")
 if (!require("geodata", quietly = TRUE)) install.packages("geodata")
 if (!require("corrplot", quietly = TRUE)) install.packages("corrplot")
 if (!require("vegan", quietly = TRUE)) install.packages("vegan")
