@@ -21,9 +21,9 @@ gdm_map(
 
 \item{coords}{data frame with x and y coordinates}
 
-\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation}
+\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)}
 
-\item{scl}{constant for rescaling variable vectors for plotting}
+\item{scl}{constant for rescaling variable vectors for plotting (defaults to 1)}
 
 \item{display_axes}{display PC axes text, labels, and ticks (defaults to FALSE)}
 
