@@ -378,7 +378,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Plot raster if quiet = FALSE
   if (!quiet) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
-  if (!is.null(coords)) points(coords, cex = 1.5)
+  if (!is.null(coords) & !quiet) points(coords, cex = 1.5)
 
   # Plot variable vectors
   if (!quiet & plot_vars & (n_layers == 3)) {
