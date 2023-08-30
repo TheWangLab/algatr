@@ -77,7 +77,7 @@ if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
 if (!require("tess3r", quietly = TRUE)) install.packages("tess3r")
 
 # For wingen:
-if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
+if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
 
 ```
 
