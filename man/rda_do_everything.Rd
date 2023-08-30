@@ -55,11 +55,11 @@ rda_do_everything(
 
 \item{naxes}{number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes}
 
-\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordiR2step})}
+\item{Pin}{if \code{model = "best"}, limits of permutation P-values for adding (\code{Pin}) a term to the model, or dropping (\code{Pout}) from the model. Term is added if\code{ P <= Pin}, and removed if \code{P > Pout} (see \link[vegan]{ordiR2step}) (defaults to 0.05)}
 
-\item{R2permutations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})}
+\item{R2permutations}{if \code{model = "best"}, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step}) (defaults to 1000)}
 
-\item{R2scope}{if \code{model = "best"}, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})}
+\item{R2scope}{if \code{model = "best"} and set to TRUE (default), use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})}
 
 \item{stdz}{whether to center and scale environmental data (defaults to TRUE)}
 

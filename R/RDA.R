@@ -14,9 +14,9 @@
 #' @param nPC number of PCs to use if correctPC = TRUE (defaults to 3); if set to "manual" a selection option with a terminal prompt will be provided
 #' @param varpart whether to perform variance partitioning (defaults to FALSE)
 #' @param naxes number of RDA axes to use (defaults to "all" to use all axes), if set to "manual" a selection option with a terminal prompt will be given, otherwise can be any integer that is less than or equal to the total number of axes
-#' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordiR2step})
-#' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step})
-#' @param R2scope if `model = "best"`, use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
+#' @param Pin if `model = "best"`, limits of permutation P-values for adding (`Pin`) a term to the model, or dropping (`Pout`) from the model. Term is added if` P <= Pin`, and removed if `P > Pout` (see \link[vegan]{ordiR2step}) (defaults to 0.05)
+#' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step}) (defaults to 1000)
+#' @param R2scope if `model = "best"` and set to TRUE (default), use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
