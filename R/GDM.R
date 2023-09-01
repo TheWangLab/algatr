@@ -10,7 +10,7 @@
 #' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
-#' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param plot_vars whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
 #' @details
@@ -71,7 +71,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (zero_env == 0) map <- NULL
 
   # Create and plot map
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) {
+  if (geodist_type == "Euclidean" & !is.null(envlayers)) {
     if (zero_env == 0){
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
     } else {
@@ -88,7 +88,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) results[["rast"]] <- map else results[["rast"]] <- NULL
+  if (geodist_type == "Euclidean" & !is.null(envlayers)) results[["rast"]] <- map else results[["rast"]] <- NULL
 
   return(results)
 }
@@ -289,9 +289,8 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
 #'
 #' @param gdm_model GDM model
 #' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
-#' @param plot_vars whether to create PCA plot to help in variable and map interpretation
 #' @param coords data frame with x and y coordinates
-#' @param scl constant for rescaling variable vectors for plotting
+#' @param scl constant for rescaling variable vectors for plotting (defaults to 1)
 #' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
 #' @inheritParams gdm_do_everything
 #'
@@ -379,14 +378,14 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Plot raster if quiet = FALSE
   if (!quiet) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
-  if (!is.null(coords)) points(coords, cex = 1.5)
+  if (!is.null(coords) & !quiet) points(coords, cex = 1.5)
 
   # Plot variable vectors
-  if (plot_vars & (n_layers == 3)) {
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes, quiet = quiet)
+  if (!quiet & plot_vars & (n_layers == 3)) {
+    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
   }
 
-  if (plot_vars & (n_layers != 3)) {
+  if (!quiet & plot_vars & (n_layers != 3)) {
     warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
   }
 
@@ -482,14 +481,13 @@ gdm_plot_diss <- function(gdm_model) {
 #' @param y y-axis PC
 #' @param scl constant for rescaling variable vectors for plotting
 #' @param display_axes whether to display axes
-#' @inheritParams gdm_do_everything
 #'
 #' @return GDM PCA plot
 #'
 #' @family GDM functions
 #'
 #' @export
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE, quiet = FALSE) {
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE) {
   # Confirm there are exactly 3 axes
   if (terra::nlyr(pcaRastRGB) > 3) {
     stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")
@@ -596,7 +594,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   }
 
   # Plot
-  if (!quiet) print(plot)
+  print(plot)
 }
 
 #' Helper function to create rgb vector

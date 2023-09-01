@@ -12,8 +12,7 @@ gdm_plot_vars(
   x = "PC1",
   y = "PC2",
   scl = 1,
-  display_axes = FALSE,
-  quiet = FALSE
+  display_axes = FALSE
 )
 }
 \arguments{
@@ -32,8 +31,6 @@ gdm_plot_vars(
 \item{scl}{constant for rescaling variable vectors for plotting}
 
 \item{display_axes}{whether to display axes}
-
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
 \value{
 GDM PCA plot

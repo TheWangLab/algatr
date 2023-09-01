@@ -30,7 +30,7 @@ mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "full",
   if (inherits(env, "SpatRaster")) crs_check(coords, env) else crs_check(coords)
 
   # If not provided, make env data frame from layers and coords
-  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords)
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
 
   # Make env dist matrix
   X <- env_dist(env)

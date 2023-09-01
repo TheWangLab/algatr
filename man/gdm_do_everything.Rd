@@ -40,7 +40,7 @@ gdm_do_everything(
 
 \item{scale_gendist}{whether to scale genetic distance data from 0 to 1 (defaults to FALSE)}
 
-\item{plot_vars}{whether to create variable vector loading plot (defaults to TRUE)}
+\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
