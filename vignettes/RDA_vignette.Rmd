@@ -15,15 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-
-# For RDA:
-if (!require("ggrepel", quietly = TRUE)) install.packages("ggrepel")
-if (!require("qvalue", quietly = TRUE)) BiocManager::install("qvalue")
-if (!require("robust", quietly = TRUE)) install.packages("robust")
-if (!require("tibble", quietly = TRUE)) install.packages("tibble")
-if (!require("vegan", quietly = TRUE)) install.packages("vegan")
+# Install packages
+rda_packages()
 ```
 
 # Redundancy analysis (RDA)

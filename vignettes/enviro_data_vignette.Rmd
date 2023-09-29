@@ -14,21 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-
-# For environmental and geographic data processing:
-if (!require("RStoolbox", quietly = TRUE)) devtools::install_github("bleutner/RStoolbox")
-if (!require("geodata", quietly = TRUE)) install.packages("geodata")
-if (!require("corrplot", quietly = TRUE)) install.packages("corrplot")
-if (!require("vegan", quietly = TRUE)) install.packages("vegan")
-if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
-if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
-if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-if (!require("wingen", quietly = TRUE)) devtools::github_install("wingen")
+# Install packages
+envirodata_packages()
 ```
 
 # Processing environmental data for landscape genomics

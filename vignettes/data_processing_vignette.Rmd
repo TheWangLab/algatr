@@ -15,16 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-
-# For genetic data processing
-if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
-if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
-if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
-if (!require("LEA", quietly = TRUE)) install.packages("LEA")
-if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")
+# Install packages 
+data_processing_packages()
 ```
 
 # Processing genomic data files

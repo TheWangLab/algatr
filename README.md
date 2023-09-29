@@ -18,86 +18,50 @@ with their data.
 
 ------------------------------------------------------------------------
 
+algatr can be installed with the following code:
+
+``` r
+devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+```
+
 The algatr package depends on many packages for all of the different
 methods implemented. To ensure that algatr can still be installed even
 if one of the many dependencies breaks, the packages required for each
-method must be installed separately from algatr. This is also helpful if
+method are suggested rather than imported. To install all of the
+suggested packages set `dependencies = TRUE` when running
+`install_github()`. To install just the packages required for each
+method, use the `*_packages()` functions below. This is helpful if
 you’re only interested in using a subset of the methods provided and
-don’t want to install unnecessary packages. Below, we list the packages
-that you need to install for each part of algatr.
+don’t want to install unnecessary packages.
 
 ``` r
-# Install packages for installing other packages:
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+# Install all of the packages needed for algatr:
+devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE, dependencies = TRUE)
 
-# For genetic distance processing:
-if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
-if (!require("readr", quietly = TRUE)) install.packages("readr")
-if (!require("tibble", quietly = TRUE)) install.packages("tibble")
-if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")
-if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
-
-# For genetic data processing:
-if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
-if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
-if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
-
-# For environmental and geographic data processing:
-if (!require("RStoolbox", quietly = TRUE))devtools::install_github("bleutner/RStoolbox")
-if (!require("geodata", quietly = TRUE)) install.packages("geodata")
-if (!require("corrplot", quietly = TRUE)) install.packages("corrplot")
-if (!require("vegan", quietly = TRUE)) install.packages("vegan")
-if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
-if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
-if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-if (!require("wingen", quietly = TRUE)) devtools::install_github("wingen")
-
-# For LFMM:
-if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
-if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
-if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
-
-# For RDA:
-if (!require("ggrepel", quietly = TRUE)) install.packages("ggrepel")
-if (!require("qvalue", quietly = TRUE)) BiocManager::install("qvalue")
-if (!require("robust", quietly = TRUE)) install.packages("robust")
-if (!require("tibble", quietly = TRUE)) install.packages("tibble")
-if (!require("vegan", quietly = TRUE)) install.packages("vegan")
-
-# For GDM:
-if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
-if (!require("gdm", quietly = TRUE)) install.packages("gdm")
-
-# For MMRR:
-if (!require("GGally", quietly = TRUE)) install.packages("GGally")
-
-# For TESS:
-if (!require("automap", quietly = TRUE)) install.packages("automap")
-if (!require("graphics", quietly = TRUE)) install.packages("graphics")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") # required by tess3r
-if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("fields", quietly = TRUE)) install.packages("fields")
-if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
-if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
-
-# For wingen:
-if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
+# Install subsets of packages based on what methods you want to use:
+## Genetic distance processing:
+genetic_distance_packages()
+## Genetic data processing:
+data_processing_packages()
+## Environmental and geographic data processing:
+envirodata_packages()
+## LFMM:
+lfmm_packages()
+## RDA:
+rda_packages()
+## MMRR:
+mmrr_packages()
+## GDM:
+gdm_packages()
+## TESS:
+tess_packages()
+## wingen:
+wingen_packages()
 ```
 
 If you’re installing on Ubuntu, you may run into issues installing the
 rmapshaper package; scroll to the bottom of the README for more
 information.
-
-Once you have installed the above dependencies, you can install algatr
-using the following code:
-
-``` r
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
-```
 
 Alternatively, algatr can be run using
 [Docker](https://docs.docker.com/get-started/), in which case prior
