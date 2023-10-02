@@ -132,7 +132,7 @@ envirodata_packages <- function(){
   if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
   if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
   if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-  if (!require("wingen", quietly = TRUE)) devtools::install_github("wingen")
+  if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
 }
 
 
