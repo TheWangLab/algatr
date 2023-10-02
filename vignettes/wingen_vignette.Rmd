@@ -15,11 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-
-# For wingen:
-if (!require("wingen", quietly = TRUE)) devtools::github_install("AnushaPB/wingen")
+# Install packages
+wingen_packages()
 ```
 
 # wingen

@@ -15,11 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-
-# For MMRR:
-if (!require("GGally", quietly = TRUE)) install.packages("GGally")
+# Install packages
+mmrr_packages()
 ```
 
 # Multiple matrix regression with randomization (MMRR)

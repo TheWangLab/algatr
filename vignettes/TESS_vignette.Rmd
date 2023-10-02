@@ -15,18 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, eval = FALSE}
-# Install packages for installing other packages
-if (!require("devtools", quietly = TRUE)) install.packages("devtools")
-if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-
-# For TESS:
-if (!require("automap", quietly = TRUE)) install.packages("automap")
-if (!require("graphics", quietly = TRUE)) install.packages("graphics")
-if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
-if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") 
-if (!require("fields", quietly = TRUE)) install.packages("fields")
-if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
-if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")
+# Install packages
+tess_packages()
 ```
 
 # TESS
