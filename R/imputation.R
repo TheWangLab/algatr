@@ -24,9 +24,8 @@ impute_helper <- function(i, FUN = median) {
 #'
 #' @param gen a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
-#' @param save_output name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
-#' if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
-#' gen <- load.snmfProject("example.snmfProject")
+#' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
+#' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #'
 #' @inheritParams LEA::snmf
 #'
@@ -51,7 +50,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   # Look through directories
   bestK <- snmf_bestK(snmf_proj, K = K, quiet = quiet)
 
-  if (!quiet) {
+  if (!quiet & length(K) > 1) {
     print(plot_crossent(bestK$ce_values))
   }
 
@@ -92,7 +91,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
 snmf_bestK <- function(snmf_proj, K, quiet) {
   if (length(K) == 1) {
     bestrun <- which.min(LEA::cross.entropy(snmf_proj, K = K))
-    results <- list(K_value = K, run = bestrun)
+    results <- list(K_value = K, bestrun = bestrun)
   }
 
   if (length(K) > 1) {
