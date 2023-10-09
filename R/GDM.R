@@ -144,7 +144,6 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
   }
 
-
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
   # If model = "full", the final GDM model is just the full model
@@ -181,7 +180,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     }
 
     # Get subset of variables for final model
-    gdm_varimp <- gdm_var_select(gdmData, sig = sig, nperm = nperm)
+    gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
     finalvars <- gdm_varimp$finalvars
 
     # Stop if there are no significant final variables
@@ -227,7 +226,6 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 }
 
 
-
 #' Get best set of variables from a GDM model
 #'
 #' @param gdmData data formatted using GDM package
@@ -237,7 +235,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 #' @family GDM functions
 #'
 #' @export
-gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
+gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
     geo = FALSE,
@@ -284,7 +282,6 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
 }
 
 
-
 #' Make map from model
 #'
 #' @param gdm_model GDM model
@@ -325,7 +322,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Subset envlayers to only include variables in final model
   envlayers_sub <- terra::subset(envlayers, model_vars)
-
 
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
@@ -420,7 +416,6 @@ gdm_plot_isplines <- function(gdm_model) {
 }
 
 
-
 #' Plot compositional dissimilarity spline plots
 #'
 #' @description generates two plots: a plot of the observed response data against raw ecological distance from the model, and a plot of the observed response against the predicted response from the model (after link function is applied)
@@ -468,7 +463,6 @@ gdm_plot_diss <- function(gdm_model) {
 
   print(plot)
 }
-
 
 
 #' Create a PCA plot for GDM
@@ -519,7 +513,6 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     v1 = scl * scldat * varpc[, x],
     v2 = scl * scldat * varpc[, y]
   )
-
 
   # GET RGB VALS FOR EACH COORD----------------------------------------------------------------------------------------
 
@@ -597,6 +590,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   print(plot)
 }
 
+
 #' Helper function to create rgb vector
 #'
 #' @export
@@ -605,6 +599,7 @@ create_rgb_vec <- function(vec) {
   if (any(is.na(vec))) x <- NA else x <- rgb(vec[1], vec[2], vec[3], maxColorValue = 255)
   return(x)
 }
+
 
 #' Scale a raster stack from 0 to 255
 #'
@@ -617,6 +612,7 @@ stack_to_rgb <- function(s) {
   new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb))
   return(new_stack)
 }
+
 
 #' Scale raster from 0 to 255
 #'
@@ -664,6 +660,7 @@ gdm_coeffs <- function(gdm_model) {
   return(coeffs)
 }
 
+
 #' Create dataframe of GDM results
 #'
 #' @param gdm_result output of \link[algatr]{gdm_run}
@@ -678,6 +675,7 @@ gdm_df <- function(gdm_result) {
   if (!is.null(gdm_result$pvalues)) coeff_df$p <- gdm_result$pvalues
   return(coeff_df)
 }
+
 
 #' Create `gt` table of GDM results
 #'
@@ -737,6 +735,7 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
   tbl
 }
 
+
 #' Scale genetic distances from 0 to 1
 #'
 #' @param x genetic distance matrix
@@ -749,4 +748,3 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
-

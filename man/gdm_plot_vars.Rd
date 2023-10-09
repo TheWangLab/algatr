@@ -48,7 +48,7 @@ Other GDM functions:
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_run}()},
 \code{\link{gdm_table}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_var_sel}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}
