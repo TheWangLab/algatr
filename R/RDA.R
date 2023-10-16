@@ -53,25 +53,6 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
   # Convert vcf to dosage
   if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
-  # Perform imputation with warning
-  if (any(is.na(gen))) {
-    gen <- simple_impute(gen, median)
-    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-  }
-
-  # Check for NAs
-  if (any(is.na(gen))) {
-    stop("NA values found in gen data")
-  }
-
-  if (any(is.na(env))) {
-    warning("NA values found in env data, removing rows with NAs for RDA")
-    gen <- gen[complete.cases(env), ]
-    coords <- coords[complete.cases(env), ]
-    # NOTE: this must be last
-    env <- env[complete.cases(env), ]
-  }
-
   # Running RDA ----------------------------------------------------------------------------------------------------------------
 
   # Run model
@@ -154,6 +135,28 @@ rda_do_everything <- function(gen, env, coords = NULL, model = "full", correctGE
 rda_run <- function(gen, env, coords = NULL, model = "full",
                     correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
+
+  # Handle NA values -----------------------------------------------------
+  # Perform imputation with warning
+  if (any(is.na(gen))) {
+    gen <- simple_impute(gen, median)
+    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+  }
+
+  # Check for NAs
+  if (any(is.na(gen))) {
+    stop("NA values found in gen data")
+  }
+
+  if (any(is.na(env))) {
+    warning("NA values found in env data, removing rows with NAs for RDA")
+    gen <- gen[complete.cases(env), ]
+    coords <- coords[complete.cases(env), ]
+    # NOTE: this must be last
+    env <- env[complete.cases(env), ]
+  }
+
+  # Set up model ---------------------------------------------------------
   if (!correctPC & !correctGEO) {
     moddf <- data.frame(env)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+")))
