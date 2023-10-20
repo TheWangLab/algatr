@@ -25,7 +25,6 @@ envirodata_packages()
 library(algatr)
 library(terra)
 library(raster)
-library(RStoolbox)
 library(ggplot2)
 library(geodata)
 library(viridis)
@@ -156,13 +155,14 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `rasterPCA()` function in the [RStoolbox package](https://cran.r-project.org/web/packages/RStoolbox/index.html); this function can take in a `SpatRaster` or `RasterStack` object. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. The result of this function is a list containing the model information, and a RasterBrick object containing multiple layers of PCA scores. One can also use the `nComp` argument to only extract the top n PCs; in many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `raster_pca()` function. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. In many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
 
 ```{r raster PCA}
-env_pcs <- rasterPCA(wclim, spca = TRUE)
+# run PCA
+env_pcs <- raster_pca(wclim)
 
 # Let's take a look at the results for the top three PCs
-plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))
+plots <- lapply(1:3, function(x) plot(env_pcs[[x]]))
 
 plots[[1]] 
 plots[[2]] 
