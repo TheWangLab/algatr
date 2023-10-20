@@ -27,7 +27,7 @@ raster_pca <- function(x, center = TRUE, scale = TRUE, tol = NULL, rank. = NULL,
   df <- terra::as.data.frame(x, na.rm = TRUE)
 
   # Perform PCA
-  pca <- stats::prcomp(df, retx = retx, center = center, scale = scale, tol = tol, rank. = rank., ...)
+  pca <- stats::prcomp(df, center = center, scale = scale, tol = tol, rank. = rank., ...)
 
   # Apply the PCA model to the raster to produce raster PCs
   env_pcs <- terra::predict(x, pca)
