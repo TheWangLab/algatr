@@ -157,21 +157,18 @@ check_dists(CA_env, liz_coords)
 
 Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `raster_pca()` function. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. In many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
 
-```{r raster PCA}
+```{r raster PCA, fig.width = 5, fig.height = 5}
 # run PCA
 env_pcs <- raster_pca(wclim)
 
 # Let's take a look at the results for the top three PCs
-plots <- lapply(1:3, function(x) plot(env_pcs[[x]]))
-
-plots[[1]] 
-plots[[2]] 
-plots[[3]]
+plot(env_pcs[[1:3]])
 ```
 
-```{r comp raster}
+```{r comp raster, fig.width = 3, fig.height = 4}
 # We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
-ggRGB(env_pcs$map, 1, 2, 3, stretch = "lin", q = 0)
+# stretch = "lin" stretches the values to increase contrast
+plot_rgb(env_pcs[[1:4]], r = 1, g = 2, b = 3, stretch = "lin")
 ```
 
 ## Create raster from coordinates with wingen: `coords_to_raster()`

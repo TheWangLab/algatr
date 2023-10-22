@@ -600,20 +600,6 @@ create_rgb_vec <- function(vec) {
   return(x)
 }
 
-
-#' Scale a raster stack from 0 to 255
-#'
-#' @param s RasterStack
-#'
-#' @noRd
-#' @export
-stack_to_rgb <- function(s) {
-  stack_list <- as.list(s)
-  new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb))
-  return(new_stack)
-}
-
-
 #' Scale raster from 0 to 255
 #'
 #' @param r SpatRast

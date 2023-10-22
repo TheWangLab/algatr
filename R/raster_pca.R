@@ -34,3 +34,5 @@ raster_pca <- function(x, center = TRUE, scale = TRUE, tol = NULL, rank. = NULL,
 
   return(env_pcs)
 }
+
+
