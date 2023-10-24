@@ -52,7 +52,7 @@ load_algatr_example()
 
 ------------------------------------------------------------------------
 
-Euclidean, Bray-Curtis, and PC-based genetic distance metrics ***require no missing data***. A simple imputation (to the median or mean, depending on the distance metric) is built into the `gen_dist_calc()` function mostly for creating test datasets; we ***highly discourage*** using this form of imputation in any of your analyses.
+Euclidean, Bray-Curtis, and PC-based genetic distance metrics ***require no missing data***. A simple imputation (to the median or mean, depending on the distance metric) is built into the `gen_dist()` function mostly for creating test datasets; we ***highly discourage*** using this form of imputation in any of your analyses. You can take a look at the `str_impute()` function description in the data processing vignette for information on an alternate imputation method provided in algatr.
 
 To calculate Euclidean distances between our samples:
 

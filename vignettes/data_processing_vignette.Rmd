@@ -22,9 +22,7 @@ data_processing_packages()
 # Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
-# library(algatr)
-devtools::load_all()
-library(here)
+library(algatr)
 library(purrr)
 library(dplyr)
 library(ggplot2)
