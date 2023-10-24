@@ -44,9 +44,9 @@ str_impute(
 
 \item{quiet}{whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
 
-\item{save_output}{if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)}
+\item{save_output}{if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)}
 
-\item{output_filename}{if \code{save_output = TRUE}, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)}
+\item{output_filename}{if \code{save_output = TRUE}, name prefix for saved .geno file, sNMF project file, and sNMF output file results (defaults to FALSE, in which no files are saved)}
 }
 \value{
 dosage matrix with imputed missing values
