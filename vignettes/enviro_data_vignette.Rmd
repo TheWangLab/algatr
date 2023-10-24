@@ -45,7 +45,7 @@ For landscape genomic analyses, environmental data layers must be processed in s
 
     -   `check_dists()` to detect collinearity between geographic and environmental distances
 
--   `rasterPCA()` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
+-   `raster_pca()` to perform a raster PCA on a stack of environmental layers to reduce dimensionality
 
 -   `coords_to_raster()` to create a raster layer from coordinate data (using the wingen package)
 
