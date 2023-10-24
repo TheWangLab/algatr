@@ -40,7 +40,6 @@ Suggests:
     renv,
     rmapshaper,
     robust,
-    RStoolbox,
     SeqArray,
     SNPRelate,
     tess3r,
