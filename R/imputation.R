@@ -41,10 +41,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   if (!inherits(gen, "snmfProject")) {
     geno <- gen_to_geno(gen)
     # SNMF requires an input file saved to file (cannot accept an R object)
-    LEA::write.geno(geno, here::here(paste0(filename, ".geno")))
+    LEA::write.geno(geno, paste0(filename, ".geno"))
 
     # Run SNMF
-    snmf_proj <- LEA::snmf(input.file = here::here(paste0(filename, ".geno")), K = K, entropy = entropy, repetitions = repetitions, project = project)
+    snmf_proj <- LEA::snmf(input.file = paste0(filename, ".geno"), K = K, entropy = entropy, repetitions = repetitions, project = project)
   }
 
   # Look through directories
@@ -55,10 +55,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   }
 
   # Impute missing values based on snmf groupings
-  LEA::impute(object = snmf_proj, input.file = here(paste0(filename, ".geno")), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
+  LEA::impute(object = snmf_proj, input.file = paste0(filename, ".geno"), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
 
   # Read .lfmm file in
-  imputed <- LEA::read.lfmm(here(paste0(filename, ".lfmm_imputed.lfmm")))
+  imputed <- LEA::read.lfmm(paste0(filename, ".lfmm_imputed.lfmm"))
 
   # Add individual and variant names back in
   rownames(imputed) <- rownames(gen)
@@ -69,12 +69,12 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   # Remove created files
   if (!save_output) {
     # Removes snmf project and associated snmf files
-    LEA::remove.snmfProject(here::here(paste0(filename, ".snmfProject")))
+    LEA::remove.snmfProject(paste0(filename, ".snmfProject"))
 
     # Delete other associated files
-    unlink(here::here(paste0(filename, ".geno")))
-    unlink(here::here(paste0(filename, ".lfmm")))
-    unlink(here::here(paste0(filename, ".lfmm_imputed.lfmm")))
+    unlink(paste0(filename, ".geno"))
+    unlink(paste0(filename, ".lfmm"))
+    unlink(paste0(filename, ".lfmm_imputed.lfmm"))
   }
   return(imputed)
 }
