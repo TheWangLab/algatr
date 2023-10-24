@@ -22,7 +22,7 @@ impute_helper <- function(i, FUN = median) {
 
 #' Imputation of missing values using population structure inferred with `LEA::snmf`
 #'
-#' @param gen a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject
+#' @param gen a dosage matrix, an object of class 'vcfR', or an object of type snmfProject
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
 #' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
 #' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, sNMF project file, and sNMF output file results (defaults to FALSE, in which no files are saved)
@@ -35,12 +35,16 @@ impute_helper <- function(i, FUN = median) {
 str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new", quiet = TRUE, save_output = FALSE, output_filename = NULL) {
   if (is.null(output_filename)) filename <- "tmp" else filename <- output_filename
 
+  # Convert vcf to dosage
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # Load sNMF project
   if (inherits(gen, "snmfProject")) snmf_proj <- gen
 
   # Convert gen to .geno type file unless snmfProject provided
   if (!inherits(gen, "snmfProject")) {
     geno <- gen_to_geno(gen)
-    # SNMF requires an input file saved to file (cannot accept an R object)
+    # sNMF requires an input file saved to file (cannot accept an R object)
     LEA::write.geno(geno, paste0(filename, ".geno"))
 
     # Run SNMF
