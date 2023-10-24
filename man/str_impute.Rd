@@ -16,7 +16,7 @@ str_impute(
 )
 }
 \arguments{
-\item{gen}{a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject}
+\item{gen}{a dosage matrix, an object of class 'vcfR', or an object of type snmfProject}
 
 \item{K}{
     An integer vector corresponding to the number of ancestral populations for

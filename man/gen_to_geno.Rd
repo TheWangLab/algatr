@@ -7,7 +7,7 @@
 gen_to_geno(gen)
 }
 \arguments{
-\item{gen}{a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject}
+\item{gen}{a dosage matrix, an object of class 'vcfR', or an object of type snmfProject}
 }
 \value{
 matrix encoded as geno type object
