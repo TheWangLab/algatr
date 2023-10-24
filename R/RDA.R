@@ -4,7 +4,7 @@
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param coords dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted
 #' @param impute if NAs in `gen`, imputation will be performed on missing values; options are "structure" which uses the `str_impute()` function to impute based on population structure inferred with `LEA::snmf` (default); other option is "simple" based on `simple_impute()` which imputes to the median
-#' @param K if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
+#' @param K_impute if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
 #' @param quiet_impute if `impute = "structure"`, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
 #' @param save_output if `impute = "structure"`, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
 #' @param output_filename if `impute = "structure"` and `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
@@ -24,9 +24,9 @@
 #' @param R2scope if `model = "best"` and set to TRUE (default), use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @inheritParams LEA::snmf
 #'
 #' @importFrom vegan rda
-#' @inheritParams LEA::snmf
 #'
 #' @return list containing (1) outlier SNPs, (2) dataframe with correlation test results, if `cortest = TRUE`, (3) the RDA model, (4) results from outlier analysis (output from \link[algatr]{rda_getoutliers}), (5) RDA R-Squared, (6) RDA ANOVA, (7) p-values if `outlier_method = "p"`, and (8) results from variance partitioning analysis, if `varpart = TRUE`
 #' @export
@@ -34,7 +34,7 @@
 #' Much of algatr's code is adapted from Capblancq T., Forester B.R. 2021. Redundancy analysis: A swiss army knife for landscape genomics. Methods Ecol. Evol. 12:2298-2309. doi: https://doi.org/10.1111/2041-210X.13722.
 #'
 #' @family RDA functions
-rda_do_everything <- function(gen, env, coords = NULL, impute = "simple", K = 3,
+rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_impute = 3,
                               entropy = TRUE, repetitions = 10, project = "new",
                               quiet_impute = TRUE, save_output = FALSE, output_filename = NULL,
                               model = "full", correctGEO = FALSE, correctPC = FALSE,
@@ -61,6 +61,25 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "simple", K = 3,
 
   # Convert vcf to dosage
   if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # Perform imputation with warning
+  if (any(is.na(gen))) {
+    if (impute == "simple") {
+      gen <- simple_impute(gen, median)
+      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+    if (impute == "structure") {
+      gen <- str_impute(gen,
+                        K = K_impute,
+                        entropy = entropy,
+                        repetitions = repetitions,
+                        project = project,
+                        quiet = quiet_impute,
+                        save_output = save_output,
+                        output_filename = output_filename)
+      warning("NAs found in genetic data, imputing based on sNMF clusters")
+    }
+  }
 
   # Running RDA ----------------------------------------------------------------------------------------------------------------
 
@@ -141,39 +160,18 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "simple", K = 3,
 #' @export
 #'
 #' @family RDA functions
-rda_run <- function(gen, env, coords = NULL, impute = "structure", K = 3,
-                    entropy = TRUE, repetitions = 10, project = "new",
-                    quiet_impute = TRUE, save_output = FALSE, output_filename = NULL,
-                    model = "full", correctGEO = FALSE, correctPC = FALSE, nPC = 3,
+rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
 
   # Handle NA values -----------------------------------------------------
-  # Perform imputation with warning
-  if (any(is.na(gen))) {
-    if (impute == "simple") {
-      gen <- simple_impute(gen, median)
-      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-    }
-    if (impute == "structure") {
-      gen <- str_impute(gen,
-                        K = K,
-                        entropy = entropy,
-                        repetitions = repetitions,
-                        project = project,
-                        quiet = quiet_impute,
-                        save_output = save_output,
-                        output_filename = output_filename)
-      warning("NAs found in genetic data, imputing based on sNMF clusters")
-    }
-  }
 
   # Check for NAs
   if (any(is.na(gen))) {
-    stop("NA values found in gen data")
+    stop("Missing values found in gen data")
   }
 
   if (any(is.na(env))) {
-    warning("NA values found in env data, removing rows with NAs for RDA")
+    warning("Missing values found in env data, removing rows with NAs")
     gen <- gen[complete.cases(env), ]
     coords <- coords[complete.cases(env), ]
     # NOTE: this must be last

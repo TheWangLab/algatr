@@ -1,8 +1,13 @@
 #' LFMM function to do everything
 #'
-#' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
+#' @param gen genotype dosage matrix (rows = individuals & columns = SNPs) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
-#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
+#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values are not provided)
+#' @param impute if NAs in `gen`, imputation will be performed on missing values; options are "structure" which uses the `str_impute()` function to impute based on population structure inferred with `LEA::snmf` (default); other option is "simple" based on `simple_impute()` which imputes to the median
+#' @param K_impute if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
+#' @param quiet_impute if `impute = "structure"`, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
+#' @param save_output if `impute = "structure"`, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
+#' @param output_filename if `impute = "structure"` and `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
@@ -11,6 +16,7 @@
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
+#' @inheritParams LEA::snmf
 #'
 #' @family LFMM functions
 #'
@@ -20,7 +26,10 @@
 #'
 #' @return list with candidate SNPs, model results, and K-value
 #' @export
-lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
+lfmm_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_impute = 3,
+                               entropy = TRUE, repetitions = 10, project = "new",
+                               quiet_impute = TRUE, save_output = FALSE, output_filename = NULL,
+                               K = NULL, lfmm_method = "ridge",
                                K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                                p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                                low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
@@ -36,10 +45,23 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Perform imputation with warning
+  # Perform imputation with warning
   if (any(is.na(gen))) {
-    # TODO add structure impute to below
-    gen <- simple_impute(gen, median)
-    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    if (impute == "simple") {
+      gen <- simple_impute(gen, median)
+      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+    if (impute == "structure") {
+      gen <- str_impute(gen,
+                        K = K_impute,
+                        entropy = entropy,
+                        repetitions = repetitions,
+                        project = project,
+                        quiet = quiet_impute,
+                        save_output = save_output,
+                        output_filename = output_filename)
+      warning("NAs found in genetic data, imputing based on sNMF clusters")
+    }
   }
 
   # PCA to determine number of latent factors
@@ -75,6 +97,11 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 #' @export
 #'
 lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif") {
+  # Check for NAs
+  if (any(is.na(gen))) {
+    stop("Missing values found in gen data")
+  }
+
   # gen matrix
   genmat <- as.matrix(gen)
   # env matrix
