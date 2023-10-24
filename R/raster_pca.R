@@ -1,5 +1,5 @@
 
-#' Perform Rastar PCA
+#' Perform Raster PCA
 #'
 #' Runs Principal Component Analysis (PCA) on a Raster stack.
 #'

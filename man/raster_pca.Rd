@@ -2,7 +2,7 @@
 % Please edit documentation in R/raster_pca.R
 \name{raster_pca}
 \alias{raster_pca}
-\title{Perform Rastar PCA}
+\title{Perform Raster PCA}
 \usage{
 raster_pca(x, center = TRUE, scale = TRUE, tol = NULL, rank. = NULL, ...)
 }

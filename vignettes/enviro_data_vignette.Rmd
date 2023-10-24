@@ -155,7 +155,7 @@ check_dists(CA_env, liz_coords)
 
 ------------------------------------------------------------------------
 
-Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `raster_pca()` function. Let's use the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. In many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
+Because of collinearity issues, and because we may not want to deal with dozens of environmental layers at a time, we can perform a PCA on our rasters using the `raster_pca()` function. Let's perform a raster PCA on the `wclim` object we generated above using the `get_worldclim()` function, which contains 19 environmental variables. In many cases, the top three PCs may explain the majority of the variance of the data, and so only those will be considered for further analyses.
 
 ```{r raster PCA, fig.width = 5, fig.height = 5}
 # run PCA
