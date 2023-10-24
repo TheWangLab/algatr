@@ -1,7 +1,7 @@
 #' Calculate genetic distances
 #'
 #' @param gen path to vcf file, a `vcfR` type object, or a dosage matrix
-#' @param dist_type the type of genetic distance to calculate (options: `"euclidean"` (default), `"bray_curtis"`, `"dps"` for proportion of shared alleles, `"plink"`, or `"pc"` for PC-based)
+#' @param dist_type the type of genetic distance to calculate (options: `"euclidean"` (default), `"bray_curtis"`, `"dps"` for proportion of shared alleles (requires vcf), `"plink"`, or `"pc"` for PC-based)
 #' @param plink_file if `"plink"` dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)
 #' @param plink_id_file if `"plink"` dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)
 #' @param npc_selection if `dist_type = "pc"`, how to perform K selection (options: `"auto"` for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or `"manual"` to examine PC screeplot and enter no. PCs into console)
@@ -21,16 +21,21 @@ gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_f
   # Read in vcf if path provided
   if (is.character(gen)) gen <- vcfR::read.vcfR(gen)
   # Convert vcf to dosage matrix
-  if (inherits(gen, "vcfR") & dist_type == "euclidean" | dist_type == "bray_curtis" | dist_type == "pc") gen <- vcf_to_dosage(gen)
-
-  # Calculate Euclidean distances -------------------------------------------
-  if (dist_type == "euclidean") {
+  if (inherits(gen, "vcfR") & dist_type == "euclidean" | dist_type == "bray_curtis" | dist_type == "pc") {
+    gen <- vcf_to_dosage(gen)
     # Perform imputation with warning
     if (any(is.na(gen))) {
       gen <- simple_impute(gen, median)
       warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
     }
+  }
 
+  # Calculate Euclidean distances -------------------------------------------
+  if (dist_type == "euclidean") {
+    # Check for NAs
+    if (any(is.na(gen))) {
+      stop("NA values found in genetic data")
+    }
     dists <- ecodist::distance(gen, method = "euclidean")
     dists <- as.matrix(dists)
     return(as.data.frame(dists))
@@ -38,12 +43,6 @@ gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_f
 
   # Calculate Bray-Curtis distances -----------------------------------------
   if (dist_type == "bray_curtis") {
-    # Perform imputation with warning
-    if (any(is.na(gen))) {
-      gen <- simple_impute(gen, median)
-      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-    }
-
     # Check for NAs
     if (any(is.na(gen))) {
       stop("NA values found in genetic data")
@@ -56,6 +55,7 @@ gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_f
 
   # Calculate proportion of shared alleles ----------------------------------
   if (dist_type == "dps") {
+    if (!inherits(gen, "vcfR")) stop("VCF file required for calculating DPS distances")
     # Convert to genind
     genind <- vcfR::vcfR2genind(gen)
     dists <- adegenet::propShared(genind)
@@ -64,6 +64,7 @@ gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_f
 
   # Process Plink distance output files -------------------------------------
   if (dist_type == "plink") {
+    if (is.null(plink_file)) stop("No plink distance file provided")
     dists <- as.data.frame(readr::read_tsv(plink_file, col_names = FALSE))
     plink_names <- readr::read_tsv(plink_id_file, col_names = FALSE) %>%
       dplyr::select(-`X1`) %>%
@@ -76,17 +77,12 @@ gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_f
 
   # PC-based dist -----------------------------------------------------------
   if (dist_type == "pc") {
-    # Perform imputation with warning
-    if (any(is.na(gen))) {
-      gen <- simple_impute(gen, median)
-      gl <- adegenet::as.genlight(gen)
-      warning("NAs found in genetic data, imputing to median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
-    }
-
     # Check for NAs
     if (any(is.na(gen))) {
       stop("NA values found in genetic data")
     }
+
+    gl <- adegenet::as.genlight(gen)
 
     # Perform PCA
     pc <- stats::prcomp(gl)

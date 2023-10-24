@@ -16,7 +16,7 @@ gen_dist(
 \arguments{
 \item{gen}{path to vcf file, a \code{vcfR} type object, or a dosage matrix}
 
-\item{dist_type}{the type of genetic distance to calculate (options: \code{"euclidean"} (default), \code{"bray_curtis"}, \code{"dps"} for proportion of shared alleles, \code{"plink"}, or \code{"pc"} for PC-based)}
+\item{dist_type}{the type of genetic distance to calculate (options: \code{"euclidean"} (default), \code{"bray_curtis"}, \code{"dps"} for proportion of shared alleles (requires vcf), \code{"plink"}, or \code{"pc"} for PC-based)}
 
 \item{plink_file}{if \code{"plink"} dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)}
 

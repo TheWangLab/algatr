@@ -3,7 +3,7 @@
 #'
 #' Disclaimer: this is probably a bad idea...
 #'
-#' @param gen path to vcf file or a `vcfR` type object
+#' @param gen path to vcf file, a `vcfR` type object, or a dosage matrix
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
 #' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
@@ -16,7 +16,7 @@ do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE) {
 
   # Data processing ---------------------------------------------------------
 
-  gendist <- gen_dist(gen, dist_type = "dps")
+  gendist <- gen_dist(gen, dist_type = "euclidean")
 
   lyr <- wingen::coords_to_raster(coords, res = 0.5, buffer = 5)
 

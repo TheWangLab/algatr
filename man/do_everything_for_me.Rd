@@ -7,7 +7,7 @@
 do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 }
 \arguments{
-\item{gen}{path to vcf file or a \code{vcfR} type object}
+\item{gen}{path to vcf file, a \code{vcfR} type object, or a dosage matrix}
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
