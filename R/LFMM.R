@@ -37,6 +37,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 
   # Perform imputation with warning
   if (any(is.na(gen))) {
+    # TODO add structure impute to below
     gen <- simple_impute(gen, median)
     warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
   }

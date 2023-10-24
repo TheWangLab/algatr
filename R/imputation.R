@@ -24,8 +24,8 @@ impute_helper <- function(i, FUN = median) {
 #'
 #' @param gen a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
-#' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
-#' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
+#' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
+#' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, sNMF project file, and sNMF output file results (defaults to FALSE, in which no files are saved)
 #'
 #' @inheritParams LEA::snmf
 #'
@@ -79,7 +79,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   return(imputed)
 }
 
-#' Helper function to select "best" K based on minimizing cross-entropy criteria from SNMF results
+#' Helper function to select "best" K based on minimizing cross-entropy criteria from sNMF results
 #'
 #' @param snmf_proj object of type snmfProject
 #' @param K integer corresponding to K-value
