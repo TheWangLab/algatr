@@ -5,7 +5,7 @@
 \title{Calculate genetic distances}
 \usage{
 gen_dist(
-  vcf = NULL,
+  gen,
   dist_type = "euclidean",
   plink_file = NULL,
   plink_id_file = NULL,
@@ -14,7 +14,7 @@ gen_dist(
 )
 }
 \arguments{
-\item{vcf}{path to vcf file or a \code{vcfR} type object}
+\item{gen}{path to vcf file, a \code{vcfR} type object, or a dosage matrix}
 
 \item{dist_type}{the type of genetic distance to calculate (options: \code{"euclidean"} (default), \code{"bray_curtis"}, \code{"dps"} for proportion of shared alleles, \code{"plink"}, or \code{"pc"} for PC-based)}
 
