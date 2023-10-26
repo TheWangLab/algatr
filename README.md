@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# algatr <img src="man/figures/logo.png" align="right" height="150"/>
+# algatr <img src="man/figures/logo.png" align="right" height="160"/>
 
 [![docker-build](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml)
 [![license:
