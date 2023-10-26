@@ -2,9 +2,7 @@
 output: github_document
 ---
 
-[![docker-build](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml) [![license:
-MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
-
+[![docker-build](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -24,11 +22,15 @@ library(viridis)
 library(vcfR)
 ```
 
-# algatr <img src="man/figures/logo_review.png" align="right" height="140"/>
+# algatr ![](logo.png){align="right" width="161"}
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data.
 
-# <img src="man/figures/algatr_review.png" align="center" width="687" height="110"/>
+## Citation
+
+Please cite our paper if you use this package:
+
+**Chambers, E.A., Bishop, A.P., & Wang, I.J. (2023). Individual-based landscape genomics for conservation: An analysis pipeline. *Molecular Ecology Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
 
 ## Installation
 
@@ -40,7 +42,7 @@ algatr can be installed with the following code:
 devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
 ```
 
-The algatr package depends on many packages for all of the different methods implemented. To ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method are suggested rather than imported. To install all of the suggested packages set `dependencies = TRUE` when running `install_github()`. To install just the packages required for each method, use the `*_packages()` functions below. This is helpful if you're only interested in using a subset of the methods provided and don't want to install unnecessary packages. 
+The algatr package depends on many packages for all of the different methods implemented. To ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method are suggested rather than imported. To install all of the suggested packages set `dependencies = TRUE` when running `install_github()`. To install just the packages required for each method, use the `*_packages()` functions below. This is helpful if you're only interested in using a subset of the methods provided and don't want to install unnecessary packages.
 
 ``` r
 # Install all of the packages needed for algatr:
