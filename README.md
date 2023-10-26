@@ -1,11 +1,11 @@
 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# algatr <img src="man/figures/logo.png" align="right" height="150"/>
+
 [![docker-build](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml)
 [![license:
 MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# algatr <img src="logo.png" data-align="right" width="161" />
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
@@ -13,6 +13,8 @@ start-to-finish pipeline to perform various landscape genomics methods
 with their data.
 
 ## Citation
+
+------------------------------------------------------------------------
 
 Please cite our paper if you use this package:
 
