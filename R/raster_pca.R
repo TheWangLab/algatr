@@ -32,7 +32,8 @@ raster_pca <- function(x, center = TRUE, scale = TRUE, tol = NULL, rank. = NULL,
   # Apply the PCA model to the raster to produce raster PCs
   env_pcs <- terra::predict(x, pca)
 
-  return(env_pcs)
+  rpca_results <- list(pcs = env_pcs, loadings = pca$rotation)
+  return(rpca_results)
 }
 
 
