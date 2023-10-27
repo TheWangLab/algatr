@@ -23,6 +23,20 @@ landscape genomics for conservation: An analysis pipeline. *Molecular
 Ecology
 Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
 
+Because algatr makes use of existing software, please also be sure to
+cite the papers for the relevant corresponding method:
+
+|          |                             |                                                                                           |
+|----------|-----------------------------|-------------------------------------------------------------------------------------------|
+| `wingen` | Bishop et al. (2023)        | DOI: [10.1111/2041-210X.14090](https://doi.org/10.1111/2041-210X.14090)                   |
+| `TESS`   | Caye et al. (2016)          | DOI: [10.1111/1755-0998.12471](https://doi.org/10.1111/1755-0998.12471)                   |
+| `MMRR`   | Wang (2013)                 | DOI: [10.1111/evo.12134](https://doi.org/10.1111/evo.12134)                               |
+| `GDM`    | Ferrier et al. (2007)       | DOI: [10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x) |
+|          | Fitzpatrick et al. (2022)   | gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.                     |
+| `RDA`    | Capblancq & Forester (2021) | DOI: [10.1111/2041-210X.13722](https://doi.org/10.1111/2041-210X.13722)                   |
+| `LFMM`   | Caye et al. (2019)          | DOI: [10.1093/molbev/msz008](https://doi.org/10.1093/molbev/msz008)                       |
+|          | Jumentier (2021)            | lfmm: Latent Factor Mixed Models. R package version 1.1.                                  |
+
 ## Installation
 
 ------------------------------------------------------------------------
