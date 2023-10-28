@@ -34,3 +34,4 @@ print(leftovers)
 # tigris - used only in DATASET
 # fansi - used only in alazygatr
 # usethis, crayon, devtools, renv, BiocManager - all SUGGESTS
+# RStoolbox - only used in the enviro_data_vignette

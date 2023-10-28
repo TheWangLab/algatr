@@ -16,6 +16,7 @@ If any of these packages are not already installed, it will automatically instal
 \details{
 The following packages will be installed if not already present:
 \itemize{
+\item "RStoolbox" (from GitHub repository bleutner/RStoolbox)
 \item "geodata"
 \item "corrplot"
 \item "vegan"
