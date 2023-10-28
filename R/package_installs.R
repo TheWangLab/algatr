@@ -125,7 +125,7 @@ data_processing_packages <- function(){
 #' \dontrun{envirodata_packages()}
 envirodata_packages <- function(){
   dev_packages()
-  if (!require("RStoolbox", quietly = TRUE))devtools::install_github("bleutner/RStoolbox")
+  if (!require("RStoolbox", quietly = TRUE)) devtools::install_github("bleutner/RStoolbox")
   if (!require("geodata", quietly = TRUE)) install.packages("geodata")
   if (!require("corrplot", quietly = TRUE)) install.packages("corrplot")
   if (!require("vegan", quietly = TRUE)) install.packages("vegan")
