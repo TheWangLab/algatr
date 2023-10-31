@@ -8,6 +8,14 @@ rda_do_everything(
   gen,
   env,
   coords = NULL,
+  impute = "structure",
+  K_impute = 3,
+  entropy = TRUE,
+  repetitions = 10,
+  project = "new",
+  quiet_impute = TRUE,
+  save_output = FALSE,
+  output_filename = NULL,
   model = "full",
   correctGEO = FALSE,
   correctPC = FALSE,
@@ -32,6 +40,35 @@ rda_do_everything(
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
 \item{coords}{dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted}
+
+\item{impute}{if NAs in \code{gen}, imputation will be performed on missing values; options are "structure" which uses the \code{str_impute()} function to impute based on population structure inferred with \code{LEA::snmf} (default); other option is "simple" based on \code{simple_impute()} which imputes to the median}
+
+\item{K_impute}{if \code{impute = "structure"}, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)}
+
+\item{entropy}{
+    A boolean value. If true, the cross-entropy criterion is calculated 
+    (see \code{\link[LEA]{create.dataset}} and 
+    \code{\link[LEA]{cross.entropy.estimation}}).
+}
+
+\item{repetitions}{
+    An integer corresponding with the number of repetitions for each value of 
+    \code{K}.
+}
+
+\item{project}{
+    A character string among "continue", "new", and "force". If "continue",
+    the results are stored in the current project. If "new", the current 
+    project is removed and a new one is created to store the result. If 
+    "force", the results are stored in the current project even if the input 
+    file has been modified since the creation of the project.
+}
+
+\item{quiet_impute}{if \code{impute = "structure"}, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy}
+
+\item{save_output}{if \code{impute = "structure"}, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)}
+
+\item{output_filename}{if \code{impute = "structure"} and \code{save_output = TRUE}, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)}
 
 \item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"}
 

@@ -22,10 +22,10 @@ impute_helper <- function(i, FUN = median) {
 
 #' Imputation of missing values using population structure inferred with `LEA::snmf`
 #'
-#' @param gen a dosage matrix, an object of class 'vcfR', a path to a .vcf file, or an object of type snmfProject
+#' @param gen a dosage matrix, an object of class 'vcfR', or an object of type snmfProject
 #' @param quiet whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy
-#' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
-#' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
+#' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
+#' @param output_filename if `save_output = TRUE`, name prefix for saved .geno file, sNMF project file, and sNMF output file results (defaults to FALSE, in which no files are saved)
 #'
 #' @inheritParams LEA::snmf
 #'
@@ -35,16 +35,20 @@ impute_helper <- function(i, FUN = median) {
 str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new", quiet = TRUE, save_output = FALSE, output_filename = NULL) {
   if (is.null(output_filename)) filename <- "tmp" else filename <- output_filename
 
+  # Convert vcf to dosage
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
+
+  # Load sNMF project
   if (inherits(gen, "snmfProject")) snmf_proj <- gen
 
   # Convert gen to .geno type file unless snmfProject provided
   if (!inherits(gen, "snmfProject")) {
     geno <- gen_to_geno(gen)
-    # SNMF requires an input file saved to file (cannot accept an R object)
-    LEA::write.geno(geno, here::here(paste0(filename, ".geno")))
+    # sNMF requires an input file saved to file (cannot accept an R object)
+    LEA::write.geno(geno, paste0(filename, ".geno"))
 
     # Run SNMF
-    snmf_proj <- LEA::snmf(input.file = here::here(paste0(filename, ".geno")), K = K, entropy = entropy, repetitions = repetitions, project = project)
+    snmf_proj <- LEA::snmf(input.file = paste0(filename, ".geno"), K = K, entropy = entropy, repetitions = repetitions, project = project)
   }
 
   # Look through directories
@@ -55,10 +59,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   }
 
   # Impute missing values based on snmf groupings
-  LEA::impute(object = snmf_proj, input.file = here(paste0(filename, ".geno")), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
+  LEA::impute(object = snmf_proj, input.file = paste0(filename, ".geno"), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
 
   # Read .lfmm file in
-  imputed <- LEA::read.lfmm(here(paste0(filename, ".lfmm_imputed.lfmm")))
+  imputed <- LEA::read.lfmm(paste0(filename, ".lfmm_imputed.lfmm"))
 
   # Add individual and variant names back in
   rownames(imputed) <- rownames(gen)
@@ -69,17 +73,17 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
   # Remove created files
   if (!save_output) {
     # Removes snmf project and associated snmf files
-    LEA::remove.snmfProject(here::here(paste0(filename, ".snmfProject")))
+    LEA::remove.snmfProject(paste0(filename, ".snmfProject"))
 
     # Delete other associated files
-    unlink(here::here(paste0(filename, ".geno")))
-    unlink(here::here(paste0(filename, ".lfmm")))
-    unlink(here::here(paste0(filename, ".lfmm_imputed.lfmm")))
+    unlink(paste0(filename, ".geno"))
+    unlink(paste0(filename, ".lfmm"))
+    unlink(paste0(filename, ".lfmm_imputed.lfmm"))
   }
   return(imputed)
 }
 
-#' Helper function to select "best" K based on minimizing cross-entropy criteria from SNMF results
+#' Helper function to select "best" K based on minimizing cross-entropy criteria from sNMF results
 #'
 #' @param snmf_proj object of type snmfProject
 #' @param K integer corresponding to K-value

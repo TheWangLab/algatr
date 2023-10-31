@@ -339,7 +339,7 @@ rda_table(cor_df, var = "CA_rPCA2", nrow = 5)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but can also generate figures, the correlation test table (`cortest`; default is TRUE), and variance partitioning (`varpart`; default is FALSE). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
+The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but also performs imputation (`impute` option), can generate figures, the correlation test table (`cortest` option; default is TRUE), and variance partitioning (`varpart` option; default is FALSE). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 The resulting object from `rda_do_everything()` contains:
 
@@ -359,32 +359,34 @@ The resulting object from `rda_do_everything()` contains:
 
 -   Variance partitioning results: `varpart`
 
-Let's first run a simple RDA with variable selection and the p-value outlier method:
+Let's first run a simple RDA, imputing to the median, with variable selection and the p-value outlier method:
 
 ```{r simple RDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
-results <- rda_do_everything(gen, CA_env, liz_coords,
-  correctGEO = FALSE,
-  correctPC = FALSE,
-  outlier_method = "p",
-  sig = 0.05,
-  p_adj = "fdr",
-  cortest = TRUE,
-  varpart = FALSE
+results <- rda_do_everything(liz_vcf, CA_env, liz_coords,
+                             impute = "simple",
+                             correctGEO = FALSE,
+                             correctPC = FALSE,
+                             outlier_method = "p",
+                             sig = 0.05,
+                             p_adj = "fdr",
+                             cortest = TRUE,
+                             varpart = FALSE
 )
 ```
 
-Now, let's run a partial RDA, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
+Now, let's run a partial RDA, imputing based on 3 sNMF clusters, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
 
 ```{r pRDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
-results <- rda_do_everything(gen, env, liz_coords,
-  model = "full",
-  correctGEO = TRUE,
-  correctPC = TRUE,
-  nPC = 3,
-  varpart = TRUE,
-  outlier_method = "z",
-  z = 3,
-  p_adj = "fdr"
+results <- rda_do_everything(liz_vcf, CA_env, liz_coords,
+                             impute = "structure",
+                             K_impute = 3,
+                             model = "full",
+                             correctGEO = TRUE,
+                             correctPC = TRUE,
+                             nPC = 3,
+                             varpart = TRUE,
+                             outlier_method = "z",
+                             z = 3
 )
 ```
 

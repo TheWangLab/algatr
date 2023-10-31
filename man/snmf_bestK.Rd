@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputation.R
 \name{snmf_bestK}
 \alias{snmf_bestK}
-\title{Helper function to select "best" K based on minimizing cross-entropy criteria from SNMF results}
+\title{Helper function to select "best" K based on minimizing cross-entropy criteria from sNMF results}
 \usage{
 snmf_bestK(snmf_proj, K, quiet)
 }
@@ -17,7 +17,7 @@ snmf_bestK(snmf_proj, K, quiet)
 list with best K-value and run number and all cross-entropy scores
 }
 \description{
-Helper function to select "best" K based on minimizing cross-entropy criteria from SNMF results
+Helper function to select "best" K based on minimizing cross-entropy criteria from sNMF results
 }
 \seealso{
 Other Imputation functions: 

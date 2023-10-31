@@ -15,7 +15,7 @@ lfmm_run(
 )
 }
 \arguments{
-\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
+\item{gen}{genotype dosage matrix (rows = individuals & columns = SNPs) or \code{vcfR} object}
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
