@@ -5,7 +5,7 @@
 \title{Calculate genetic distances}
 \usage{
 gen_dist(
-  gen,
+  gen = NULL,
   dist_type = "euclidean",
   plink_file = NULL,
   plink_id_file = NULL,

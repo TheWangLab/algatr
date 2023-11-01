@@ -14,7 +14,7 @@
 #'
 #' @return pairwise distance matrix for given distance metric
 #' @export
-gen_dist <- function(gen, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL,
+gen_dist <- function(gen = NULL, dist_type = "euclidean", plink_file = NULL, plink_id_file = NULL,
                      npc_selection = "auto", criticalpoint = 2.0234) {
 
   # Process input data ------------------------------------------------------
