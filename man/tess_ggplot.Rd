@@ -11,7 +11,8 @@ tess_ggplot(
   ggplot_fill = algatr_col_default("ggplot"),
   minQ = 0.1,
   plot_axes = FALSE,
-  rel_widths = c(3, 1)
+  rel_widths = c(3, 1),
+  list = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ tess_ggplot(
 \item{plot_axes}{whether to plot axes or not (defaults to FALSE)}
 
 \item{rel_widths}{if \code{plot_method = "maxQ"} or \code{plot_method = "allQ"} is used, sets relative widths of kriged TESS map and legend (defaults to 3:1), from \link[cowplot]{plot_grid}}
+
+\item{list}{if \code{plot_method = "maxQ"} or \code{"allQ"}, whether to output list of ggplots (i.e., the base plot and legend; TRUE) or a single plot (FALSE; default). Use \code{list = TRUE} if you would like to add additional ggplot2 functions to the plot}
 }
 \value{
 ggplot object of TESS results
