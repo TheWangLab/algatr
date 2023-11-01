@@ -44,7 +44,7 @@ cite the papers for the relevant corresponding method:
 algatr can be installed with the following code:
 
 ``` r
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+devtools::install_github("TheWangLab/algatr")
 ```
 
 The algatr package depends on many packages for all of the different
@@ -59,7 +59,7 @@ don’t want to install unnecessary packages.
 
 ``` r
 # Install all of the packages needed for algatr:
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE, dependencies = TRUE)
+devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
 
 # Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
@@ -458,10 +458,10 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 
 ------------------------------------------------------------------------
 
-As an example of algatr, let’s run through all of its functionality
-which we’ve coded up into a single function, `do_everything_for_me()`.
-For obvious reasons, we ***strongly*** advise against actually using
-this function for your analyses.
+Do alligators alligate? You can run through all of algatr’s
+functionality which we’ve coded up into a single function,
+`do_everything_for_me()`. For obvious reasons, we ***strongly*** advise
+against actually using this function for your analyses.
 
 ``` r
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)

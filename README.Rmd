@@ -36,23 +36,23 @@ Please cite our paper if you use this package:
 
 Because algatr makes use of existing software, please also be sure to cite the papers for the relevant corresponding method:
 
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `wingen` | Bishop et al. (2023)        | DOI: [10.1111/2041-210X.14090](https://doi.org/10.1111/2041-210X.14090)                   |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `TESS`   | Caye et al. (2016)          | DOI: [10.1111/1755-0998.12471](https://doi.org/10.1111/1755-0998.12471)                   |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `MMRR`   | Wang (2013)                 | DOI: [10.1111/evo.12134](https://doi.org/10.1111/evo.12134)                               |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `GDM`    | Ferrier et al. (2007)       | DOI: [10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x) |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-|          | Fitzpatrick et al. (2022)   | gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.                     |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `RDA`    | Capblancq & Forester (2021) | DOI: [10.1111/2041-210X.13722](https://doi.org/10.1111/2041-210X.13722)                   |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-| `LFMM`   | Caye et al. (2019)          | DOI: [10.1093/molbev/msz008](https://doi.org/10.1093/molbev/msz008)                       |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
-|          | Jumentier (2021)            | lfmm: Latent Factor Mixed Models. R package version 1.1.                                  |
-+----------+-----------------------------+-------------------------------------------------------------------------------------------+
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `wingen`   | Bishop et al. (2023)        | DOI: [10.1111/2041-210X.14090](https://doi.org/10.1111/2041-210X.14090)                   |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `TESS`     | Caye et al. (2016)          | DOI: [10.1111/1755-0998.12471](https://doi.org/10.1111/1755-0998.12471)                   |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `MMRR`     | Wang (2013)                 | DOI: [10.1111/evo.12134](https://doi.org/10.1111/evo.12134)                               |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `GDM`      | Ferrier et al. (2007)       | DOI: [10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x) |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+|            | Fitzpatrick et al. (2022)   | gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.                     |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `RDA`      | Capblancq & Forester (2021) | DOI: [10.1111/2041-210X.13722](https://doi.org/10.1111/2041-210X.13722)                   |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+| `LFMM`     | Caye et al. (2019)          | DOI: [10.1093/molbev/msz008](https://doi.org/10.1093/molbev/msz008)                       |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
+|            | Jumentier (2021)            | lfmm: Latent Factor Mixed Models. R package version 1.1.                                  |
++------------+-----------------------------+-------------------------------------------------------------------------------------------+
 
 ## Installation
 
@@ -61,14 +61,14 @@ Because algatr makes use of existing software, please also be sure to cite the p
 algatr can be installed with the following code:
 
 ``` r
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+devtools::install_github("TheWangLab/algatr")
 ```
 
 The algatr package depends on many packages for all of the different methods implemented. To ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method are suggested rather than imported. To install all of the suggested packages set `dependencies = TRUE` when running `install_github()`. To install just the packages required for each method, use the `*_packages()` functions below. This is helpful if you're only interested in using a subset of the methods provided and don't want to install unnecessary packages.
 
 ``` r
 # Install all of the packages needed for algatr:
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE, dependencies = TRUE)
+devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
 
 # Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
@@ -247,7 +247,7 @@ You'll now want to do some processing of these data, such as file conversions an
 
 ------------------------------------------------------------------------
 
-As an example of algatr, let's run through all of its functionality which we've coded up into a single function, `do_everything_for_me()`. For obvious reasons, we ***strongly*** advise against actually using this function for your analyses.
+Do alligators alligate? You can run through all of algatr's functionality which we've coded up into a single function, `do_everything_for_me()`. For obvious reasons, we ***strongly*** advise against actually using this function for your analyses.
 
 ```{r do everything, warning = FALSE, message = FALSE}
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
