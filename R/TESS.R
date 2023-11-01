@@ -281,12 +281,13 @@ raster_to_grid <- function(x) {
 #' @param minQ threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"} is used (defaults to 0.10)
 #' @param plot_axes whether to plot axes or not (defaults to FALSE)
 #' @param rel_widths if \code{plot_method = "maxQ"} or \code{plot_method = "allQ"} is used, sets relative widths of kriged TESS map and legend (defaults to 3:1), from \link[cowplot]{plot_grid}
+#' @param list if `plot_method = "maxQ"` or `"allQ"`, whether to output list of ggplots (i.e., the base plot and legend; TRUE) or a single plot (FALSE; default). Use `list = TRUE` if you would like to add additional ggplot2 functions to the plot
 #'
 #' @family TESS functions
 #'
 #' @return ggplot object of TESS results
 #' @export
-tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE, rel_widths = c(3, 1)) {
+tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE, rel_widths = c(3, 1), list = FALSE) {
   # Set up ggplot df
   gg_df <- krig_admix %>%
     terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
@@ -348,8 +349,8 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   # Add coords
   if (!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
 
-  # Produce plot with krig_legend for "allQ" or "maxQ"
-  if (plot_method == "allQ" | plot_method == "maxQ") {
+  # Produce plot with krig_legend for "allQ" or "maxQ" as a combined figure (base plot and legend)
+  if (plot_method == "allQ" | plot_method == "maxQ" & (!list)) {
     # Remove existing legend
     plt <- plt +
       ggplot2::theme(legend.position = "none")
@@ -358,6 +359,20 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
 
     plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
+  }
+
+  # Produce plot with krig_legend for "allQ" or "maxQ" as a list of two elements
+  # Each element is a ggplot object: one for the base plot and one for the legend
+  if (plot_method == "allQ" | plot_method == "maxQ" & (list)) {
+    # Remove existing legend
+    plt <- plt +
+      ggplot2::theme(legend.position = "none")
+
+    # Build secondary plot (which will become the legend) with combined K and Q values using helper function
+    plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
+
+    # Make list with elements for base plot and legend
+    plt <- list(plot = plt, legend = plt_leg)
   }
 
   return(plt)
