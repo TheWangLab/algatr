@@ -1,7 +1,5 @@
 #' ld_prune prunes SNPs based on linkage disequilibrium using `SNPRelate` and `SeqArray` packages
 #'
-#' `SNPRelate` package citation: Zheng et al. (2012): https://doi.org/10.1093/bioinformatics/bts606
-#'
 #' @param vcf is the path to the vcf file containing all SNPs
 #' @param nodes is the number of parallel processors (numeric)
 #' @param ld.threshold is the threshold for LD pruning (numeric; 0 - 1; defaults to 0.6)
@@ -13,6 +11,11 @@
 #' @param out_format output file format ("plink" will produce ped and map files while "vcf" will produce a vcf and a GDS)
 #' @param save_output if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)
 #'
+#' @details
+#' `SNPRelate` package citation: Zheng et al. (2012): https://doi.org/10.1093/bioinformatics/bts606
+#'
+#' @return LD-pruned vcf-type object
+#' @export
 ld_prune <- function(vcf, out_name, out_format, nodes = 1, ld.threshold = 0.6, slide.max.n = 100,
                      maf = 0.05, seed = 1234, method = c("corr"), save_output = TRUE) {
   dir.create(here(paste(out_name, "_LDpruned", sep = "")))

@@ -38,6 +38,12 @@ ld_prune(
 
 \item{save_output}{if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to TRUE)}
 }
+\value{
+LD-pruned vcf-type object
+}
 \description{
+ld_prune prunes SNPs based on linkage disequilibrium using \code{SNPRelate} and \code{SeqArray} packages
+}
+\details{
 \code{SNPRelate} package citation: Zheng et al. (2012): https://doi.org/10.1093/bioinformatics/bts606
 }
