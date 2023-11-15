@@ -14,7 +14,6 @@ name: pkgdown
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
-    # Only restrict concurrency for non-PR jobs
     concurrency:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
@@ -23,12 +22,12 @@ jobs:
       contents: write
     container:
       image: ghcr.io/thewanglab/algatr:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Update package lists
+        run: sudo apt-get update
 
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
