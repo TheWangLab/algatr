@@ -2,6 +2,9 @@ url: https://thewanglab.github.io/algatr/
 template:
   bootstrap: 5
 articles:
+- title: Articles
+  navbar: ~
+  contents:
   - data_processing_vignette
   - enviro_data_vignette
   - Masking_vignette
