@@ -1,0 +1,23 @@
+name: build
+
+on:
+  push:
+    paths:
+      - .github/workflows/build-test.yml
+  pull_request:
+    branches: [ "build-test" ]
+
+jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thewanglab/algatr:latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore renv Environment
+        run: R -e 'renv::restore()'
+
+      - name: Build R Package
+        run: R -e 'devtools::build()'
+
