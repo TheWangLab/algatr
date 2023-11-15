@@ -39,21 +39,9 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Install GitHub packages
-        run: |
-          install.packages("remotes")
-          install.packages("BiocManager")
-          remotes::install_github("bleutner/RStoolbox")
-          remotes::install_github("AnushaPB/wingen")
-          BiocManager::install("LEA") 
-          remotes::install_github("bcm-uga/TESS3_encho_sen")
+      - name: Install packages
+        run:  install.packages("pkgdown")
         shell: Rscript {0}
-
-      - name: Setup R Dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::pkgdown, local::.
-          needs: website
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
