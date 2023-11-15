@@ -39,6 +39,9 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Restore dependencies with renv
+        run: Rscript -e 'renv::restore()'
+
       - name: Setup R Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
