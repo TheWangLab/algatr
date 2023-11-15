@@ -90,9 +90,6 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install packages</span></span>
 <span><span class="fu"><a href="../reference/wingen_packages.html">wingen_packages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="section level2">
-<h2 id="wingen">wingen<a class="anchor" aria-label="anchor" href="#wingen"></a>
-</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thewanglab.github.io/algatr/">algatr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">wingen</span><span class="op">)</span></span>
@@ -143,9 +140,9 @@ this can be accomplished is shown below. If no CRS is provided, a
 warning will be given and wingen will assume the data are provided in a
 projected system. Please refer to the wingen vignette for further
 information.</p>
-<div class="section level4">
-<h4 id="read-in-and-process-input-data">Read in and process input data<a class="anchor" aria-label="anchor" href="#read-in-and-process-input-data"></a>
-</h4>
+<div class="section level3">
+<h3 id="read-in-and-process-input-data">Read in and process input data<a class="anchor" aria-label="anchor" href="#read-in-and-process-input-data"></a>
+</h3>
 <p>wingen requires a vcf, sampling coordinates, and a raster layer upon
 which to move the sliding window across. We’ll also want the shape of
 California for subsequent plotting, so we’ll save one of the
@@ -166,9 +163,9 @@ environmental PC layers as a SpatRaster object for this purpose.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="va">envlayer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level4">
-<h4 id="generate-raster-layer-for-sliding-window">Generate raster layer for sliding window<a class="anchor" aria-label="anchor" href="#generate-raster-layer-for-sliding-window"></a>
-</h4>
+<div class="section level3">
+<h3 id="generate-raster-layer-for-sliding-window">Generate raster layer for sliding window<a class="anchor" aria-label="anchor" href="#generate-raster-layer-for-sliding-window"></a>
+</h3>
 <p>Although we can use one of the PCs within our CA_env object as a
 raster for wingen, the resolution of those layers is unnecessarily high
 given our sampling localities, and running wingen (particularly the
@@ -180,10 +177,10 @@ function, we can specify the resolution of our raster with the
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">liz_lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/coords_to_raster.html" class="external-link">coords_to_raster</a></span><span class="op">(</span><span class="va">liz_coords</span>, res <span class="op">=</span> <span class="fl">0.5</span>, buffer <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="moving-window-calculations-using-preview_gd-and-window_gd">Moving window calculations using <code>preview_gd()</code> and
+<div class="section level2">
+<h2 id="moving-window-calculations-using-preview_gd-and-window_gd">Moving window calculations using <code>preview_gd()</code> and
 <code>window_gd()</code><a class="anchor" aria-label="anchor" href="#moving-window-calculations-using-preview_gd-and-window_gd"></a>
-</h3>
+</h2>
 <hr>
 <p>The <code><a href="https://rdrr.io/pkg/wingen/man/window_gd.html" class="external-link">window_gd()</a></code> function takes in a vcf file (the
 <code>vcf</code> argument), sampling coordinates (<code>coords</code>
@@ -204,9 +201,9 @@ the user would like samples to be rarified (which then requires users to
 specify <code>rarify_n</code> and <code>rarify_nit</code>), and finally
 <code>parallel</code> specifies whether you would like to
 parallelize.</p>
-<div class="section level4">
-<h4 id="preview-the-moving-window">Preview the moving window<a class="anchor" aria-label="anchor" href="#preview-the-moving-window"></a>
-</h4>
+<div class="section level3">
+<h3 id="preview-the-moving-window">Preview the moving window<a class="anchor" aria-label="anchor" href="#preview-the-moving-window"></a>
+</h3>
 <p>First, we can get an idea of what the size of the cell and moving
 window look like using the <code><a href="https://rdrr.io/pkg/wingen/man/preview_gd.html" class="external-link">preview_gd()</a></code> function. We want
 adjust the window size (using the <code>wdim</code> argument) to ensure
@@ -238,9 +235,9 @@ be included in each cell’s calculation (specified using
 <span><span class="co">#&gt; min value   :            0 </span></span>
 <span><span class="co">#&gt; max value   :           10</span></span></code></pre>
 </div>
-<div class="section level4">
-<h4 id="run-the-moving-window">Run the moving window<a class="anchor" aria-label="anchor" href="#run-the-moving-window"></a>
-</h4>
+<div class="section level3">
+<h3 id="run-the-moving-window">Run the moving window<a class="anchor" aria-label="anchor" href="#run-the-moving-window"></a>
+</h3>
 <p>Next, let’s run the moving window function (<code><a href="https://rdrr.io/pkg/wingen/man/window_gd.html" class="external-link">window_gd()</a></code>)
 using the parameters specified above, calculating nucleotide diversity
 (<code>stat = "pi"</code>) as our diversity metric. For simplicity’s
@@ -264,14 +261,14 @@ sake, we will not perform rarefaction of our samples
 <span><span class="co">#&gt; Loading required namespace: adegenet</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level3">
-<h3 id="visualizing-wingen-results">Visualizing wingen results<a class="anchor" aria-label="anchor" href="#visualizing-wingen-results"></a>
-</h3>
+<div class="section level2">
+<h2 id="visualizing-wingen-results">Visualizing wingen results<a class="anchor" aria-label="anchor" href="#visualizing-wingen-results"></a>
+</h2>
 <hr>
-<div class="section level4">
-<h4 id="plot-wingen-results-with-plot_gd-and-plot_count">Plot wingen results with <code>plot_gd()</code> and
+<div class="section level3">
+<h3 id="plot-wingen-results-with-plot_gd-and-plot_count">Plot wingen results with <code>plot_gd()</code> and
 <code>plot_count()</code><a class="anchor" aria-label="anchor" href="#plot-wingen-results-with-plot_gd-and-plot_count"></a>
-</h4>
+</h3>
 <p>wingen allows for plotting maps in two ways: <code><a href="https://rdrr.io/pkg/wingen/man/plot_gd.html" class="external-link">plot_gd()</a></code>
 plots the genetic diversity layer, while <code><a href="https://rdrr.io/pkg/wingen/man/plot_count.html" class="external-link">plot_count()</a></code> plots
 the sample count layer. We can also provide a background map using the
@@ -284,9 +281,9 @@ the sample count layer. We can also provide a background map using the
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/plot_count.html" class="external-link">plot_count</a></span><span class="op">(</span><span class="va">wgd</span>, main <span class="op">=</span> <span class="st">"Sample counts"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="wingen_vignette_files/figure-html/plot%20window-1.png" width="672" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level4">
-<h4 id="krige-results">Krige results<a class="anchor" aria-label="anchor" href="#krige-results"></a>
-</h4>
+<div class="section level3">
+<h3 id="krige-results">Krige results<a class="anchor" aria-label="anchor" href="#krige-results"></a>
+</h3>
 <p>Kriging is a type of spatial interpolation that uses a spatial model
 to provide estimates of genetic diversity from unsampled locations; in
 the cae of wingen, it also allows for smoother maps of genetic
@@ -335,9 +332,9 @@ because of the <code>lyr</code> raster shape.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/plot_count.html" class="external-link">plot_count</a></span><span class="op">(</span><span class="va">kgd</span>, main <span class="op">=</span> <span class="st">"Kriged sample counts"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="wingen_vignette_files/figure-html/plot%20krige-1.png" width="672" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level4">
-<h4 id="mask-using-sample-counts">Mask using sample counts<a class="anchor" aria-label="anchor" href="#mask-using-sample-counts"></a>
-</h4>
+<div class="section level3">
+<h3 id="mask-using-sample-counts">Mask using sample counts<a class="anchor" aria-label="anchor" href="#mask-using-sample-counts"></a>
+</h3>
 <p>Finally, we may want to mask out any areas that we’re not interested
 in using the <code><a href="https://rdrr.io/pkg/wingen/man/mask_gd.html" class="external-link">mask_gd()</a></code> function. wingen provides several
 ways to perform masking, but we will focus on two for this vignette. The
@@ -362,9 +359,9 @@ masked in this way with differing <code>minval</code> values.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/plot_gd.html" class="external-link">plot_gd</a></span><span class="op">(</span><span class="va">mgd_2</span>, main <span class="op">=</span> <span class="st">"Kriged &amp; masked pi"</span>, bkg <span class="op">=</span> <span class="va">envlayer</span><span class="op">)</span></span></code></pre></div>
 <p><img src="wingen_vignette_files/figure-html/mask%20sample%20count-1.png" width="672" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level4">
-<h4 id="mask-using-state-boundaries">Mask using state boundaries<a class="anchor" aria-label="anchor" href="#mask-using-state-boundaries"></a>
-</h4>
+<div class="section level3">
+<h3 id="mask-using-state-boundaries">Mask using state boundaries<a class="anchor" aria-label="anchor" href="#mask-using-state-boundaries"></a>
+</h3>
 <p>Next, let’s mask out any areas outside of California state boundaries
 using our <code>envlayer</code> object.</p>
 <p>One thing to keep in mind is that if you are masking using a raster,
@@ -387,9 +384,9 @@ function. This function will resample a raster (here,
 <p><img src="wingen_vignette_files/figure-html/mask%20sd-1.png" width="672" style="display: block; margin: auto;"></p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="running-wingen-with-wingen_do_everything">Running wingen with <code>wingen_do_everything()</code><a class="anchor" aria-label="anchor" href="#running-wingen-with-wingen_do_everything"></a>
-</h3>
+<div class="section level2">
+<h2 id="running-wingen-with-wingen_do_everything">Running wingen with <code>wingen_do_everything()</code><a class="anchor" aria-label="anchor" href="#running-wingen-with-wingen_do_everything"></a>
+</h2>
 <hr>
 <p>The algatr package also has an option to run all of the above
 functionality in a single function, <code><a href="../reference/wingen_do_everything.html">wingen_do_everything()</a></code>.
@@ -449,9 +446,9 @@ disaggregation factor of 4 for kriging
 <span><span class="co">#&gt; CRS do not match</span></span></code></pre></div>
 <p><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-1.png" width="700"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-2.png" width="700"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-3.png" width="700"></p>
 </div>
-<div class="section level3">
-<h3 id="additional-documentation-and-citations">Additional documentation and citations<a class="anchor" aria-label="anchor" href="#additional-documentation-and-citations"></a>
-</h3>
+<div class="section level2">
+<h2 id="additional-documentation-and-citations">Additional documentation and citations<a class="anchor" aria-label="anchor" href="#additional-documentation-and-citations"></a>
+</h2>
 <hr>
 <table class="table">
 <colgroup>
@@ -482,7 +479,6 @@ Github</a></td>
 <p>Retrieve wingen’s vignette:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># vignette("wingen-vignette")</span></span></code></pre></div>
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
