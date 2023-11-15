@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
 wingen_packages()
 ```
 
-# wingen
-
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(wingen)
