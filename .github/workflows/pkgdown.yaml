@@ -26,10 +26,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Update package lists and install gdebi-core
+      - name: Install gdebi-core and rsync
         run: |
           sudo apt-get update
           sudo apt-get install -y gdebi-core
+          sudo apt-get install -y rsync
 
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
