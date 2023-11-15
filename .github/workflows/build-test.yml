@@ -5,7 +5,7 @@ on:
     paths:
       - .github/workflows/build-test.yml
   pull_request:
-    branches: [ "build-test" ]
+    branches: [ "main" ]
 
 jobs:
   container-test-job:
