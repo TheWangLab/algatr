@@ -1,6 +1,6 @@
 Package: algatr
 Title: A Landscape Genomic Analysis Toolkit in R
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: c(
             person("Anusha", "Bishop", , email = "anusha.bishop@berkeley.edu", role = c("aut", "cre"), 
                    comment = c(ORCID="0000-0003-1731-8683")),
