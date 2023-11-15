@@ -1,7 +1,14 @@
 bibentry(
   bibtype  = "Article",
   title    = "Individual-based landscape genomics for conservation: An analysis pipeline",
-  author   = c("E. Anne Chambers", "Anusha P. Bishop", "Ian J. Wang"),
+  author   = c(
+            person("Anne", "Chambers", , email = "eachambers@berkeley.edu", role = c("aut"),
+                   comment = c(ORCID="0000-0002-7369-0108")),
+            person("Anusha", "Bishop", , email = "anusha.bishop@berkeley.edu", role = c("aut"),
+                   comment = c(ORCID="0000-0003-1731-8683")),
+            person("Ian", "Wang", , email = "ianwang@berkeley.edu", role = "aut",
+                   comment = c(ORCID = "0000-0003-2554-9414"))
+            )
   journal  = "Molecular Ecology Resources",
   year     = "2023",
   volume   = "00",
