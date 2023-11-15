@@ -49,8 +49,8 @@ jobs:
 
       - name: Install algatr
         run: |
-        install.packages("devtools")
-        devtools::install()
+          install.packages("devtools")
+          devtools::install()
         shell: Rscript {0}
 
       - name: Build site
