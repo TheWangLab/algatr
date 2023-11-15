@@ -50,7 +50,7 @@ jobs:
       - name: Install algatr
         run: |
         install.packages("devtools")
-        renv::restore()
+        devtools::install()
         shell: Rscript {0}
 
       - name: Build site
