@@ -8,9 +8,8 @@
 MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
-(**algatr**) was built to provide researchers with a step-by-step,
-start-to-finish pipeline to perform various landscape genomics methods
-with their data.
+(**algatr**) was built to provide a step-by-step,
+start-to-finish pipeline to perform core landscape genomics analysis on genomic datasets.
 
 ## Citation
 
