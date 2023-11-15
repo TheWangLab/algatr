@@ -1,0 +1,6 @@
+"0","# Extract enviro vars"
+"0","env <- raster::extract(CA_env, liz_coords)"
+"0","# Calculate environmental distances"
+"0","X <- env_dist(env)"
+"0","# Add geographic distance to X"
+"0","X[[""geodist""]] <- geo_dist(liz_coords)"

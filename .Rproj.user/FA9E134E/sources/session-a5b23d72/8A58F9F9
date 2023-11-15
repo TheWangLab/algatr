@@ -1,0 +1,26 @@
+{
+    "id": "8A58F9F9",
+    "path": "~/GitHub/algatr/.github/workflows/docker-image.yml",
+    "project_path": ".github/workflows/docker-image.yml",
+    "type": "yaml",
+    "hash": "3126428801",
+    "contents": "",
+    "dirty": false,
+    "created": 1700008425531.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "31,0",
+        "scrollLine": "8"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1700008906,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1700008906191,
+    "read_only": false,
+    "read_only_alternatives": []
+}

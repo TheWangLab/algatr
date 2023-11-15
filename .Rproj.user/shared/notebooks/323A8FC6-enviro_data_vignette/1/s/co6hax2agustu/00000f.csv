@@ -1,0 +1,5 @@
+"0","# Check using the CA_env object; note that these values are quite different from those from check_env()"
+"0","check_vals(CA_env, liz_coords)"
+"2","Warning: No CRS found for the provided coordinates. Make sure the coordinates and the raster have the same projection (see function details or vignette)"
+"1","$cor_df
+"

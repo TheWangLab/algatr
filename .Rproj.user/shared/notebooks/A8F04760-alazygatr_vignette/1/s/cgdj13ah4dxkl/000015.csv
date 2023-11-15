@@ -1,0 +1,112 @@
+"0","if (!require(""AssocTests"", quietly = TRUE)) install.packages(""AssocTests"")
+if (!require(""lfmm"", quietly = TRUE)) install.packages(""lfmm"")
+if (!require(""TESS3_encho_sen"", quietly = TRUE)) devtools::install_github(""bcm-uga/TESS3_encho_sen"")
+"
+"2","Skipping install of 'tess3r' from a github remote, the SHA1 (1e333c2b) has not changed since last install.
+  Use `force = TRUE` to force installation
+"
+"0","if (!require(""LEA"", quietly = TRUE)) BiocManager::install(""LEA"") "
+"2","
+Attaching package: ‘LEA’
+
+"
+"2","The following object is masked from ‘package:lattice’:
+
+    barchart
+
+"
+"0","if (!require(""tess3r"", quietly = TRUE)) install.packages(""tess3r"")"
+"0",""
+"0","# For RDA:"
+"0","if (!require(""ggrepel"", quietly = TRUE)) install.packages(""ggrepel"")"
+"0","if (!require(""qvalue"", quietly = TRUE)) BiocManager::install(""qvalue"")"
+"0","if (!require(""robust"", quietly = TRUE)) install.packages(""robust"")"
+"0","if (!require(""tibble"", quietly = TRUE)) install.packages(""tibble"")"
+"0","if (!require(""vegan"", quietly = TRUE)) install.packages(""vegan"")"
+"0",""
+"0","# For GDM:"
+"0","if (!require(""cowplot"", quietly = TRUE)) install.packages(""cowplot"")"
+"0","if (!require(""gdm"", quietly = TRUE)) install.packages(""gdm"")"
+"0",""
+"0","# For MMRR:"
+"0","if (!require(""GGally"", quietly = TRUE)) install.packages(""GGally"")"
+"2","Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+"
+"2","
+Attaching package: ‘GGally’
+
+"
+"2","The following object is masked from ‘package:terra’:
+
+    wrap
+
+"
+"0","# For TESS:"
+"0","if (!require(""automap"", quietly = TRUE)) install.packages(""automap"")"
+"0","if (!require(""graphics"", quietly = TRUE)) install.packages(""graphics"")"
+"0","if (!require(""LEA"", quietly = TRUE)) BiocManager::install(""LEA"") # required by tess3r"
+"0","if (!require(""TESS3_encho_sen"", quietly = TRUE)) devtools::install_github(""bcm-uga/TESS3_encho_sen"")"
+"2","Skipping install of 'tess3r' from a github remote, the SHA1 (1e333c2b) has not changed since last install.
+  Use `force = TRUE` to force installation
+"
+"0","if (!require(""LEA"", quietly = TRUE)) BiocManager::install(""LEA"") "
+"0","if (!require(""fields"", quietly = TRUE)) install.packages(""fields"")"
+"2","Spam version 2.9-1 (2022-08-07) is loaded.
+Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+and overview of this package.
+Help for individual functions is also obtained by adding the
+suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+"
+"2","
+Attaching package: ‘spam’
+
+"
+"2","The following object is masked from ‘package:Matrix’:
+
+    det
+
+"
+"2","The following objects are masked from ‘package:mvtnorm’:
+
+    rmvnorm, rmvt
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    backsolve, forwardsolve
+
+"
+"2","
+Try help(fields) to get started.
+"
+"2","
+Attaching package: ‘fields’
+
+"
+"2","The following object is masked from ‘package:geodata’:
+
+    world
+
+"
+"2","The following object is masked from ‘package:terra’:
+
+    describe
+
+"
+"0","if (!require(""rworldmap"", quietly = TRUE)) install.packages(""rworldmap"")"
+"2","Please note that 'maptools' will be retired during October 2023,
+plan transition at your earliest convenience (see
+https://r-spatial.org/r/2023/05/15/evolution4.html and earlier blogs
+for guidance);some functionality will be moved to 'sp'.
+ Checking rgeos availability: FALSE
+"
+"2","### Welcome to rworldmap ###
+"
+"2","For a short introduction type : 	 vignette('rworldmap')
+"
+"0","if (!require(""tess3r"", quietly = TRUE)) install.packages(""tess3r"")"
+"0",""
+"0","# For wingen:"
+"0","if (!require(""wingen"", quietly = TRUE)) devtools::github_install(""AnushaPB/wingen"")"

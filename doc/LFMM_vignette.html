@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>LFMM_vignette</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">LFMM_vignette</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install packages for installing other packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;devtools&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># For LFMM:</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;adegenet&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;adegenet&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;Assoctests&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;Assoctests&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;lfmm&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;lfmm&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;TESS3_encho_sen&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;bcm-uga/TESS3_encho_sen&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;LEA&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;LEA&quot;</span>) </span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;tess3r&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;tess3r&quot;</span>)</span></code></pre></div>
+<div id="latent-factor-mixed-models-lfmm" class="section level1">
+<h1>Latent factor mixed models (LFMM)</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(algatr)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(raster)</span></code></pre></div>
+<p><strong>If using LFMM, please cite the following: for the LFMM
+method, Caye et al. 2019. For the <code>lfmm</code> package, please cite
+Jumentier B. (2021). lfmm: Latent Factor Mixed Models. R package version
+1.1.</strong></p>
+<p>LFMM (<a href="https://academic.oup.com/mbe/article/30/7/1687/972098">Frichot et
+al. 2013</a>) is a genotype-environment association (GEA) method in
+which mixed models are used to determine loci that are significantly
+associated with environmental variables. This method is similar to
+performing RDA, except that LFMM takes into account – and corrects for –
+unobserved variables that may confound results (known as latent
+factors). A good example of a latent factor that we may want to correct
+for prior to examining environment-associated loci is population
+structure.</p>
+<p>There are a variety of ways to determine the best number of latent
+factors in LFMM (which are called K values, although these are
+<em>not</em> the same as TESS K values). algatr provides the option to
+test using four such methods: (1) Tracy-Widom test; (2) quick elbow test
+(i.e., scree test); (3) using the clustering algorithm from TESS (i.e.,
+determining latent factors corresponding to some measure of population
+structure); and (4) K-means clustering. We will explore each of these,
+and compare results, in this vignette.</p>
+<p>Importantly, as with RDA, LFMM cannot take in missing values.
+Imputation based on the per-site median is commonly performed, but there
+are several other ways researchers can deal with missing values. For
+example, algatr contains the <code>str_impute()</code> function to
+impute missing values based on population structure using the
+<code>LEA::impute()</code> function. However, here, we’ll impute on the
+median, but strongly urge researchers to use extreme caution when using
+this form of simplistic imputation. We mainly provide code to impute on
+the median for testing datasets and highly discourage its use in further
+analyses (please use <code>str_impute()</code> instead!).</p>
+<p>To perform an LFMM analysis (<a href="https://academic.oup.com/mbe/article/36/4/852/5290100">Caye et
+al. 2019</a>), algatr uses the lfmm package (see <a href="https://bcm-uga.github.io/lfmm/index.html">here</a> for details).
+Despite its name, this package implements the LFMM2 method, which is
+similar to the original LFMM algorithm, but is computationally faster.
+The LEA package (<a href="https://rdrr.io/bioc/LEA/">Frichot &amp;
+Francois 2015</a>) also provides a wrapper for lfmm2 using the
+<code>lfmm2()</code> function.</p>
+<div id="read-in-and-process-data-files" class="section level3">
+<h3>Read in and process data files</h3>
+<p>To run LFMM, we will need a genotype dosage matrix and environmental
+values extracted at sampling coordinates. Let’s load the example
+dataset, convert the vcf to a dosage matrix using the
+<code>vcf_to_dosage()</code> function, and extract environmental
+variables based on our sampling coordinates.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">load_algatr_example</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; [36m[1m</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; ---------------- example dataset ----------------</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [22m[39m [34m</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; Objects loaded:[39m [33m[1m</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; *liz_vcf*[22m[39m [33mvcfR object (1000 loci x 53 samples)[39m [33m[1m</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; *liz_gendist*[22m[39m [33mgenetic distance matrix (Plink Distance)[39m [32m[1m</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; *liz_coords*[22m[39m [32mdataframe with x and y coordinates[39m [35m[1m</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; *CA_env*[22m[39m [35mRasterStack with PC environmental layers[39m [36m[1m</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; [22m[39m</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co"># Convert vcf to dosage matrix</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>gen <span class="ot">&lt;-</span> <span class="fu">vcf_to_dosage</span>(liz_vcf)</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co"># Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>env <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">extract</span>(CA_env, liz_coords)</span></code></pre></div>
+<p>As mentioned above, LFMM requires that your genotype matrix contains
+no missing values. Let’s impute missing values based on the per-site
+median. <em>N.B.: this type of simplistic imputation is strongly not
+recommended for downstream analyses and is used here for example’s
+sake!</em></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Are there NAs in the data?</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>gen[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;        Locus_10 Locus_15 Locus_22 Locus_28 Locus_32</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; ALT3          0        0        0        0        0</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; BAR360        0        0        0       NA        0</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; BLL5          0       NA        0        0       NA</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; BNT5          0        0       NA       NA        0</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; BOF1          0       NA       NA       NA       NA</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>gen <span class="ot">&lt;-</span> <span class="fu">simple_impute</span>(gen)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co"># Check that NAs are gone</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>gen[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;        Locus_10 Locus_15 Locus_22 Locus_28 Locus_32</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; ALT3          0        0        0        0        0</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; BAR360        0        0        0        0        0</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; BLL5          0        0        0        0        0</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; BNT5          0        0        0        0        0</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; BOF1          0        0        0        0        0</span></span></code></pre></div>
+</div>
+<div id="determining-the-number-of-latent-factors-using-select_k" class="section level2">
+<h2>Determining the number of latent factors using
+<code>select_K()</code></h2>
+<hr />
+<p>LFMM requires a user to define the number of latent factors (K
+values). algatr provides options to perform four types of K selection
+using the <code>K_selection</code> parameter within the
+<code>select_K()</code> function:</p>
+<ul>
+<li><p><code>K_selection = &quot;tracy_widom&quot;</code>: A Tracy-Widom test is
+performed. Briefly, this method finds significant eigenvalues of a
+matrix after performing a PCA. This argument uses the <code>tw()</code>
+function within the <a href="https://cran.r-project.org/web/packages/AssocTests/index.html">AssocTests</a>
+package, and also requires a user to provide the
+<code>criticalpoint</code>, which corresponds to the significance level.
+Significance levels of alpha=0.05, 0.01, 0.005, or 0.001 correspond to
+critical point values of 0.9793, 2.0234, 2.4224, or 3.2724,
+respectively. The default significance level is 0.05, so the default for
+the <code>criticalpoint</code> parameter is 2.0234. The Tracy-Widom test
+is also the default method for the <code>select_K()</code>
+function.</p></li>
+<li><p><code>K_selection = &quot;quick_elbow&quot;</code>: A “quick elbow” is
+found automatically, which refers to a large percent drop in eigenvalues
+given a variance below 5% for each principal component (essentially the
+same as a scree test). The code to determine a quick elbow is adapted
+from that developed by Nicholas Cooper <a href="https://rdrr.io/cran/bigpca/man/quick.elbow.html">here</a>. This
+argument requires users to set the threshold that defines whether a
+principal component explains ‘much’ of the variance using the
+<code>low</code> argument, and also the maximum percentage of the
+variance to capture before the elbow (i.e., the cumulative sum to PC
+‘n’) using the <code>max.pc</code> argument. The default for
+<code>low</code> is 0.08, and the default for <code>max.pc</code> is
+0.90.</p></li>
+<li><p><code>K_selection = &quot;tess&quot;</code>: The automatic K selection is
+performed after running TESS. This method minimizes the slope of the
+line that connects cross-entropy scores between K values. This approach
+is described <a href="https://chazhyseni.github.io/NALgen/post/determining_bestk/">here</a>.
+This argument requires users to provide coordinates
+(<code>coords</code>) and set the range of K values to test
+(<code>Kvals</code>; defaults to 1:10).</p></li>
+<li><p><code>K_selection = &quot;find_clusters&quot;</code>: Uses K-means
+clustering to detect the number of clusters that best describe the data;
+this uses the <code>find.clusters()</code> function in the <a href="https://cran.r-project.org/web/packages/adegenet/index.html">adegenet</a>
+package. For this method, the data are first transformed using a PCA,
+after which successive K-means clustering is run with an increasing
+number of K values. The “best” K is selected using the
+<code>&quot;diffNgroup</code>” criterion in adegenet’s
+<code>find.clusters</code> function. algatr’s
+<code>&quot;find_clusters&quot;</code> argument requires users to set several
+parameters for both the PCA and the K-means clustering steps:</p>
+<ul>
+<li><p>The user must specify the minimum amount of the total variance to
+be preserved by the retained axes using the <code>perc.pca</code>
+argument. The default for this argument is 90%.</p></li>
+<li><p>The maximum number of clusters to be tested using the
+<code>max.n.clust</code> parameter; the default for this is 10.</p></li>
+</ul></li>
+</ul>
+<p>There are more options within the <code>find.clusters</code> function
+in adegenet, but we’ve chosen to include only some of them in algatr
+(e.g., the <code>pca.select</code> argument is set to
+<code>&quot;percVar&quot;</code>). Please refer to the adegenet documentation for
+further information.</p>
+<p>Let’s see how the above methods compare to one another in terms of
+how K values compare. Regardless of the K selection that’s done, a user
+must provide a dosage matrix (<code>gen</code>) and the K selection
+procedure they would like to perform (<code>K_selection</code>).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Keep relevant params but retain default values for them</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">select_K</span>(gen, <span class="at">K_selection =</span> <span class="st">&quot;tracy_widom&quot;</span>, <span class="at">criticalpoint =</span> <span class="fl">2.0234</span>) <span class="co"># 6</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] 6</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">select_K</span>(gen, <span class="at">K_selection =</span> <span class="st">&quot;quick_elbow&quot;</span>, <span class="at">low =</span> <span class="fl">0.08</span>, <span class="at">max.pc =</span> <span class="fl">0.90</span>) <span class="co"># 3</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<pre><code>#&gt; [1] 3
+
+select_K(gen, K_selection = &quot;tess&quot;, coords = liz_coords, Kvals = 1:10) # 3
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done
+#&gt; == Computing spectral decomposition of graph laplacian matrix: done
+#&gt; ==Main loop with 1 threads: done</code></pre>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<pre><code>#&gt; [1] 3
+
+select_K(gen, K_selection = &quot;find_clusters&quot;, perc.pca = 90, max.n.clust = 10) # 4
+#&gt; [1] 7</code></pre>
+<p>As you can see, the K selection method has quite an effect on the
+best number of latent factors discovered in the data. For this vignette,
+let’s move forward with the best K from the default method (Tracy-Widom
+test), which means <strong>K = 6</strong>.</p>
+</div>
+<div id="comparing-different-lfmm-methods-with-lfmm_run" class="section level2">
+<h2>Comparing different LFMM methods with <code>lfmm_run()</code></h2>
+<hr />
+<p>The main function in algatr that runs LFMM is
+<code>lfmm_run()</code>. This function requires that users provide the
+dosage matrix (<code>gen</code>), the extracted environmental variables
+(<code>env</code>), the number of latent factors (<code>K</code>), and
+the LFMM method (<code>lfmm_method</code>).</p>
+<p>Importantly, LFMM can be performed using two main methods
+(<code>&quot;lasso&quot;</code> or <code>&quot;ridge&quot;</code>), which primarily differ
+in the penalized loss functions that are incorporated into the
+least-squares minimization and are specified using the
+<code>lfmm_method</code> argument. The least-squares minimization is how
+statistical significance is determined for SNPs being associated with
+environmental variables. The primary difference between the two methods
+is that the ridge method minimizes the problem with an L^2 penalty,
+whereas the lasso method minimizes with an L^1 penalty. According to <a href="https://bcm-uga.github.io/lfmm/articles/lfmm#starting-with-lfmm">Caye
+&amp; François 2017</a>, a user would want to select the lasso method
+(i.e., L^1-norm) to induce “sparsity on the fixed effects, and
+corresponds to the prior information that not all response variables may
+be associated with the variables of interest. More specifically, the
+prior implies that a limited number of rows of the effect size matrix B
+are effectively non-zero.” The ridge penalty is further described in <a href="https://academic.oup.com/mbe/article/36/4/852/5290100">Caye et
+al. 2019</a>.</p>
+<p>One other argument to be aware of within <code>lfmm_run()</code> is
+the adjustment of p-values, specified using <code>p_adj</code>. There
+are two options for <code>p_adj</code>: <code>&quot;fdr&quot;</code>, which
+adjusts calibrated p-values based on the false discovery rate (the
+default). Other options for p-value adjustment can be found within the
+<code>p.adjust()</code> function in the stats package.</p>
+<p>Finally, the last argument to be aware of within
+<code>lfmm_run()</code> is <code>calibrate</code>, which calibrates
+p-values based on resulting z-scores. There are two options for this
+argument: <code>&quot;gif&quot;</code> (the default), and
+<code>&quot;median+MAD&quot;</code>. From the LFMM documentation: “If the”gif”
+option is set (default), significance values are calibrated by using the
+genomic control method. Genomic control uses a robust estimate of the
+variance of z-scores called “genomic inflation factor”. If the
+“median+MAD” option is set, the pvalues are calibrated by computing the
+median and MAD of the zscores. If NULL, the pvalues are not
+calibrated.”</p>
+<p>Now that we’ve identified the number of latent factors to provide in
+our model, let’s run LFMM using both ridge and lasso penalties with
+default settings (i.e., FDR p-value adjustment and the “gif”
+calibration).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>ridge_results <span class="ot">&lt;-</span> <span class="fu">lfmm_run</span>(gen, env, <span class="at">K =</span> <span class="dv">6</span>, <span class="at">lfmm_method =</span> <span class="st">&quot;ridge&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>lasso_results <span class="ot">&lt;-</span> <span class="fu">lfmm_run</span>(gen, env, <span class="at">K =</span> <span class="dv">6</span>, <span class="at">lfmm_method =</span> <span class="st">&quot;lasso&quot;</span>)</span></code></pre></div>
+<p>The results object from <code>lfmm_run()</code> contains 5
+elements:</p>
+<ul>
+<li><p><code>lfmm_snps</code>: a list of candidate SNPs that are
+statistically significantly associated with environmental variables,
+including all relevant information pertaining to the LFMM analysis
+(e.g., p-values, fixed effects, etc.)</p></li>
+<li><p><code>df</code>: all of the SNPs and their associations,
+including all relevant information pertaining to the LFMM
+analysis</p></li>
+<li><p><code>model</code>: parameters of the LFMM model, including
+matrices <strong><em>B</em></strong>, <strong><em>U</em></strong>, and
+<strong><em>V</em></strong></p></li>
+<li><p><code>lfmm_test_result</code>: results from association
+testing</p></li>
+<li><p><code>K</code>: the number of latent factors that LFMM was run
+using (in our case, 6)</p></li>
+</ul>
+</div>
+<div id="visualizing-lfmm-results" class="section level2">
+<h2>Visualizing LFMM results</h2>
+<hr />
+<p>There are three main ways we can visualize the results from our LFMM
+analysis. Each of these is automatically produced by
+<code>lfmm_run()</code>, but you can produce them individually as well
+with the functions below.</p>
+<ul>
+<li><p><code>lfmm_table()</code>: Build a table with each SNP and its
+association (and p-value) with each environmental variable. This
+function allows for quite a bit of customization in terms of what is
+displayed:</p>
+<ul>
+<li><p><code>sig</code>: the significance threshold (alpha
+value)</p></li>
+<li><p><code>sig_only</code>: whether to only display SNPs above the
+significance threshold</p></li>
+<li><p><code>top</code>: if there are SNPs that are significantly
+associated with multiple environmental variables, only display the top
+association (i.e., variable with the maximum B value)</p></li>
+<li><p><code>order</code>: whether to order the SNPs in descending order
+based on their B value, otherwise they will be ordered based on
+environmental variable</p></li>
+<li><p><code>var</code>: only display SNPs associated with one
+environmental variable</p></li>
+<li><p><code>nrow</code>: the number of rows to display</p></li>
+<li><p><code>digits</code>: the number of decimal places to
+include</p></li>
+<li><p><code>footnotes</code>: whether to include footnotes describing
+the variables displayed</p></li>
+<li><p><code>p_adj</code>: whether p-values were adjusted in
+<code>lfmm_run()</code></p></li>
+</ul></li>
+<li><p><code>lfmm_qqplot()</code>: Build a QQ-plot (quantile-quantile
+plot) which plots expected quantiles (percentiles) against
+p-values.</p></li>
+<li><p><code>lfmm_manhattanplot()</code>: Build a Manhattan plot with
+defined significance threshold.</p></li>
+</ul>
+<div id="building-a-table-of-snp-associations-with-lfmm_table" class="section level3">
+<h3>Building a table of SNP associations with
+<code>lfmm_table()</code></h3>
+<p>Let’s see what the top candidate SNPs were for each of our LFMM
+runs:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">lfmm_table</span>(lasso_results<span class="sc">$</span>df, <span class="at">order =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="wocskwqfjh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wocskwqfjh table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#wocskwqfjh thead, #wocskwqfjh tbody, #wocskwqfjh tfoot, #wocskwqfjh tr, #wocskwqfjh td, #wocskwqfjh th {
+border-style: none;
+}
+#wocskwqfjh p {
+margin: 0;
+padding: 0;
+}
+#wocskwqfjh .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#wocskwqfjh .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#wocskwqfjh .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#wocskwqfjh .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#wocskwqfjh .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wocskwqfjh .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wocskwqfjh .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wocskwqfjh .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#wocskwqfjh .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#wocskwqfjh .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#wocskwqfjh .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#wocskwqfjh .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#wocskwqfjh .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#wocskwqfjh .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#wocskwqfjh .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#wocskwqfjh .gt_from_md > :first-child {
+margin-top: 0;
+}
+#wocskwqfjh .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#wocskwqfjh .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#wocskwqfjh .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wocskwqfjh .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#wocskwqfjh .gt_row_group_first td {
+border-top-width: 2px;
+}
+#wocskwqfjh .gt_row_group_first th {
+border-top-width: 2px;
+}
+#wocskwqfjh .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wocskwqfjh .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#wocskwqfjh .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#wocskwqfjh .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wocskwqfjh .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wocskwqfjh .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#wocskwqfjh .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#wocskwqfjh .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#wocskwqfjh .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wocskwqfjh .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wocskwqfjh .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wocskwqfjh .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wocskwqfjh .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wocskwqfjh .gt_left {
+text-align: left;
+}
+#wocskwqfjh .gt_center {
+text-align: center;
+}
+#wocskwqfjh .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#wocskwqfjh .gt_font_normal {
+font-weight: normal;
+}
+#wocskwqfjh .gt_font_bold {
+font-weight: bold;
+}
+#wocskwqfjh .gt_font_italic {
+font-style: italic;
+}
+#wocskwqfjh .gt_super {
+font-size: 65%;
+}
+#wocskwqfjh .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#wocskwqfjh .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#wocskwqfjh .gt_indent_1 {
+text-indent: 5px;
+}
+#wocskwqfjh .gt_indent_2 {
+text-indent: 10px;
+}
+#wocskwqfjh .gt_indent_3 {
+text-indent: 15px;
+}
+#wocskwqfjh .gt_indent_4 {
+text-indent: 20px;
+}
+#wocskwqfjh .gt_indent_5 {
+text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="snp">snp</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="B&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;">B<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="z-score">z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p-value">p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated z-score">calibrated z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated p-value">calibrated p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="adjusted p-value">adjusted p-value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2338</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #AF8DC3; color: #FFFFFF;">-0.26</td>
+<td headers="z-score" class="gt_row gt_right">-4.44</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">19.19</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.01</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_125</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #B7DDB1; color: #000000;">0.18</td>
+<td headers="z-score" class="gt_row gt_right">3.80</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">14.09</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_859</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #B7DDB1; color: #000000;">0.18</td>
+<td headers="z-score" class="gt_row gt_right">3.80</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">14.09</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_249</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #D2ECCC; color: #000000;">0.14</td>
+<td headers="z-score" class="gt_row gt_right">4.95</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">16.78</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1051</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #E2F2DE; color: #000000;">0.09</td>
+<td headers="z-score" class="gt_row gt_right">3.80</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">14.09</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_562</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F1E9F1; color: #000000;">-0.05</td>
+<td headers="z-score" class="gt_row gt_right">-4.74</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.42</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> LFMM effect size</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">lfmm_table</span>(ridge_results<span class="sc">$</span>df, <span class="at">order =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="wnoctbjwah" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wnoctbjwah table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#wnoctbjwah thead, #wnoctbjwah tbody, #wnoctbjwah tfoot, #wnoctbjwah tr, #wnoctbjwah td, #wnoctbjwah th {
+border-style: none;
+}
+#wnoctbjwah p {
+margin: 0;
+padding: 0;
+}
+#wnoctbjwah .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#wnoctbjwah .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#wnoctbjwah .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#wnoctbjwah .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#wnoctbjwah .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wnoctbjwah .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wnoctbjwah .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wnoctbjwah .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#wnoctbjwah .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#wnoctbjwah .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#wnoctbjwah .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#wnoctbjwah .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#wnoctbjwah .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#wnoctbjwah .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#wnoctbjwah .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#wnoctbjwah .gt_from_md > :first-child {
+margin-top: 0;
+}
+#wnoctbjwah .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#wnoctbjwah .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#wnoctbjwah .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wnoctbjwah .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#wnoctbjwah .gt_row_group_first td {
+border-top-width: 2px;
+}
+#wnoctbjwah .gt_row_group_first th {
+border-top-width: 2px;
+}
+#wnoctbjwah .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wnoctbjwah .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#wnoctbjwah .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#wnoctbjwah .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wnoctbjwah .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wnoctbjwah .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#wnoctbjwah .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#wnoctbjwah .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#wnoctbjwah .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wnoctbjwah .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wnoctbjwah .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wnoctbjwah .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wnoctbjwah .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wnoctbjwah .gt_left {
+text-align: left;
+}
+#wnoctbjwah .gt_center {
+text-align: center;
+}
+#wnoctbjwah .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#wnoctbjwah .gt_font_normal {
+font-weight: normal;
+}
+#wnoctbjwah .gt_font_bold {
+font-weight: bold;
+}
+#wnoctbjwah .gt_font_italic {
+font-style: italic;
+}
+#wnoctbjwah .gt_super {
+font-size: 65%;
+}
+#wnoctbjwah .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#wnoctbjwah .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#wnoctbjwah .gt_indent_1 {
+text-indent: 5px;
+}
+#wnoctbjwah .gt_indent_2 {
+text-indent: 10px;
+}
+#wnoctbjwah .gt_indent_3 {
+text-indent: 15px;
+}
+#wnoctbjwah .gt_indent_4 {
+text-indent: 20px;
+}
+#wnoctbjwah .gt_indent_5 {
+text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="snp">snp</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="B&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;">B<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="z-score">z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p-value">p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated z-score">calibrated z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated p-value">calibrated p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="adjusted p-value">adjusted p-value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2338</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #AF8DC3; color: #FFFFFF;">-0.29</td>
+<td headers="z-score" class="gt_row gt_right">-5.25</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">25.50</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_125</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #CAE8C3; color: #000000;">0.17</td>
+<td headers="z-score" class="gt_row gt_right">4.08</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.43</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.02</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_859</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #CAE8C3; color: #000000;">0.17</td>
+<td headers="z-score" class="gt_row gt_right">4.08</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.43</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.02</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2947</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #E9D8EA; color: #000000;">-0.13</td>
+<td headers="z-score" class="gt_row gt_right">-7.49</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">38.03</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_512</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #DCF1D7; color: #000000;">0.13</td>
+<td headers="z-score" class="gt_row gt_right">3.85</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">13.71</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.03</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2014</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #DCF1D7; color: #000000;">0.13</td>
+<td headers="z-score" class="gt_row gt_right">3.85</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">13.71</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.03</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1524</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EADAEB; color: #000000;">-0.12</td>
+<td headers="z-score" class="gt_row gt_right">-4.84</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.89</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_249</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #DEF1D9; color: #000000;">0.12</td>
+<td headers="z-score" class="gt_row gt_right">5.92</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">23.78</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2338</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EBDCEC; color: #000000;">-0.11</td>
+<td headers="z-score" class="gt_row gt_right">-4.00</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">10.84</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.03</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2133</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #ECDFED; color: #000000;">-0.10</td>
+<td headers="z-score" class="gt_row gt_right">-6.45</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">28.25</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_831</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #ECDFED; color: #000000;">-0.10</td>
+<td headers="z-score" class="gt_row gt_right">-5.07</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">17.46</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2669</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EDE1EE; color: #000000;">-0.09</td>
+<td headers="z-score" class="gt_row gt_right">-5.29</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">18.98</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2703</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #E4F3E1; color: #000000;">0.09</td>
+<td headers="z-score" class="gt_row gt_right">4.02</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">10.97</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.03</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1278</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EDE1EE; color: #000000;">-0.09</td>
+<td headers="z-score" class="gt_row gt_right">-5.48</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">20.33</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_786</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EDE1EE; color: #000000;">-0.09</td>
+<td headers="z-score" class="gt_row gt_right">-4.31</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">12.61</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.01</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1318</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EDE1EE; color: #000000;">-0.09</td>
+<td headers="z-score" class="gt_row gt_right">-6.51</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">28.74</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1051</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #E4F3E1; color: #000000;">0.09</td>
+<td headers="z-score" class="gt_row gt_right">4.08</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.43</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.02</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2045</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EEE4EF; color: #000000;">-0.08</td>
+<td headers="z-score" class="gt_row gt_right">-5.72</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">22.21</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1319</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EEE4EF; color: #000000;">-0.08</td>
+<td headers="z-score" class="gt_row gt_right">-5.59</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">21.15</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1745</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EEE4EF; color: #000000;">-0.08</td>
+<td headers="z-score" class="gt_row gt_right">-5.59</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">21.15</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2670</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EEE4EF; color: #000000;">-0.08</td>
+<td headers="z-score" class="gt_row gt_right">-6.91</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">32.38</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_138</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #E7F3E3; color: #000000;">0.08</td>
+<td headers="z-score" class="gt_row gt_right">4.66</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">14.73</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.01</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_903</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EFE6F0; color: #000000;">-0.07</td>
+<td headers="z-score" class="gt_row gt_right">-5.06</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">17.39</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_870</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-5.75</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">22.40</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2426</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-5.75</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">22.40</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2699</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-5.75</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">22.40</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2145</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-3.95</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">10.55</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2770</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-4.11</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">11.47</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.02</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_562</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F0E8F1; color: #000000;">-0.06</td>
+<td headers="z-score" class="gt_row gt_right">-7.05</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">33.70</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1414</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EBF4E8; color: #000000;">0.06</td>
+<td headers="z-score" class="gt_row gt_right">3.90</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">10.30</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_974</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F3EDF3; color: #000000;">-0.04</td>
+<td headers="z-score" class="gt_row gt_right">-5.59</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">21.15</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_1254</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F3EDF3; color: #000000;">-0.04</td>
+<td headers="z-score" class="gt_row gt_right">-5.59</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">21.15</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_3116</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F3EDF3; color: #000000;">-0.04</td>
+<td headers="z-score" class="gt_row gt_right">-5.59</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">21.15</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.00</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_2421</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #F3EDF3; color: #000000;">-0.04</td>
+<td headers="z-score" class="gt_row gt_right">-4.38</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">13.04</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.01</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_637</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #EFF5ED; color: #000000;">0.04</td>
+<td headers="z-score" class="gt_row gt_right">4.22</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">12.06</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.02</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> LFMM effect size</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<p>As you can see from the above, the penalty chosen makes quite a bit
+of difference in terms of how many significant SNPs are found (only 6
+with the lasso method, but 35 with the ridge method). However, the three
+SNPs with the largest effect size are the same between the two methods
+(loci 2338, 125, and 859), and the effect sizes and p-values are
+comparable. The tables also contain columns for calibrated z-score,
+calibrated p-values, and adjusted p-values. Recall that adjusted
+p-values are calculated based on setting the <code>p_adj</code>
+argument; in our case, these are adjusted based on the false discovery
+rate, which is why they differ from non-adjusted p-values (i.e., values
+in the p-value column).</p>
+<p>Let’s only look at SNPs significantly associated with the PCA2
+environmental variable from the lasso method:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">lfmm_table</span>(lasso_results<span class="sc">$</span>df, <span class="at">order =</span> <span class="cn">TRUE</span>, <span class="at">var =</span> <span class="st">&quot;CA_rPCA2&quot;</span>)</span></code></pre></div>
+<div id="upywwsbdnb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#upywwsbdnb table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#upywwsbdnb thead, #upywwsbdnb tbody, #upywwsbdnb tfoot, #upywwsbdnb tr, #upywwsbdnb td, #upywwsbdnb th {
+border-style: none;
+}
+#upywwsbdnb p {
+margin: 0;
+padding: 0;
+}
+#upywwsbdnb .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#upywwsbdnb .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#upywwsbdnb .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#upywwsbdnb .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#upywwsbdnb .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#upywwsbdnb .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#upywwsbdnb .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#upywwsbdnb .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#upywwsbdnb .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#upywwsbdnb .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#upywwsbdnb .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#upywwsbdnb .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#upywwsbdnb .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#upywwsbdnb .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#upywwsbdnb .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#upywwsbdnb .gt_from_md > :first-child {
+margin-top: 0;
+}
+#upywwsbdnb .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#upywwsbdnb .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#upywwsbdnb .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#upywwsbdnb .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#upywwsbdnb .gt_row_group_first td {
+border-top-width: 2px;
+}
+#upywwsbdnb .gt_row_group_first th {
+border-top-width: 2px;
+}
+#upywwsbdnb .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#upywwsbdnb .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#upywwsbdnb .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#upywwsbdnb .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#upywwsbdnb .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#upywwsbdnb .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#upywwsbdnb .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#upywwsbdnb .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#upywwsbdnb .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#upywwsbdnb .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#upywwsbdnb .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#upywwsbdnb .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#upywwsbdnb .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#upywwsbdnb .gt_left {
+text-align: left;
+}
+#upywwsbdnb .gt_center {
+text-align: center;
+}
+#upywwsbdnb .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#upywwsbdnb .gt_font_normal {
+font-weight: normal;
+}
+#upywwsbdnb .gt_font_bold {
+font-weight: bold;
+}
+#upywwsbdnb .gt_font_italic {
+font-style: italic;
+}
+#upywwsbdnb .gt_super {
+font-size: 65%;
+}
+#upywwsbdnb .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#upywwsbdnb .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#upywwsbdnb .gt_indent_1 {
+text-indent: 5px;
+}
+#upywwsbdnb .gt_indent_2 {
+text-indent: 10px;
+}
+#upywwsbdnb .gt_indent_3 {
+text-indent: 15px;
+}
+#upywwsbdnb .gt_indent_4 {
+text-indent: 20px;
+}
+#upywwsbdnb .gt_indent_5 {
+text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="snp">snp</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="B&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;">B<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="z-score">z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p-value">p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated z-score">calibrated z-score</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="calibrated p-value">calibrated p-value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="adjusted p-value">adjusted p-value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="snp" class="gt_row gt_left">Locus_249</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #7FBF7B; color: #000000;">0.14</td>
+<td headers="z-score" class="gt_row gt_right">4.95</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">16.78</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+    <tr><td headers="snp" class="gt_row gt_left">Locus_562</td>
+<td headers="variable" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="B" class="gt_row gt_right" style="background-color: #ECDEEC; color: #000000;">-0.05</td>
+<td headers="z-score" class="gt_row gt_right">-4.74</td>
+<td headers="p-value" class="gt_row gt_right">0</td>
+<td headers="calibrated z-score" class="gt_row gt_right">15.42</td>
+<td headers="calibrated p-value" class="gt_row gt_right">0</td>
+<td headers="adjusted p-value" class="gt_row gt_right">0.04</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> LFMM effect size</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co"># Be aware that if significant SNPs &lt; nrow, function will return NULL object</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co"># lfmm_table(lasso_results$df, sig_only = FALSE, order = FALSE, nrow=10)</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co"># Similarly, the same will occur if you try to specify a variable that is not significantly associated with a SNP</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co"># lfmm_table(lasso_results$df, sig_only = TRUE, var = &quot;CA_rPCA1&quot;)</span></span></code></pre></div>
+</div>
+<div id="building-a-qqplot-with-lfmm_qqplot" class="section level3">
+<h3>Building a QQplot with <code>lfmm_qqplot()</code></h3>
+<p>A QQplot plots theoretical quantiles against p-value quantiles,
+providing a way to visualize the normality of the test significance
+values. The line that is plotted runs through the intercept and has a
+slope of 1. The points should ideally fall along this reference
+line:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">lfmm_qqplot</span>(lasso_results<span class="sc">$</span>df)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt; Warning: [1m[22mRemoved 414 rows containing non-finite values (`stat_qq()`).</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+</div>
+<div id="building-a-manhattan-plot-using-lfmm_manhattanplot" class="section level3">
+<h3>Building a Manhattan plot using
+<code>lfmm_manhattanplot()</code></h3>
+<p>Manhattan plots are helpful ways to visualize the position of the
+outlier SNPs across the genome, as well as how much they exceed a
+user-specified significance threshold for each environmental
+variable.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># As displayed in our table from above, only six SNPs are visible on the lasso method plots as outliers:</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">lfmm_manhattanplot</span>(lasso_results<span class="sc">$</span>df, <span class="at">sig =</span> <span class="fl">0.05</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co">#&gt; Warning: [1m[22mRemoved 414 rows containing missing values (`geom_point()`).</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p>For the ridge method LFMM run, we can see that there are (a) more
+outliers than the lasso method above, and (b) the majority of these
+outliers are associated with environmental PC2.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">lfmm_manhattanplot</span>(ridge_results<span class="sc">$</span>df, <span class="at">sig =</span> <span class="fl">0.05</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; Warning: [1m[22mRemoved 414 rows containing missing values (`geom_point()`).</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="running-lfmm-with-lfmm_do_everything" class="section level2">
+<h2>Running LFMM with <code>lfmm_do_everything()</code></h2>
+<hr />
+<p>The algatr package also has an option to run all of the above
+functionality in a single function, <code>lfmm_do_everything()</code>.
+This function will automatically extract relevant values from our
+environmental layers given our coordinate data; it will also
+automatically convert a vcf object to a dosage matrix for us. The output
+looks the same as the output from <code>lfmm_run()</code> above, and
+plots will be automatically produced. <strong>Please be aware that the
+<code>do_everything()</code> functions are meant to be exploratory. We
+do not recommend their use for final analyses unless certain they are
+properly parameterized.</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">lfmm_do_everything</span>(<span class="at">gen =</span> gen, <span class="at">env =</span> CA_env, <span class="at">coords =</span> liz_coords, <span class="at">lfmm_method =</span> <span class="st">&quot;lasso&quot;</span>, <span class="at">K_selection =</span> <span class="st">&quot;tracy_widom&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+</div>
+<div id="additional-documentation-and-citations" class="section level2">
+<h2>Additional documentation and citations</h2>
+<hr />
+<table>
+<colgroup>
+<col width="25%" />
+<col width="40%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Citation/URL</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Main manuscript describing method</td>
+<td><a href="https://academic.oup.com/mbe/article/36/4/852/5290100">Caye
+et al. 2019</a>; see <a href="https://bcm-uga.github.io/lfmm/index.html">here</a> for
+documentation</td>
+<td>Paper and code describing LFMM2</td>
+</tr>
+<tr class="even">
+<td>Associated literature</td>
+<td><a href="https://academic.oup.com/mbe/article/30/7/1687/972098">Frichot et
+al. 2013</a></td>
+<td>Paper describing LFMM</td>
+</tr>
+<tr class="odd">
+<td>Associated code</td>
+<td><a href="https://cran.r-project.org/web/packages/AssocTests/index.html">Wang
+et al. 2020</a></td>
+<td>algatr performs a Tracy-Widom test using the <code>tw()</code>
+function in the AssocTests package</td>
+</tr>
+<tr class="even">
+<td>Associated code</td>
+<td><a href="https://chazhyseni.github.io/NALgen/post/determining_bestk/">Blog
+post on automatic K selection</a></td>
+<td>algatr’s automatic K selection code</td>
+</tr>
+<tr class="odd">
+<td>Additional code</td>
+<td><a href="https://rdrr.io/bioc/LEA/">Frichot &amp; Francois
+2015</a></td>
+<td>The LEA package provides wrapper functions for LFMM (using the
+<code>lfmm2()</code> function</td>
+</tr>
+</tbody>
+</table>
+<p>Retrieve LFMM’s vignette:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">&quot;lfmm&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

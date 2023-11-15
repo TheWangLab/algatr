@@ -1,0 +1,35 @@
+---
+title: "package_setup"
+format: html
+editor: visual
+---
+
+```{r}
+library(usethis)
+library(here)
+library(devtools)
+```
+
+```{r}
+use_build_ignore("package_setup.qmd")
+```
+
+```{r}
+# Creates and modifies external data for use in package
+usethis::use_data_raw()
+usethis::use_pipe()
+```
+
+```{r} 
+usethis::use_logo("logo.png") 
+usethis::use_readme_rmd()
+```
+
+```{r}
+# Run once to configure package to use pkgdown
+#usethis::use_pkgdown()
+# Run to build the website
+pkgdown::build_site()
+usethis::use_pkgdown_github_pages()
+```
+

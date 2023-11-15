@@ -1,0 +1,2 @@
+"0","par(mfrow = c(2, 2))"
+"0","gdm_plot_isplines(gdm_full$model)"

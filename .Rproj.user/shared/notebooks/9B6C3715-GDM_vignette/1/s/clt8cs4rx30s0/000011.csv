@@ -1,0 +1,7 @@
+"0","maprgb <- map$pcaRastRGB"
+"0",""
+"0","# Now, use `extrap_mask()` to do buffer-based masking"
+"0","map_mask <- extrap_mask(liz_coords, maprgb, method = ""buffer"", buffer_width = 1.25)"
+"0",""
+"0","# Plot the resulting masked map"
+"0","plot_extrap_mask(maprgb, map_mask, RGB = TRUE, mask_col = rgb(1, 1, 1, alpha = 0.6))"

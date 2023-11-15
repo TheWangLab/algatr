@@ -1,0 +1,26 @@
+{
+    "id": "E93CBCF1",
+    "path": "~/GitHub/algatr/.github/workflows/pkgdown.yaml",
+    "project_path": ".github/workflows/pkgdown.yaml",
+    "type": "yaml",
+    "hash": "2569613078",
+    "contents": "",
+    "dirty": true,
+    "created": 1700008915238.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "25,6",
+        "scrollLine": "15"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1700009311,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1700009311524,
+    "read_only": false,
+    "read_only_alternatives": []
+}

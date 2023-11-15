@@ -1,0 +1,47 @@
+"0","load_algatr_example()"
+"1","[36m[1m
+---------------- example dataset ----------------
+[22m[39m"
+"1"," "
+"1","[34m
+Objects loaded:[39m"
+"1"," "
+"1","[33m[1m
+*liz_vcf*[22m[39m"
+"1"," "
+"1","[33mvcfR object (1000 loci x 53 samples)[39m"
+"1"," "
+"1","[33m[1m
+*liz_gendist*[22m[39m"
+"1"," "
+"1","[33mgenetic distance matrix (Plink Distance)[39m"
+"1"," "
+"1","[32m[1m
+*liz_coords*[22m[39m"
+"1"," "
+"1","[32mdataframe with x and y coordinates[39m"
+"1"," "
+"1","[35m[1m
+*CA_env*[22m[39m"
+"1"," "
+"1","[35mRasterStack with PC environmental layers[39m"
+"1"," "
+"1","[36m[1m
+
+-------------------------------------------------
+[22m[39m"
+"2","
+"
+"2","Loading required package: vcfR
+"
+"2","
+   *****       ***   vcfR   ***       *****
+   This is vcfR 1.14.0 
+     browseVignettes('vcfR') # Documentation
+     citation('vcfR') # Citation
+   *****       *****      *****       *****
+
+"
+"0","gen <- liz_vcf[, 1:21]"
+"0","coords <- liz_coords[1:20, ]"
+"0","envlayers <- CA_env"

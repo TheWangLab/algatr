@@ -1,0 +1,2 @@
+"0","# Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)"
+"0","lfmm_table(lasso_results$df, order = TRUE)"

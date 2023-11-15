@@ -1,0 +1,2 @@
+"0","# We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)"
+"0","ggRGB(env_pcs$map, 1, 2, 3, stretch = ""lin"", q = 0)"

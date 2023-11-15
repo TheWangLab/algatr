@@ -1,0 +1,2 @@
+"0","ridge_results <- lfmm_run(gen, env, K = 6, lfmm_method = ""ridge"")"
+"0","lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = ""lasso"")"

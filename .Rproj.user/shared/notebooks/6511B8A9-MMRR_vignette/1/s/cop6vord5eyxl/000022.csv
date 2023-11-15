@@ -1,0 +1,5 @@
+"0","# Add geographic distance to X
+X[[""resistdist""]] <- geo_dist(liz_coords, type = ""resistance"", lyr = lyr)
+"
+"2","Calculating resistance distances... This can be time consuming with many points and large rasters.
+"

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>data_processing_vignette</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">data_processing_vignette</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install packages for installing other packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;devtools&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># For genetic data processing</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;gdsfmt&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;gdsfmt&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;SeqArray&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;SeqArray&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;SNPRelate&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;SNPRelate&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;LEA&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;LEA&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;ecodist&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;ecodist&quot;</span>)</span></code></pre></div>
+<div id="processing-genomic-data-files" class="section level1">
+<h1>Processing genomic data files</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(algatr)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<p>For landscape genomic analyses, we first need to process our input
+data files in various ways. It is important to understand what this data
+processing is doing, so in this vignette, we’ll do the following:</p>
+<ul>
+<li><p><code>vcf_to_dosage()</code> to convert a vcf file to a dosage
+matrix</p></li>
+<li><p><code>str_impute()</code> and <code>simple_impute()</code> to
+impute missing data in two different ways</p></li>
+<li><p><code>ld_prune()</code> to prune variants that are in linkage
+disequilibrium with one another; this primarily uses the
+<code>snpgdsLDpruning()</code> function within the SNPRelate package (<a href="https://academic.oup.com/bioinformatics/article/28/24/3326/245844">Zheng
+et al. 2012</a>; see <a href="https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf">here</a>
+for further information)</p></li>
+</ul>
+<div id="converting-a-vcf-to-a-dosage-matrix-with-vcf_to_dosage" class="section level2">
+<h2>Converting a vcf to a dosage matrix with
+<code>vcf_to_dosage()</code></h2>
+<hr />
+<p>Recall the way genotypes are encoded within a vcf: <code>&quot;0/0&quot;</code>
+denotes individual is homozygous for the reference allele,
+<code>&quot;0/1&quot;</code> for heterozygote, and <code>&quot;1/1&quot;</code> for a
+homozygote for the alternate allele; <code>NA</code> is missing
+data.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Load the example data</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">load_algatr_example</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [36m[1m</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; ---------------- example dataset ----------------</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [22m[39m [34m</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Objects loaded:[39m [33m[1m</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; *liz_vcf*[22m[39m [33mvcfR object (1000 loci x 53 samples)[39m [33m[1m</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; *liz_gendist*[22m[39m [33mgenetic distance matrix (Plink Distance)[39m [32m[1m</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; *liz_coords*[22m[39m [32mdataframe with x and y coordinates[39m [35m[1m</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; *CA_env*[22m[39m [35mRasterStack with PC environmental layers[39m [36m[1m</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; [22m[39m</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co"># Look at genotypes for five individuals at eight sites:</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>liz_vcf<span class="sc">@</span>gt[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt;      ALT3  BAR360 BLL5  BNT5  BOF1 </span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; [1,] &quot;0/0&quot; &quot;0/0&quot;  &quot;0/0&quot; &quot;0/0&quot; &quot;0/0&quot;</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; [2,] &quot;0/0&quot; &quot;0/0&quot;  NA    &quot;0/0&quot; NA   </span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; [3,] &quot;0/0&quot; &quot;0/0&quot;  &quot;0/0&quot; NA    NA   </span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; [4,] &quot;0/0&quot; NA     &quot;0/0&quot; NA    NA   </span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; [5,] &quot;0/0&quot; &quot;0/0&quot;  NA    &quot;0/0&quot; NA   </span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; [6,] NA    &quot;0/0&quot;  &quot;0/0&quot; &quot;0/0&quot; NA   </span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; [7,] NA    &quot;0/0&quot;  &quot;0/0&quot; NA    &quot;0/0&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; [8,] &quot;1/1&quot; &quot;1/1&quot;  &quot;0/1&quot; &quot;0/0&quot; &quot;0/0&quot;</span></span></code></pre></div>
+<p>A dosage matrix contains each row as an individual (unlike a vcf) and
+each column as a site. Importantly, genotypes are now encoded with a
+single number. For a diploid organism, there are three possibilities for
+coding genotypes in a dosage matrix: 0, 1, or 2 (corresponding to 0/0,
+1/1, and 0/1 from the vcf, respectively). <code>NA</code> still
+represents missing data. We can convert our vcf to a dosage matrix using
+the <code>vcf_to_dosage()</code> function:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dosage <span class="ot">&lt;-</span> <span class="fu">vcf_to_dosage</span>(liz_vcf)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Look at genotypes for five individuals at five sites:</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>dosage[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>]</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;        Locus_10 Locus_15 Locus_22 Locus_28 Locus_32 Locus_35 Locus_37 Locus_61</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; ALT3          0        0        0        0        0       NA       NA        2</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; BAR360        0        0        0       NA        0        0        0        2</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; BLL5          0       NA        0        0       NA        0        0        1</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; BNT5          0        0       NA       NA        0        0       NA        0</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; BOF1          0       NA       NA       NA       NA       NA        0        0</span></span></code></pre></div>
+</div>
+<div id="imputation-of-missing-values" class="section level2">
+<h2>Imputation of missing values</h2>
+<hr />
+<p>Because of their underlying statistical framework, several landscape
+genomics methods cannot accept any missing data as input. Within algatr,
+the two GEA methods (RDA and LFMM) are examples of such methods. To deal
+with inevitable missing data, researchers typically perform imputation,
+wherein values are assigned to missing data based on some criteria. For
+example, the most simplistic imputation could be one in which missing
+values are imputed based on the median value across all individuals; one
+can imagine that this is extremely simplistic and assumes a lot about
+the data and samples. There have been quite a few developments in
+missing data imputation in recent years; we suggest you take a look at
+<a href="https://doi.org/10.1534/g3.115.021667">Money et al. 2015</a>
+and <a href="https://doi.org/10.1159/000489758">Shi et al. 2018</a> as a
+starting point for examples of how this can be done.</p>
+<p>algatr has the functionality to impute missing values in two ways:
+the simplistic median-based approach described above using
+<code>simple_impute()</code> and a more sophisticated imputation method,
+<code>str_impute()</code> that uses underlying population structure to
+assign missing values. Let’s first take a look at
+<code>simple_impute()</code> using the dosage matrix we just generated
+in the step prior to this one:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Are there NAs in the data?</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>dosage[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;        Locus_10 Locus_15 Locus_22 Locus_28 Locus_32</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; ALT3          0        0        0        0        0</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; BAR360        0        0        0       NA        0</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; BLL5          0       NA        0        0       NA</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; BNT5          0        0       NA       NA        0</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; BOF1          0       NA       NA       NA       NA</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>simple_dos <span class="ot">&lt;-</span> <span class="fu">simple_impute</span>(dosage)</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co"># Check that NAs are gone</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>simple_dos[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;        Locus_10 Locus_15 Locus_22 Locus_28 Locus_32</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; ALT3          0        0        0        0        0</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; BAR360        0        0        0        0        0</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; BLL5          0        0        0        0        0</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; BNT5          0        0        0        0        0</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; BOF1          0        0        0        0        0</span></span></code></pre></div>
+<p>Now, let’s use <code>str_impute()</code> to impute missing values
+based on population structure. This function does two main things: (1)
+it runs SNMF to generate ancestry coefficients based on a single or
+range of K-values; and (2) it uses the <code>LEA::impute()</code>
+function to impute missing values based on the SNMF results. In this
+way, this imputation method is taking into consideration population
+structure and assuming that individuals sharing the same ancestral
+clusters are more similar to one another; certainly, this is a better
+assumption than imputing based on the median across all individuals.</p>
+<p>There are a number of arguments in the <code>str_impute()</code>
+function, most of which inherit from <code>LEA::snmf()</code>:</p>
+<ul>
+<li><p><code>gen</code> specifies the genotype data and can be a dosage
+matrix, vcfR object, path to vcf file, or an SNMF project (i.e., object
+of type snmfProject) if you’ve already run SNMF and want to use that for
+imputation</p></li>
+<li><p><code>K</code> specifies a single value or range of K-values for
+SNMF to be run</p></li>
+<li><p><code>entropy</code> whether to calculate cross-entropy criteria
+(defaults to TRUE)</p></li>
+<li><p><code>repetitions</code> specifies the number of repetitions (or
+runs) to do for each K-value (defaults to 10)</p></li>
+<li><p><code>project</code> specifies whether you want to start a new
+SNMF project (<code>&quot;new&quot;</code>; default), whether you want to continue
+an existing SNMF project (<code>&quot;continue&quot;</code>) or overwrite existing
+results (<code>&quot;force&quot;</code>)</p></li>
+<li><p><code>quiet</code> will print a plot with the results of internal
+function <code>snmf_bestK()</code> if set to FALSE; default is for
+nothing to be printed (TRUE). The <code>snmf_bestK()</code> function
+selects the best K value from the SNMF results based on minimizing
+cross-entropy scores</p></li>
+<li><p><code>save_output</code> specifies whether you would like output
+files to be saved to file (a string) or not (left NULL; this is the
+default). If a string is provided, output files will be saved with this
+argument’s string as a prefix. Files to be saved include SNMF results,
+the original dosage matrix as .geno and .lfmm files, and an imputed
+.lfmm file</p></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>str_dos <span class="ot">&lt;-</span> <span class="fu">str_impute</span>(<span class="at">gen =</span> dosage, <span class="at">K =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">entropy =</span> <span class="cn">TRUE</span>, <span class="at">repetitions =</span> <span class="dv">3</span>, <span class="at">quiet =</span> <span class="cn">FALSE</span>, <span class="at">save_output =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Let’s take a look at how the two imputation methods compare by
+calculating genetic distances for each and then using the
+<code>gen_dist_corr()</code> function which plots the relationship
+between two distance metrics (please see the genetic distances vignette
+for further information).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>str_dist <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(ecodist<span class="sc">::</span><span class="fu">distance</span>(str_dos, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>simple_dist <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(ecodist<span class="sc">::</span><span class="fu">distance</span>(simple_dos, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">gen_dist_corr</span>(<span class="at">dist_x =</span> simple_dist, <span class="at">dist_y =</span> str_dist, <span class="at">metric_name_x =</span> <span class="st">&quot;simple&quot;</span>, <span class="at">metric_name_y =</span> <span class="st">&quot;SNMF&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+</div>
+<div id="removing-sites-that-are-in-linkage-disequilibrium-using-ld_prune" class="section level2">
+<h2>Removing sites that are in linkage disequilibrium using
+<code>ld_prune()</code></h2>
+<hr />
+<p>For some analyses, we may want to prune out any linked sites from our
+data to not bias results. This is particularly the case with methods
+that estimate population structure (e.g., TESS), as population structure
+can be overinflated as more SNPs appear to independently support the
+same pattern. For other analyses - such as genotype-environment
+association methods like RDA and LFMM - SNPs in LD are sometimes removed
+prior to running such analyses, but we do not recommend this because
+SNPs most strongly associated with environmental variables may have been
+pruned out. However, failing to account for linkage may result in
+overinflated conclusions about environmental associations. A solution to
+this is to perform LD-pruning after having run GEA methods; one approach
+to do so is to retain SNPs with the strongest association (i.e., lowest
+p-value) and removing all others that are in linkage with that
+particular SNP (see the approach described in Capblancq &amp; Forester
+2021 for more information).</p>
+<p>To perform LD-pruning, we can use the <code>ld_prune()</code>
+function (which largely uses the <code>snpgdsLDpruning()</code> function
+within the SNPRelate package). The function works by first removing any
+variants that occur below a given minor allele frequency, and then by
+pruning any variants that have a given correlation using a sliding
+window approach.</p>
+<p>The main arguments within this function are as follows:</p>
+<ul>
+<li><p><code>ld.threshold</code> specifies the LD pruning threshold (the
+default is the correlation coefficient value; thus, the higher the
+<code>ld.threshold</code> value, fewer variants will be pruned)</p></li>
+<li><p><code>slide.max.n</code> specifies the maximum number of SNPs in
+the sliding window (defaults to 100)</p></li>
+<li><p><code>maf</code> specifies the minor allele frequency (defaults
+to 0.05)</p></li>
+<li><p><code>vcf</code> specifies the path to the vcf file that you
+would like to be pruned</p></li>
+<li><p><code>out_name</code> specifies the prefix of output file
+names</p></li>
+<li><p><code>out_format</code> specifies the file type (options are
+<code>&quot;vcf&quot;</code> for vcf and gds files [default], or
+<code>&quot;plink&quot;</code> for ped and map files)</p></li>
+<li><p><code>save_output</code> specifies whether you would like a new
+directory made containing all output (and intermediate) files; default
+is <code>TRUE.</code> If set to <code>FALSE</code>, the function will
+simply return a vcf object.</p></li>
+</ul>
+<p>The way to call this function is as follows:</p>
+<p><code>vcf_ldpruned &lt;- ld_prune(vcf = &quot;test.vcf&quot;, out_name = &quot;liz&quot;, out_format = &quot;vcf&quot;, ld.threshold = 0.9, slide.max.n = 10)</code></p>
+<p>We will not be running this function within the vignette to avoid
+generating intermediate files, but the example line above creates a new
+directory called liz_LDpruned, and it contains five files: a LOGFILE,
+with information on how many sites were pruned and how many remain,
+three gds files (pre- and post-pruned SNP GDS files and a GDS SeqArray
+file), and the pruned vcf. All of these output files are named such that
+the <code>ld.threshold</code> and <code>slide.max.n</code> parameter
+settings are contained in file names.</p>
+</div>
+<div id="additional-documentation-and-citations" class="section level2">
+<h2>Additional documentation and citations</h2>
+<hr />
+<table>
+<colgroup>
+<col width="26%" />
+<col width="39%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Citation/URL</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Associated code</td>
+<td><a href="https://academic.oup.com/bioinformatics/article/28/24/3326/245844">Zheng
+et al. 2012</a>; further details <a href="https://www.bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf">here</a></td>
+<td>algatr uses the <code>snpgdsLDpruning()</code> function within the
+SNPRelate package for LD-pruning</td>
+</tr>
+</tbody>
+</table>
+<p>Retrieve SNPRelate’s vignette:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">&quot;SNPRelate&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; starting httpd help server ... done</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

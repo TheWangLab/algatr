@@ -1,0 +1,6 @@
+"0","env_pcs <- rasterPCA(wclim, spca = TRUE)"
+"0",""
+"0","# Let's take a look at the results for the top three PCs"
+"0","plots <- lapply(1:3, function(x) ggR(env_pcs$map, x, geom_raster = TRUE))"
+"0",""
+"0","plots[[1]] "

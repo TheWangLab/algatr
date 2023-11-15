@@ -1,0 +1,3 @@
+"0","# Run MMRR with resistance distances"
+"0","results_resist <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = ""full"")"
+"0","mmrr_plot(Y, X, mod = results_resist$mod, plot_type = ""all"", stdz = TRUE)"

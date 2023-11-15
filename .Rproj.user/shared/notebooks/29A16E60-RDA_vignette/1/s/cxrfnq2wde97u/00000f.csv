@@ -1,0 +1,8 @@
+"0","rda_sig_p <- rda_getoutliers(mod_best, naxes = ""all"", outlier_method = ""p"", p_adj = ""fdr"", sig = 0.01, plot = FALSE)"
+"0",""
+"0","# How many outlier SNPs were detected?"
+"0","length(rda_sig_p$rda_snps)"
+"1","[1]"
+"1"," 101"
+"1","
+"

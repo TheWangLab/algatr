@@ -1,0 +1,1 @@
+"0","env <- raster::extract(CA_env, liz_coords)"

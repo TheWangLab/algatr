@@ -1,0 +1,2 @@
+"0","set.seed(01)"
+"0","mmrr_full_everything <- mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, geo = TRUE, model = ""full"")"

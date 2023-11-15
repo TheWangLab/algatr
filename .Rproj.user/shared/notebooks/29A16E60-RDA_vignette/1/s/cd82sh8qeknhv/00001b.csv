@@ -1,0 +1,3 @@
+"0",""
+"0","# Only retain the top variable for each SNP based on the strength of the correlation"
+"0","rda_table(cor_df, top = TRUE, nrow = 5)"

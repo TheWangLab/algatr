@@ -1,0 +1,7 @@
+"0","gdm_full_everything <- gdm_do_everything(liz_gendist,
+                                         liz_coords,
+                                         envlayers = CA_env,
+                                         model = ""full"", 
+                                         scale_gendist = TRUE)
+"
+"2","Warning: No CRS found for the provided coordinates. Make sure the coordinates and the raster have the same projection (see function details or wingen vignette)"

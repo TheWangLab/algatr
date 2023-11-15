@@ -1,0 +1,7 @@
+"0",""
+"0","# How many outlier SNPs were detected?"
+"0","length(rda_sig_z$rda_snps)"
+"1","[1]"
+"1"," 19"
+"1","
+"

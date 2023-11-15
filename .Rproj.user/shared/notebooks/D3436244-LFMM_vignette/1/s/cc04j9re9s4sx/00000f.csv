@@ -1,0 +1,55 @@
+"0","# Install packages for installing other packages"
+"0","if (!require(""devtools"", quietly = TRUE)) install.packages(""devtools"")"
+"2","Registered S3 methods overwritten by 'htmltools':
+  method               from         
+  print.html           tools:rstudio
+  print.shiny.tag      tools:rstudio
+  print.shiny.tag.list tools:rstudio
+"
+"2","Registered S3 method overwritten by 'htmlwidgets':
+  method           from         
+  print.htmlwidget tools:rstudio
+"
+"0","if (!require(""BiocManager"", quietly = TRUE)) install.packages(""BiocManager"")"
+"2","Bioconductor version 3.17 (BiocManager 1.30.22), R 4.3.1 (2023-06-16 ucrt)
+"
+"2","
+Attaching package: ‘BiocManager’
+
+"
+"2","The following object is masked from ‘package:devtools’:
+
+    install
+
+"
+"0","# For LFMM:"
+"0","if (!require(""adegenet"", quietly = TRUE)) install.packages(""adegenet"")"
+"2","Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2
+"
+"2","
+   /// adegenet 2.1.10 is loaded ////////////
+
+   > overview: '?adegenet'
+   > tutorials/doc/questions: 'adegenetWeb()' 
+   > bug reports/feature requests: adegenetIssues()
+
+
+"
+"0","if (!require(""AssocTests"", quietly = TRUE)) install.packages(""AssocTests"")"
+"2","
+Attaching package: ‘combinat’
+
+"
+"2","The following object is masked from ‘package:utils’:
+
+    combn
+
+"
+"0","if (!require(""lfmm"", quietly = TRUE)) install.packages(""lfmm"")"
+"0","if (!require(""TESS3_encho_sen"", quietly = TRUE)) devtools::install_github(""bcm-uga/TESS3_encho_sen"")"
+"2","Skipping install of 'tess3r' from a github remote, the SHA1 (1e333c2b) has not changed since last install.
+  Use `force = TRUE` to force installation
+"
+"0","if (!require(""LEA"", quietly = TRUE)) BiocManager::install(""LEA"")"

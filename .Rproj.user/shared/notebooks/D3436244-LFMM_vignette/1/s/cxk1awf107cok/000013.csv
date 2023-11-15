@@ -1,0 +1,5 @@
+"0","select_K(gen, K_selection = ""find_clusters"", pca.select = ""percVar"", perc.pca = 90, choose.n.clust = FALSE, criterion = NULL, max.n.clust = 10) # 7"
+"1","[1]"
+"1"," 4"
+"1","
+"

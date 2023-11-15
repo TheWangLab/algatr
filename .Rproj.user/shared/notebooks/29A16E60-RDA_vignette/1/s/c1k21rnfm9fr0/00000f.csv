@@ -1,0 +1,3 @@
+"0","mod_full$call"
+"1","rda(formula = gen ~ CA_rPCA1 + CA_rPCA2 + CA_rPCA3, data = moddf)
+"

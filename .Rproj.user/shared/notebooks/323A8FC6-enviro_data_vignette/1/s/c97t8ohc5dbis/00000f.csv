@@ -1,0 +1,2 @@
+"0","raster <- coords_to_raster(liz_coords, res = 1)"
+"0","plot(raster, axes = FALSE)"

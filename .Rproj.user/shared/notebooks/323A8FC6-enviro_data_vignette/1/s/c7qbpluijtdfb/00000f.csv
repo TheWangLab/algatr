@@ -1,0 +1,5 @@
+"0","check_results <- check_dists(wclim, liz_coords)"
+"2","Warning: No CRS found for the provided coordinates. Make sure the coordinates and the raster have the same projection (see function details or vignette)"
+"2","Warning: The distances for 121 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.
+"
+"0","head(check_results$mantel_df)"

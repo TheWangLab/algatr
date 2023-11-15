@@ -1,0 +1,31 @@
+{
+    "id": "77A872B4",
+    "path": "~/GitHub/algatr/package_setup.qmd",
+    "project_path": "package_setup.qmd",
+    "type": "quarto_markdown",
+    "hash": "2279393332",
+    "contents": "",
+    "dirty": false,
+    "created": 1700005121668.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "source_window_id": "",
+        "Source": "Source",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "282:144.88888549804688",
+        "cursorPosition": "33,0",
+        "scrollLine": "22"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1700008757,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1700008762277,
+    "read_only": false,
+    "read_only_alternatives": []
+}

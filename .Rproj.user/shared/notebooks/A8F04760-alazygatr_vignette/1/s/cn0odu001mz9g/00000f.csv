@@ -1,0 +1,11 @@
+"0","options(crayon.enabled = TRUE)"
+"0",""
+"0","old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,"
+"0","  which = c(""output"", ""message"", ""error"")"
+"0",")"
+"1","<STYLE type='text/css' scoped>
+"
+"1","PRE.fansi SPAN {padding-top: .25em; padding-bottom: .25em};
+"
+"1","</STYLE>
+"

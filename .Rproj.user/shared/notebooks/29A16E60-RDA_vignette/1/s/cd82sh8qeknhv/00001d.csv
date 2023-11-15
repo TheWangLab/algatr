@@ -1,0 +1,3 @@
+"0",""
+"0","# Display results for only one environmental variable"
+"0","rda_table(cor_df, var = ""CA_rPCA2"", nrow = 5)"

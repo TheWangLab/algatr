@@ -1,0 +1,2 @@
+"0","# As displayed in our table from above, only six SNPs are visible on the lasso method plots as outliers:"
+"0","lfmm_manhattanplot(lasso_results$df, sig = 0.05)"

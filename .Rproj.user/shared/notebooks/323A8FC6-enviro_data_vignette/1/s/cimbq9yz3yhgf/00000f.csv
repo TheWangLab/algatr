@@ -1,0 +1,5 @@
+"0","# Once again, we can see that there are many pairs of variables that exceed the threshold"
+"0","check_result <- check_vals(wclim, liz_coords)"
+"2","Warning: No CRS found for the provided coordinates. Make sure the coordinates and the raster have the same projection (see function details or vignette)"
+"2","Warning: The extracted values for 25 pairs of variables had correlation coefficients > 0.7. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.
+"

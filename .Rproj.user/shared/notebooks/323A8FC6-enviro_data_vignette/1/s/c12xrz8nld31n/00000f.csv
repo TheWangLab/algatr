@@ -1,0 +1,4 @@
+"0","cors_env <- check_env(wclim)"
+"2","Warning: The extracted values for 19 pairs of variables had correlation coefficients > 0.7. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.
+"
+"0","# There are many pairs of layers that have correlation coefficients > 0.7 (the default threshold)"

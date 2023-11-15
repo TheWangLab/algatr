@@ -1,0 +1,2 @@
+"0","geo_dist <- geo_dist(liz_coords, type = ""Euclidean"")"
+"0","plot(geo_dist)"

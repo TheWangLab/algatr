@@ -1,0 +1,11 @@
+"0"," install.packages(""rworldmap"")
+"
+"2","Warning: restarting interrupted promise evaluation"
+"2","Warning:"
+"2"," error downloading 'https://bioconductor.org/packages/3.15/bioc/bin/windows/contrib/4.3/PACKAGES.rds' [curl: (22) The requested URL returned error: 404]
+"
+"2","Warning:"
+"2"," no MRAN records available from repository URL '/bin/windows/contrib/4.3'
+"
+"2","Error: package 'rworldmap' is not available
+"

@@ -1,0 +1,6 @@
+"0","# Download the DEM raster using the elevation_30s function
+# This will save a .tif file in your current dir
+dem <- elevation_30s(country = ""USA"", path = getwd())
+"
+"2","The geodata server seems to be off-line
+"

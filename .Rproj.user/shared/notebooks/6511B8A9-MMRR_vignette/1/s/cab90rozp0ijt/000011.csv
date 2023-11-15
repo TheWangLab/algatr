@@ -1,0 +1,2 @@
+"0","set.seed(10)"
+"0","results_full <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = ""full"")"

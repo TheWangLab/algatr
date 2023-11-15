@@ -1,0 +1,3 @@
+"0",""
+"0","# In the case of our partial RDA, there was only one RDA axis, so a histogram is generated"
+"0","rda_plot(mod_pRDA, rda_sig_z$rda_snps, rdaplot = TRUE, manhattan = FALSE, binwidth = 0.01)"

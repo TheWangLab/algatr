@@ -1,0 +1,2 @@
+"0","# Covariance plot"
+"0","mmrr_plot(Y, X, mod = results_full$mod, plot_type = ""cov"", stdz = TRUE)"

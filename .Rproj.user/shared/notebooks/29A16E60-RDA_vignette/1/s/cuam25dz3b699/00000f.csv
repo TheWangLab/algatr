@@ -1,0 +1,6 @@
+"0","# Extract environmental vars"
+"0","env <- raster::extract(CA_env, liz_coords)"
+"0",""
+"0","# Standardize environmental variables and make into dataframe"
+"0","env <- scale(env, center = TRUE, scale = TRUE)"
+"0","env <- data.frame(env)"

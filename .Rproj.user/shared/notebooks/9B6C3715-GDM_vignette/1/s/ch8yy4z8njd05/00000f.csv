@@ -1,0 +1,7 @@
+"0","gdm_full <- gdm_run("
+"0","  gendist = liz_gendist,"
+"0","  coords = liz_coords,"
+"0","  env = env,"
+"0","  model = ""full"","
+"0","  scale_gendist = TRUE"
+"0",")"

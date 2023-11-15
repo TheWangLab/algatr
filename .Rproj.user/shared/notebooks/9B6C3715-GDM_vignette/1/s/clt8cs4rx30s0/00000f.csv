@@ -1,0 +1,2 @@
+"0","# Extract the GDM map from the GDM model object"
+"0","map <- gdm_map(gdm_full$model, CA_env, liz_coords, plot_vars = FALSE)"

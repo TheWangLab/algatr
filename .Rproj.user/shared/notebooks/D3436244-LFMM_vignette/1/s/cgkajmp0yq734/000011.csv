@@ -1,0 +1,6 @@
+"0",""
+"0","# Be aware that if significant SNPs < nrow, function will return NULL object"
+"0","# lfmm_table(lasso_results$df, sig_only = FALSE, order = FALSE, nrow=10)"
+"0",""
+"0","# Similarly, the same will occur if you try to specify a variable that is not significantly associated with a SNP"
+"0","# lfmm_table(lasso_results$df, sig_only = TRUE, var = ""CA_rPCA1"")"
