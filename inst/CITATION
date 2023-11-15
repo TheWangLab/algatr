@@ -1,7 +1,7 @@
 bibentry(
   bibtype  = "Article",
   title    = "Individual-based landscape genomics for conservation: An analysis pipeline",
-  author   = c("Chambers, E. A.", "Bishop, A. P.", "Wang, I. J."),
+  author   = c("E. Anne Chambers", "Anusha P. Bishop", "Ian J. Wang"),
   journal  = "Molecular Ecology Resources",
   year     = "2023",
   volume   = "00",
