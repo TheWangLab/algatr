@@ -2,7 +2,7 @@ url: https://thewanglab.github.io/algatr/
 template:
   bootstrap: 5
 articles:
-- title: Articles
+- title: Vignettes
   navbar: ~
   contents:
   - data_processing_vignette
