@@ -8,7 +8,7 @@ bibentry(
                    comment = c(ORCID="0000-0003-1731-8683")),
             person("Ian", "Wang", , email = "ianwang@berkeley.edu", role = "aut",
                    comment = c(ORCID = "0000-0003-2554-9414"))
-            )
+            ),
   journal  = "Molecular Ecology Resources",
   year     = "2023",
   volume   = "00",
