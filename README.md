@@ -9,7 +9,7 @@ MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badg
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide a step-by-step,
-start-to-finish pipeline to perform core landscape genomics analysis on genomic datasets.
+start-to-finish pipeline to perform core landscape genomics analysis methods on genomic datasets.
 
 ## Citation
 
@@ -18,7 +18,7 @@ start-to-finish pipeline to perform core landscape genomics analysis on genomic 
 Please cite our paper if you use this package:
 
 **Chambers, E.A., Bishop, A.P., & Wang, I.J. (2023). Individual-based
-landscape genomics for conservation: An analysis pipeline. *Molecular
+landscape genomics for conservation: an analysis pipeline. *Molecular
 Ecology
 Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
 
