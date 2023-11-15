@@ -39,8 +39,12 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Install packages
+      - name: Install pkgdown
         run:  install.packages("pkgdown")
+        shell: Rscript {0}
+
+      - name: Install packages
+        run:  renv::restore()
         shell: Rscript {0}
 
       - name: Build site
