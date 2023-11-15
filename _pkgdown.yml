@@ -1,4 +1,16 @@
 url: https://thewanglab.github.io/algatr/
 template:
   bootstrap: 5
+articles:
+  - data_processing_vignette
+  - enviro_data_vignette
+  - Masking_vignette
+  - gen_dist_vignette
+  - TESS_vignette
+  - MMRR_vignette
+  - GDM_vignette
+  - RDA_vignette
+  - LFMM_vignette
+  - wingen_vignette
+  - alazygatr_vignette
 

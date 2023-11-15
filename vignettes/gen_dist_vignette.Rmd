@@ -1,8 +1,8 @@
 ---
-title: "gen_dist_vignette"
+title: "Genetic distances"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{gen_dist_vignette}
+  %\VignetteIndexEntry{Genetic distances}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,8 +1,8 @@
 ---
-title: "masking_vignette"
+title: "Masking"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{masking_vignette}
+  %\VignetteIndexEntry{Masking}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

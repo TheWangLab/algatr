@@ -1,8 +1,8 @@
 ---
-title: "data_processing_vignette"
+title: "Genetic data processing"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{data_processing_vignette}
+  %\VignetteIndexEntry{Genetic data processing}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
