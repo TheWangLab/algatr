@@ -9,6 +9,7 @@ on:
       - renv.lock
       - inst/CITATION
       - README.md
+      - _pkgdown.yml
     branches: [ "main" ]
 name: pkgdown
 
