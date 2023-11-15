@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: write
     container:
-      image: [ghcr.io/thewanglab/algatr:latest](http://ghcr.io/thewanglab/algatr:latest)
+      image: ghcr.io/thewanglab/algatr:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
