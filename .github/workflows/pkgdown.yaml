@@ -23,6 +23,9 @@ jobs:
       contents: write
     container:
       image: ghcr.io/thewanglab/algatr:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
