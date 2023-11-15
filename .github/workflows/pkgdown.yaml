@@ -39,8 +39,15 @@ jobs:
         with:
           use-public-rspm: true
 
-      - name: Restore dependencies with renv
-        run: Rscript -e 'renv::restore()'
+      - name: Install GitHub packages
+        run: |
+          install.packages("remotes")
+          install.packages("BiocManager")
+          remotes::install_github("bleutner/RStoolbox")
+          remotes::install_github("AnushaPB/wingen")
+          BiocManager::install("LEA") 
+          remotes::install_github("bcm-uga/TESS3_encho_sen")
+        shell: Rscript {0}
 
       - name: Setup R Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
