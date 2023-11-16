@@ -418,7 +418,7 @@ adjusted R2 values lower than specified are accepted).</p>
 <span><span class="co">#&gt; &lt;none&gt;          0.0000000000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            Df    AIC      F Pr(&gt;F)   </span></span>
-<span><span class="co">#&gt; + CA_rPCA2  1 264.09 2.0407  0.002 **</span></span>
+<span><span class="co">#&gt; + CA_rPCA2  1 264.09 2.0407  0.004 **</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -432,7 +432,7 @@ adjusted R2 values lower than specified are accepted).</p>
 <span><span class="co">#&gt; &lt;none&gt;           0.01962140</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            Df    AIC      F Pr(&gt;F)   </span></span>
-<span><span class="co">#&gt; + CA_rPCA3  1 263.97 2.0389  0.002 **</span></span>
+<span><span class="co">#&gt; + CA_rPCA3  1 263.97 2.0389  0.006 **</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -445,7 +445,7 @@ adjusted R2 values lower than specified are accepted).</p>
 <span><span class="co">#&gt; &lt;none&gt;           0.03919420</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            Df    AIC      F Pr(&gt;F)</span></span>
-<span><span class="co">#&gt; + CA_rPCA1  1 264.72 1.1691  0.184</span></span></code></pre></div>
+<span><span class="co">#&gt; + CA_rPCA1  1 264.72 1.1691   0.17</span></span></code></pre></div>
 <p>Let’s look at our best model, and see how it compares to our full
 model. There is also an additional element in the <code>mod_best</code>
 object, which are the results from an ANOVA-like permutation test. When
@@ -460,8 +460,8 @@ explains nearly as much as the RDA with all three.</p>
 <span><span class="co">#&gt; rda(formula = gen ~ CA_rPCA2 + CA_rPCA3, data = moddf)</span></span>
 <span><span class="va">mod_best</span><span class="op">$</span><span class="va">anova</span></span>
 <span><span class="co">#&gt;                   R2.adj Df    AIC      F Pr(&gt;F)   </span></span>
-<span><span class="co">#&gt; + CA_rPCA2      0.019621  1 264.09 2.0407  0.002 **</span></span>
-<span><span class="co">#&gt; + CA_rPCA3      0.039194  1 263.97 2.0389  0.002 **</span></span>
+<span><span class="co">#&gt; + CA_rPCA2      0.019621  1 264.09 2.0407  0.004 **</span></span>
+<span><span class="co">#&gt; + CA_rPCA3      0.039194  1 263.97 2.0389  0.006 **</span></span>
 <span><span class="co">#&gt; &lt;All variables&gt; 0.042433                           </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
@@ -819,7 +819,7 @@ function call in the table (<code>call_col</code>; defaults to
 <span><span class="co">#&gt; &lt;none&gt;           0.01962140</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            Df    AIC      F Pr(&gt;F)   </span></span>
-<span><span class="co">#&gt; + CA_rPCA3  1 263.97 2.0389  0.004 **</span></span>
+<span><span class="co">#&gt; + CA_rPCA3  1 263.97 2.0389  0.006 **</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -832,27 +832,27 @@ function call in the table (<code>call_col</code>; defaults to
 <span><span class="co">#&gt; &lt;none&gt;           0.03919420</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            Df    AIC      F Pr(&gt;F)</span></span>
-<span><span class="co">#&gt; + CA_rPCA1  1 264.72 1.1691   0.18</span></span></code></pre></div>
+<span><span class="co">#&gt; + CA_rPCA1  1 264.72 1.1691  0.186</span></span></code></pre></div>
 <p><img src="RDA_vignette_files/figure-html/varpart-1.png" width="700"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/rda_varpart_table.html">rda_varpart_table</a></span><span class="op">(</span><span class="va">varpart</span>, call_col <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div id="sgpyuxjbaz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sgpyuxjbaz table {
+<div id="xfzbhurona" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xfzbhurona table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#sgpyuxjbaz thead, #sgpyuxjbaz tbody, #sgpyuxjbaz tfoot, #sgpyuxjbaz tr, #sgpyuxjbaz td, #sgpyuxjbaz th {
+#xfzbhurona thead, #xfzbhurona tbody, #xfzbhurona tfoot, #xfzbhurona tr, #xfzbhurona td, #xfzbhurona th {
   border-style: none;
 }
 
-#sgpyuxjbaz p {
+#xfzbhurona p {
   margin: 0;
   padding: 0;
 }
 
-#sgpyuxjbaz .gt_table {
+#xfzbhurona .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -878,12 +878,12 @@ function call in the table (<code>call_col</code>; defaults to
   border-left-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_caption {
+#xfzbhurona .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#sgpyuxjbaz .gt_title {
+#xfzbhurona .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -895,7 +895,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-bottom-width: 0;
 }
 
-#sgpyuxjbaz .gt_subtitle {
+#xfzbhurona .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -907,7 +907,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-top-width: 0;
 }
 
-#sgpyuxjbaz .gt_heading {
+#xfzbhurona .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -919,13 +919,13 @@ function call in the table (<code>call_col</code>; defaults to
   border-right-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_bottom_border {
+#xfzbhurona .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_col_headings {
+#xfzbhurona .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -940,7 +940,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-right-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_col_heading {
+#xfzbhurona .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -960,7 +960,7 @@ function call in the table (<code>call_col</code>; defaults to
   overflow-x: hidden;
 }
 
-#sgpyuxjbaz .gt_column_spanner_outer {
+#xfzbhurona .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -972,15 +972,15 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 4px;
 }
 
-#sgpyuxjbaz .gt_column_spanner_outer:first-child {
+#xfzbhurona .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#sgpyuxjbaz .gt_column_spanner_outer:last-child {
+#xfzbhurona .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#sgpyuxjbaz .gt_column_spanner {
+#xfzbhurona .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -992,11 +992,11 @@ function call in the table (<code>call_col</code>; defaults to
   width: 100%;
 }
 
-#sgpyuxjbaz .gt_spanner_row {
+#xfzbhurona .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#sgpyuxjbaz .gt_group_heading {
+#xfzbhurona .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1022,7 +1022,7 @@ function call in the table (<code>call_col</code>; defaults to
   text-align: left;
 }
 
-#sgpyuxjbaz .gt_empty_group_heading {
+#xfzbhurona .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1037,15 +1037,15 @@ function call in the table (<code>call_col</code>; defaults to
   vertical-align: middle;
 }
 
-#sgpyuxjbaz .gt_from_md > :first-child {
+#xfzbhurona .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#sgpyuxjbaz .gt_from_md > :last-child {
+#xfzbhurona .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#sgpyuxjbaz .gt_row {
+#xfzbhurona .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1064,7 +1064,7 @@ function call in the table (<code>call_col</code>; defaults to
   overflow-x: hidden;
 }
 
-#sgpyuxjbaz .gt_stub {
+#xfzbhurona .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1077,7 +1077,7 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 5px;
 }
 
-#sgpyuxjbaz .gt_stub_row_group {
+#xfzbhurona .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1091,15 +1091,15 @@ function call in the table (<code>call_col</code>; defaults to
   vertical-align: top;
 }
 
-#sgpyuxjbaz .gt_row_group_first td {
+#xfzbhurona .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#sgpyuxjbaz .gt_row_group_first th {
+#xfzbhurona .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#sgpyuxjbaz .gt_summary_row {
+#xfzbhurona .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1109,16 +1109,16 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 5px;
 }
 
-#sgpyuxjbaz .gt_first_summary_row {
+#xfzbhurona .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_first_summary_row.thick {
+#xfzbhurona .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#sgpyuxjbaz .gt_last_summary_row {
+#xfzbhurona .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1128,7 +1128,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-bottom-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_grand_summary_row {
+#xfzbhurona .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1138,7 +1138,7 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 5px;
 }
 
-#sgpyuxjbaz .gt_first_grand_summary_row {
+#xfzbhurona .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1148,7 +1148,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-top-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_last_grand_summary_row_top {
+#xfzbhurona .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1158,11 +1158,11 @@ function call in the table (<code>call_col</code>; defaults to
   border-bottom-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_striped {
+#xfzbhurona .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#sgpyuxjbaz .gt_table_body {
+#xfzbhurona .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1171,7 +1171,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-bottom-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_footnotes {
+#xfzbhurona .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1185,7 +1185,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-right-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_footnote {
+#xfzbhurona .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1194,7 +1194,7 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 5px;
 }
 
-#sgpyuxjbaz .gt_sourcenotes {
+#xfzbhurona .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1208,7 +1208,7 @@ function call in the table (<code>call_col</code>; defaults to
   border-right-color: #D3D3D3;
 }
 
-#sgpyuxjbaz .gt_sourcenote {
+#xfzbhurona .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1216,63 +1216,63 @@ function call in the table (<code>call_col</code>; defaults to
   padding-right: 5px;
 }
 
-#sgpyuxjbaz .gt_left {
+#xfzbhurona .gt_left {
   text-align: left;
 }
 
-#sgpyuxjbaz .gt_center {
+#xfzbhurona .gt_center {
   text-align: center;
 }
 
-#sgpyuxjbaz .gt_right {
+#xfzbhurona .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#sgpyuxjbaz .gt_font_normal {
+#xfzbhurona .gt_font_normal {
   font-weight: normal;
 }
 
-#sgpyuxjbaz .gt_font_bold {
+#xfzbhurona .gt_font_bold {
   font-weight: bold;
 }
 
-#sgpyuxjbaz .gt_font_italic {
+#xfzbhurona .gt_font_italic {
   font-style: italic;
 }
 
-#sgpyuxjbaz .gt_super {
+#xfzbhurona .gt_super {
   font-size: 65%;
 }
 
-#sgpyuxjbaz .gt_footnote_marks {
+#xfzbhurona .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#sgpyuxjbaz .gt_asterisk {
+#xfzbhurona .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#sgpyuxjbaz .gt_indent_1 {
+#xfzbhurona .gt_indent_1 {
   text-indent: 5px;
 }
 
-#sgpyuxjbaz .gt_indent_2 {
+#xfzbhurona .gt_indent_2 {
   text-indent: 10px;
 }
 
-#sgpyuxjbaz .gt_indent_3 {
+#xfzbhurona .gt_indent_3 {
   text-indent: 15px;
 }
 
-#sgpyuxjbaz .gt_indent_4 {
+#xfzbhurona .gt_indent_4 {
   text-indent: 20px;
 }
 
-#sgpyuxjbaz .gt_indent_5 {
+#xfzbhurona .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1329,7 +1329,7 @@ function call in the table (<code>call_col</code>; defaults to
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #F5F7F4; color: #000000;">5.32</td>
 <td headers="R2" class="gt_row gt_right">0.04</td>
 <td headers="Adjusted R2" class="gt_row gt_right">0.01</td>
-<td headers="p (&gt;F)" class="gt_row gt_right">0.00</td>
+<td headers="p (&gt;F)" class="gt_row gt_right">0.01</td>
 <td headers="Prop. of explainable variance" class="gt_row gt_right">0.10</td>
 <td headers="Prop. of total variance" class="gt_row gt_right">0.04</td>
 </tr>
@@ -1631,23 +1631,23 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
 <span></span>
 <span><span class="co"># Make a table from these results (displaying only the first 5 rows):</span></span>
 <span><span class="fu"><a href="../reference/rda_table.html">rda_table</a></span><span class="op">(</span><span class="va">cor_df</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div id="dgzqyekvgi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dgzqyekvgi table {
+<div id="ulpeytxrhk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ulpeytxrhk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dgzqyekvgi thead, #dgzqyekvgi tbody, #dgzqyekvgi tfoot, #dgzqyekvgi tr, #dgzqyekvgi td, #dgzqyekvgi th {
+#ulpeytxrhk thead, #ulpeytxrhk tbody, #ulpeytxrhk tfoot, #ulpeytxrhk tr, #ulpeytxrhk td, #ulpeytxrhk th {
   border-style: none;
 }
 
-#dgzqyekvgi p {
+#ulpeytxrhk p {
   margin: 0;
   padding: 0;
 }
 
-#dgzqyekvgi .gt_table {
+#ulpeytxrhk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1673,12 +1673,12 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-left-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_caption {
+#ulpeytxrhk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dgzqyekvgi .gt_title {
+#ulpeytxrhk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1690,7 +1690,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-width: 0;
 }
 
-#dgzqyekvgi .gt_subtitle {
+#ulpeytxrhk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1702,7 +1702,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-width: 0;
 }
 
-#dgzqyekvgi .gt_heading {
+#ulpeytxrhk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1714,13 +1714,13 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_bottom_border {
+#ulpeytxrhk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_col_headings {
+#ulpeytxrhk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1735,7 +1735,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_col_heading {
+#ulpeytxrhk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1755,7 +1755,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#dgzqyekvgi .gt_column_spanner_outer {
+#ulpeytxrhk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1767,15 +1767,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 4px;
 }
 
-#dgzqyekvgi .gt_column_spanner_outer:first-child {
+#ulpeytxrhk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dgzqyekvgi .gt_column_spanner_outer:last-child {
+#ulpeytxrhk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dgzqyekvgi .gt_column_spanner {
+#ulpeytxrhk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1787,11 +1787,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   width: 100%;
 }
 
-#dgzqyekvgi .gt_spanner_row {
+#ulpeytxrhk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dgzqyekvgi .gt_group_heading {
+#ulpeytxrhk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1817,7 +1817,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   text-align: left;
 }
 
-#dgzqyekvgi .gt_empty_group_heading {
+#ulpeytxrhk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1832,15 +1832,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: middle;
 }
 
-#dgzqyekvgi .gt_from_md > :first-child {
+#ulpeytxrhk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dgzqyekvgi .gt_from_md > :last-child {
+#ulpeytxrhk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dgzqyekvgi .gt_row {
+#ulpeytxrhk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1859,7 +1859,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#dgzqyekvgi .gt_stub {
+#ulpeytxrhk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1872,7 +1872,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#dgzqyekvgi .gt_stub_row_group {
+#ulpeytxrhk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1886,15 +1886,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: top;
 }
 
-#dgzqyekvgi .gt_row_group_first td {
+#ulpeytxrhk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dgzqyekvgi .gt_row_group_first th {
+#ulpeytxrhk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dgzqyekvgi .gt_summary_row {
+#ulpeytxrhk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1904,16 +1904,16 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#dgzqyekvgi .gt_first_summary_row {
+#ulpeytxrhk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_first_summary_row.thick {
+#ulpeytxrhk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dgzqyekvgi .gt_last_summary_row {
+#ulpeytxrhk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1923,7 +1923,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_grand_summary_row {
+#ulpeytxrhk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1933,7 +1933,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#dgzqyekvgi .gt_first_grand_summary_row {
+#ulpeytxrhk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1943,7 +1943,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_last_grand_summary_row_top {
+#ulpeytxrhk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1953,11 +1953,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_striped {
+#ulpeytxrhk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dgzqyekvgi .gt_table_body {
+#ulpeytxrhk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1966,7 +1966,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_footnotes {
+#ulpeytxrhk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1980,7 +1980,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_footnote {
+#ulpeytxrhk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1989,7 +1989,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#dgzqyekvgi .gt_sourcenotes {
+#ulpeytxrhk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2003,7 +2003,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#dgzqyekvgi .gt_sourcenote {
+#ulpeytxrhk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2011,63 +2011,63 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#dgzqyekvgi .gt_left {
+#ulpeytxrhk .gt_left {
   text-align: left;
 }
 
-#dgzqyekvgi .gt_center {
+#ulpeytxrhk .gt_center {
   text-align: center;
 }
 
-#dgzqyekvgi .gt_right {
+#ulpeytxrhk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dgzqyekvgi .gt_font_normal {
+#ulpeytxrhk .gt_font_normal {
   font-weight: normal;
 }
 
-#dgzqyekvgi .gt_font_bold {
+#ulpeytxrhk .gt_font_bold {
   font-weight: bold;
 }
 
-#dgzqyekvgi .gt_font_italic {
+#ulpeytxrhk .gt_font_italic {
   font-style: italic;
 }
 
-#dgzqyekvgi .gt_super {
+#ulpeytxrhk .gt_super {
   font-size: 65%;
 }
 
-#dgzqyekvgi .gt_footnote_marks {
+#ulpeytxrhk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dgzqyekvgi .gt_asterisk {
+#ulpeytxrhk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dgzqyekvgi .gt_indent_1 {
+#ulpeytxrhk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dgzqyekvgi .gt_indent_2 {
+#ulpeytxrhk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dgzqyekvgi .gt_indent_3 {
+#ulpeytxrhk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dgzqyekvgi .gt_indent_4 {
+#ulpeytxrhk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dgzqyekvgi .gt_indent_5 {
+#ulpeytxrhk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2116,23 +2116,23 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Order by the strength of the correlation</span></span>
 <span><span class="fu"><a href="../reference/rda_table.html">rda_table</a></span><span class="op">(</span><span class="va">cor_df</span>, order <span class="op">=</span> <span class="cn">TRUE</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div id="nwmckaayft" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#nwmckaayft table {
+<div id="qmmvkwogdm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qmmvkwogdm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#nwmckaayft thead, #nwmckaayft tbody, #nwmckaayft tfoot, #nwmckaayft tr, #nwmckaayft td, #nwmckaayft th {
+#qmmvkwogdm thead, #qmmvkwogdm tbody, #qmmvkwogdm tfoot, #qmmvkwogdm tr, #qmmvkwogdm td, #qmmvkwogdm th {
   border-style: none;
 }
 
-#nwmckaayft p {
+#qmmvkwogdm p {
   margin: 0;
   padding: 0;
 }
 
-#nwmckaayft .gt_table {
+#qmmvkwogdm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2158,12 +2158,12 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-left-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_caption {
+#qmmvkwogdm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#nwmckaayft .gt_title {
+#qmmvkwogdm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2175,7 +2175,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-width: 0;
 }
 
-#nwmckaayft .gt_subtitle {
+#qmmvkwogdm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2187,7 +2187,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-width: 0;
 }
 
-#nwmckaayft .gt_heading {
+#qmmvkwogdm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2199,13 +2199,13 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_bottom_border {
+#qmmvkwogdm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_col_headings {
+#qmmvkwogdm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2220,7 +2220,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_col_heading {
+#qmmvkwogdm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2240,7 +2240,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#nwmckaayft .gt_column_spanner_outer {
+#qmmvkwogdm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2252,15 +2252,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 4px;
 }
 
-#nwmckaayft .gt_column_spanner_outer:first-child {
+#qmmvkwogdm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#nwmckaayft .gt_column_spanner_outer:last-child {
+#qmmvkwogdm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#nwmckaayft .gt_column_spanner {
+#qmmvkwogdm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2272,11 +2272,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   width: 100%;
 }
 
-#nwmckaayft .gt_spanner_row {
+#qmmvkwogdm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#nwmckaayft .gt_group_heading {
+#qmmvkwogdm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2302,7 +2302,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   text-align: left;
 }
 
-#nwmckaayft .gt_empty_group_heading {
+#qmmvkwogdm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2317,15 +2317,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: middle;
 }
 
-#nwmckaayft .gt_from_md > :first-child {
+#qmmvkwogdm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nwmckaayft .gt_from_md > :last-child {
+#qmmvkwogdm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nwmckaayft .gt_row {
+#qmmvkwogdm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2344,7 +2344,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#nwmckaayft .gt_stub {
+#qmmvkwogdm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2357,7 +2357,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#nwmckaayft .gt_stub_row_group {
+#qmmvkwogdm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2371,15 +2371,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: top;
 }
 
-#nwmckaayft .gt_row_group_first td {
+#qmmvkwogdm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#nwmckaayft .gt_row_group_first th {
+#qmmvkwogdm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#nwmckaayft .gt_summary_row {
+#qmmvkwogdm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2389,16 +2389,16 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#nwmckaayft .gt_first_summary_row {
+#qmmvkwogdm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_first_summary_row.thick {
+#qmmvkwogdm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#nwmckaayft .gt_last_summary_row {
+#qmmvkwogdm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2408,7 +2408,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_grand_summary_row {
+#qmmvkwogdm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2418,7 +2418,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#nwmckaayft .gt_first_grand_summary_row {
+#qmmvkwogdm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2428,7 +2428,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_last_grand_summary_row_top {
+#qmmvkwogdm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2438,11 +2438,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_striped {
+#qmmvkwogdm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#nwmckaayft .gt_table_body {
+#qmmvkwogdm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2451,7 +2451,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_footnotes {
+#qmmvkwogdm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2465,7 +2465,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_footnote {
+#qmmvkwogdm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2474,7 +2474,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#nwmckaayft .gt_sourcenotes {
+#qmmvkwogdm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2488,7 +2488,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#nwmckaayft .gt_sourcenote {
+#qmmvkwogdm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2496,63 +2496,63 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#nwmckaayft .gt_left {
+#qmmvkwogdm .gt_left {
   text-align: left;
 }
 
-#nwmckaayft .gt_center {
+#qmmvkwogdm .gt_center {
   text-align: center;
 }
 
-#nwmckaayft .gt_right {
+#qmmvkwogdm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nwmckaayft .gt_font_normal {
+#qmmvkwogdm .gt_font_normal {
   font-weight: normal;
 }
 
-#nwmckaayft .gt_font_bold {
+#qmmvkwogdm .gt_font_bold {
   font-weight: bold;
 }
 
-#nwmckaayft .gt_font_italic {
+#qmmvkwogdm .gt_font_italic {
   font-style: italic;
 }
 
-#nwmckaayft .gt_super {
+#qmmvkwogdm .gt_super {
   font-size: 65%;
 }
 
-#nwmckaayft .gt_footnote_marks {
+#qmmvkwogdm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#nwmckaayft .gt_asterisk {
+#qmmvkwogdm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#nwmckaayft .gt_indent_1 {
+#qmmvkwogdm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#nwmckaayft .gt_indent_2 {
+#qmmvkwogdm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#nwmckaayft .gt_indent_3 {
+#qmmvkwogdm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#nwmckaayft .gt_indent_4 {
+#qmmvkwogdm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#nwmckaayft .gt_indent_5 {
+#qmmvkwogdm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2601,23 +2601,23 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Only retain the top variable for each SNP based on the strength of the correlation</span></span>
 <span><span class="fu"><a href="../reference/rda_table.html">rda_table</a></span><span class="op">(</span><span class="va">cor_df</span>, top <span class="op">=</span> <span class="cn">TRUE</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div id="igrwozhche" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#igrwozhche table {
+<div id="kwtfzaccxk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kwtfzaccxk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#igrwozhche thead, #igrwozhche tbody, #igrwozhche tfoot, #igrwozhche tr, #igrwozhche td, #igrwozhche th {
+#kwtfzaccxk thead, #kwtfzaccxk tbody, #kwtfzaccxk tfoot, #kwtfzaccxk tr, #kwtfzaccxk td, #kwtfzaccxk th {
   border-style: none;
 }
 
-#igrwozhche p {
+#kwtfzaccxk p {
   margin: 0;
   padding: 0;
 }
 
-#igrwozhche .gt_table {
+#kwtfzaccxk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2643,12 +2643,12 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-left-color: #D3D3D3;
 }
 
-#igrwozhche .gt_caption {
+#kwtfzaccxk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#igrwozhche .gt_title {
+#kwtfzaccxk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2660,7 +2660,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-width: 0;
 }
 
-#igrwozhche .gt_subtitle {
+#kwtfzaccxk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2672,7 +2672,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-width: 0;
 }
 
-#igrwozhche .gt_heading {
+#kwtfzaccxk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2684,13 +2684,13 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#igrwozhche .gt_bottom_border {
+#kwtfzaccxk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#igrwozhche .gt_col_headings {
+#kwtfzaccxk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2705,7 +2705,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#igrwozhche .gt_col_heading {
+#kwtfzaccxk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2725,7 +2725,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#igrwozhche .gt_column_spanner_outer {
+#kwtfzaccxk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2737,15 +2737,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 4px;
 }
 
-#igrwozhche .gt_column_spanner_outer:first-child {
+#kwtfzaccxk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#igrwozhche .gt_column_spanner_outer:last-child {
+#kwtfzaccxk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#igrwozhche .gt_column_spanner {
+#kwtfzaccxk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2757,11 +2757,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   width: 100%;
 }
 
-#igrwozhche .gt_spanner_row {
+#kwtfzaccxk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#igrwozhche .gt_group_heading {
+#kwtfzaccxk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2787,7 +2787,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   text-align: left;
 }
 
-#igrwozhche .gt_empty_group_heading {
+#kwtfzaccxk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2802,15 +2802,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: middle;
 }
 
-#igrwozhche .gt_from_md > :first-child {
+#kwtfzaccxk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#igrwozhche .gt_from_md > :last-child {
+#kwtfzaccxk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#igrwozhche .gt_row {
+#kwtfzaccxk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2829,7 +2829,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#igrwozhche .gt_stub {
+#kwtfzaccxk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2842,7 +2842,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#igrwozhche .gt_stub_row_group {
+#kwtfzaccxk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2856,15 +2856,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: top;
 }
 
-#igrwozhche .gt_row_group_first td {
+#kwtfzaccxk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#igrwozhche .gt_row_group_first th {
+#kwtfzaccxk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#igrwozhche .gt_summary_row {
+#kwtfzaccxk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2874,16 +2874,16 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#igrwozhche .gt_first_summary_row {
+#kwtfzaccxk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#igrwozhche .gt_first_summary_row.thick {
+#kwtfzaccxk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#igrwozhche .gt_last_summary_row {
+#kwtfzaccxk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2893,7 +2893,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#igrwozhche .gt_grand_summary_row {
+#kwtfzaccxk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2903,7 +2903,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#igrwozhche .gt_first_grand_summary_row {
+#kwtfzaccxk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2913,7 +2913,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-color: #D3D3D3;
 }
 
-#igrwozhche .gt_last_grand_summary_row_top {
+#kwtfzaccxk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2923,11 +2923,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#igrwozhche .gt_striped {
+#kwtfzaccxk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#igrwozhche .gt_table_body {
+#kwtfzaccxk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2936,7 +2936,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#igrwozhche .gt_footnotes {
+#kwtfzaccxk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2950,7 +2950,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#igrwozhche .gt_footnote {
+#kwtfzaccxk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2959,7 +2959,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#igrwozhche .gt_sourcenotes {
+#kwtfzaccxk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2973,7 +2973,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#igrwozhche .gt_sourcenote {
+#kwtfzaccxk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2981,63 +2981,63 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#igrwozhche .gt_left {
+#kwtfzaccxk .gt_left {
   text-align: left;
 }
 
-#igrwozhche .gt_center {
+#kwtfzaccxk .gt_center {
   text-align: center;
 }
 
-#igrwozhche .gt_right {
+#kwtfzaccxk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#igrwozhche .gt_font_normal {
+#kwtfzaccxk .gt_font_normal {
   font-weight: normal;
 }
 
-#igrwozhche .gt_font_bold {
+#kwtfzaccxk .gt_font_bold {
   font-weight: bold;
 }
 
-#igrwozhche .gt_font_italic {
+#kwtfzaccxk .gt_font_italic {
   font-style: italic;
 }
 
-#igrwozhche .gt_super {
+#kwtfzaccxk .gt_super {
   font-size: 65%;
 }
 
-#igrwozhche .gt_footnote_marks {
+#kwtfzaccxk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#igrwozhche .gt_asterisk {
+#kwtfzaccxk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#igrwozhche .gt_indent_1 {
+#kwtfzaccxk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#igrwozhche .gt_indent_2 {
+#kwtfzaccxk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#igrwozhche .gt_indent_3 {
+#kwtfzaccxk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#igrwozhche .gt_indent_4 {
+#kwtfzaccxk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#igrwozhche .gt_indent_5 {
+#kwtfzaccxk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -3086,23 +3086,23 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Display results for only one environmental variable</span></span>
 <span><span class="fu"><a href="../reference/rda_table.html">rda_table</a></span><span class="op">(</span><span class="va">cor_df</span>, var <span class="op">=</span> <span class="st">"CA_rPCA2"</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div id="elxnovkrma" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#elxnovkrma table {
+<div id="fivkmmpwza" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fivkmmpwza table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#elxnovkrma thead, #elxnovkrma tbody, #elxnovkrma tfoot, #elxnovkrma tr, #elxnovkrma td, #elxnovkrma th {
+#fivkmmpwza thead, #fivkmmpwza tbody, #fivkmmpwza tfoot, #fivkmmpwza tr, #fivkmmpwza td, #fivkmmpwza th {
   border-style: none;
 }
 
-#elxnovkrma p {
+#fivkmmpwza p {
   margin: 0;
   padding: 0;
 }
 
-#elxnovkrma .gt_table {
+#fivkmmpwza .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3128,12 +3128,12 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-left-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_caption {
+#fivkmmpwza .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#elxnovkrma .gt_title {
+#fivkmmpwza .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3145,7 +3145,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-width: 0;
 }
 
-#elxnovkrma .gt_subtitle {
+#fivkmmpwza .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3157,7 +3157,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-width: 0;
 }
 
-#elxnovkrma .gt_heading {
+#fivkmmpwza .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3169,13 +3169,13 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_bottom_border {
+#fivkmmpwza .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_col_headings {
+#fivkmmpwza .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3190,7 +3190,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_col_heading {
+#fivkmmpwza .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3210,7 +3210,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#elxnovkrma .gt_column_spanner_outer {
+#fivkmmpwza .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3222,15 +3222,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 4px;
 }
 
-#elxnovkrma .gt_column_spanner_outer:first-child {
+#fivkmmpwza .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#elxnovkrma .gt_column_spanner_outer:last-child {
+#fivkmmpwza .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#elxnovkrma .gt_column_spanner {
+#fivkmmpwza .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3242,11 +3242,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   width: 100%;
 }
 
-#elxnovkrma .gt_spanner_row {
+#fivkmmpwza .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#elxnovkrma .gt_group_heading {
+#fivkmmpwza .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3272,7 +3272,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   text-align: left;
 }
 
-#elxnovkrma .gt_empty_group_heading {
+#fivkmmpwza .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3287,15 +3287,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: middle;
 }
 
-#elxnovkrma .gt_from_md > :first-child {
+#fivkmmpwza .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#elxnovkrma .gt_from_md > :last-child {
+#fivkmmpwza .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#elxnovkrma .gt_row {
+#fivkmmpwza .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3314,7 +3314,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   overflow-x: hidden;
 }
 
-#elxnovkrma .gt_stub {
+#fivkmmpwza .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3327,7 +3327,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#elxnovkrma .gt_stub_row_group {
+#fivkmmpwza .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3341,15 +3341,15 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   vertical-align: top;
 }
 
-#elxnovkrma .gt_row_group_first td {
+#fivkmmpwza .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#elxnovkrma .gt_row_group_first th {
+#fivkmmpwza .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#elxnovkrma .gt_summary_row {
+#fivkmmpwza .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3359,16 +3359,16 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#elxnovkrma .gt_first_summary_row {
+#fivkmmpwza .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_first_summary_row.thick {
+#fivkmmpwza .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#elxnovkrma .gt_last_summary_row {
+#fivkmmpwza .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3378,7 +3378,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_grand_summary_row {
+#fivkmmpwza .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3388,7 +3388,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#elxnovkrma .gt_first_grand_summary_row {
+#fivkmmpwza .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3398,7 +3398,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-top-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_last_grand_summary_row_top {
+#fivkmmpwza .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3408,11 +3408,11 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_striped {
+#fivkmmpwza .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#elxnovkrma .gt_table_body {
+#fivkmmpwza .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3421,7 +3421,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_footnotes {
+#fivkmmpwza .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3435,7 +3435,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_footnote {
+#fivkmmpwza .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3444,7 +3444,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#elxnovkrma .gt_sourcenotes {
+#fivkmmpwza .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3458,7 +3458,7 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   border-right-color: #D3D3D3;
 }
 
-#elxnovkrma .gt_sourcenote {
+#fivkmmpwza .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3466,63 +3466,63 @@ using <code><a href="../reference/rda_table.html">rda_table()</a></code>.</p>
   padding-right: 5px;
 }
 
-#elxnovkrma .gt_left {
+#fivkmmpwza .gt_left {
   text-align: left;
 }
 
-#elxnovkrma .gt_center {
+#fivkmmpwza .gt_center {
   text-align: center;
 }
 
-#elxnovkrma .gt_right {
+#fivkmmpwza .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#elxnovkrma .gt_font_normal {
+#fivkmmpwza .gt_font_normal {
   font-weight: normal;
 }
 
-#elxnovkrma .gt_font_bold {
+#fivkmmpwza .gt_font_bold {
   font-weight: bold;
 }
 
-#elxnovkrma .gt_font_italic {
+#fivkmmpwza .gt_font_italic {
   font-style: italic;
 }
 
-#elxnovkrma .gt_super {
+#fivkmmpwza .gt_super {
   font-size: 65%;
 }
 
-#elxnovkrma .gt_footnote_marks {
+#fivkmmpwza .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#elxnovkrma .gt_asterisk {
+#fivkmmpwza .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#elxnovkrma .gt_indent_1 {
+#fivkmmpwza .gt_indent_1 {
   text-indent: 5px;
 }
 
-#elxnovkrma .gt_indent_2 {
+#fivkmmpwza .gt_indent_2 {
   text-indent: 10px;
 }
 
-#elxnovkrma .gt_indent_3 {
+#fivkmmpwza .gt_indent_3 {
   text-indent: 15px;
 }
 
-#elxnovkrma .gt_indent_4 {
+#fivkmmpwza .gt_indent_4 {
   text-indent: 20px;
 }
 
-#elxnovkrma .gt_indent_5 {
+#fivkmmpwza .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -3609,23 +3609,23 @@ selection and the p-value outlier method:</p>
 <span>                             cortest <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                             varpart <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-1.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-2.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-3.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-4.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-5.png" width="700" style="display: block; margin: auto;"><div id="gjfxjrvtjl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#gjfxjrvtjl table {
+<img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-1.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-2.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-3.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-4.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/simple%20RDA%20do%20everything-5.png" width="700" style="display: block; margin: auto;"><div id="xnscgwykwx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xnscgwykwx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#gjfxjrvtjl thead, #gjfxjrvtjl tbody, #gjfxjrvtjl tfoot, #gjfxjrvtjl tr, #gjfxjrvtjl td, #gjfxjrvtjl th {
+#xnscgwykwx thead, #xnscgwykwx tbody, #xnscgwykwx tfoot, #xnscgwykwx tr, #xnscgwykwx td, #xnscgwykwx th {
   border-style: none;
 }
 
-#gjfxjrvtjl p {
+#xnscgwykwx p {
   margin: 0;
   padding: 0;
 }
 
-#gjfxjrvtjl .gt_table {
+#xnscgwykwx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3651,12 +3651,12 @@ selection and the p-value outlier method:</p>
   border-left-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_caption {
+#xnscgwykwx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#gjfxjrvtjl .gt_title {
+#xnscgwykwx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3668,7 +3668,7 @@ selection and the p-value outlier method:</p>
   border-bottom-width: 0;
 }
 
-#gjfxjrvtjl .gt_subtitle {
+#xnscgwykwx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3680,7 +3680,7 @@ selection and the p-value outlier method:</p>
   border-top-width: 0;
 }
 
-#gjfxjrvtjl .gt_heading {
+#xnscgwykwx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3692,13 +3692,13 @@ selection and the p-value outlier method:</p>
   border-right-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_bottom_border {
+#xnscgwykwx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_col_headings {
+#xnscgwykwx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3713,7 +3713,7 @@ selection and the p-value outlier method:</p>
   border-right-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_col_heading {
+#xnscgwykwx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3733,7 +3733,7 @@ selection and the p-value outlier method:</p>
   overflow-x: hidden;
 }
 
-#gjfxjrvtjl .gt_column_spanner_outer {
+#xnscgwykwx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3745,15 +3745,15 @@ selection and the p-value outlier method:</p>
   padding-right: 4px;
 }
 
-#gjfxjrvtjl .gt_column_spanner_outer:first-child {
+#xnscgwykwx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#gjfxjrvtjl .gt_column_spanner_outer:last-child {
+#xnscgwykwx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#gjfxjrvtjl .gt_column_spanner {
+#xnscgwykwx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3765,11 +3765,11 @@ selection and the p-value outlier method:</p>
   width: 100%;
 }
 
-#gjfxjrvtjl .gt_spanner_row {
+#xnscgwykwx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#gjfxjrvtjl .gt_group_heading {
+#xnscgwykwx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3795,7 +3795,7 @@ selection and the p-value outlier method:</p>
   text-align: left;
 }
 
-#gjfxjrvtjl .gt_empty_group_heading {
+#xnscgwykwx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3810,15 +3810,15 @@ selection and the p-value outlier method:</p>
   vertical-align: middle;
 }
 
-#gjfxjrvtjl .gt_from_md > :first-child {
+#xnscgwykwx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#gjfxjrvtjl .gt_from_md > :last-child {
+#xnscgwykwx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#gjfxjrvtjl .gt_row {
+#xnscgwykwx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3837,7 +3837,7 @@ selection and the p-value outlier method:</p>
   overflow-x: hidden;
 }
 
-#gjfxjrvtjl .gt_stub {
+#xnscgwykwx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3850,7 +3850,7 @@ selection and the p-value outlier method:</p>
   padding-right: 5px;
 }
 
-#gjfxjrvtjl .gt_stub_row_group {
+#xnscgwykwx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3864,15 +3864,15 @@ selection and the p-value outlier method:</p>
   vertical-align: top;
 }
 
-#gjfxjrvtjl .gt_row_group_first td {
+#xnscgwykwx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#gjfxjrvtjl .gt_row_group_first th {
+#xnscgwykwx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#gjfxjrvtjl .gt_summary_row {
+#xnscgwykwx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3882,16 +3882,16 @@ selection and the p-value outlier method:</p>
   padding-right: 5px;
 }
 
-#gjfxjrvtjl .gt_first_summary_row {
+#xnscgwykwx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_first_summary_row.thick {
+#xnscgwykwx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#gjfxjrvtjl .gt_last_summary_row {
+#xnscgwykwx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3901,7 +3901,7 @@ selection and the p-value outlier method:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_grand_summary_row {
+#xnscgwykwx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3911,7 +3911,7 @@ selection and the p-value outlier method:</p>
   padding-right: 5px;
 }
 
-#gjfxjrvtjl .gt_first_grand_summary_row {
+#xnscgwykwx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3921,7 +3921,7 @@ selection and the p-value outlier method:</p>
   border-top-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_last_grand_summary_row_top {
+#xnscgwykwx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3931,11 +3931,11 @@ selection and the p-value outlier method:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_striped {
+#xnscgwykwx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#gjfxjrvtjl .gt_table_body {
+#xnscgwykwx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3944,7 +3944,7 @@ selection and the p-value outlier method:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_footnotes {
+#xnscgwykwx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3958,7 +3958,7 @@ selection and the p-value outlier method:</p>
   border-right-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_footnote {
+#xnscgwykwx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3967,7 +3967,7 @@ selection and the p-value outlier method:</p>
   padding-right: 5px;
 }
 
-#gjfxjrvtjl .gt_sourcenotes {
+#xnscgwykwx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3981,7 +3981,7 @@ selection and the p-value outlier method:</p>
   border-right-color: #D3D3D3;
 }
 
-#gjfxjrvtjl .gt_sourcenote {
+#xnscgwykwx .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3989,63 +3989,63 @@ selection and the p-value outlier method:</p>
   padding-right: 5px;
 }
 
-#gjfxjrvtjl .gt_left {
+#xnscgwykwx .gt_left {
   text-align: left;
 }
 
-#gjfxjrvtjl .gt_center {
+#xnscgwykwx .gt_center {
   text-align: center;
 }
 
-#gjfxjrvtjl .gt_right {
+#xnscgwykwx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#gjfxjrvtjl .gt_font_normal {
+#xnscgwykwx .gt_font_normal {
   font-weight: normal;
 }
 
-#gjfxjrvtjl .gt_font_bold {
+#xnscgwykwx .gt_font_bold {
   font-weight: bold;
 }
 
-#gjfxjrvtjl .gt_font_italic {
+#xnscgwykwx .gt_font_italic {
   font-style: italic;
 }
 
-#gjfxjrvtjl .gt_super {
+#xnscgwykwx .gt_super {
   font-size: 65%;
 }
 
-#gjfxjrvtjl .gt_footnote_marks {
+#xnscgwykwx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#gjfxjrvtjl .gt_asterisk {
+#xnscgwykwx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#gjfxjrvtjl .gt_indent_1 {
+#xnscgwykwx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#gjfxjrvtjl .gt_indent_2 {
+#xnscgwykwx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#gjfxjrvtjl .gt_indent_3 {
+#xnscgwykwx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#gjfxjrvtjl .gt_indent_4 {
+#xnscgwykwx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#gjfxjrvtjl .gt_indent_5 {
+#xnscgwykwx .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -4229,12 +4229,12 @@ default, which is three axes (<code>nPC</code>):</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1412203882 [1] “*************************************” [1] “*
+<p>[1] 399176761 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1412203882
+    -s (seed random init)                      399176761
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4251,14 +4251,15 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run1/tmp_r1.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94318894024042
+    -s (seed random init)                  4607182419199194169
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [=================] Number of iterations: 46</p>
-<p>Least-square error: 8593.133631 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [=====================] Number of iterations:
+56</p>
+<p>Least-square error: 8534.294521 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run1/tmp_r1.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run1/tmp_r1.3.G: OK.</p>
@@ -4273,17 +4274,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run1/tmp_r1.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.253831 Cross-Entropy (masked data):
-0.447279 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.256109 Cross-Entropy (masked data):
+0.411175 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1772287745 [1] “*************************************” [1] “*
+<p>[1] 1198227957 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1772287745
+    -s (seed random init)                      1198227957
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4300,15 +4301,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run2/tmp_r2.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94319254107905
+    -s (seed random init)                  94438939132405
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [===================] Number of iterations:
-52</p>
-<p>Least-square error: 8405.713921 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [=============] Number of iterations: 36</p>
+<p>Least-square error: 8517.353414 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run2/tmp_r2.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run2/tmp_r2.3.G: OK.</p>
@@ -4323,17 +4323,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run2/tmp_r2.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.253039 Cross-Entropy (masked data):
-0.452078 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.255232 Cross-Entropy (masked data):
+0.376351 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1681147514 [1] “*************************************” [1] “*
+<p>[1] 1707694936 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1681147514
+    -s (seed random init)                      1707694936
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4350,14 +4350,15 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run3/tmp_r3.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94319162967674
+    -s (seed random init)                  94439448599384
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [============] Number of iterations: 33</p>
-<p>Least-square error: 8534.707733 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [====================] Number of iterations:
+54</p>
+<p>Least-square error: 8611.373759 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run3/tmp_r3.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run3/tmp_r3.3.G: OK.</p>
@@ -4372,17 +4373,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run3/tmp_r3.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.25399 Cross-Entropy (masked data):
-0.407423 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.255809 Cross-Entropy (masked data):
+0.402817 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1794338986 [1] “*************************************” [1] “*
+<p>[1] 134698567 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1794338986
+    -s (seed random init)                      134698567
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4399,15 +4400,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run4/tmp_r4.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94319276159146
+    -s (seed random init)                  94437875603015
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [============================] Number of
-iterations: 74</p>
-<p>Least-square error: 8591.207658 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [===========] Number of iterations: 29</p>
+<p>Least-square error: 8529.540422 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run4/tmp_r4.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run4/tmp_r4.3.G: OK.</p>
@@ -4422,17 +4422,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run4/tmp_r4.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.255831 Cross-Entropy (masked data):
-0.416176 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.253517 Cross-Entropy (masked data):
+0.468345 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 495071201 [1] “*************************************” [1] “*
+<p>[1] 476753329 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      495071201
+    -s (seed random init)                      476753329
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4449,14 +4449,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run5/tmp_r5.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  4607182419295088609
+    -s (seed random init)                  4607182419276770737
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [================] Number of iterations: 44</p>
-<p>Least-square error: 8557.293707 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [===========] Number of iterations: 29</p>
+<p>Least-square error: 8647.491959 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run5/tmp_r5.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run5/tmp_r5.3.G: OK.</p>
@@ -4471,17 +4471,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run5/tmp_r5.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.255726 Cross-Entropy (masked data):
-0.379573 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.256319 Cross-Entropy (masked data):
+0.382352 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 2122147195 [1] “*************************************” [1] “*
+<p>[1] 269016716 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      2122147195
+    -s (seed random init)                      269016716
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4498,14 +4498,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run6/tmp_r6.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  2122147195
+    -s (seed random init)                  94438009921164
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [============] Number of iterations: 31</p>
-<p>Least-square error: 8428.076646 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [==============] Number of iterations: 37</p>
+<p>Least-square error: 8648.239077 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run6/tmp_r6.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run6/tmp_r6.3.G: OK.</p>
@@ -4520,17 +4520,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run6/tmp_r6.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.253603 Cross-Entropy (masked data):
-0.417907 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.254486 Cross-Entropy (masked data):
+0.47207 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1878452214 [1] “*************************************” [1] “*
+<p>[1] 747104738 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1878452214
+    -s (seed random init)                      747104738
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4547,14 +4547,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run7/tmp_r7.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  4617315519840053238
+    -s (seed random init)                  4617315518708705762
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [=========] Number of iterations: 25</p>
-<p>Least-square error: 8524.129373 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [===============] Number of iterations: 41</p>
+<p>Least-square error: 8527.267450 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run7/tmp_r7.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run7/tmp_r7.3.G: OK.</p>
@@ -4569,17 +4569,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run7/tmp_r7.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.256076 Cross-Entropy (masked data):
-0.356501 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.25482 Cross-Entropy (masked data):
+0.408421 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 1017498053 [1] “*************************************” [1] “*
+<p>[1] 362263075 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      1017498053
+    -s (seed random init)                      362263075
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4596,15 +4596,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run8/tmp_r8.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94318499318213
+    -s (seed random init)                  94438103167523
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [===================] Number of iterations:
-51</p>
-<p>Least-square error: 8541.256310 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [===========] Number of iterations: 30</p>
+<p>Least-square error: 8560.326119 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run8/tmp_r8.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run8/tmp_r8.3.G: OK.</p>
@@ -4619,17 +4618,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run8/tmp_r8.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.254705 Cross-Entropy (masked data):
-0.457877 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.255021 Cross-Entropy (masked data):
+0.439895 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 545764186 [1] “*************************************” [1] “*
+<p>[1] 578465654 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      545764186
+    -s (seed random init)                      578465654
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4646,15 +4645,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run9/tmp_r9.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94318027584346
+    -s (seed random init)                  94438319370102
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [=====================] Number of iterations:
-55</p>
-<p>Least-square error: 8598.709152 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [==========] Number of iterations: 27</p>
+<p>Least-square error: 8576.023342 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run9/tmp_r9.3.Q: OK. Write
 ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run9/tmp_r9.3.G: OK.</p>
@@ -4669,17 +4667,17 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run9/tmp_r9.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.255704 Cross-Entropy (masked data):
-0.414649 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.256374 Cross-Entropy (masked data):
+0.398809 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
-<p>[1] 867467714 [1] “*************************************” [1] “*
+<p>[1] 477484450 [1] “*************************************” [1] “*
 create.dataset <em>” [1] ”</em>************************************”
 summary of the options:</p>
 <pre><code>    -n (number of individuals)                 53
     -L (number of loci)                        1000
-    -s (seed random init)                      867467714
+    -s (seed random init)                      477484450
     -r (percentage of masked data)             0.05
     -x (genotype file in .geno format)         /__w/algatr/algatr/vignettes/tmp.geno
     -o (output file in .geno format)           /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno</code></pre>
@@ -4696,14 +4694,14 @@ summary of the options:</p>
     -g (ancestral frequencies file)        /__w/algatr/algatr/vignettes/tmp.snmf/K3/run10/tmp_r10.3.G
     -i (number max of iterations)          200
     -a (regularization parameter)          10
-    -s (seed random init)                  94318349287874
+    -s (seed random init)                  94438218388898
     -e (tolerance error)                   1E-05
     -p (number of processes)               1
     - diploid</code></pre>
 <p>Read genotype file
 /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno: OK.</p>
-<p>Main algorithm: [ ] [============] Number of iterations: 32</p>
-<p>Least-square error: 8553.940032 Write individual ancestry coefficient
+<p>Main algorithm: [ ] [==================] Number of iterations: 48</p>
+<p>Least-square error: 8537.770346 Write individual ancestry coefficient
 file /__w/algatr/algatr/vignettes/tmp.snmf/K3/run10/tmp_r10.3.Q: OK.
 Write ancestral allele frequency coefficient file
 /__w/algatr/algatr/vignettes/tmp.snmf/K3/run10/tmp_r10.3.G: OK.</p>
@@ -4718,8 +4716,8 @@ of the options:</p>
     -g (ancestral frequencies)         /__w/algatr/algatr/vignettes/tmp.snmf/K3/run10/tmp_r10.3.G
     -i (with masked genotypes)         /__w/algatr/algatr/vignettes/tmp.snmf/masked/tmp_I.geno
     - diploid</code></pre>
-<p>Cross-Entropy (all data): 0.254347 Cross-Entropy (masked data):
-0.422882 The project is saved into : tmp.snmfProject</p>
+<p>Cross-Entropy (all data): 0.257624 Cross-Entropy (masked data):
+0.336577 The project is saved into : tmp.snmfProject</p>
 <p>To load the project, use: project =
 load.snmfProject(“tmp.snmfProject”)</p>
 <p>To remove the project, use: remove.snmfProject(“tmp.snmfProject”)</p>
@@ -4729,62 +4727,62 @@ Conversion from the geno format to the lfmm format” [1]
 <pre><code>- number of detected individuals:   53
 - number of detected loci:      1000</code></pre>
 <p>Missing genotype imputation for K = 3 Missing genotype imputation for
-run = 7 Results are written in the file: ./tmp.lfmm_imputed.lfmm Step:
+run = 10 Results are written in the file: ./tmp.lfmm_imputed.lfmm Step:
 R2.adj= 0 Call: gen ~ 1</p>
 <pre><code><span>            <span class="va">R2.adjusted</span></span></code></pre>
-<p><all variables> 0.067475404 + CA_rPCA2 0.022962352 + CA_rPCA3
-0.021171057 + CA_rPCA1 0.006508832 <none> 0.000000000</none></all></p>
+<p><all variables> 0.064317889 + CA_rPCA3 0.022301696 + CA_rPCA2
+0.021082722 + CA_rPCA1 0.004465551 <none> 0.000000000</none></all></p>
 <pre><code>       Df    AIC      F Pr(&gt;F)   </code></pre>
 <ul>
 <li>
-<h3 id="ca_rpca2-1-269.22-2.2221-0.008">CA_rPCA2 1 269.22 2.2221
-0.008 **</h3>
+<h3 id="ca_rpca3-1-269.46-2.1861-0.006">CA_rPCA3 1 269.46 2.1861
+0.006 **</h3>
 Signif. codes: 0 ‘<em><strong>’ 0.001 ’</strong>’ 0.01 ’</em>’ 0.05 ‘.’
 0.1 ’ ’ 1</li>
 </ul>
-<p>Step: R2.adj= 0.02296235 Call: gen ~ CA_rPCA2</p>
+<p>Step: R2.adj= 0.0223017 Call: gen ~ CA_rPCA3</p>
 <pre><code><span>            <span class="va">R2.adjusted</span></span></code></pre>
-<p><all variables> 0.06747540 + CA_rPCA3 0.05485288 + CA_rPCA1
-0.03048390 <none> 0.02296235</none></all></p>
-<pre><code>       Df    AIC      F Pr(&gt;F)   </code></pre>
+<p><all variables> 0.06431789 + CA_rPCA2 0.05398314 + CA_rPCA1
+0.02774911 <none> 0.02230170</none></all></p>
+<pre><code>       Df    AIC     F Pr(&gt;F)   </code></pre>
 <ul>
 <li>
-<h3 id="ca_rpca3-1-268.41-2.7208-0.002">CA_rPCA3 1 268.41 2.7208
-0.002 **</h3>
+<h3 id="ca_rpca2-1-268.66-2.708-0.002">CA_rPCA2 1 268.66 2.708 0.002
+**</h3>
 Signif. codes: 0 ‘<em><strong>’ 0.001 ’</strong>’ 0.01 ’</em>’ 0.05 ‘.’
 0.1 ’ ’ 1</li>
 </ul>
-<p>Step: R2.adj= 0.05485288 Call: gen ~ CA_rPCA2 + CA_rPCA3</p>
+<p>Step: R2.adj= 0.05398314 Call: gen ~ CA_rPCA3 + CA_rPCA2</p>
 <pre><code><span>            <span class="va">R2.adjusted</span></span></code></pre>
-<p><all variables> 0.06747540 + CA_rPCA1 0.06747540 <none>
-0.05485288</none></all></p>
+<p><all variables> 0.06431789 + CA_rPCA1 0.06431789 <none>
+0.05398314</none></all></p>
 <pre><code>       Df    AIC      F Pr(&gt;F)  </code></pre>
 <ul>
 <li>
-<h3 id="ca_rpca1-1-268.63-1.6768-0.014">CA_rPCA1 1 268.63 1.6768
-0.014 *</h3>
+<h3 id="ca_rpca1-1-269.01-1.5523-0.05">CA_rPCA1 1 269.01 1.5523 0.05
+*</h3>
 Signif. codes: 0 ‘<em><strong>’ 0.001 ’</strong>’ 0.01 ’</em>’ 0.05 ‘.’
 0.1 ’ ’ 1</li>
 </ul>
-<p>Step: R2.adj= 0.0674754 Call: gen ~ CA_rPCA2 + CA_rPCA3 +
+<p>Step: R2.adj= 0.06431789 Call: gen ~ CA_rPCA3 + CA_rPCA2 +
 CA_rPCA1</p>
-<img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-1.png" width="700" style="display: block; margin: auto;"><div id="kzieoggukj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kzieoggukj table {
+<img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-1.png" width="700" style="display: block; margin: auto;"><div id="ypevrdzryb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ypevrdzryb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kzieoggukj thead, #kzieoggukj tbody, #kzieoggukj tfoot, #kzieoggukj tr, #kzieoggukj td, #kzieoggukj th {
+#ypevrdzryb thead, #ypevrdzryb tbody, #ypevrdzryb tfoot, #ypevrdzryb tr, #ypevrdzryb td, #ypevrdzryb th {
   border-style: none;
 }
 
-#kzieoggukj p {
+#ypevrdzryb p {
   margin: 0;
   padding: 0;
 }
 
-#kzieoggukj .gt_table {
+#ypevrdzryb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -4810,12 +4808,12 @@ CA_rPCA1</p>
   border-left-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_caption {
+#ypevrdzryb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kzieoggukj .gt_title {
+#ypevrdzryb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -4827,7 +4825,7 @@ CA_rPCA1</p>
   border-bottom-width: 0;
 }
 
-#kzieoggukj .gt_subtitle {
+#ypevrdzryb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -4839,7 +4837,7 @@ CA_rPCA1</p>
   border-top-width: 0;
 }
 
-#kzieoggukj .gt_heading {
+#ypevrdzryb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -4851,13 +4849,13 @@ CA_rPCA1</p>
   border-right-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_bottom_border {
+#ypevrdzryb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_col_headings {
+#ypevrdzryb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -4872,7 +4870,7 @@ CA_rPCA1</p>
   border-right-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_col_heading {
+#ypevrdzryb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4892,7 +4890,7 @@ CA_rPCA1</p>
   overflow-x: hidden;
 }
 
-#kzieoggukj .gt_column_spanner_outer {
+#ypevrdzryb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4904,15 +4902,15 @@ CA_rPCA1</p>
   padding-right: 4px;
 }
 
-#kzieoggukj .gt_column_spanner_outer:first-child {
+#ypevrdzryb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kzieoggukj .gt_column_spanner_outer:last-child {
+#ypevrdzryb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kzieoggukj .gt_column_spanner {
+#ypevrdzryb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -4924,11 +4922,11 @@ CA_rPCA1</p>
   width: 100%;
 }
 
-#kzieoggukj .gt_spanner_row {
+#ypevrdzryb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kzieoggukj .gt_group_heading {
+#ypevrdzryb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4954,7 +4952,7 @@ CA_rPCA1</p>
   text-align: left;
 }
 
-#kzieoggukj .gt_empty_group_heading {
+#ypevrdzryb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -4969,15 +4967,15 @@ CA_rPCA1</p>
   vertical-align: middle;
 }
 
-#kzieoggukj .gt_from_md > :first-child {
+#ypevrdzryb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kzieoggukj .gt_from_md > :last-child {
+#ypevrdzryb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kzieoggukj .gt_row {
+#ypevrdzryb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4996,7 +4994,7 @@ CA_rPCA1</p>
   overflow-x: hidden;
 }
 
-#kzieoggukj .gt_stub {
+#ypevrdzryb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5009,7 +5007,7 @@ CA_rPCA1</p>
   padding-right: 5px;
 }
 
-#kzieoggukj .gt_stub_row_group {
+#ypevrdzryb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5023,15 +5021,15 @@ CA_rPCA1</p>
   vertical-align: top;
 }
 
-#kzieoggukj .gt_row_group_first td {
+#ypevrdzryb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kzieoggukj .gt_row_group_first th {
+#ypevrdzryb .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kzieoggukj .gt_summary_row {
+#ypevrdzryb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -5041,16 +5039,16 @@ CA_rPCA1</p>
   padding-right: 5px;
 }
 
-#kzieoggukj .gt_first_summary_row {
+#ypevrdzryb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_first_summary_row.thick {
+#ypevrdzryb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kzieoggukj .gt_last_summary_row {
+#ypevrdzryb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5060,7 +5058,7 @@ CA_rPCA1</p>
   border-bottom-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_grand_summary_row {
+#ypevrdzryb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -5070,7 +5068,7 @@ CA_rPCA1</p>
   padding-right: 5px;
 }
 
-#kzieoggukj .gt_first_grand_summary_row {
+#ypevrdzryb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5080,7 +5078,7 @@ CA_rPCA1</p>
   border-top-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_last_grand_summary_row_top {
+#ypevrdzryb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5090,11 +5088,11 @@ CA_rPCA1</p>
   border-bottom-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_striped {
+#ypevrdzryb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kzieoggukj .gt_table_body {
+#ypevrdzryb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5103,7 +5101,7 @@ CA_rPCA1</p>
   border-bottom-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_footnotes {
+#ypevrdzryb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -5117,7 +5115,7 @@ CA_rPCA1</p>
   border-right-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_footnote {
+#ypevrdzryb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -5126,7 +5124,7 @@ CA_rPCA1</p>
   padding-right: 5px;
 }
 
-#kzieoggukj .gt_sourcenotes {
+#ypevrdzryb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -5140,7 +5138,7 @@ CA_rPCA1</p>
   border-right-color: #D3D3D3;
 }
 
-#kzieoggukj .gt_sourcenote {
+#ypevrdzryb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -5148,63 +5146,63 @@ CA_rPCA1</p>
   padding-right: 5px;
 }
 
-#kzieoggukj .gt_left {
+#ypevrdzryb .gt_left {
   text-align: left;
 }
 
-#kzieoggukj .gt_center {
+#ypevrdzryb .gt_center {
   text-align: center;
 }
 
-#kzieoggukj .gt_right {
+#ypevrdzryb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kzieoggukj .gt_font_normal {
+#ypevrdzryb .gt_font_normal {
   font-weight: normal;
 }
 
-#kzieoggukj .gt_font_bold {
+#ypevrdzryb .gt_font_bold {
   font-weight: bold;
 }
 
-#kzieoggukj .gt_font_italic {
+#ypevrdzryb .gt_font_italic {
   font-style: italic;
 }
 
-#kzieoggukj .gt_super {
+#ypevrdzryb .gt_super {
   font-size: 65%;
 }
 
-#kzieoggukj .gt_footnote_marks {
+#ypevrdzryb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kzieoggukj .gt_asterisk {
+#ypevrdzryb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kzieoggukj .gt_indent_1 {
+#ypevrdzryb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kzieoggukj .gt_indent_2 {
+#ypevrdzryb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kzieoggukj .gt_indent_3 {
+#ypevrdzryb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kzieoggukj .gt_indent_4 {
+#ypevrdzryb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kzieoggukj .gt_indent_5 {
+#ypevrdzryb .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -5245,7 +5243,7 @@ Prop. of total variance
 Full model
 </td>
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #DCF1D7; color: #000000;">
-71.02
+71.31
 </td>
 <td headers="R2" class="gt_row gt_right">
 0.45
@@ -5268,45 +5266,45 @@ Full model
 Pure enviro. model
 </td>
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #F4F6F4; color: #000000;">
-6.99
+7.17
 </td>
 <td headers="R2" class="gt_row gt_right">
-0.04
+0.05
 </td>
 <td headers="Adjusted R2" class="gt_row gt_right">
 0.01
 </td>
 <td headers="p (&gt;F)" class="gt_row gt_right">
-0.02
+0.01
 </td>
 <td headers="Prop. of explainable variance" class="gt_row gt_right">
 0.10
 </td>
 <td headers="Prop. of total variance" class="gt_row gt_right">
-0.04
+0.05
 </td>
 </tr>
 <tr>
 <td headers="Model" class="gt_row gt_left">
 Pure pop. structure model
 </td>
-<td headers="Inertia" class="gt_row gt_right" style="background-color: #EDF5EB; color: #000000;">
-27.16
+<td headers="Inertia" class="gt_row gt_right" style="background-color: #ECF5EA; color: #000000;">
+28.30
 </td>
 <td headers="R2" class="gt_row gt_right">
-0.17
+0.18
 </td>
 <td headers="Adjusted R2" class="gt_row gt_right">
-0.15
+0.16
 </td>
 <td headers="p (&gt;F)" class="gt_row gt_right">
 0.00
 </td>
 <td headers="Prop. of explainable variance" class="gt_row gt_right">
-0.38
+0.40
 </td>
 <td headers="Prop. of total variance" class="gt_row gt_right">
-0.17
+0.18
 </td>
 </tr>
 <tr>
@@ -5314,7 +5312,7 @@ Pure pop. structure model
 Pure geography model
 </td>
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #F5F7F4; color: #000000;">
-5.58
+5.80
 </td>
 <td headers="R2" class="gt_row gt_right">
 0.04
@@ -5336,8 +5334,8 @@ Pure geography model
 <td headers="Model" class="gt_row gt_left">
 Confounded variance
 </td>
-<td headers="Inertia" class="gt_row gt_right" style="background-color: #EBF4E9; color: #000000;">
-31.28
+<td headers="Inertia" class="gt_row gt_right" style="background-color: #ECF4E9; color: #000000;">
+30.04
 </td>
 <td headers="R2" class="gt_row gt_right">
 <br>
@@ -5349,10 +5347,10 @@ Confounded variance
 <br>
 </td>
 <td headers="Prop. of explainable variance" class="gt_row gt_right">
-0.44
+0.42
 </td>
 <td headers="Prop. of total variance" class="gt_row gt_right">
-0.20
+0.19
 </td>
 </tr>
 <tr>
@@ -5360,7 +5358,7 @@ Confounded variance
 Total unexplained variance
 </td>
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #D0EBCA; color: #000000;">
-87.50
+87.81
 </td>
 <td headers="R2" class="gt_row gt_right">
 <br>
@@ -5383,7 +5381,7 @@ Total unexplained variance
 Total inertia
 </td>
 <td headers="Inertia" class="gt_row gt_right" style="background-color: #7FBF7B; color: #000000;">
-158.52
+159.11
 </td>
 <td headers="R2" class="gt_row gt_right">
 <br>
@@ -5404,23 +5402,23 @@ Total inertia
 </tbody>
 </table>
 </div>
-<img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-2.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-3.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-4.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-5.png" width="700" style="display: block; margin: auto;"><div id="vixzfegtxs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vixzfegtxs table {
+<img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-2.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-3.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-4.png" width="700" style="display: block; margin: auto;"><img src="RDA_vignette_files/figure-html/pRDA%20do%20everything-5.png" width="700" style="display: block; margin: auto;"><div id="yvwtiroxst" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yvwtiroxst table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vixzfegtxs thead, #vixzfegtxs tbody, #vixzfegtxs tfoot, #vixzfegtxs tr, #vixzfegtxs td, #vixzfegtxs th {
+#yvwtiroxst thead, #yvwtiroxst tbody, #yvwtiroxst tfoot, #yvwtiroxst tr, #yvwtiroxst td, #yvwtiroxst th {
   border-style: none;
 }
 
-#vixzfegtxs p {
+#yvwtiroxst p {
   margin: 0;
   padding: 0;
 }
 
-#vixzfegtxs .gt_table {
+#yvwtiroxst .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -5446,12 +5444,12 @@ Total inertia
   border-left-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_caption {
+#yvwtiroxst .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vixzfegtxs .gt_title {
+#yvwtiroxst .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -5463,7 +5461,7 @@ Total inertia
   border-bottom-width: 0;
 }
 
-#vixzfegtxs .gt_subtitle {
+#yvwtiroxst .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -5475,7 +5473,7 @@ Total inertia
   border-top-width: 0;
 }
 
-#vixzfegtxs .gt_heading {
+#yvwtiroxst .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -5487,13 +5485,13 @@ Total inertia
   border-right-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_bottom_border {
+#yvwtiroxst .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_col_headings {
+#yvwtiroxst .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5508,7 +5506,7 @@ Total inertia
   border-right-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_col_heading {
+#yvwtiroxst .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5528,7 +5526,7 @@ Total inertia
   overflow-x: hidden;
 }
 
-#vixzfegtxs .gt_column_spanner_outer {
+#yvwtiroxst .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5540,15 +5538,15 @@ Total inertia
   padding-right: 4px;
 }
 
-#vixzfegtxs .gt_column_spanner_outer:first-child {
+#yvwtiroxst .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vixzfegtxs .gt_column_spanner_outer:last-child {
+#yvwtiroxst .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vixzfegtxs .gt_column_spanner {
+#yvwtiroxst .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -5560,11 +5558,11 @@ Total inertia
   width: 100%;
 }
 
-#vixzfegtxs .gt_spanner_row {
+#yvwtiroxst .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vixzfegtxs .gt_group_heading {
+#yvwtiroxst .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5590,7 +5588,7 @@ Total inertia
   text-align: left;
 }
 
-#vixzfegtxs .gt_empty_group_heading {
+#yvwtiroxst .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5605,15 +5603,15 @@ Total inertia
   vertical-align: middle;
 }
 
-#vixzfegtxs .gt_from_md > :first-child {
+#yvwtiroxst .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vixzfegtxs .gt_from_md > :last-child {
+#yvwtiroxst .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vixzfegtxs .gt_row {
+#yvwtiroxst .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5632,7 +5630,7 @@ Total inertia
   overflow-x: hidden;
 }
 
-#vixzfegtxs .gt_stub {
+#yvwtiroxst .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5645,7 +5643,7 @@ Total inertia
   padding-right: 5px;
 }
 
-#vixzfegtxs .gt_stub_row_group {
+#yvwtiroxst .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5659,15 +5657,15 @@ Total inertia
   vertical-align: top;
 }
 
-#vixzfegtxs .gt_row_group_first td {
+#yvwtiroxst .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vixzfegtxs .gt_row_group_first th {
+#yvwtiroxst .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vixzfegtxs .gt_summary_row {
+#yvwtiroxst .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -5677,16 +5675,16 @@ Total inertia
   padding-right: 5px;
 }
 
-#vixzfegtxs .gt_first_summary_row {
+#yvwtiroxst .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_first_summary_row.thick {
+#yvwtiroxst .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vixzfegtxs .gt_last_summary_row {
+#yvwtiroxst .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5696,7 +5694,7 @@ Total inertia
   border-bottom-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_grand_summary_row {
+#yvwtiroxst .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -5706,7 +5704,7 @@ Total inertia
   padding-right: 5px;
 }
 
-#vixzfegtxs .gt_first_grand_summary_row {
+#yvwtiroxst .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5716,7 +5714,7 @@ Total inertia
   border-top-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_last_grand_summary_row_top {
+#yvwtiroxst .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5726,11 +5724,11 @@ Total inertia
   border-bottom-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_striped {
+#yvwtiroxst .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vixzfegtxs .gt_table_body {
+#yvwtiroxst .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5739,7 +5737,7 @@ Total inertia
   border-bottom-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_footnotes {
+#yvwtiroxst .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -5753,7 +5751,7 @@ Total inertia
   border-right-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_footnote {
+#yvwtiroxst .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -5762,7 +5760,7 @@ Total inertia
   padding-right: 5px;
 }
 
-#vixzfegtxs .gt_sourcenotes {
+#yvwtiroxst .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -5776,7 +5774,7 @@ Total inertia
   border-right-color: #D3D3D3;
 }
 
-#vixzfegtxs .gt_sourcenote {
+#yvwtiroxst .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -5784,63 +5782,63 @@ Total inertia
   padding-right: 5px;
 }
 
-#vixzfegtxs .gt_left {
+#yvwtiroxst .gt_left {
   text-align: left;
 }
 
-#vixzfegtxs .gt_center {
+#yvwtiroxst .gt_center {
   text-align: center;
 }
 
-#vixzfegtxs .gt_right {
+#yvwtiroxst .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vixzfegtxs .gt_font_normal {
+#yvwtiroxst .gt_font_normal {
   font-weight: normal;
 }
 
-#vixzfegtxs .gt_font_bold {
+#yvwtiroxst .gt_font_bold {
   font-weight: bold;
 }
 
-#vixzfegtxs .gt_font_italic {
+#yvwtiroxst .gt_font_italic {
   font-style: italic;
 }
 
-#vixzfegtxs .gt_super {
+#yvwtiroxst .gt_super {
   font-size: 65%;
 }
 
-#vixzfegtxs .gt_footnote_marks {
+#yvwtiroxst .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vixzfegtxs .gt_asterisk {
+#yvwtiroxst .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vixzfegtxs .gt_indent_1 {
+#yvwtiroxst .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vixzfegtxs .gt_indent_2 {
+#yvwtiroxst .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vixzfegtxs .gt_indent_3 {
+#yvwtiroxst .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vixzfegtxs .gt_indent_4 {
+#yvwtiroxst .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vixzfegtxs .gt_indent_5 {
+#yvwtiroxst .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -5875,31 +5873,59 @@ CA_rPCA2
 </td>
 </tr>
 <tr>
-<td headers="r" class="gt_row gt_right" style="background-color: #C0A2CE; color: #000000;">
--0.40
+<td headers="r" class="gt_row gt_right" style="background-color: #BB9CCB; color: #000000;">
+-0.42
 </td>
 <td headers="p" class="gt_row gt_right">
 0.00
 </td>
 <td headers="snp" class="gt_row gt_left">
-Locus_263
+Locus_2338
+</td>
+<td headers="var" class="gt_row gt_left">
+CA_rPCA3
+</td>
+</tr>
+<tr>
+<td headers="r" class="gt_row gt_right" style="background-color: #A2D29C; color: #000000;">
+0.38
+</td>
+<td headers="p" class="gt_row gt_right">
+0.00
+</td>
+<td headers="snp" class="gt_row gt_left">
+Locus_314
 </td>
 <td headers="var" class="gt_row gt_left">
 CA_rPCA1
 </td>
 </tr>
 <tr>
-<td headers="r" class="gt_row gt_right" style="background-color: #C4A8D1; color: #000000;">
--0.38
+<td headers="r" class="gt_row gt_right" style="background-color: #AAD6A4; color: #000000;">
+0.36
 </td>
 <td headers="p" class="gt_row gt_right">
 0.00
 </td>
 <td headers="snp" class="gt_row gt_left">
-Locus_636
+Locus_770
 </td>
 <td headers="var" class="gt_row gt_left">
-CA_rPCA1
+CA_rPCA3
+</td>
+</tr>
+<tr>
+<td headers="r" class="gt_row gt_right" style="background-color: #AAD6A4; color: #000000;">
+0.36
+</td>
+<td headers="p" class="gt_row gt_right">
+0.00
+</td>
+<td headers="snp" class="gt_row gt_left">
+Locus_1561
+</td>
+<td headers="var" class="gt_row gt_left">
+CA_rPCA3
 </td>
 </tr>
 <tr>
@@ -5931,8 +5957,22 @@ CA_rPCA3
 </td>
 </tr>
 <tr>
-<td headers="r" class="gt_row gt_right" style="background-color: #BDE0B6; color: #000000;">
-0.31
+<td headers="r" class="gt_row gt_right" style="background-color: #D0B7D9; color: #000000;">
+-0.33
+</td>
+<td headers="p" class="gt_row gt_right">
+0.00
+</td>
+<td headers="snp" class="gt_row gt_left">
+Locus_2839
+</td>
+<td headers="var" class="gt_row gt_left">
+CA_rPCA1
+</td>
+</tr>
+<tr>
+<td headers="r" class="gt_row gt_right" style="background-color: #C0E2BA; color: #000000;">
+0.30
 </td>
 <td headers="p" class="gt_row gt_right">
 0.01
@@ -5945,20 +5985,6 @@ CA_rPCA2
 </td>
 </tr>
 <tr>
-<td headers="r" class="gt_row gt_right" style="background-color: #BDE0B6; color: #000000;">
-0.31
-</td>
-<td headers="p" class="gt_row gt_right">
-0.01
-</td>
-<td headers="snp" class="gt_row gt_left">
-Locus_1106
-</td>
-<td headers="var" class="gt_row gt_left">
-CA_rPCA1
-</td>
-</tr>
-<tr>
 <td headers="r" class="gt_row gt_right" style="background-color: #C4E5BE; color: #000000;">
 0.29
 </td>
@@ -5967,20 +5993,6 @@ CA_rPCA1
 </td>
 <td headers="snp" class="gt_row gt_left">
 Locus_2053
-</td>
-<td headers="var" class="gt_row gt_left">
-CA_rPCA1
-</td>
-</tr>
-<tr>
-<td headers="r" class="gt_row gt_right" style="background-color: #E3CFE6; color: #000000;">
--0.25
-</td>
-<td headers="p" class="gt_row gt_right">
-0.03
-</td>
-<td headers="snp" class="gt_row gt_left">
-Locus_2321
 </td>
 <td headers="var" class="gt_row gt_left">
 CA_rPCA1
