@@ -11,7 +11,7 @@ navbar:
     - text: Environmental data processing
       href: articles/enviro_data_vignette.html
     - text: Masking
-      href: articles/Masking_vignette.html
+      href: articles/masking_vignette.html
     - text: Genetic distances
       href: articles/gen_dist_vignette.html
     - text: TESS
