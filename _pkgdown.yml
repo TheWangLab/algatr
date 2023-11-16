@@ -1,19 +1,96 @@
 url: https://thewanglab.github.io/algatr/
 template:
   bootstrap: 5
-articles:
-  - title: Vignettes
-    navbar: ~
-    contents:
-    - data_processing_vignette
-    - enviro_data_vignette
-    - Masking_vignette
-    - gen_dist_vignette
-    - TESS_vignette
-    - MMRR_vignette
-    - GDM_vignette
-    - RDA_vignette
-    - LFMM_vignette
-    - wingen_vignette
-    - alazygatr_vignette
+navbar:
+ components:
+   articles:
+    text: Vignettes
+    menu:
+    - text: Genetic data processing
+      href: articles/data_processing_vignette.html
+    - text: Environmental data processing
+      href: articles/enviro_data_vignette.html
+    - text: Masking
+      href: articles/Masking_vignette.html
+    - text: Genetic distances
+      href: articles/gen_dist_vignette.html
+    - text: TESS
+      href: articles/TESS_vignette.html
+    - text: MMRR
+      href: articles/MMRR_vignette.html
+    - text: GDM
+      href: articles/GDM_vignette.html
+    - text: RDA
+      href: articles/RDA_vignette.html
+    - text: LFMM
+      href: articles/LFMM_vignette.html
+    - text: Wingen
+      href: articles/wingen_vignette.html
+    - text: Alazygatr
+      href: articles/alazygatr_vignette.html
+   reference:
+    text: "Reference Manual"
+    href: reference/index.html
 
+reference:
+  - title: Genetic data processing
+  - contents:
+    - starts_with("data_processing")
+    - gen_to_geno
+    - geno_to_dosage
+    - ld_prune
+    - simple_impute
+    - str_impute
+    - vcf_to_dosage
+  - title: Environmental data processing
+  - contents:
+    - starts_with("envirodata")
+    - starts_with("check")
+    - env_dist
+    - geo_dist
+    - get_worldclim
+    - rm_islands
+  - title: Masking
+  - contents:
+    - ends_with("mask")
+    - plot_extrap_mask
+  - title: Genetic distances
+  - contents:
+    - starts_with("gen_dist")
+  - title: TESS
+  - contents:
+    - starts_with("tess")
+    - bestK
+  - title: MMRR
+  - contents:
+    - starts_with("mmrr")
+    - MMRR
+    - unfold
+  - title: GDM
+  - contents:
+    - starts_with("gdm")
+    - scale01
+    - scaleRGB
+  - title: RDA
+  - contents:
+    - starts_with("rda")
+  - title: LFMM
+  - contents:
+    - starts_with("lfmm")
+    - starts_with("select_K")
+    - quick_elbow
+  - title: Wingen
+  - contents:
+    - starts_with("wingen")
+  - title: Alazygatr
+  - contents:
+    - starts_with("alazygatr")
+    - do_everything_for_me
+  - title: Data
+  - contents:
+    - load_algatr_example
+    - CA_env
+    - starts_with("liz_")
+  - title: Other
+  - contents:
+    - starts_with("coords")
