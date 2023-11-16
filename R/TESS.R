@@ -389,6 +389,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' @export
 #' @family TESS functions
 #' @importFrom ggplot2 '%+replace%'
+#' @keywords internal
 krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
   if (plot_method == "maxQ") vals <- seq(0, 1, by = 0.10)
   if (plot_method == "allQ") vals <- seq(minQ, 1, by = 0.10)
@@ -437,6 +438,7 @@ tess_plot_allK <- function(krig_admix, coords = NULL, col_pal = algatr_col_defau
 #'
 #' @export
 #' @family TESS functions
+#' @keywords internal
 allK_plot_helper <- function(K, krig_admix, coords = NULL, col, col_breaks, ...) {
   # Suppress irrelevant plot warnings
   suppressWarnings({
@@ -573,6 +575,7 @@ tess_ggbarplot <- function(qmat, ggplot_fill = algatr_col_default("ggplot"), sor
 #'
 #' @family TESS functions
 #' @export
+#' @keywords internal
 ggbarplot_helper <- function(dat) {
   dat %>%
     ggplot2::ggplot(ggplot2::aes(x = order, y = Q_value, fill = K_value)) +
@@ -619,6 +622,7 @@ bestK <- function(tess3_obj, Kvals) {
 #'
 #' @export
 #' @family TESS functions
+#' @keywords internal
 pops_helper <- function(gen, tess3_obj, K) {
   # Get individual names for population assignments
   if (inherits(gen, "vcfR")) names <- colnames(gen@gt[,-1])

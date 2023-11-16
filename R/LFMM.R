@@ -179,6 +179,7 @@ lfmm_df <- function(x) {
 #' @export
 #'
 #' @family LFMM functions
+#' @keywords internal
 lfmm_test_tidy <- function(colname, lfmm_test_result) {
   x <- lfmm_test_result[[colname]]
   if (is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))

@@ -96,6 +96,7 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
 
 #' Helper function to create correlation dataframe from matrix and filter based on threshold
 #'
+#' @keywords internal
 cor_df_helper <- function(cors, threshold) {
   cor_df <-
     data.frame(

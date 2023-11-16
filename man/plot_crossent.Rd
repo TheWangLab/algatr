@@ -15,3 +15,4 @@ ggplots of cross entropy values compared to K-values (and across runs)
 \description{
 Helper function to plot cross entropy scores from SNMF
 }
+\keyword{internal}

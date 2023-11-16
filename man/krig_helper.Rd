@@ -41,3 +41,4 @@ Other wingen functions:
 \code{\link{wingen_do_everything}()}
 }
 \concept{wingen functions}
+\keyword{internal}

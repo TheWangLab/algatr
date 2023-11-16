@@ -26,3 +26,4 @@ Other LFMM functions:
 \code{\link{select_K}()}
 }
 \concept{LFMM functions}
+\keyword{internal}

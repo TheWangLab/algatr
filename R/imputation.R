@@ -92,6 +92,7 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
 #' @return list with best K-value and run number and all cross-entropy scores
 #' @export
 #' @family Imputation functions
+#' @keywords internal
 snmf_bestK <- function(snmf_proj, K, quiet) {
   if (length(K) == 1) {
     bestrun <- which.min(LEA::cross.entropy(snmf_proj, K = K))
@@ -126,6 +127,7 @@ snmf_bestK <- function(snmf_proj, K, quiet) {
 #' @return cross entropy scores for given K
 #' @export
 #' @family Imputation functions
+#' @keywords internal
 snmf_crossent_helper <- function(snmf_proj, K, select_min = TRUE) {
   if (select_min) results <- which.min(LEA::cross.entropy(snmf_proj, K = K))
   if (!select_min) results <- LEA::cross.entropy(snmf_proj, K = K)
@@ -138,6 +140,7 @@ snmf_crossent_helper <- function(snmf_proj, K, select_min = TRUE) {
 #'
 #' @return ggplots of cross entropy values compared to K-values (and across runs)
 #' @export
+#' @keywords internal
 plot_crossent <- function(ce_values) {
   if (length(unique(ce_values$run)) == 1) {
     plt <-
