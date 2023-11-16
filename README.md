@@ -3,7 +3,8 @@
 
 # algatr <img src="man/figures/logo.png" align="right" height="160"/>
 
-[![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml)[![license:
+[![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml)
+[![license:
 MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
@@ -62,7 +63,7 @@ devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
 
 # Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
-genetic_distance_packages()
+gen_dist_packages()
 ## Genetic data processing:
 data_processing_packages()
 ## Environmental and geographic data processing:

@@ -21,7 +21,7 @@ dev_packages <- function(){
 alazygatr_packages <- function(){
   # To install subsets of packages, run the following depending on what methods you want to use
   ## Genetic distance processing:
-  genetic_distance_packages()
+  gen_dist_packages()
   ## Genetic data processing:
   data_processing_packages()
   ## Environmental and geographic data processing:
@@ -61,8 +61,8 @@ alazygatr_packages <- function(){
 #' @export
 #'
 #' @examples
-#' \dontrun{genetic_distance_packages()}
-genetic_distance_packages <- function(){
+#' \dontrun{gen_dist_packages()}
+gen_dist_packages <- function(){
   if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
   if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
   if (!require("readr", quietly = TRUE)) install.packages("readr")
@@ -72,32 +72,14 @@ genetic_distance_packages <- function(){
 }
 
 
-#' Install data processing packages
-#'
-#' Checks for the presence of packages required for genetic data processing.
-#' If any of these packages are not already installed, it will automatically install them.
-#'
-#' @details
-#' The following packages will be installed if not already present:
-#' \itemize{
-#'   \item "gdsfmt" (from Bioconductor repository)
-#'   \item "SeqArray" (from Bioconductor repository)
-#'   \item "SNPRelate" (from Bioconductor repository)
-#' }
-#'
-#' @return None
+#' Install genetic distance packages (DEPRECATED)
+#' @noRd
 #'
 #' @export
-#'
-#' @examples
-#' \dontrun{data_processing_packages()}
-data_processing_packages <- function(){
-  dev_packages()
-  if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
-  if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
-  if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
+genetic_distance_packages <- function(){
+  warning("genetic_distance_packages() is deprecated, use gen_dist_packages() instead")
+  gen_dist_packages()
 }
-
 
 #' Install environmental and geographic data processing packages
 #'

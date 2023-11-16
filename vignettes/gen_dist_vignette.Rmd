@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r, eval = FALSE}
 # Install packages 
-genetic_distance_packages()
+gen_dist_packages()
 ```
 
 # Calculating genetic distances
