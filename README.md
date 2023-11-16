@@ -161,10 +161,10 @@ questions fall into four broad categories of analyses:
 
 <table style="width:99%;">
 <colgroup>
+<col style="width: 17%" />
 <col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 30%" />
-<col style="width: 27%" />
+<col style="width: 32%" />
+<col style="width: 24%" />
 <col style="width: 7%" />
 </colgroup>
 <thead>
@@ -182,7 +182,8 @@ questions fall into four broad categories of analyses:
 <td>Population structure</td>
 <td>TESS (Caye et al. 2016)</td>
 <td><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/TESS_vignette.Rmd">TESS_vignette.Rmd</a></td>
+href="https://thewanglab.github.io/algatr/articles/TESS_vignette.html">TESS
+vignette</a></td>
 <td><code>tess_do_everything()</code></td>
 </tr>
 <tr class="even">
@@ -191,7 +192,8 @@ href="https://github.com/TheWangLab/algatr/blob/main/vignettes/TESS_vignette.Rmd
 <td>Moving windows of genetic diversity; wingen (Bishop et
 al. 2023)</td>
 <td><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/wingen_vignette.Rmd">wingen_vignette.Rmd</a></td>
+href="https://thewanglab.github.io/algatr/articles/wingen_vignette.html">wingen
+vignette</a></td>
 <td><code>wingen_do_everything()</code></td>
 </tr>
 <tr class="odd">
@@ -202,9 +204,11 @@ href="https://github.com/TheWangLab/algatr/blob/main/vignettes/wingen_vignette.R
 <p>Generalized dissimilarity modeling; GDM (Ferrier et al. 2007;
 Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
 <td><p><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/MMRR_vignette.Rmd">MMRR_vignette.Rmd</a></p>
+href="https://thewanglab.github.io/algatr/articles/MMRR_vignette.html">MMRR
+vignette</a></p>
 <p><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/GDM_vignette.Rmd">GDM_vignette.Rmd</a></p></td>
+href="https://thewanglab.github.io/algatr/articles/GDM_vignette.html">GDM
+vignette</a></p></td>
 <td><p><code>mmrr_do_everything()</code></p>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
@@ -214,9 +218,11 @@ href="https://github.com/TheWangLab/algatr/blob/main/vignettes/GDM_vignette.Rmd"
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
 <td><p><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/RDA_vignette.Rmd">RDA_vignette.Rmd</a></p>
+href="https://thewanglab.github.io/algatr/articles/RDA_vignette.html">RDA
+vignette</a></p>
 <p><a
-href="https://github.com/TheWangLab/algatr/blob/main/vignettes/LFMM_vignette.Rmd">LFMM_vignette.Rmd</a></p></td>
+href="https://thewanglab.github.io/algatr/articles/LFMM_vignette.html">LFMM
+vignette</a></p></td>
 <td><p><code>rda_do_everything()</code></p>
 <p><code>lfmm_do_everything()</code></p></td>
 </tr>
@@ -339,8 +345,13 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
 You’ll now want to do some processing of these data, such as file
-conversions and LD-pruning (see the **data processing vignette**) and
-calculating genetic distances (see the **genetic distances vignette**).
+conversions and LD-pruning (see the [**data processing
+vignette**](https://thewanglab.github.io/algatr/articles/data_processing_vignette.html)),
+environmental data checking and manipulation (see the [**environmental
+data processing
+vignette**](https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html)),
+and calculating genetic distances (see the [**genetic distances
+vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)).
 
 <table style="width:98%;">
 <colgroup>
