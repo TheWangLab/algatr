@@ -16,9 +16,6 @@
     <loc>https://thewanglab.github.io/algatr/articles/MMRR_vignette.html</loc>
   </url>
   <url>
-    <loc>https://thewanglab.github.io/algatr/articles/Masking_vignette.html</loc>
-  </url>
-  <url>
     <loc>https://thewanglab.github.io/algatr/articles/RDA_vignette.html</loc>
   </url>
   <url>
@@ -38,6 +35,9 @@
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://thewanglab.github.io/algatr/articles/masking_vignette.html</loc>
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/articles/wingen_vignette.html</loc>
