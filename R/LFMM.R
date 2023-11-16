@@ -380,9 +380,10 @@ select_K_fc <- function(gen, perc.pca, max.n.clust) {
   return(K)
 }
 
-#' Quickly choose an elbow for a PC.
-#' At variance below 5% per component, choose the largest % drop
-#' Designed for variance percentages, but will also work given a full set of Evalues
+#' Quickly choose an elbow for a PC
+#'
+#' At variance below 5% per component, choose the largest % drop.
+#' Designed for variance percentages, but will also work given a full set of Evalues.
 #' Quickly estimate the 'elbow' of a scree plot (PCA)
 #'
 #' This function uses a rough algorithm to estimate a sensible 'elbow' to
