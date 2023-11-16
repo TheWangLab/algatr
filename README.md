@@ -19,7 +19,7 @@ methods with their data.
 Please cite our paper if you use this package:
 
 **Chambers, E.A., Bishop, A.P., & Wang, I.J. (2023). Individual-based
-landscape genomics for conservation: an analysis pipeline. *Molecular
+landscape genomics for conservation: An analysis pipeline. *Molecular
 Ecology
 Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
 
