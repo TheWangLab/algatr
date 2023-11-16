@@ -82,9 +82,6 @@
     <loc>https://thewanglab.github.io/algatr/reference/cor_df_helper.html</loc>
   </url>
   <url>
-    <loc>https://thewanglab.github.io/algatr/reference/data_processing_packages.html</loc>
-  </url>
-  <url>
     <loc>https://thewanglab.github.io/algatr/reference/do_everything_for_me.html</loc>
   </url>
   <url>
@@ -139,10 +136,10 @@
     <loc>https://thewanglab.github.io/algatr/reference/gen_dist_hm.html</loc>
   </url>
   <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_to_geno.html</loc>
+    <loc>https://thewanglab.github.io/algatr/reference/gen_dist_packages.html</loc>
   </url>
   <url>
-    <loc>https://thewanglab.github.io/algatr/reference/genetic_distance_packages.html</loc>
+    <loc>https://thewanglab.github.io/algatr/reference/gen_to_geno.html</loc>
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/reference/geno_to_dosage.html</loc>

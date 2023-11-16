@@ -43,11 +43,11 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+  <a class="nav-link" href="../reference/index.html">Reference Manual</a>
 </li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/data_processing_vignette.html">Genetic data processing</a>
     <a class="dropdown-item" href="../articles/enviro_data_vignette.html">Environmental data processing</a>
     <a class="dropdown-item" href="../articles/Masking_vignette.html">Masking</a>
@@ -337,32 +337,33 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: The distances for 122 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
+<span><span class="co">#&gt; Warning: The distances for 123 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   var1 var2    p          r</span></span>
-<span><span class="co">#&gt; 1  geo bio2 0.01 0.14655852</span></span>
-<span><span class="co">#&gt; 2  geo bio3 0.03 0.11537009</span></span>
-<span><span class="co">#&gt; 3 bio2 bio3 0.01 0.36879426</span></span>
-<span><span class="co">#&gt; 4  geo bio4 0.01 0.16604751</span></span>
-<span><span class="co">#&gt; 5   ID bio4 0.04 0.07768818</span></span>
-<span><span class="co">#&gt; 6 bio2 bio4 0.01 0.57247312</span></span></code></pre></div>
+<span><span class="co">#&gt;   var1 var2    p         r</span></span>
+<span><span class="co">#&gt; 1  geo bio2 0.01 0.1465585</span></span>
+<span><span class="co">#&gt; 2  geo bio3 0.04 0.1153701</span></span>
+<span><span class="co">#&gt; 3 bio2 bio3 0.01 0.3687943</span></span>
+<span><span class="co">#&gt; 4  geo bio4 0.01 0.1660475</span></span>
+<span><span class="co">#&gt; 5 bio2 bio4 0.01 0.5724731</span></span>
+<span><span class="co">#&gt; 6 bio3 bio4 0.01 0.8417016</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can see that PC2 from CA_env and geo dists are significantly correlated!</span></span>
 <span><span class="fu"><a href="../reference/check_dists.html">check_dists</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: The distances for 2 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
+<span><span class="co">#&gt; Warning: The distances for 3 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="co">#&gt; $mantel_df</span></span>
 <span><span class="co">#&gt;       var1     var2    p         r</span></span>
-<span><span class="co">#&gt; 1      geo CA_rPCA2 0.01 0.2037404</span></span>
-<span><span class="co">#&gt; 2 CA_rPCA2 CA_rPCA3 0.01 0.2544182</span></span>
+<span><span class="co">#&gt; 1      geo       ID 0.04 0.0724489</span></span>
+<span><span class="co">#&gt; 2      geo CA_rPCA2 0.01 0.2037404</span></span>
+<span><span class="co">#&gt; 3 CA_rPCA2 CA_rPCA3 0.01 0.2544182</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $p</span></span>
 <span><span class="co">#&gt;          [,1] [,2] [,3] [,4] [,5]</span></span>
-<span><span class="co">#&gt; geo        NA 0.06 0.62 0.01 0.25</span></span>
-<span><span class="co">#&gt; ID         NA   NA 0.83 0.10 0.06</span></span>
-<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.48 0.75</span></span>
+<span><span class="co">#&gt; geo        NA 0.04 0.66 0.01 0.18</span></span>
+<span><span class="co">#&gt; ID         NA   NA 0.84 0.11 0.08</span></span>
+<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.54 0.86</span></span>
 <span><span class="co">#&gt; CA_rPCA2   NA   NA   NA   NA 0.01</span></span>
 <span><span class="co">#&gt; CA_rPCA3   NA   NA   NA   NA   NA</span></span>
 <span><span class="co">#&gt; </span></span>

@@ -19,11 +19,11 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+  <a class="nav-link" href="../reference/index.html">Reference Manual</a>
 </li>
 <li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/data_processing_vignette.html">Genetic data processing</a>
     <a class="dropdown-item" href="../articles/enviro_data_vignette.html">Environmental data processing</a>
     <a class="dropdown-item" href="../articles/Masking_vignette.html">Masking</a>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="genetic-data-processing">Genetic data processing<a class="anchor" aria-label="anchor" href="#genetic-data-processing"></a></h2>
       
       
 
@@ -63,29 +63,51 @@
 
       <dl><dt>
           
-          <code><a href="CA_env.html">CA_env</a></code> 
+          <code><a href="gen_to_geno.html">gen_to_geno()</a></code> 
         </dt>
-        <dd>Example environmental data, calculated by performing a raster PCA on 18 bioclimatic variables for state of California</dd>
+        <dd>Convert dosage matrix or vcf to geno type object (N.B.: this only works for diploids!)</dd>
       </dl><dl><dt>
           
-          <code><a href="MMRR.html">MMRR()</a></code> 
+          <code><a href="geno_to_dosage.html">geno_to_dosage()</a></code> 
         </dt>
-        <dd>MMRR performs Multiple Matrix Regression with Randomization analysis</dd>
+        <dd>Convert lfmm/geno matrix to dosage matrix (N.B.: this only works for diploids!)</dd>
       </dl><dl><dt>
           
-          <code><a href="alazygatr_packages.html">alazygatr_packages()</a></code> 
+          <code><a href="ld_prune.html">ld_prune()</a></code> 
         </dt>
-        <dd>Install alazygatr packages</dd>
+        <dd>ld_prune prunes SNPs based on linkage disequilibrium using <code>SNPRelate</code> and <code>SeqArray</code> packages</dd>
       </dl><dl><dt>
           
-          <code><a href="allK_plot_helper.html">allK_plot_helper()</a></code> 
+          <code><a href="simple_impute.html">simple_impute()</a></code> 
         </dt>
-        <dd>Helper function for all K plotting</dd>
+        <dd>Impute NA values
+NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.</dd>
       </dl><dl><dt>
           
-          <code><a href="bestK.html">bestK()</a></code> 
+          <code><a href="str_impute.html">str_impute()</a></code> 
         </dt>
-        <dd>Best K Selection based on cross entropy</dd>
+        <dd>Imputation of missing values using population structure inferred with <code><a href="https://rdrr.io/pkg/LEA/man/main_sNMF.html" class="external-link">LEA::snmf</a></code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="vcf_to_dosage.html">vcf_to_dosage()</a></code> 
+        </dt>
+        <dd>Convert a vcf to a dosage matrix</dd>
+      </dl></div><div class="section level2">
+      <h2 id="environmental-data-processing">Environmental data processing<a class="anchor" aria-label="anchor" href="#environmental-data-processing"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="envirodata_packages.html">envirodata_packages()</a></code> 
+        </dt>
+        <dd>Install environmental and geographic data processing packages</dd>
       </dl><dl><dt>
           
           <code><a href="check_dists.html">check_dists()</a></code> 
@@ -103,45 +125,205 @@
         <dd>Check extracted values for collinearity</dd>
       </dl><dl><dt>
           
-          <code><a href="coords_to_sf.html">coords_to_sf()</a></code> 
-        </dt>
-        <dd>Convert from matrix, data frame, or sf to sf (sf is a pass through)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="coords_to_sp.html">coords_to_sp()</a></code> 
-        </dt>
-        <dd>Convert from matrix, data frame, or sf to formatted sp</dd>
-      </dl><dl><dt>
-          
-          <code><a href="cor_df_helper.html">cor_df_helper()</a></code> 
-        </dt>
-        <dd>Helper function to create correlation dataframe from matrix and filter based on threshold</dd>
-      </dl><dl><dt>
-          
-          <code><a href="data_processing_packages.html">data_processing_packages()</a></code> 
-        </dt>
-        <dd>Install data processing packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="do_everything_for_me.html">do_everything_for_me()</a></code> 
-        </dt>
-        <dd>Lazy run of all landscape genomic analyses contained within <code>algatr</code></dd>
-      </dl><dl><dt>
-          
           <code><a href="env_dist.html">env_dist()</a></code> 
         </dt>
         <dd>Calculate distance between environmental vars</dd>
       </dl><dl><dt>
           
-          <code><a href="envirodata_packages.html">envirodata_packages()</a></code> 
+          <code><a href="geo_dist.html">geo_dist()</a></code> 
         </dt>
-        <dd>Install environmental and geographic data processing packages</dd>
+        <dd>Calculate geographic distance between coordinates</dd>
       </dl><dl><dt>
+          
+          <code><a href="get_worldclim.html">get_worldclim()</a></code> 
+        </dt>
+        <dd>Download and merge WorldClim data for study area</dd>
+      </dl><dl><dt>
+          
+          <code><a href="rm_islands.html">rm_islands()</a></code> 
+        </dt>
+        <dd>Remove islands from mapping</dd>
+      </dl></div><div class="section level2">
+      <h2 id="masking">Masking<a class="anchor" aria-label="anchor" href="#masking"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="extrap_mask.html">extrap_mask()</a></code> <code><a href="extrap_mask.html">range_mask()</a></code> <code><a href="extrap_mask.html">sd_mask()</a></code> <code><a href="extrap_mask.html">buffer_mask()</a></code> <code><a href="extrap_mask.html">chull_mask()</a></code> 
         </dt>
         <dd>Create raster mask based on coordinates</dd>
       </dl><dl><dt>
+          
+          <code><a href="plot_extrap_mask.html">plot_extrap_mask()</a></code> 
+        </dt>
+        <dd>Plot mask on top of map</dd>
+      </dl></div><div class="section level2">
+      <h2 id="genetic-distances">Genetic distances<a class="anchor" aria-label="anchor" href="#genetic-distances"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="gen_dist.html">gen_dist()</a></code> 
+        </dt>
+        <dd>Calculate genetic distances</dd>
+      </dl><dl><dt>
+          
+          <code><a href="gen_dist_corr.html">gen_dist_corr()</a></code> 
+        </dt>
+        <dd>Plot the relationship between two distance metrics</dd>
+      </dl><dl><dt>
+          
+          <code><a href="gen_dist_hm.html">gen_dist_hm()</a></code> 
+        </dt>
+        <dd>Make heatmap of genetic distances</dd>
+      </dl><dl><dt>
+          
+          <code><a href="gen_dist_packages.html">gen_dist_packages()</a></code> 
+        </dt>
+        <dd>Install genetic distance packages</dd>
+      </dl></div><div class="section level2">
+      <h2 id="tess">TESS<a class="anchor" aria-label="anchor" href="#tess"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="tess_barplot.html">tess_barplot()</a></code> 
+        </dt>
+        <dd>Create TESS barplot</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_col_default.html">tess_col_default()</a></code> 
+        </dt>
+        <dd>Create default TESS color palette</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_do_everything.html">tess_do_everything()</a></code> 
+        </dt>
+        <dd>TESS function to do everything</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_ggbarplot.html">tess_ggbarplot()</a></code> 
+        </dt>
+        <dd>Create TESS barplot using ggplot2</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_ggplot.html">tess_ggplot()</a></code> 
+        </dt>
+        <dd>ggplot of TESS results</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_krig.html">tess_krig()</a></code> 
+        </dt>
+        <dd>Krige admixture values</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_ktest.html">tess_ktest()</a></code> 
+        </dt>
+        <dd>Test multiple K values</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_packages.html">tess_packages()</a></code> 
+        </dt>
+        <dd>Install TESS packages</dd>
+      </dl><dl><dt>
+          
+          <code><a href="tess_plot_allK.html">tess_plot_allK()</a></code> 
+        </dt>
+        <dd>Plot all kriged Q values for each K</dd>
+      </dl><dl><dt>
+          
+          <code><a href="bestK.html">bestK()</a></code> 
+        </dt>
+        <dd>Best K Selection based on cross entropy</dd>
+      </dl></div><div class="section level2">
+      <h2 id="mmrr">MMRR<a class="anchor" aria-label="anchor" href="#mmrr"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="mmrr_df.html">mmrr_df()</a></code> 
+        </dt>
+        <dd>Make nice dataframe from MMRR results</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_do_everything.html">mmrr_do_everything()</a></code> 
+        </dt>
+        <dd>MMRR function to do everything</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_packages.html">mmrr_packages()</a></code> 
+        </dt>
+        <dd>Install MMRR packages</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_plot.html">mmrr_plot()</a></code> 
+        </dt>
+        <dd>Plot MMRR results</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_run.html">mmrr_run()</a></code> 
+        </dt>
+        <dd>Run MMRR and return model object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_table.html">mmrr_table()</a></code> 
+        </dt>
+        <dd>Create <code>gt</code> table of MMRR results</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrr_var_sel.html">mmrr_var_sel()</a></code> 
+        </dt>
+        <dd>mmrr_var_sel performs MMRR with backward elimination variable selection</dd>
+      </dl><dl><dt>
+          
+          <code><a href="MMRR.html">MMRR()</a></code> 
+        </dt>
+        <dd>MMRR performs Multiple Matrix Regression with Randomization analysis</dd>
+      </dl><dl><dt>
+          
+          <code><a href="unfold.html">unfold()</a></code> 
+        </dt>
+        <dd>unfold converts the lower diagonal elements of a matrix into a vector</dd>
+      </dl></div><div class="section level2">
+      <h2 id="gdm">GDM<a class="anchor" aria-label="anchor" href="#gdm"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="gdm_coeffs.html">gdm_coeffs()</a></code> 
         </dt>
@@ -198,188 +380,26 @@
         <dd>Get best set of variables from a GDM model</dd>
       </dl><dl><dt>
           
-          <code><a href="gen_dist.html">gen_dist()</a></code> 
+          <code><a href="scale01.html">scale01()</a></code> 
         </dt>
-        <dd>Calculate genetic distances</dd>
+        <dd>Scale genetic distances from 0 to 1</dd>
       </dl><dl><dt>
           
-          <code><a href="gen_dist_corr.html">gen_dist_corr()</a></code> 
+          <code><a href="scaleRGB.html">scaleRGB()</a></code> 
         </dt>
-        <dd>Plot the relationship between two distance metrics</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_dist_hm.html">gen_dist_hm()</a></code> 
-        </dt>
-        <dd>Make heatmap of genetic distances</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_to_geno.html">gen_to_geno()</a></code> 
-        </dt>
-        <dd>Convert dosage matrix or vcf to geno type object (N.B.: this only works for diploids!)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="genetic_distance_packages.html">genetic_distance_packages()</a></code> 
-        </dt>
-        <dd>Install genetic distance packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="geno_to_dosage.html">geno_to_dosage()</a></code> 
-        </dt>
-        <dd>Convert lfmm/geno matrix to dosage matrix (N.B.: this only works for diploids!)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="geo_dist.html">geo_dist()</a></code> 
-        </dt>
-        <dd>Calculate geographic distance between coordinates</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_worldclim.html">get_worldclim()</a></code> 
-        </dt>
-        <dd>Download and merge WorldClim data for study area</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ggbarplot_helper.html">ggbarplot_helper()</a></code> 
-        </dt>
-        <dd>Helper function for TESS barplots using ggplot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="krig_agg_helper.html">krig_agg_helper()</a></code> 
-        </dt>
-        <dd>Helper function for krig_helper; calculates aggregated/disaggregated raster cell size</dd>
-      </dl><dl><dt>
-          
-          <code><a href="krig_helper.html">krig_helper()</a></code> 
-        </dt>
-        <dd>Helper function for kriging wingen moving window; checks raster resolution and runs kriging</dd>
-      </dl><dl><dt>
-          
-          <code><a href="krig_legend.html">krig_legend()</a></code> 
-        </dt>
-        <dd>Helper function to make a custom legend for TESS maps</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ld_prune.html">ld_prune()</a></code> 
-        </dt>
-        <dd>ld_prune prunes SNPs based on linkage disequilibrium using <code>SNPRelate</code> and <code>SeqArray</code> packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_df.html">lfmm_df()</a></code> 
-        </dt>
-        <dd>Convert LFMM results into a tidy dataframe for downstream processing</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_do_everything.html">lfmm_do_everything()</a></code> 
-        </dt>
-        <dd>LFMM function to do everything</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_manhattanplot.html">lfmm_manhattanplot()</a></code> 
-        </dt>
-        <dd>LFMM Manhattan Plot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_packages.html">lfmm_packages()</a></code> 
-        </dt>
-        <dd>Install LFMM packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_qqplot.html">lfmm_qqplot()</a></code> 
-        </dt>
-        <dd>LFMM QQplot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_run.html">lfmm_run()</a></code> 
-        </dt>
-        <dd>Run LFMM</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_table.html">lfmm_table()</a></code> 
-        </dt>
-        <dd>Create <code>gt</code> table of LFMM results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="lfmm_test_tidy.html">lfmm_test_tidy()</a></code> 
-        </dt>
-        <dd>Helper function to tidy LFMM test results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="liz_coords.html">liz_coords</a></code> 
-        </dt>
-        <dd>Example coordinates from Bouzid et al. 2022</dd>
-      </dl><dl><dt>
-          
-          <code><a href="liz_gendist.html">liz_gendist</a></code> 
-        </dt>
-        <dd>Example genetic distance matrix, calculated with Plink using data from Bouzid et al. 2022</dd>
-      </dl><dl><dt>
-          
-          <code><a href="liz_vcf.html">liz_vcf</a></code> 
-        </dt>
-        <dd>Example VCF from Bouzid et al. 2022</dd>
-      </dl><dl><dt>
-          
-          <code><a href="load_algatr_example.html">load_algatr_example()</a></code> 
-        </dt>
-        <dd>Load example data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_df.html">mmrr_df()</a></code> 
-        </dt>
-        <dd>Make nice dataframe from MMRR results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_do_everything.html">mmrr_do_everything()</a></code> 
-        </dt>
-        <dd>MMRR function to do everything</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_packages.html">mmrr_packages()</a></code> 
-        </dt>
-        <dd>Install MMRR packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_plot.html">mmrr_plot()</a></code> 
-        </dt>
-        <dd>Plot MMRR results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_run.html">mmrr_run()</a></code> 
-        </dt>
-        <dd>Run MMRR and return model object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_table.html">mmrr_table()</a></code> 
-        </dt>
-        <dd>Create <code>gt</code> table of MMRR results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mmrr_var_sel.html">mmrr_var_sel()</a></code> 
-        </dt>
-        <dd>mmrr_var_sel performs MMRR with backward elimination variable selection</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_crossent.html">plot_crossent()</a></code> 
-        </dt>
-        <dd>Helper function to plot cross entropy scores from SNMF</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_extrap_mask.html">plot_extrap_mask()</a></code> 
-        </dt>
-        <dd>Plot mask on top of map</dd>
-      </dl><dl><dt>
-          
-          <code><a href="pops_helper.html">pops_helper()</a></code> 
-        </dt>
-        <dd>Helper function to get population assignments for best K</dd>
-      </dl><dl><dt>
-          
-          <code><a href="quick_elbow.html">quick_elbow()</a></code> 
-        </dt>
-        <dd>Quickly choose an elbow for a PC.
-At variance below 5% per component, choose the largest % drop
-Designed for variance percentages, but will also work given a full set of Evalues
-Quickly estimate the 'elbow' of a scree plot (PCA)</dd>
-      </dl><dl><dt>
+        <dd>Scale three layers of environmental data to R, G, and B for mapping</dd>
+      </dl></div><div class="section level2">
+      <h2 id="rda">RDA<a class="anchor" aria-label="anchor" href="#rda"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="rda_cor.html">rda_cor()</a></code> 
         </dt>
@@ -424,21 +444,52 @@ Quickly estimate the 'elbow' of a scree plot (PCA)</dd>
           <code><a href="rda_varpart_table.html">rda_varpart_table()</a></code> 
         </dt>
         <dd>Create <code>gt</code> table with RDA variance partitioning results</dd>
+      </dl></div><div class="section level2">
+      <h2 id="lfmm">LFMM<a class="anchor" aria-label="anchor" href="#lfmm"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="lfmm_df.html">lfmm_df()</a></code> 
+        </dt>
+        <dd>Convert LFMM results into a tidy dataframe for downstream processing</dd>
       </dl><dl><dt>
           
-          <code><a href="rm_islands.html">rm_islands()</a></code> 
+          <code><a href="lfmm_do_everything.html">lfmm_do_everything()</a></code> 
         </dt>
-        <dd>Remove islands from mapping</dd>
+        <dd>LFMM function to do everything</dd>
       </dl><dl><dt>
           
-          <code><a href="scale01.html">scale01()</a></code> 
+          <code><a href="lfmm_manhattanplot.html">lfmm_manhattanplot()</a></code> 
         </dt>
-        <dd>Scale genetic distances from 0 to 1</dd>
+        <dd>LFMM Manhattan Plot</dd>
       </dl><dl><dt>
           
-          <code><a href="scaleRGB.html">scaleRGB()</a></code> 
+          <code><a href="lfmm_packages.html">lfmm_packages()</a></code> 
         </dt>
-        <dd>Scale three layers of environmental data to R, G, and B for mapping</dd>
+        <dd>Install LFMM packages</dd>
+      </dl><dl><dt>
+          
+          <code><a href="lfmm_qqplot.html">lfmm_qqplot()</a></code> 
+        </dt>
+        <dd>LFMM QQplot</dd>
+      </dl><dl><dt>
+          
+          <code><a href="lfmm_run.html">lfmm_run()</a></code> 
+        </dt>
+        <dd>Run LFMM</dd>
+      </dl><dl><dt>
+          
+          <code><a href="lfmm_table.html">lfmm_table()</a></code> 
+        </dt>
+        <dd>Create <code>gt</code> table of LFMM results</dd>
       </dl><dl><dt>
           
           <code><a href="select_K.html">select_K()</a></code> <code><a href="select_K.html">select_K_tw()</a></code> <code><a href="select_K.html">select_K_elbow()</a></code> <code><a href="select_K.html">select_K_tess()</a></code> <code><a href="select_K.html">select_K_fc()</a></code> 
@@ -446,81 +497,21 @@ Quickly estimate the 'elbow' of a scree plot (PCA)</dd>
         <dd>K selection</dd>
       </dl><dl><dt>
           
-          <code><a href="simple_impute.html">simple_impute()</a></code> 
+          <code><a href="quick_elbow.html">quick_elbow()</a></code> 
         </dt>
-        <dd>Impute NA values
-NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="snmf_bestK.html">snmf_bestK()</a></code> 
-        </dt>
-        <dd>Helper function to select "best" K based on minimizing cross-entropy criteria from sNMF results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="snmf_crossent_helper.html">snmf_crossent_helper()</a></code> 
-        </dt>
-        <dd>Helper function to retrieve cross entropy scores from SNMF project</dd>
-      </dl><dl><dt>
-          
-          <code><a href="str_impute.html">str_impute()</a></code> 
-        </dt>
-        <dd>Imputation of missing values using population structure inferred with <code><a href="https://rdrr.io/pkg/LEA/man/main_sNMF.html" class="external-link">LEA::snmf</a></code></dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_barplot.html">tess_barplot()</a></code> 
-        </dt>
-        <dd>Create TESS barplot</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_col_default.html">tess_col_default()</a></code> 
-        </dt>
-        <dd>Create default TESS color palette</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_do_everything.html">tess_do_everything()</a></code> 
-        </dt>
-        <dd>TESS function to do everything</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_ggbarplot.html">tess_ggbarplot()</a></code> 
-        </dt>
-        <dd>Create TESS barplot using ggplot2</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_ggplot.html">tess_ggplot()</a></code> 
-        </dt>
-        <dd>ggplot of TESS results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_krig.html">tess_krig()</a></code> 
-        </dt>
-        <dd>Krige admixture values</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_ktest.html">tess_ktest()</a></code> 
-        </dt>
-        <dd>Test multiple K values</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_packages.html">tess_packages()</a></code> 
-        </dt>
-        <dd>Install TESS packages</dd>
-      </dl><dl><dt>
-          
-          <code><a href="tess_plot_allK.html">tess_plot_allK()</a></code> 
-        </dt>
-        <dd>Plot all kriged Q values for each K</dd>
-      </dl><dl><dt>
-          
-          <code><a href="unfold.html">unfold()</a></code> 
-        </dt>
-        <dd>unfold converts the lower diagonal elements of a matrix into a vector</dd>
-      </dl><dl><dt>
-          
-          <code><a href="vcf_to_dosage.html">vcf_to_dosage()</a></code> 
-        </dt>
-        <dd>Convert a vcf to a dosage matrix</dd>
-      </dl><dl><dt>
+        <dd>Quickly choose an elbow for a PC</dd>
+      </dl></div><div class="section level2">
+      <h2 id="wingen">Wingen<a class="anchor" aria-label="anchor" href="#wingen"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="wingen_do_everything.html">wingen_do_everything()</a></code> 
         </dt>
@@ -530,8 +521,87 @@ NOTE: use extreme caution when using this form of simplistic imputation. We main
           <code><a href="wingen_packages.html">wingen_packages()</a></code> 
         </dt>
         <dd>Install wingen packages</dd>
+      </dl></div><div class="section level2">
+      <h2 id="alazygatr">Alazygatr<a class="anchor" aria-label="anchor" href="#alazygatr"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="alazygatr_packages.html">alazygatr_packages()</a></code> 
+        </dt>
+        <dd>Install alazygatr packages</dd>
+      </dl><dl><dt>
+          
+          <code><a href="do_everything_for_me.html">do_everything_for_me()</a></code> 
+        </dt>
+        <dd>Lazy run of all landscape genomic analyses contained within <code>algatr</code></dd>
+      </dl></div><div class="section level2">
+      <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="load_algatr_example.html">load_algatr_example()</a></code> 
+        </dt>
+        <dd>Load example data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="CA_env.html">CA_env</a></code> 
+        </dt>
+        <dd>Example environmental data, calculated by performing a raster PCA on 18 bioclimatic variables for state of California</dd>
+      </dl><dl><dt>
+          
+          <code><a href="liz_coords.html">liz_coords</a></code> 
+        </dt>
+        <dd>Example coordinates from Bouzid et al. 2022</dd>
+      </dl><dl><dt>
+          
+          <code><a href="liz_gendist.html">liz_gendist</a></code> 
+        </dt>
+        <dd>Example genetic distance matrix, calculated with Plink using data from Bouzid et al. 2022</dd>
+      </dl><dl><dt>
+          
+          <code><a href="liz_vcf.html">liz_vcf</a></code> 
+        </dt>
+        <dd>Example VCF from Bouzid et al. 2022</dd>
+      </dl></div><div class="section level2">
+      <h2 id="other">Other<a class="anchor" aria-label="anchor" href="#other"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="coords_to_sf.html">coords_to_sf()</a></code> 
+        </dt>
+        <dd>Convert from matrix, data frame, or sf to sf (sf is a pass through)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="coords_to_sp.html">coords_to_sp()</a></code> 
+        </dt>
+        <dd>Convert from matrix, data frame, or sf to formatted sp</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
