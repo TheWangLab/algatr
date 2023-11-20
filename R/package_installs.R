@@ -40,6 +40,32 @@ alazygatr_packages <- function(){
   wingen_packages()
 }
 
+#' Install data processing packages
+#'
+#' Checks for the presence of packages required for genetic data processing.
+#' If any of these packages are not already installed, it will automatically install them.
+#'
+#' @details
+#' The following packages will be installed if not already present:
+#' \itemize{
+#'   \item "gdsfmt" (from Bioconductor repository)
+#'   \item "SeqArray" (from Bioconductor repository)
+#'   \item "SNPRelate" (from Bioconductor repository)
+#' }
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{data_processing_packages()}
+data_processing_packages <- function(){
+  dev_packages()
+  if (!require("gdsfmt", quietly = TRUE)) BiocManager::install("gdsfmt")
+  if (!require("SeqArray", quietly = TRUE)) BiocManager::install("SeqArray")
+  if (!require("SNPRelate", quietly = TRUE)) BiocManager::install("SNPRelate")
+}
+
 #' Install genetic distance packages
 #'
 #' Checks for the presence of packages required for genetic distance calculations.
