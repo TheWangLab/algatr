@@ -26,6 +26,7 @@ library(algatr)
 library(purrr)
 library(dplyr)
 library(ggplot2)
+library(here)
 ```
 
 For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:
@@ -89,7 +90,7 @@ There are a number of arguments in the `str_impute()` function, most of which in
 
 -   `project` specifies whether you want to start a new SNMF project (`"new"`; default), whether you want to continue an existing SNMF project (`"continue"`) or overwrite existing results (`"force"`)
 
--   `quiet` will print a plot with the results of internal function `snmf_bestK()` if set to FALSE; default is for nothing to be printed (TRUE). The `snmf_bestK()` function selects the best K value from the SNMF results based on minimizing cross-entropy scores
+-   `quiet` produces a plot of the cross-entropy scores for each K value from SNMF, if set to FALSE. The default is for nothing to be printed (quiet = TRUE). The best K value from the SNMF results is based on minimizing cross-entropy scores
 
 -   `save_output` specifies whether you would like output files to be saved to file (a string) or not (left NULL; this is the default). If a string is provided, output files will be saved with this argument's string as a prefix. Files to be saved include SNMF results, the original dosage matrix as .geno and .lfmm files, and an imputed .lfmm file
 

@@ -250,7 +250,7 @@ You'll now want to do some processing of these data, such as file conversions an
 
 ------------------------------------------------------------------------
 
-Do alligators alligate? You can run through all of algatr's functionality which we've coded up into a single function, `do_everything_for_me()`. For obvious reasons, we ***strongly*** advise against actually using this function for your analyses.
+Do alligators alligate? You can run through all of algatr's functionality which we've coded up into a single function, `do_everything_for_me()`. The `do_everything` functions provide a useful first pass at analyses, but each of algatr's methods should be thoroughly tested and parameterized based on input data. Given this, we ***strongly*** advise against using this function for any final analyses.
 
 ```{r do everything, warning = FALSE, message = FALSE}
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
