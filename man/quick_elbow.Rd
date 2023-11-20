@@ -2,10 +2,7 @@
 % Please edit documentation in R/LFMM.R
 \name{quick_elbow}
 \alias{quick_elbow}
-\title{Quickly choose an elbow for a PC.
-At variance below 5\% per component, choose the largest \% drop
-Designed for variance percentages, but will also work given a full set of Evalues
-Quickly estimate the 'elbow' of a scree plot (PCA)}
+\title{Quickly choose an elbow for a PC}
 \usage{
 quick_elbow(varpc, low = 0.08, max.pc = 0.9)
 }
@@ -20,6 +17,11 @@ quick_elbow(varpc, low = 0.08, max.pc = 0.9)
 the number of principal components to keep, prior to the determined elbow cutoff
 }
 \description{
+At variance below 5\% per component, choose the largest \% drop.
+Designed for variance percentages, but will also work given a full set of Evalues.
+Quickly estimate the 'elbow' of a scree plot (PCA)
+}
+\details{
 This function uses a rough algorithm to estimate a sensible 'elbow' to
 choose for a PCA screeplot of eigenvalues. The function looks at an initial arbitrarily 'low'
 level of variance and looks for the first eigenvalue lower than this. If the very first eigenvalue

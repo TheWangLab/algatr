@@ -1,8 +1,8 @@
 ---
-title: "alazygatr_vignette"
+title: "Alazygatr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{alazygatr_vignette}
+  %\VignetteIndexEntry{Alazygatr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

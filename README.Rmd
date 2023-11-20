@@ -22,9 +22,9 @@ library(vcfR)
 
 # algatr <img src="man/figures/logo.png" align="right" height="160"/>
 
-[![docker-build](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml/badge.svg)](https://github.com/TheWangLab/algatr/actions/workflows/docker-image.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
 
-**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform various landscape genomics methods with their data.
+**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R** (**algatr**) was built to provide researchers with a step-by-step, start-to-finish pipeline to perform core landscape genomic analysis methods with their data.
 
 ## Citation
 
@@ -72,7 +72,7 @@ devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
 
 # Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
-genetic_distance_packages()
+gen_dist_packages()
 ## Genetic data processing:
 data_processing_packages()
 ## Environmental and geographic data processing:
@@ -127,21 +127,21 @@ To better understand what's going on under the hood of these `[method]_do_everyt
 
 When deciding on methods to have within algatr, we found it best to first identify the questions that these methods seek to answer, and we think this is a good framework for anyone (particularly beginner landscape genomicists) to think about landscape genomic methods. These questions fall into four broad categories of analyses:
 
-+-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+--------------------------+
-| Question                                                    | Category                                                 | Method                                                                                                         | Vignette                                                                                            | algatr function          |
-+=============================================================+==========================================================+================================================================================================================+=====================================================================================================+==========================+
-| How do we delineate population units for management?        | Population structure                                     | TESS (Caye et al. 2016)                                                                                        | [TESS_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/TESS_vignette.Rmd)     | `tess_do_everything()`   |
-+-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+--------------------------+
-| How is genetic variation distributed?                       | Genetic diversity                                        | Moving windows of genetic diversity; wingen (Bishop et al. 2023)                                               | [wingen_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/wingen_vignette.Rmd) | `wingen_do_everything()` |
-+-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+--------------------------+
-| What are the drivers of population connectivity?            | Isolation by distance/isolation by environment (IBD/IBE) | Multiple matrix regression with randomization; MMRR (Wang 2013)                                                | [MMRR_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/MMRR_vignette.Rmd)     | `mmrr_do_everything()`   |
-|                                                             |                                                          |                                                                                                                |                                                                                                     |                          |
-|                                                             |                                                          | Generalized dissimilarity modeling; GDM (Ferrier et al. 2007; Freedman et al. 2010; Fitzpatrick & Keller 2015) | [GDM_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/GDM_vignette.Rmd)       | `gdm_do_everything()`    |
-+-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+--------------------------+
-| How can we identify and protect adaptive genetic variation? | Genotype-environment associations (GEA)                  | Redundancy analysis; RDA (Capblancq & Forester 2021)                                                           | [RDA_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/RDA_vignette.Rmd)       | `rda_do_everything()`    |
-|                                                             |                                                          |                                                                                                                |                                                                                                     |                          |
-|                                                             |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | [LFMM_vignette.Rmd](https://github.com/TheWangLab/algatr/blob/main/vignettes/LFMM_vignette.Rmd)     | `lfmm_do_everything()`   |
-+-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+--------------------------+
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
+| Question                                                    | Category                                                 | Method                                                                                                         | Vignette                                                                             | algatr function          |
++=============================================================+==========================================================+================================================================================================================+======================================================================================+==========================+
+| How do we delineate population units for management?        | Population structure                                     | TESS (Caye et al. 2016)                                                                                        | [TESS vignette](https://thewanglab.github.io/algatr/articles/TESS_vignette.html)     | `tess_do_everything()`   |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
+| How is genetic variation distributed?                       | Genetic diversity                                        | Moving windows of genetic diversity; wingen (Bishop et al. 2023)                                               | [wingen vignette](https://thewanglab.github.io/algatr/articles/wingen_vignette.html) | `wingen_do_everything()` |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
+| What are the drivers of population connectivity?            | Isolation by distance/isolation by environment (IBD/IBE) | Multiple matrix regression with randomization; MMRR (Wang 2013)                                                | [MMRR vignette](https://thewanglab.github.io/algatr/articles/MMRR_vignette.html)     | `mmrr_do_everything()`   |
+|                                                             |                                                          |                                                                                                                |                                                                                      |                          |
+|                                                             |                                                          | Generalized dissimilarity modeling; GDM (Ferrier et al. 2007; Freedman et al. 2010; Fitzpatrick & Keller 2015) | [GDM vignette](https://thewanglab.github.io/algatr/articles/GDM_vignette.html)       | `gdm_do_everything()`    |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
+| How can we identify and protect adaptive genetic variation? | Genotype-environment associations (GEA)                  | Redundancy analysis; RDA (Capblancq & Forester 2021)                                                           | [RDA vignette](https://thewanglab.github.io/algatr/articles/RDA_vignette.html)       | `rda_do_everything()`    |
+|                                                             |                                                          |                                                                                                                |                                                                                      |                          |
+|                                                             |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | [LFMM vignette](https://thewanglab.github.io/algatr/articles/LFMM_vignette.html)     | `lfmm_do_everything()`   |
++-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
 
 ### The example dataset
 
@@ -203,7 +203,7 @@ Read in your vcf file using the `read.vcfR()` function in the vcfR package. To s
 vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
-You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the **data processing vignette**) and calculating genetic distances (see the **genetic distances vignette**).
+You'll now want to do some processing of these data, such as file conversions and LD-pruning (see the [**data processing vignette**](https://thewanglab.github.io/algatr/articles/data_processing_vignette.html)), environmental data checking and manipulation (see the [**environmental data processing vignette**](https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html)), and calculating genetic distances (see the [**genetic distances vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)).
 
 +-----------+-------------------------------------------------------------------+--------------------------+-------------------------------------------+--------------------+
 |           | R package                                                         | algatr function          | Input files                               | Required arguments |
@@ -260,3 +260,4 @@ You may run into issues installing the rmapshaper package if you're using a Ubun
 ```         
 sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
 ```
+

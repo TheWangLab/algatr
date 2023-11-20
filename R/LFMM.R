@@ -179,6 +179,7 @@ lfmm_df <- function(x) {
 #' @export
 #'
 #' @family LFMM functions
+#' @keywords internal
 lfmm_test_tidy <- function(colname, lfmm_test_result) {
   x <- lfmm_test_result[[colname]]
   if (is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
@@ -380,9 +381,10 @@ select_K_fc <- function(gen, perc.pca, max.n.clust) {
   return(K)
 }
 
-#' Quickly choose an elbow for a PC.
-#' At variance below 5% per component, choose the largest % drop
-#' Designed for variance percentages, but will also work given a full set of Evalues
+#' Quickly choose an elbow for a PC
+#'
+#' At variance below 5% per component, choose the largest % drop.
+#' Designed for variance percentages, but will also work given a full set of Evalues.
 #' Quickly estimate the 'elbow' of a scree plot (PCA)
 #'
 #' This function uses a rough algorithm to estimate a sensible 'elbow' to

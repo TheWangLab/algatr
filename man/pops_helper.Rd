@@ -35,3 +35,4 @@ Other TESS functions:
 \code{\link{tess_plot_allK}()}
 }
 \concept{TESS functions}
+\keyword{internal}

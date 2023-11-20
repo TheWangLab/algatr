@@ -1,0 +1,18 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "Individual-based landscape genomics for conservation: An analysis pipeline",
+  author   = c(
+            person("E. Anne", "Chambers", , email = "eachambers@berkeley.edu", role = c("aut"),
+                   comment = c(ORCID="0000-0002-7369-0108")),
+            person("Anusha P.", "Bishop", , email = "anusha.bishop@berkeley.edu", role = c("aut"),
+                   comment = c(ORCID="0000-0003-1731-8683")),
+            person("Ian J.", "Wang", , email = "ianwang@berkeley.edu", role = "aut",
+                   comment = c(ORCID = "0000-0003-2554-9414"))
+            ),
+  journal  = "Molecular Ecology Resources",
+  year     = "2023",
+  volume   = "00",
+  number   = "",
+  pages    = "1–12",
+  doi      = "10.1111/1755-0998.13884"
+)

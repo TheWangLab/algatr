@@ -1,8 +1,8 @@
 ---
-title: "RDA_vignette"
+title: "RDA"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{RDA_vignette}
+  %\VignetteIndexEntry{RDA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

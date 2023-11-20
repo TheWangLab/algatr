@@ -1,8 +1,8 @@
 ---
-title: "TESS_vignette"
+title: "TESS"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{TESS_vignette}
+  %\VignetteIndexEntry{TESS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

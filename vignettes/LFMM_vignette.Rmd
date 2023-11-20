@@ -1,8 +1,8 @@
 ---
-title: "LFMM_vignette"
+title: "LFMM"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LFMM_vignette}
+  %\VignetteIndexEntry{LFMM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

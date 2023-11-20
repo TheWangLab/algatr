@@ -1,8 +1,8 @@
 ---
-title: "MMRR_vignette"
+title: "MMRR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MMRR_vignette}
+  %\VignetteIndexEntry{MMRR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,8 +1,8 @@
 ---
-title: "GDM_vignette"
+title: "GDM"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GDM_vignette}
+  %\VignetteIndexEntry{GDM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

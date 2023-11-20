@@ -1,8 +1,8 @@
 ---
-title: "Environmental_data_vignette"
+title: "Environmental data processing"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Environmental_data_vignette}
+  %\VignetteIndexEntry{Environmental data processing}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

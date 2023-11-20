@@ -1,8 +1,8 @@
 ---
-title: "wingen-vignette"
+title: "Wingen"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{wingen-vignette}
+  %\VignetteIndexEntry{Wingen}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,8 +18,6 @@ knitr::opts_chunk$set(
 # Install packages
 wingen_packages()
 ```
-
-# wingen
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
