@@ -67,10 +67,13 @@ devtools::install_github("TheWangLab/algatr")
 The algatr package depends on many packages for all of the different methods implemented. To ensure that algatr can still be installed even if one of the many dependencies breaks, the packages required for each method are suggested rather than imported. To install all of the suggested packages set `dependencies = TRUE` when running `install_github()`. To install just the packages required for each method, use the `*_packages()` functions below. This is helpful if you're only interested in using a subset of the methods provided and don't want to install unnecessary packages.
 
 ``` r
-# Install all of the packages needed for algatr:
-devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
+# Install algatr
+devtools::install_github("TheWangLab/algatr")
 
-# Install subsets of packages based on what methods you want to use:
+# Option 1: Install all of the packages for algatr
+alazygatr_packages()
+
+# Option 2: Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
 gen_dist_packages()
 ## Genetic data processing:
@@ -260,4 +263,3 @@ You may run into issues installing the rmapshaper package if you're using a Ubun
 ```         
 sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
 ```
-

@@ -58,10 +58,13 @@ you’re only interested in using a subset of the methods provided and
 don’t want to install unnecessary packages.
 
 ``` r
-# Install all of the packages needed for algatr:
-devtools::install_github("TheWangLab/algatr", dependencies = TRUE)
+# Install algatr
+devtools::install_github("TheWangLab/algatr")
 
-# Install subsets of packages based on what methods you want to use:
+# Option 1: Install all of the packages for algatr
+alazygatr_packages()
+
+# Option 2: Install subsets of packages based on what methods you want to use:
 ## Genetic distance processing:
 gen_dist_packages()
 ## Genetic data processing:
