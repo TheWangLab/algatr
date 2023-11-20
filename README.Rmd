@@ -70,6 +70,8 @@ The algatr package depends on many packages for all of the different methods imp
 # Install algatr
 devtools::install_github("TheWangLab/algatr")
 
+library(algatr)
+
 # Option 1: Install all of the packages for algatr
 alazygatr_packages()
 
@@ -263,3 +265,4 @@ You may run into issues installing the rmapshaper package if you're using a Ubun
 ```         
 sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
 ```
+

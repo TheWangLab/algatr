@@ -61,6 +61,8 @@ don’t want to install unnecessary packages.
 # Install algatr
 devtools::install_github("TheWangLab/algatr")
 
+library(algatr)
+
 # Option 1: Install all of the packages for algatr
 alazygatr_packages()
 
@@ -474,8 +476,11 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 
 Do alligators alligate? You can run through all of algatr’s
 functionality which we’ve coded up into a single function,
-`do_everything_for_me()`. For obvious reasons, we ***strongly*** advise
-against actually using this function for your analyses.
+`do_everything_for_me()`. The `do_everything` functions provide a useful
+first pass at analyses, but each of algatr’s methods should be
+thoroughly tested and parameterized based on input data. Given this, we
+***strongly*** advise against using this function for any final
+analyses.
 
 ``` r
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)
