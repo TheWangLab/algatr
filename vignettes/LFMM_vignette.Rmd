@@ -208,8 +208,8 @@ lfmm_manhattanplot(ridge_results$df, sig = 0.05)
 
 The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will automatically extract relevant values from our environmental layers given our coordinate data; it will also automatically convert a vcf object to a dosage matrix for us and impute missing values if present. The output looks the same as the output from `lfmm_run()` above, and plots will be automatically produced. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
-```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
-results <- lfmm_do_everything(liz_vcf, CA_env, liz_coords, 
+```{r do everything, warning = FALSE,  results = 'asis', message = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
+lfmm_full_everything <- lfmm_do_everything(liz_vcf, CA_env, liz_coords, 
                               impute = "structure",
                               K_impute = 3,
                               lfmm_method = "lasso", 

@@ -181,7 +181,7 @@ The algatr package also has an option to run all of the above functionality in a
 
 Running a GDM with `gdm_do_everything()` requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
-```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='hide'}
+```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='asis'}
 gdm_full_everything <- gdm_do_everything(liz_gendist,
   liz_coords,
   envlayers = CA_env,

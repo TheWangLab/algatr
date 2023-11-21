@@ -80,21 +80,21 @@ Now, let's use `str_impute()` to impute missing values based on population struc
 
 There are a number of arguments in the `str_impute()` function, most of which inherit from `LEA::snmf()`:
 
--   `gen` specifies the genotype data and can be a dosage matrix, vcfR object, path to vcf file, or an SNMF project (i.e., object of type snmfProject) if you've already run SNMF and want to use that for imputation
+-   `gen` specifies the genotype data and can be a dosage matrix, vcfR object, path to vcf file, or an sNMF project (i.e., object of type snmfProject) if you've already run SNMF and want to use that for imputation
 
--   `K` specifies a single value or range of K-values for SNMF to be run
+-   `K` specifies a single value or range of K-values for sNMF to be run
 
 -   `entropy` whether to calculate cross-entropy criteria (defaults to TRUE)
 
 -   `repetitions` specifies the number of repetitions (or runs) to do for each K-value (defaults to 10)
 
--   `project` specifies whether you want to start a new SNMF project (`"new"`; default), whether you want to continue an existing SNMF project (`"continue"`) or overwrite existing results (`"force"`)
+-   `project` specifies whether you want to start a new sNMF project (`"new"`; default), whether you want to continue an existing SNMF project (`"continue"`) or overwrite existing results (`"force"`)
 
--   `quiet` produces a plot of the cross-entropy scores for each K value from SNMF, if set to FALSE. The default is for nothing to be printed (quiet = TRUE). The best K value from the SNMF results is based on minimizing cross-entropy scores
+-   `quiet` produces a plot of the cross-entropy scores for each K value from sNMF, if set to FALSE. The default is for nothing to be printed (quiet = TRUE). The best K value from the sNMF results is based on minimizing cross-entropy scores
 
 -   `save_output` specifies whether you would like output files to be saved to file (a string) or not (left NULL; this is the default). If a string is provided, output files will be saved with this argument's string as a prefix. Files to be saved include SNMF results, the original dosage matrix as .geno and .lfmm files, and an imputed .lfmm file
 
-```{r str impute, message = FALSE, results = FALSE, warning = FALSE, fig.align = 'center'}
+```{r str impute, message = FALSE, results = 'hide', warning = FALSE, fig.align = 'center'}
 str_dos <- str_impute(gen = dosage, K = 1:3, entropy = TRUE, repetitions = 3, quiet = FALSE, save_output = FALSE)
 ```
 

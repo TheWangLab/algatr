@@ -39,12 +39,10 @@ envlayers <- CA_env
 
 Now, let's run the function:
 
-```{r alazygatr, warning = FALSE}
+```{r alazygatr, warning = FALSE, message = FALSE, results = 'asis'}
 lazy_results <- do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 ```
 
 The `do_everything_for_me()` function returns a list with each analysis's results as objects named according to the method. These formats are identical to those obtained when running respective "do_everything" functions (e.g., `tess_do_everything()` function output is identical to that within the `tess` object).
 
 For methods with model selection (e.g., GDM and MMRR), the default of `do_everything_for_me()` is to run with model selection (`"best"`), and if no significant variables are found, the function will revert to running the `"full"` model for these methods.
-
-

@@ -145,7 +145,7 @@ The algatr package also has an option to run all of the above functionality in a
 
 ### MMRR with all variables
 
-```{r all vars, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE}
+```{r all vars, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE, results = 'asis', message = FALSE}
 set.seed(01)
 mmrr_full_everything <- mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, geo = TRUE, model = "full")
 ```
@@ -175,7 +175,7 @@ X[["resistdist"]] <- geo_dist(liz_coords, type = "resistance", lyr = lyr)
 
 Now, we can run MMRR as we did above but including resistance-based distances in our input data.
 
-```{r mmrr resist, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE}
+```{r mmrr resist, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE, results = 'asis'}
 # Run MMRR with resistance distances
 results_resist <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "full")
 mmrr_plot(Y, X, mod = results_resist$mod, plot_type = "all", stdz = TRUE)

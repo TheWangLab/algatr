@@ -234,6 +234,10 @@ vignette</a></p></td>
 </tbody>
 </table>
 
+You can also view the knitted versions of this README and all of
+algatr’s vignettes on the **package’s pkgdown website
+[here](%5Bhttps://thewanglab.github.io/algatr/).**
+
 ### The example dataset
 
 ------------------------------------------------------------------------

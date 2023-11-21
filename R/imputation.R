@@ -47,8 +47,10 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
     # sNMF requires an input file saved to file (cannot accept an R object)
     LEA::write.geno(geno, paste0(filename, ".geno"))
 
-    # Run SNMF
-    snmf_proj <- LEA::snmf(input.file = paste0(filename, ".geno"), K = K, entropy = entropy, repetitions = repetitions, project = project)
+    # Run sNMF
+    snmf_quiet <- purrr::quietly(LEA::snmf)
+    quiet_result <- snmf_quiet(input.file = paste0(filename, ".geno"), K = K, entropy = entropy, repetitions = repetitions, project = project)
+    snmf_proj <- quiet_result[[1]]
   }
 
   # Look through directories
