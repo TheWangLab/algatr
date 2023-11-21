@@ -60,8 +60,9 @@ str_impute <- function(gen, K, entropy = TRUE, repetitions = 10, project = "new"
     print(plot_crossent(bestK$ce_values))
   }
 
-  # Impute missing values based on snmf groupings
-  LEA::impute(object = snmf_proj, input.file = paste0(filename, ".geno"), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
+  # Impute missing values based on sNMF groupings
+  impute_quiet <- purrr::quietly(LEA::impute)
+  result <- impute_quiet(object = snmf_proj, input.file = paste0(filename, ".geno"), method = "mode", K = as.integer(bestK$K_value), run = as.integer(bestK$bestrun))
 
   # Read .lfmm file in
   imputed <- LEA::read.lfmm(paste0(filename, ".lfmm_imputed.lfmm"))
