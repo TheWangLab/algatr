@@ -52,7 +52,7 @@ mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "full",
   # Print dataframe
   if (!quiet) {
     mmrr_plot(Y = Y, X = X, mod = results$mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
-    print(mmrr_table(results))
+    mmrr_table(results)
   }
 
   return(results)
@@ -243,13 +243,13 @@ mmrr_df <- function(mod) {
 #' @family MMRR functions
 mmrr_plot <- function(Y = NULL, X, mod = NULL, plot_type = "all", stdz = TRUE, var_names = NULL) {
   # Plot single variable relationships
-  if ("all" %in% plot_type | "vars" %in% plot_type) print(mmrr_plot_vars(Y, X, stdz = TRUE))
+  if ("all" %in% plot_type | "vars" %in% plot_type) mmrr_plot_vars(Y, X, stdz = TRUE)
 
   # Plot fitted relationship
-  if ("all" %in% plot_type | "fitted" %in% plot_type) print(mmrr_plot_fitted(mod, Y, X, stdz = TRUE))
+  if ("all" %in% plot_type | "fitted" %in% plot_type) mmrr_plot_fitted(mod, Y, X, stdz = TRUE)
 
   # Plot fitted relationship
-  if ("all" %in% plot_type | "cov" %in% plot_type) print(mmrr_plot_cov(X, stdz = TRUE))
+  if ("all" %in% plot_type | "cov" %in% plot_type) mmrr_plot_cov(X, stdz = TRUE)
 }
 
 #' Plot single variable relationships
