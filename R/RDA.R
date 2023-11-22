@@ -107,8 +107,10 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   # Variance partitioning ---------------------------------------------------
 
   if (varpart) {
-    varpart_df <- rda_varpart(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC)
-    if (!quiet) print(rda_varpart_table(varpart_df))
+    varpart_quiet <- purrr::quietly(rda_varpart)
+    quiet_results <- varpart_quiet(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC)
+    varpart_df <- quiet_results$result
+    if (!quiet) rda_varpart_table(varpart_df)
   } else {
     varpart_df <- NULL
   }
@@ -131,7 +133,7 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   rda_gen <- gen[, rda_snps]
   if (cortest) {
     cor_df <- rda_cor(rda_gen, env)
-    if (!quiet) print(rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
+    if (!quiet) rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10)
   } else {
     cor_df <- NULL
   }
@@ -431,7 +433,7 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
       tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
 
     # Generate plot, faceting on RDA axis
-    print(rda_hist(loadings, binwidth = binwidth))
+    rda_hist(loadings, binwidth = binwidth)
   }
 
 
@@ -446,28 +448,28 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
     # Make RDA plots
     if (rdaplot) {
       if (length(axes) == 1) {
-        print(rda_hist(TAB_snps, binwidth = binwidth))
+        rda_hist(TAB_snps, binwidth = binwidth)
       } else if (!is.null(biplot_axes)) {
-        if (is.vector(biplot_axes)) print(rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes))
+        if (is.vector(biplot_axes)) rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes)
         if (is.list(biplot_axes)) {
           lapply(biplot_axes, function(x) {
-            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
+            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
           })
         }
       } else {
         cb <- combn(length(axes), 2)
         if (!is.null(dim(cb))) {
           apply(cb, 2, function(x) {
-            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
+            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
           })
         } else {
-          print(rda_biplot(TAB_snps, TAB_var, biplot_axes = cb))
+          rda_biplot(TAB_snps, TAB_var, biplot_axes = cb)
         }
       }
     }
 
     # Make Manhattan plot
-    if (manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
+    if (manhattan & !is.null(pvalues)) rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig)
   }
 }
 
