@@ -23,43 +23,37 @@ do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE, gators =
 
   # Run algatr methods ------------------------------------------------------
 
-  quiet_wingen <- purrr::quietly(wingen_do_everything)
-  wingen <- quiet_wingen(gen, lyr, coords, kriged = TRUE, grd = lyr, masked = TRUE, mask = envlayers, quiet = quiet)$result
+  wingen <- wingen_do_everything(gen, lyr, coords, kriged = TRUE, grd = lyr, masked = TRUE, mask = envlayers, quiet = quiet)
 
   if (gators & !quiet) ascii_alligator("wingen")
 
-  quiet_tess <- purrr::quietly(tess_do_everything)
-  tess <- quiet_tess(gen, coords, raster::aggregate(envlayers[[1]], 10), Kvals = 1:10, K_selection = "auto", quiet = quiet)$result
+  tess <- tess_do_everything(gen, coords, raster::aggregate(envlayers[[1]], 10), Kvals = 1:10, K_selection = "auto", quiet = quiet)
 
   if (gators & !quiet) ascii_alligator("TESS")
 
-  quiet_mmrr <- purrr::quietly(mmrr_do_everything)
-  mmrr <- quiet_mmrr(gendist, coords, envlayers, model = "best", nperm = 100, quiet = quiet)$result
+  mmrr <- mmrr_do_everything(gendist, coords, envlayers, model = "best", nperm = 100, quiet = quiet)
 
   if (is.null(mmrr)) {
     warning("MMRR model = \"best\" did not find a significant model, running a full model instead")
-    mmrr <- quiet_mmrr(gendist, coords, envlayers, model = "full", nperm = 100, quiet = quiet)$result
+    mmrr <- quiet_mmrr(gendist, coords, envlayers, model = "full", nperm = 100, quiet = quiet)
   }
 
   if (gators & !quiet) ascii_alligator("MMRR")
 
-  quiet_gdm <- purrr::quietly(gdm_do_everything)
-  gdm <- quiet_gdm(gendist, coords, envlayers, model = "best", scale_gendist = TRUE, quiet = quiet)$result
+  gdm <- gdm_do_everything(gendist, coords, envlayers, model = "best", scale_gendist = TRUE, quiet = quiet)
 
   if (is.null(gdm)) {
     warning("GDM model = \"best\" did not find a significant model, running a full model instead")
-    gdm <- quiet_gdm(gendist, coords, envlayers, model = "full", scale_gendist = TRUE, quiet = quiet)$result
+    gdm <- quiet_gdm(gendist, coords, envlayers, model = "full", scale_gendist = TRUE, quiet = quiet)
   }
 
   if (gators & !quiet) ascii_alligator("GDM")
 
-  quiet_rda <- purrr::quietly(rda_do_everything)
-  rda <- quiet_rda(gen, envlayers, coords, quiet = quiet)$result
+  rda <- rda_do_everything(gen, envlayers, coords, quiet = quiet)
 
   if (gators & !quiet) ascii_alligator("RDA")
 
-  quiet_lfmm <- purrr::quietly(lfmm_do_everything)
-  lfmm <- quiet_lfmm(gen, envlayers, coords, quiet = quiet)$result
+  lfmm <- lfmm_do_everything(gen, envlayers, coords, quiet = quiet)
 
   if (gators & !quiet) ascii_alligator("LFMM")
 
