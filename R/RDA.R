@@ -110,7 +110,7 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
     varpart_quiet <- purrr::quietly(rda_varpart)
     quiet_results <- varpart_quiet(gen, env, coords, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope, nPC = nPC)
     varpart_df <- quiet_results$result
-    if (!quiet) rda_varpart_table(varpart_df)
+    if (!quiet) print(rda_varpart_table(varpart_df))
   } else {
     varpart_df <- NULL
   }
@@ -133,7 +133,7 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   rda_gen <- gen[, rda_snps]
   if (cortest) {
     cor_df <- rda_cor(rda_gen, env)
-    if (!quiet) rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10)
+    if (!quiet) print(rda_table(cor_df, top = TRUE, order = TRUE, nrow = 10))
   } else {
     cor_df <- NULL
   }
