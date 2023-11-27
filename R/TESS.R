@@ -64,7 +64,9 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
     K <- Kvals
 
     # Run tess for given K value
-    tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+    tess_quiet <- purrr::quietly(tess3r::tess3)
+    tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+    tess3_obj <- tess3_obj$result
 
     # Get population assignments
     pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = Kvals)
@@ -131,7 +133,9 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   colnames(coords) <- c("x", "y")
 
   # Run tess for all K values
-  tess3_obj <- tess3r::tess3(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+  tess_quiet <- purrr::quietly(tess3r::tess3)
+  tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+  tess3_obj <- tess3_obj$result
 
   # Plot CV results
   if (!quiet) {
@@ -236,7 +240,9 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
   }
 
   # Krige (capture output so it is not printed automatically)
-  co <- capture.output(krig_res <- automap::autoKrige(Q ~ 1, krig_df, new_data = krig_grid))
+  quiet_krig <- purrr::quietly(automap::autoKrige)
+  co <- capture.output(krig_res <- quiet_krig(Q ~ 1, krig_df, new_data = krig_grid))
+  krig_res <- krig_res$result
 
   # Get Krige output
   krig_spdf <- krig_res$krige_output
