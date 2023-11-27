@@ -20,8 +20,9 @@ Install all of the required packages:
 alazygatr_packages()
 ```
 
-```{r setup, include = FALSE, warning = FALSE, message = FALSE}
-library(algatr)
+```{r setup, warning = FALSE, message = FALSE}
+#library(algatr)
+devtools::load_all()
 ```
 
 Are you a lazy algatr? The `do_everything_for_me()` function runs all six landscape genomic methods in the algatr package (wingen, TESS, GDM, MMRR, RDA, and LFMM) and provides limited options for customizability. This function primarily exists for fun and to demonstrate that algatr really can be run using on a vcf and sampling coordinates; we **do not** encourage researchers to actually perform analyses on their data using this function!
@@ -39,7 +40,7 @@ envlayers <- CA_env
 
 Now, let's run the function:
 
-```{r alazygatr, warning = FALSE, message = FALSE, results = 'asis'}
+```{r alazygatr, warning = FALSE, message = TRUE, results = 'asis', fig.width = 6, fig.height = 6}
 lazy_results <- do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 ```
 
