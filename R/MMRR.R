@@ -116,7 +116,6 @@ mmrr_var_sel <- function(Y, X, nperm = 999, stdz = TRUE) {
 
   # Eliminate variable with highest p-value, re-fit, and continue until only significant variables remain or no variables remain
   while ((max(pvals) > 0.05) & (length(pvals) > 1)) {
-    print(pvals)
     rem.var <- which(pvals == max(pvals))
     X <- X[-rem.var]
     if (length(X) == 0) break
