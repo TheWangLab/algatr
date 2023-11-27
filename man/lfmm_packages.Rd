@@ -19,7 +19,7 @@ The following packages will be installed if not already present:
 \item "adegenet"
 \item "AssocTests"
 \item "lfmm"
-\item "TESS3_encho_sen" (from GitHub repository bcm-uga/TESS3_encho_sen)
+\item "tess3r" (from GitHub repository bcm-uga/TESS3_encho_sen)
 \item "LEA" (from Bioconductor repository)
 }
 }
