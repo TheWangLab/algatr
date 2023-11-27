@@ -120,6 +120,8 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #'
 #' @family TESS functions
 tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
+  # Convert vcf to dosage
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Convert sf coords to matrix
   if (inherits(coords, "sf")) {
