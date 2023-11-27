@@ -52,7 +52,7 @@ mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "full",
   # Print dataframe
   if (!quiet) {
     mmrr_plot(Y = Y, X = X, mod = results$mod, plot_type = plot_type, stdz = stdz, var_names = var_names)
-    mmrr_table(results)
+    print(mmrr_table(results))
   }
 
   return(results)
