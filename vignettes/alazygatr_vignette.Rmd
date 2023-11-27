@@ -40,7 +40,7 @@ envlayers <- CA_env
 
 Now, let's run the function:
 
-```{r alazygatr, warning = FALSE, message = TRUE, results = 'asis', fig.width = 6, fig.height = 6}
+```{r alazygatr, warning = FALSE, message = FALSE, results = 'asis', fig.width = 6, fig.height = 6}
 lazy_results <- do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 ```
 
