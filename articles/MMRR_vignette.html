@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="MMRR">
 <meta property="og:description" content="algatr">
@@ -207,13 +207,7 @@ results of the model, including an R^2 value, and F statistics</p></li>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run MMRR with all variables</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">01</span><span class="op">)</span></span>
-<span><span class="va">results_best</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_run.html">mmrr_run</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, nperm <span class="op">=</span> <span class="fl">99</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"best"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; CA_rPCA1(p) CA_rPCA2(p) CA_rPCA3(p)  geodist(p) </span></span>
-<span><span class="co">#&gt;        0.08        0.75        0.40        0.01 </span></span>
-<span><span class="co">#&gt; CA_rPCA1(p) CA_rPCA3(p)  geodist(p) </span></span>
-<span><span class="co">#&gt;        0.07        0.31        0.01 </span></span>
-<span><span class="co">#&gt; CA_rPCA1(p)  geodist(p) </span></span>
-<span><span class="co">#&gt;        0.08        0.01</span></span></code></pre></div>
+<span><span class="va">results_best</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_run.html">mmrr_run</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, nperm <span class="op">=</span> <span class="fl">99</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"best"</span><span class="op">)</span></span></code></pre></div>
 <p>Once again, the results from running <code><a href="../reference/mmrr_run.html">mmrr_run()</a></code> with
 model selection contains the same elements as “full”, except that the
 “best” model result now also has an <code>X_best</code> element, which
@@ -244,11 +238,9 @@ of these plots for your MMRR run.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Single variable plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"vars"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/mmrr%20plots-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fitted variable plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"fitted"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/fitted%20plot-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Covariance plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"cov"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -259,7 +251,7 @@ of these plots for your MMRR run.</p>
 <p>How do the above results compare to those from the “best” model?</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_best</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-3.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="look-at-mmrr-output-statistics-with-mmrr_table">Look at MMRR output statistics with <code>mmrr_table()</code><a class="anchor" aria-label="anchor" href="#look-at-mmrr-output-statistics-with-mmrr_table"></a>
@@ -809,512 +801,613 @@ certain they are properly parameterized.</strong></p>
 </h4>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">01</span><span class="op">)</span></span>
-<span><span class="va">mmrr_full_everything</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_do_everything.html">mmrr_do_everything</a></span><span class="op">(</span><span class="va">liz_gendist</span>, <span class="va">liz_coords</span>, env <span class="op">=</span> <span class="va">CA_env</span>, geo <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/all%20vars-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/all%20vars-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/all%20vars-3.png" width="480" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; &lt;div id="ccqjfuyawf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span></span>
-<span><span class="co">#&gt;   &lt;style&gt;#ccqjfuyawf table {</span></span>
-<span><span class="co">#&gt;   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span></span>
-<span><span class="co">#&gt;   -webkit-font-smoothing: antialiased;</span></span>
-<span><span class="co">#&gt;   -moz-osx-font-smoothing: grayscale;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf thead, #ccqjfuyawf tbody, #ccqjfuyawf tfoot, #ccqjfuyawf tr, #ccqjfuyawf td, #ccqjfuyawf th {</span></span>
-<span><span class="co">#&gt;   border-style: none;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf p {</span></span>
-<span><span class="co">#&gt;   margin: 0;</span></span>
-<span><span class="co">#&gt;   padding: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_table {</span></span>
-<span><span class="co">#&gt;   display: table;</span></span>
-<span><span class="co">#&gt;   border-collapse: collapse;</span></span>
-<span><span class="co">#&gt;   line-height: normal;</span></span>
-<span><span class="co">#&gt;   margin-left: auto;</span></span>
-<span><span class="co">#&gt;   margin-right: auto;</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   font-size: 16px;</span></span>
-<span><span class="co">#&gt;   font-weight: normal;</span></span>
-<span><span class="co">#&gt;   font-style: normal;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   width: auto;</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #A8A8A8;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #A8A8A8;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_caption {</span></span>
-<span><span class="co">#&gt;   padding-top: 4px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 4px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_title {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   font-size: 125%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   padding-top: 4px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 4px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_subtitle {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   font-size: 85%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   padding-top: 3px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 5px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   border-top-width: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_heading {</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   text-align: center;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_bottom_border {</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_col_headings {</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_col_heading {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: normal;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   vertical-align: bottom;</span></span>
-<span><span class="co">#&gt;   padding-top: 5px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 6px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   overflow-x: hidden;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_column_spanner_outer {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: normal;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   padding-top: 0;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 0;</span></span>
-<span><span class="co">#&gt;   padding-left: 4px;</span></span>
-<span><span class="co">#&gt;   padding-right: 4px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_column_spanner_outer:first-child {</span></span>
-<span><span class="co">#&gt;   padding-left: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_column_spanner_outer:last-child {</span></span>
-<span><span class="co">#&gt;   padding-right: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_column_spanner {</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   vertical-align: bottom;</span></span>
-<span><span class="co">#&gt;   padding-top: 5px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 5px;</span></span>
-<span><span class="co">#&gt;   overflow-x: hidden;</span></span>
-<span><span class="co">#&gt;   display: inline-block;</span></span>
-<span><span class="co">#&gt;   width: 100%;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_spanner_row {</span></span>
-<span><span class="co">#&gt;   border-bottom-style: hidden;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_group_heading {</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   vertical-align: middle;</span></span>
-<span><span class="co">#&gt;   text-align: left;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_empty_group_heading {</span></span>
-<span><span class="co">#&gt;   padding: 0.5px;</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   vertical-align: middle;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_from_md &gt; :first-child {</span></span>
-<span><span class="co">#&gt;   margin-top: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_from_md &gt; :last-child {</span></span>
-<span><span class="co">#&gt;   margin-bottom: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_row {</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   margin: 10px;</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 1px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   vertical-align: middle;</span></span>
-<span><span class="co">#&gt;   overflow-x: hidden;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_stub {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   border-right-style: solid;</span></span>
-<span><span class="co">#&gt;   border-right-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_stub_row_group {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   font-weight: initial;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   border-right-style: solid;</span></span>
-<span><span class="co">#&gt;   border-right-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   vertical-align: top;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_row_group_first td {</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_row_group_first th {</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_summary_row {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_first_summary_row {</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_first_summary_row.thick {</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_last_summary_row {</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_grand_summary_row {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   text-transform: inherit;</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_first_grand_summary_row {</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   border-top-style: double;</span></span>
-<span><span class="co">#&gt;   border-top-width: 6px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_last_grand_summary_row_top {</span></span>
-<span><span class="co">#&gt;   padding-top: 8px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 8px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: double;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 6px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_striped {</span></span>
-<span><span class="co">#&gt;   background-color: rgba(128, 128, 128, 0.05);</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_table_body {</span></span>
-<span><span class="co">#&gt;   border-top-style: solid;</span></span>
-<span><span class="co">#&gt;   border-top-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-top-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: solid;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_footnotes {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: none;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_footnote {</span></span>
-<span><span class="co">#&gt;   margin: 0px;</span></span>
-<span><span class="co">#&gt;   font-size: 90%;</span></span>
-<span><span class="co">#&gt;   padding-top: 4px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 4px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_sourcenotes {</span></span>
-<span><span class="co">#&gt;   color: #333333;</span></span>
-<span><span class="co">#&gt;   background-color: #FFFFFF;</span></span>
-<span><span class="co">#&gt;   border-bottom-style: none;</span></span>
-<span><span class="co">#&gt;   border-bottom-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-bottom-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-left-style: none;</span></span>
-<span><span class="co">#&gt;   border-left-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-left-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt;   border-right-style: none;</span></span>
-<span><span class="co">#&gt;   border-right-width: 2px;</span></span>
-<span><span class="co">#&gt;   border-right-color: #D3D3D3;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_sourcenote {</span></span>
-<span><span class="co">#&gt;   font-size: 90%;</span></span>
-<span><span class="co">#&gt;   padding-top: 4px;</span></span>
-<span><span class="co">#&gt;   padding-bottom: 4px;</span></span>
-<span><span class="co">#&gt;   padding-left: 5px;</span></span>
-<span><span class="co">#&gt;   padding-right: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_left {</span></span>
-<span><span class="co">#&gt;   text-align: left;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_center {</span></span>
-<span><span class="co">#&gt;   text-align: center;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_right {</span></span>
-<span><span class="co">#&gt;   text-align: right;</span></span>
-<span><span class="co">#&gt;   font-variant-numeric: tabular-nums;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_font_normal {</span></span>
-<span><span class="co">#&gt;   font-weight: normal;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_font_bold {</span></span>
-<span><span class="co">#&gt;   font-weight: bold;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_font_italic {</span></span>
-<span><span class="co">#&gt;   font-style: italic;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_super {</span></span>
-<span><span class="co">#&gt;   font-size: 65%;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_footnote_marks {</span></span>
-<span><span class="co">#&gt;   font-size: 75%;</span></span>
-<span><span class="co">#&gt;   vertical-align: 0.4em;</span></span>
-<span><span class="co">#&gt;   position: initial;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_asterisk {</span></span>
-<span><span class="co">#&gt;   font-size: 100%;</span></span>
-<span><span class="co">#&gt;   vertical-align: 0;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_indent_1 {</span></span>
-<span><span class="co">#&gt;   text-indent: 5px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_indent_2 {</span></span>
-<span><span class="co">#&gt;   text-indent: 10px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_indent_3 {</span></span>
-<span><span class="co">#&gt;   text-indent: 15px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_indent_4 {</span></span>
-<span><span class="co">#&gt;   text-indent: 20px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; #ccqjfuyawf .gt_indent_5 {</span></span>
-<span><span class="co">#&gt;   text-indent: 25px;</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;/style&gt;</span></span>
-<span><span class="co">#&gt;   &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;</span></span>
-<span><span class="co">#&gt;   &lt;thead&gt;</span></span>
-<span><span class="co">#&gt;     </span></span>
-<span><span class="co">#&gt;     &lt;tr class="gt_col_headings"&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="var"&gt;var&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate"&gt;estimate&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p"&gt;p&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="95% Lower"&gt;95% Lower&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="95% Upper"&gt;95% Upper&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;     &lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;   &lt;/thead&gt;</span></span>
-<span><span class="co">#&gt;   &lt;tbody class="gt_table_body"&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr class="gt_group_heading_row"&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th colspan="5" class="gt_empty_group_heading" scope="colgroup" id=""&gt;&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;     &lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr class="gt_row_group_first"&gt;&lt;td headers="model  var" class="gt_row gt_left"&gt;CA_rPCA1&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  estimate" class="gt_row gt_right" style="background-color: #F2EBF2; color: #000000;"&gt;−0.10&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  p" class="gt_row gt_right"&gt;0.05&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Lower" class="gt_row gt_right"&gt;−0.14&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Upper" class="gt_row gt_right"&gt;−0.07&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="model  var" class="gt_row gt_left"&gt;CA_rPCA2&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  estimate" class="gt_row gt_right" style="background-color: #F6F7F6; color: #000000;"&gt;0.01&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  p" class="gt_row gt_right"&gt;0.78&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Lower" class="gt_row gt_right"&gt;−0.03&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Upper" class="gt_row gt_right"&gt;0.05&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="model  var" class="gt_row gt_left"&gt;CA_rPCA3&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  estimate" class="gt_row gt_right" style="background-color: #F4F1F4; color: #000000;"&gt;−0.05&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  p" class="gt_row gt_right"&gt;0.36&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Lower" class="gt_row gt_right"&gt;−0.08&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Upper" class="gt_row gt_right"&gt;−0.01&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="model  var" class="gt_row gt_left"&gt;geodist&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  estimate" class="gt_row gt_right" style="background-color: #7FBF7B; color: #000000;"&gt;0.58&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  p" class="gt_row gt_right"&gt;0.00&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Lower" class="gt_row gt_right"&gt;0.54&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Upper" class="gt_row gt_right"&gt;0.61&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="model  var" class="gt_row gt_left"&gt;Intercept&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  estimate" class="gt_row gt_right" style="background-color: #F7F7F7; color: #000000;"&gt;0.00&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  p" class="gt_row gt_right"&gt;0.00&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Lower" class="gt_row gt_right"&gt;−0.04&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="model  95% Upper" class="gt_row gt_right"&gt;0.04&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr class="gt_group_heading_row"&gt;</span></span>
-<span><span class="co">#&gt;       &lt;th colspan="5" class="gt_empty_group_heading" scope="colgroup" id=""&gt;&lt;/th&gt;</span></span>
-<span><span class="co">#&gt;     &lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr class="gt_row_group_first"&gt;&lt;td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;R-Squared:&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;0.35&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;F-Statistic:&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;181.28&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;     &lt;tr&gt;&lt;td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;F p-value:&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;0.00&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;</span></span>
-<span><span class="co">#&gt; &lt;td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span><span class="co">#&gt;   &lt;/tbody&gt;</span></span>
-<span><span class="co">#&gt;   </span></span>
-<span><span class="co">#&gt;   </span></span>
-<span><span class="co">#&gt; &lt;/table&gt;</span></span>
-<span><span class="co">#&gt; &lt;/div&gt;</span></span></code></pre>
+<span><span class="va">mmrr_full_everything</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_do_everything.html">mmrr_do_everything</a></span><span class="op">(</span><span class="va">liz_gendist</span>, <span class="va">liz_coords</span>, env <span class="op">=</span> <span class="va">CA_env</span>, geo <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span></code></pre></div>
+<div id="ccqjfuyawf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ccqjfuyawf table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ccqjfuyawf thead, #ccqjfuyawf tbody, #ccqjfuyawf tfoot, #ccqjfuyawf tr, #ccqjfuyawf td, #ccqjfuyawf th {
+  border-style: none;
+}
+
+#ccqjfuyawf p {
+  margin: 0;
+  padding: 0;
+}
+
+#ccqjfuyawf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ccqjfuyawf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ccqjfuyawf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ccqjfuyawf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ccqjfuyawf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ccqjfuyawf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ccqjfuyawf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ccqjfuyawf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ccqjfuyawf .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ccqjfuyawf .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ccqjfuyawf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ccqjfuyawf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ccqjfuyawf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ccqjfuyawf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ccqjfuyawf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ccqjfuyawf .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ccqjfuyawf .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ccqjfuyawf .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ccqjfuyawf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ccqjfuyawf .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ccqjfuyawf .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ccqjfuyawf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ccqjfuyawf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ccqjfuyawf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ccqjfuyawf .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ccqjfuyawf .gt_left {
+  text-align: left;
+}
+
+#ccqjfuyawf .gt_center {
+  text-align: center;
+}
+
+#ccqjfuyawf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ccqjfuyawf .gt_font_normal {
+  font-weight: normal;
+}
+
+#ccqjfuyawf .gt_font_bold {
+  font-weight: bold;
+}
+
+#ccqjfuyawf .gt_font_italic {
+  font-style: italic;
+}
+
+#ccqjfuyawf .gt_super {
+  font-size: 65%;
+}
+
+#ccqjfuyawf .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ccqjfuyawf .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ccqjfuyawf .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ccqjfuyawf .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ccqjfuyawf .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ccqjfuyawf .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ccqjfuyawf .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="var">
+var
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">
+estimate
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p">
+p
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="95% Lower">
+95% Lower
+</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="95% Upper">
+95% Upper
+</th>
+</tr></thead>
+<tbody class="gt_table_body">
+<tr class="gt_group_heading_row">
+<th colspan="5" class="gt_empty_group_heading" scope="colgroup" id>
+</th>
+</tr>
+<tr class="gt_row_group_first">
+<td headers="model  var" class="gt_row gt_left">
+CA_rPCA1
+</td>
+<td headers="model  estimate" class="gt_row gt_right" style="background-color: #F2EBF2; color: #000000;">
+−0.10
+</td>
+<td headers="model  p" class="gt_row gt_right">
+0.05
+</td>
+<td headers="model  95% Lower" class="gt_row gt_right">
+−0.14
+</td>
+<td headers="model  95% Upper" class="gt_row gt_right">
+−0.07
+</td>
+</tr>
+<tr>
+<td headers="model  var" class="gt_row gt_left">
+CA_rPCA2
+</td>
+<td headers="model  estimate" class="gt_row gt_right" style="background-color: #F6F7F6; color: #000000;">
+0.01
+</td>
+<td headers="model  p" class="gt_row gt_right">
+0.78
+</td>
+<td headers="model  95% Lower" class="gt_row gt_right">
+−0.03
+</td>
+<td headers="model  95% Upper" class="gt_row gt_right">
+0.05
+</td>
+</tr>
+<tr>
+<td headers="model  var" class="gt_row gt_left">
+CA_rPCA3
+</td>
+<td headers="model  estimate" class="gt_row gt_right" style="background-color: #F4F1F4; color: #000000;">
+−0.05
+</td>
+<td headers="model  p" class="gt_row gt_right">
+0.36
+</td>
+<td headers="model  95% Lower" class="gt_row gt_right">
+−0.08
+</td>
+<td headers="model  95% Upper" class="gt_row gt_right">
+−0.01
+</td>
+</tr>
+<tr>
+<td headers="model  var" class="gt_row gt_left">
+geodist
+</td>
+<td headers="model  estimate" class="gt_row gt_right" style="background-color: #7FBF7B; color: #000000;">
+0.58
+</td>
+<td headers="model  p" class="gt_row gt_right">
+0.00
+</td>
+<td headers="model  95% Lower" class="gt_row gt_right">
+0.54
+</td>
+<td headers="model  95% Upper" class="gt_row gt_right">
+0.61
+</td>
+</tr>
+<tr>
+<td headers="model  var" class="gt_row gt_left">
+Intercept
+</td>
+<td headers="model  estimate" class="gt_row gt_right" style="background-color: #F7F7F7; color: #000000;">
+0.00
+</td>
+<td headers="model  p" class="gt_row gt_right">
+0.00
+</td>
+<td headers="model  95% Lower" class="gt_row gt_right">
+−0.04
+</td>
+<td headers="model  95% Upper" class="gt_row gt_right">
+0.04
+</td>
+</tr>
+<tr class="gt_group_heading_row">
+<th colspan="5" class="gt_empty_group_heading" scope="colgroup" id>
+</th>
+</tr>
+<tr class="gt_row_group_first">
+<td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+R-Squared:
+</td>
+<td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+0.35
+</td>
+<td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+</tr>
+<tr>
+<td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+F-Statistic:
+</td>
+<td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+181.28
+</td>
+<td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+</tr>
+<tr>
+<td headers="NA  var" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+F p-value:
+</td>
+<td headers="NA  estimate" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+0.00
+</td>
+<td headers="NA  p" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Lower" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+<td headers="NA  95% Upper" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">
+<br>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section level4">
 <h4 id="extending-mmrrs-functionality-with-resistance-distances">Extending MMRR’s functionality with resistance distances<a class="anchor" aria-label="anchor" href="#extending-mmrrs-functionality-with-resistance-distances"></a>
@@ -1361,13 +1454,13 @@ how this could be done. For this example we’ll pretend our resistance
 surface is one of our environmental layers (where greater values
 indicate more resistance) and use it to calculate our resistance
 distances.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># here we aggregate the layer for computational speed</span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span>, <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MMRR_vignette_files/figure-html/toy%20resist%20surface-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Recreate MMRR input with resistance distances</span></span>
 <span><span class="co"># Calculate environmental distances</span></span>
@@ -1377,12 +1470,12 @@ distances.</p>
 <span><span class="co">#&gt; Calculating resistance distances... This can be time consuming with many points and large rasters.</span></span></code></pre></div>
 <p>Now, we can run MMRR as we did above but including resistance-based
 distances in our input data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run MMRR with resistance distances</span></span>
 <span><span class="va">results_resist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_run.html">mmrr_run</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, nperm <span class="op">=</span> <span class="fl">99</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_resist</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/mmrr%20resist-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20resist-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20resist-3.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p><img src="MMRR_vignette_files/figure-html/mmrr%20resist-1.png" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrr_table.html">mmrr_table</a></span><span class="op">(</span><span class="va">results_resist</span><span class="op">)</span></span></code></pre></div>
 <div id="mbhanvqnxp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#mbhanvqnxp table {
