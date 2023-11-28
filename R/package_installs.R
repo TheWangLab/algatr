@@ -155,7 +155,7 @@ envirodata_packages <- function(){
 #'   \item "adegenet"
 #'   \item "AssocTests"
 #'   \item "lfmm"
-#'   \item "TESS3_encho_sen" (from GitHub repository bcm-uga/TESS3_encho_sen)
+#'   \item "tess3r" (from GitHub repository bcm-uga/TESS3_encho_sen)
 #'   \item "LEA" (from Bioconductor repository)
 #' }
 #'
@@ -170,7 +170,7 @@ lfmm_packages <- function(){
   if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
   if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
   if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
-  if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+  if (!require("tess3r", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
   if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
 }
 
@@ -260,7 +260,7 @@ mmrr_packages <- function(){
 #'   \item "automap"
 #'   \item "graphics"
 #'   \item "LEA" (from Bioconductor repository)
-#'   \item "TESS3_encho_sen" (from GitHub repository bcm-uga/TESS3_encho_sen)
+#'   \item "tess3r" (from GitHub repository bcm-uga/TESS3_encho_sen)
 #'   \item "fields"
 #'   \item "rworldmap"
 #'   \item "cowplot"
@@ -277,7 +277,7 @@ tess_packages <- function(){
   if (!require("automap", quietly = TRUE)) install.packages("automap")
   if (!require("graphics", quietly = TRUE)) install.packages("graphics")
   if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA") # required by tess3r
-  if (!require("TESS3_encho_sen", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
+  if (!require("tess3r", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
   if (!require("fields", quietly = TRUE)) install.packages("fields")
   if (!require("rworldmap", quietly = TRUE)) install.packages("rworldmap")
   if (!require("cowplot", quietly = TRUE)) install.packages("cowplot")

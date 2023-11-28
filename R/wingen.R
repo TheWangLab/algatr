@@ -46,7 +46,6 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
     wdim = wdim, fact = fact, rarify = rarify
   )
 
-
   # KRIGING -----------------------------------------------------------------
 
   if (kriged == TRUE) map <- krig_helper(map, grd = grd, index = index, agg_grd = agg_grd, disagg_grd = disagg_grd, agg_r = agg_r, disagg_r = disagg_r)
@@ -55,6 +54,10 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 
   if (masked == TRUE) {
     if (!inherits(mask, "SpatRaster")) mask <- terra::rast(mask)
+    if (terra::nlyr(mask) > 1) {
+      warning("More than one mask layer provided, using the first layer")
+      mask <- mask[[1]]
+    }
 
     # Resample to match
     if (!terra::compareGeom(mask, map, stopOnError = FALSE)) {
@@ -68,7 +71,7 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
-  if (!quiet) print(wingen::plot_gd(map, bkg = bkg, index = index))
+  if (!quiet) wingen::plot_gd(map, bkg = bkg, index = index)
 
   # Plot sample counts
   if (plot_count == TRUE) print(wingen::plot_count(map))
@@ -92,20 +95,26 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 #' @family wingen functions
 #' @keywords internal
 krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL) {
+
   # Perform checks ----------------------------------------------------------
   if (!is.null(agg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = agg_grd, agg_spec = "agg")
   if (!is.null(disagg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = disagg_grd, agg_spec = "disagg")
-  if (!is.null(agg_r)) grd <- krig_agg_helper(to_krig = r, agg_disagg = agg_r, agg_spec = "agg")
-  if (!is.null(disagg_r)) grd <- krig_agg_helper(to_krig = r, agg_disagg = disagg_r, agg_spec = "disagg")
+  if (!is.null(agg_r)) r <- krig_agg_helper(to_krig = r, agg_disagg = agg_r, agg_spec = "agg")
+  if (!is.null(disagg_r)) r <- krig_agg_helper(to_krig = r, agg_disagg = disagg_r, agg_spec = "disagg")
 
   # Warning if too many cells in agg/disagg raster
   if (terra::ncell(grd) > 10000) {
     warning("The resolution of your kriging raster layer is very high and no aggregation is being performed; you should perform aggregation to reduce computational time!")
   }
 
-  map <- wingen::krig_gd(map, grd = grd, index = index)
+  quiet_krig <- purrr::quietly(wingen::krig_gd)
+  krig_map <- quiet_krig(map, grd = grd, index = index)
+  krig_map <- krig_map$result
 
-  return(map)
+  # rename layers back to genetic diversity stats
+  names(krig_map) <- names(map)[index]
+
+  return(krig_map)
 }
 
 #' Helper function for krig_helper; calculates aggregated/disaggregated raster cell size
