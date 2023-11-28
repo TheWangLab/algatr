@@ -112,7 +112,7 @@ krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd =
   krig_map <- krig_map$result
 
   # rename layers back to genetic diversity stats
-  names(krig_map) <- names(map)[[index]]
+  names(krig_map) <- names(map)[index]
 
   return(krig_map)
 }
