@@ -122,6 +122,11 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #'
 #' @family TESS functions
 tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
+  if (length(Kvals) == 1) {
+    message("Only a single value for K provided; proceeding with running TESS without K selection...")
+    K <- Kvals
+  }
+
   # Convert vcf to dosage
   if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
@@ -134,32 +139,34 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
   coords <- as.matrix(coords)
   colnames(coords) <- c("x", "y")
 
-  # Run tess for all K values
+  # Run TESS for all K values
   tess_quiet <- purrr::quietly(tess3r::tess3)
   tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
   tess3_obj <- tess3_obj$result
 
-  # Plot CV results
-  if (!quiet) {
-    plot(tess3_obj,
-      pch = 19, col = "blue",
-      xlab = "Number of ancestral populations",
-      ylab = "Cross-validation score",
-      xaxt = "n"
-    )
-    axis(side = 1, at = Kvals)
-  }
+  if (length(Kvals) > 1) {
+    # Plot CV results
+    if (!quiet) {
+      plot(tess3_obj,
+           pch = 19, col = "blue",
+           xlab = "Number of ancestral populations",
+           ylab = "Cross-validation score",
+           xaxt = "n"
+      )
+      axis(side = 1, at = Kvals)
+    }
 
-  # Get best K value
-  if (K_selection == "auto") {
-    K <- bestK(tess3_obj, Kvals)
-  }
-  if (K_selection == "manual") {
-    K <- as.numeric(readline(prompt = "Enter K Value: "))
-  }
+    # Get best K value
+    if (K_selection == "auto") {
+      K <- bestK(tess3_obj, Kvals)
+    }
+    if (K_selection == "manual") {
+      K <- as.numeric(readline(prompt = "Enter K Value: "))
+    }
 
-  # Mark the K-value selected
-  if (!quiet) abline(v = K, col = "red", lty = "dashed")
+    # Mark the K-value selected
+    if (!quiet) abline(v = K, col = "red", lty = "dashed")
+  }
 
   # Get population assignments
   pops <- pops_helper(gen = gen, tess3_obj = tess3_obj, K = K)
