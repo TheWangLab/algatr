@@ -165,6 +165,9 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
 rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
 
+  # Format coordinates
+  if (!is.null(coords)) coords <- coords_to_df(coords)
+
   # Handle NA values -----------------------------------------------------
 
   # Check for NAs
@@ -175,7 +178,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
   if (any(is.na(env))) {
     warning("Missing values found in env data, removing rows with NAs")
     gen <- gen[complete.cases(env), ]
-    coords <- coords[complete.cases(env), ]
+    if (!is.null(coords)) coords <- coords[complete.cases(env), ]
     # NOTE: this must be last
     env <- env[complete.cases(env), ]
   }
