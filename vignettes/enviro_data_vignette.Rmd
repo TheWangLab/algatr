@@ -263,7 +263,7 @@ We can also calculate topographic distances, but need to provide a digital eleva
 ```{r download DEM}
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
-dem <- elevation_30s(country = "USA", path = getwd())
+dem <- elevation_30s(country = "USA", path = tempdir())
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)
