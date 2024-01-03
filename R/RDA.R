@@ -57,6 +57,12 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   # Format coords
   if (!is.null(coords)) coords <- coords_to_df(coords)
 
+  # Check that env var names don't match coord names
+  if(any(colnames(coords) %in% colnames(env))) {
+    colnames(env) <- paste(colnames(env), "_env")
+    warning("env names contain x and y, which are used as coordinate names for RDA. Appending 'env_' to env names to distinguish them.")
+  }
+
   # Modify genetic data -----------------------------------------------------
 
   # Convert vcf to dosage
@@ -164,13 +170,16 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
 #' @family RDA functions
 rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
-
-  # Format coordinates
+  # Format coordinates ------------------------------------------------------
   if (!is.null(coords)) coords <- coords_to_df(coords)
 
-  # Handle NA values -----------------------------------------------------
+  # Check that env var names don't match coord names
+  if(any(colnames(coords) %in% colnames(env))) {
+    colnames(env) <- paste(colnames(env), "_env", sep = "")
+    warning("env names should differ from x and y. Appending 'env' to env names")
+  }
 
-  # Check for NAs
+  # Handle NA values -----------------------------------------------------
   if (any(is.na(gen))) {
     stop("Missing values found in gen data")
   }
@@ -194,6 +203,11 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
     stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[, 1:nPC]
+    # Check env var naming ----------------------------------------------------
+    if(any(colnames(pc) %in% colnames(env))) {
+      colnames(env) <- paste(colnames(env), "_env", sep = "")
+      warning("env names should differ from PC1, PC2, etc if correctPC is TRUE. Appending 'env' to env names")
+    }
     moddf <- data.frame(env, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+"), "+ Condition(", paste(colnames(pc), collapse = "+"), ")"))
   }
@@ -210,6 +224,11 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
     stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[, 1:nPC]
+    # Check env var naming ----------------------------------------------------
+    if(any(colnames(pc) %in% colnames(env))) {
+      colnames(env) <- paste(colnames(env), "_env", sep = "")
+      warning("Enviro var names should differ from PC1, PC2, etc if correctPC is TRUE. Appending env to enviro var names")
+    }
     moddf <- data.frame(env, coords, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+"), "+ Condition(", paste(colnames(pc), collapse = "+"), "+ x + y)"))
   }
