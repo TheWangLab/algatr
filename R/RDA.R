@@ -60,7 +60,7 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   # Check that env var names don't match coord names
   if(any(colnames(coords) %in% colnames(env))) {
     colnames(env) <- paste(colnames(env), "_env")
-    warning("Enviro var names should differ from x and y. Appending env to enviro var names")
+    warning("env names contain x and y, which are used as coordinate names for RDA. Appending 'env_' to env names to distinguish them.")
   }
 
   # Modify genetic data -----------------------------------------------------
@@ -176,7 +176,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
   # Check that env var names don't match coord names
   if(any(colnames(coords) %in% colnames(env))) {
     colnames(env) <- paste(colnames(env), "_env", sep = "")
-    warning("Enviro var names should differ from x and y. Appending env to enviro var names")
+    warning("env names should differ from x and y. Appending 'env' to env names")
   }
 
   # Handle NA values -----------------------------------------------------
@@ -206,7 +206,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
     # Check env var naming ----------------------------------------------------
     if(any(colnames(pc) %in% colnames(env))) {
       colnames(env) <- paste(colnames(env), "_env", sep = "")
-      warning("Enviro var names should differ from PC1, PC2, etc if correctPC is TRUE. Appending env to enviro var names")
+      warning("env names should differ from PC1, PC2, etc if correctPC is TRUE. Appending 'env' to env names")
     }
     moddf <- data.frame(env, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+"), "+ Condition(", paste(colnames(pc), collapse = "+"), ")"))
