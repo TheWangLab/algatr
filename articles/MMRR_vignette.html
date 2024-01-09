@@ -238,9 +238,11 @@ of these plots for your MMRR run.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Single variable plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"vars"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="MMRR_vignette_files/figure-html/mmrr%20plots-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fitted variable plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"fitted"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="MMRR_vignette_files/figure-html/fitted%20plot-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Covariance plot</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_full</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"cov"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -251,7 +253,7 @@ of these plots for your MMRR run.</p>
 <p>How do the above results compare to those from the “best” model?</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_best</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20best%20plots-3.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="look-at-mmrr-output-statistics-with-mmrr_table">Look at MMRR output statistics with <code>mmrr_table()</code><a class="anchor" aria-label="anchor" href="#look-at-mmrr-output-statistics-with-mmrr_table"></a>
@@ -802,7 +804,7 @@ certain they are properly parameterized.</strong></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">01</span><span class="op">)</span></span>
 <span><span class="va">mmrr_full_everything</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_do_everything.html">mmrr_do_everything</a></span><span class="op">(</span><span class="va">liz_gendist</span>, <span class="va">liz_coords</span>, env <span class="op">=</span> <span class="va">CA_env</span>, geo <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span></code></pre></div>
-<div id="ccqjfuyawf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<img src="MMRR_vignette_files/figure-html/all%20vars-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/all%20vars-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/all%20vars-3.png" width="480" style="display: block; margin: auto;"><div id="ccqjfuyawf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#ccqjfuyawf table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
@@ -1474,7 +1476,7 @@ distances in our input data.</p>
 <code class="sourceCode R"><span><span class="co"># Run MMRR with resistance distances</span></span>
 <span><span class="va">results_resist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrr_run.html">mmrr_run</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, nperm <span class="op">=</span> <span class="fl">99</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span>, model <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/mmrr_plot.html">mmrr_plot</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, mod <span class="op">=</span> <span class="va">results_resist</span><span class="op">$</span><span class="va">mod</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, stdz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MMRR_vignette_files/figure-html/mmrr%20resist-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="MMRR_vignette_files/figure-html/mmrr%20resist-1.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20resist-2.png" width="480" style="display: block; margin: auto;"><img src="MMRR_vignette_files/figure-html/mmrr%20resist-3.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrr_table.html">mmrr_table</a></span><span class="op">(</span><span class="va">results_resist</span><span class="op">)</span></span></code></pre></div>
 <div id="mbhanvqnxp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
