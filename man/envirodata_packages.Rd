@@ -23,7 +23,7 @@ The following packages will be installed if not already present:
 \item "gdistance"
 \item "topoDistance"
 \item "rmapshaper"
-\item "wingen"(from GitHub repository AnushaPB/wingen)
+\item "wingen"
 }
 }
 \examples{

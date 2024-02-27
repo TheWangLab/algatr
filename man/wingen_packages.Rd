@@ -16,7 +16,7 @@ If the packages are not already installed, it will automatically install them.
 \details{
 The following package will be installed if not already present:
 \itemize{
-\item "wingen" (from GitHub repository AnushaPB/wingen)
+\item "wingen"
 }
 }
 \examples{
