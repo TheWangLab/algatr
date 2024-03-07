@@ -164,7 +164,7 @@ matrix.</p>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co"># Our code assumes that the first column is longitude and second is latitude; check this:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           x        y</span></span>
 <span><span class="co">#&gt; 1 -120.3972 41.56120</span></span>
 <span><span class="co">#&gt; 3 -116.8923 34.16940</span></span>
@@ -201,10 +201,10 @@ function.</p>
 <span><span class="va">krig_raster</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, fact <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># If you want to see the difference between the non-aggregated (original) and aggregated rasters:</span></span>
-<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">mako</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">mako</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/raster-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">krig_raster</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">mako</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">krig_raster</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">mako</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/raster-2.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
@@ -292,7 +292,7 @@ the maximum Q value) for each individual for the best K value</p></li>
 <p>If you want to run TESS without any K selection, you could just run
 TESS as normal by doing the following:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tess3_obj_noK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/tess3.html" class="external-link">tess3</a></span><span class="op">(</span><span class="va">liz_dosage</span>, coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/coerce.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span>, K <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="st">"projected.ls"</span>, ploidy <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tess3_obj_noK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/tess3.html" class="external-link">tess3</a></span><span class="op">(</span><span class="va">liz_dosage</span>, coord <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/coerce.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span>, K <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="st">"projected.ls"</span>, ploidy <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; == Computing spectral decomposition of graph laplacian matrix: done</span></span>
 <span><span class="co">#&gt; ==Main loop with 1 threads: done</span></span></code></pre></div>
 <p>The resulting object from the above run is a typical TESS output
@@ -319,14 +319,14 @@ function with which we can visualize results.</p>
 <span><span class="va">qmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/qmatrix.html" class="external-link">qmatrix</a></span><span class="op">(</span><span class="va">tess3_obj</span>, K <span class="op">=</span> <span class="va">bestK</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># qmat contains ancestry coefficient values for each individual (row) and each K value (column)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">qmat</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">qmat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              [,1]         [,2]         [,3]</span></span>
-<span><span class="co">#&gt; [1,] 8.831193e-06 8.831193e-06 9.999823e-01</span></span>
-<span><span class="co">#&gt; [2,] 9.999818e-01 9.105663e-06 9.105663e-06</span></span>
-<span><span class="co">#&gt; [3,] 1.278075e-01 1.272537e-01 7.449388e-01</span></span>
-<span><span class="co">#&gt; [4,] 6.690745e-02 7.958522e-01 1.372403e-01</span></span>
-<span><span class="co">#&gt; [5,] 9.402332e-02 9.797795e-06 9.059669e-01</span></span>
-<span><span class="co">#&gt; [6,] 9.842054e-06 5.303022e-02 9.469599e-01</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,] 8.941220e-06 8.941220e-06 9.999821e-01</span></span>
+<span><span class="co">#&gt; [2,] 9.999818e-01 9.087515e-06 9.087515e-06</span></span>
+<span><span class="co">#&gt; [3,] 1.296498e-01 1.480916e-01 7.222587e-01</span></span>
+<span><span class="co">#&gt; [4,] 6.340184e-02 8.273590e-01 1.092392e-01</span></span>
+<span><span class="co">#&gt; [5,] 9.953124e-02 9.839829e-06 9.004589e-01</span></span>
+<span><span class="co">#&gt; [6,] 9.846185e-06 8.612997e-02 9.138602e-01</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="krige-q-values">Krige Q values<a class="anchor" aria-label="anchor" href="#krige-q-values"></a>
@@ -362,8 +362,8 @@ plot.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tess_barplot.html">tess_barplot</a></span><span class="op">(</span><span class="va">qmat</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/barplot-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; $order</span></span>
-<span><span class="co">#&gt;  [1]  4 13 20 28 29 31 32 35 36  2 10 19 24 25 40 41 49 50 51 52 53  1  3  5  6</span></span>
-<span><span class="co">#&gt; [26]  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 37 38 39 42 43 44 45</span></span>
+<span><span class="co">#&gt;  [1]  2 10 19 24 25 40 41 49 50 51  4 13 20 28 29 31 32 35 36 37 52 53  1  3  5</span></span>
+<span><span class="co">#&gt; [26]  6  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 38 39 42 43 44 45</span></span>
 <span><span class="co">#&gt; [51] 46 47 48</span></span></code></pre>
 <p>We can also build bar plots using ggplot2 with the
 <code><a href="../reference/tess_ggbarplot.html">tess_ggbarplot()</a></code> function.</p>
@@ -425,7 +425,7 @@ argument:</p>
 <p>We may also want to plot individual layers (K values), which we can
 using <code><a href="../reference/tess_plot_allK.html">tess_plot_allK()</a></code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">krig_admix</span><span class="op">)</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, oma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">krig_admix</span><span class="op">)</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, oma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tess_plot_allK.html">tess_plot_allK</a></span><span class="op">(</span><span class="va">krig_admix</span>, col_breaks <span class="op">=</span> <span class="fl">20</span>, legend.width <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/plot%20all%20K-1.png" width="960" style="display: block; margin: auto;"></p>
 </div>
@@ -435,19 +435,19 @@ using <code><a href="../reference/tess_plot_allK.html">tess_plot_allK()</a></cod
 </h3>
 <p>You can, of course, also plot TESS results using the tess3r package
 defaults and not those provided with algatr. The TESS function for a
-barplot is <code><a href="https://rdrr.io/pkg/terra/man/barplot.html" class="external-link">barplot()</a></code>.</p>
+barplot is <code><a href="https://rspatial.github.io/terra/reference/barplot.html" class="external-link">barplot()</a></code>.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">qmat</span>, sort.by.Q <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">NA</span>, space <span class="op">=</span> <span class="fl">0</span>, xlab <span class="op">=</span> <span class="st">"Individuals"</span>, ylab <span class="op">=</span> <span class="st">"Ancestry coefficients"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">qmat</span>, sort.by.Q <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">NA</span>, space <span class="op">=</span> <span class="fl">0</span>, xlab <span class="op">=</span> <span class="st">"Individuals"</span>, ylab <span class="op">=</span> <span class="st">"Ancestry coefficients"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Use CreatePalette() to define color palettes.</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/tess%20default%20barplot-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; $order</span></span>
-<span><span class="co">#&gt;  [1]  4 13 20 28 29 31 32 35 36  2 10 19 24 25 40 41 49 50 51 52 53  1  3  5  6</span></span>
-<span><span class="co">#&gt; [26]  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 37 38 39 42 43 44 45</span></span>
+<span><span class="co">#&gt;  [1]  2 10 19 24 25 40 41 49 50 51  4 13 20 28 29 31 32 35 36 37 52 53  1  3  5</span></span>
+<span><span class="co">#&gt; [26]  6  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 38 39 42 43 44 45</span></span>
 <span><span class="co">#&gt; [51] 46 47 48</span></span></code></pre>
 <p>You can also map kriged Q-values using tess3r with the
-<code><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot()</a></code> function.</p>
+<code><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot()</a></code> function.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">qmat</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">qmat</span>,</span>
 <span>  <span class="va">liz_coords</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"map.max"</span>,</span>
 <span>  interpol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/FieldsKrigModel.html" class="external-link">FieldsKrigModel</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>

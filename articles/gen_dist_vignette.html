@@ -105,16 +105,16 @@ five genetic distance metrics are specified using the
 <code>dist_type</code> argument and are as follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>Euclidean distance (the <code>"euclidean"</code> argument), which
-uses the <code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">distance()</a></code> function within the <a href="https://cran.r-project.org/web/packages/ecodist/index.html" class="external-link">ecodist</a>
+uses the <code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">distance()</a></code> function within the <a href="https://cran.r-project.org/web/packages/ecodist/index.html" class="external-link">ecodist</a>
 package</p></li>
 <li><p>Bray-Curtis distance (the <code>"bray_curtis"</code> argument),
-which uses the <code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">distance()</a></code> function within the <a href="https://cran.r-project.org/web/packages/ecodist/index.html" class="external-link">ecodist</a>
+which uses the <code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">distance()</a></code> function within the <a href="https://cran.r-project.org/web/packages/ecodist/index.html" class="external-link">ecodist</a>
 package</p></li>
 <li><p>Proportion of shared alleles (the <code>"dps"</code> argument),
 which uses the <code>propShared()</code> function within the <a href="https://cran.r-project.org/web/packages/adegenet/index.html" class="external-link">adegenet</a>
 package</p></li>
 <li><p>PC-based distance (the <code>"pc"</code> argument), which uses
-the <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code> function within the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html" class="external-link">stats</a>
+the <code><a href="https://rspatial.github.io/terra/reference/prcomp.html" class="external-link">prcomp()</a></code> function within the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html" class="external-link">stats</a>
 package and selects the number of PCs using a Tracy-Widom test (if
 <code>npc_selection = "auto"</code>; also requires specifying
 <code>criticalpoint</code> [see below for details]) or user-inputted PCs
@@ -242,8 +242,10 @@ plot them:</p>
 <span></span>
 <span><span class="co"># Show all plots as panels on a single plot</span></span>
 <span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p_euc_plink</span>, <span class="va">p_pc_plink</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 1378 rows containing missing values (`geom_point()`).</span></span>
-<span><span class="co">#&gt; Removed 1378 rows containing missing values (`geom_point()`).</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: Removed 1378 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span>
+<span><span class="co">#&gt; Removed 1378 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
 <p><img src="gen_dist_vignette_files/figure-html/gendist%20corr-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
@@ -286,7 +288,7 @@ other distance metrics available within <code><a href="../reference/gen_dist.htm
 <td><a href="https://cran.r-project.org/web/packages/ecodist/index.html" class="external-link">Goslee
 &amp; Urban 2007</a></td>
 <td>algatr’s calculation of Euclidean and Bray-Curtis distances using
-the <code><a href="https://rdrr.io/pkg/terra/man/distance.html" class="external-link">distance()</a></code> function within the ecodist package</td>
+the <code><a href="https://rspatial.github.io/terra/reference/distance.html" class="external-link">distance()</a></code> function within the ecodist package</td>
 </tr>
 <tr class="even">
 <td>Associated code</td>

@@ -233,8 +233,8 @@ object. Let’s take a look at what this object looks like.</p>
 <p>Now, let’s plot one of the variables and overlay our sampling
 coordinates on top.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wclim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wclim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/wclim%20plot-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
@@ -294,7 +294,7 @@ correlations between environmental variables.</p>
 <span><span class="co">#&gt; Warning: The extracted values for 25 pairs of variables had correlation coefficients &gt; 0.7. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/collin%20vals-1.png" width="960"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_result</span><span class="op">$</span><span class="va">cor_df</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_result</span><span class="op">$</span><span class="va">cor_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   var1 var2         r</span></span>
 <span><span class="co">#&gt; 1 bio2 bio4 0.7363230</span></span>
 <span><span class="co">#&gt; 2 bio1 bio6 0.8829763</span></span>
@@ -337,12 +337,12 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: The distances for 124 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: The distances for 121 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   var1 var2    p         r</span></span>
 <span><span class="co">#&gt; 1  geo bio2 0.04 0.1465585</span></span>
 <span><span class="co">#&gt; 2 bio2 bio3 0.01 0.3687943</span></span>
-<span><span class="co">#&gt; 3  geo bio4 0.01 0.1660475</span></span>
+<span><span class="co">#&gt; 3  geo bio4 0.04 0.1660475</span></span>
 <span><span class="co">#&gt; 4 bio2 bio4 0.01 0.5724731</span></span>
 <span><span class="co">#&gt; 5 bio3 bio4 0.01 0.8417016</span></span>
 <span><span class="co">#&gt; 6 bio1 bio5 0.01 0.3036129</span></span></code></pre></div>
@@ -360,9 +360,9 @@ significantly correlated.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $p</span></span>
 <span><span class="co">#&gt;          [,1] [,2] [,3] [,4] [,5]</span></span>
-<span><span class="co">#&gt; geo        NA 0.07 0.73 0.01 0.22</span></span>
-<span><span class="co">#&gt; ID         NA   NA 0.80 0.06 0.06</span></span>
-<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.65 0.83</span></span>
+<span><span class="co">#&gt; geo        NA 0.08 0.63 0.01 0.26</span></span>
+<span><span class="co">#&gt; ID         NA   NA 0.81 0.13 0.10</span></span>
+<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.49 0.86</span></span>
 <span><span class="co">#&gt; CA_rPCA2   NA   NA   NA   NA 0.01</span></span>
 <span><span class="co">#&gt; CA_rPCA3   NA   NA   NA   NA   NA</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -424,8 +424,8 @@ values assigned to it, but can be used to create maps of genetic
 diversity in wingen (see the wingen documentation <a href="https://github.com/AnushaPB/wingen" class="external-link">here</a>).</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/coords_to_raster.html" class="external-link">coords_to_raster</a></span><span class="op">(</span><span class="va">liz_coords</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">raster</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">raster</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/coords%20to%20raster-1.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -439,10 +439,10 @@ which allows users to calculate environmental distances between
 variables for given sampling locations. We first need to extract
 environmental variables at sampling coordinates.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># You can there are extracted values (n=53) for each environmental layer</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       CA_rPCA1   CA_rPCA2    CA_rPCA3</span></span>
 <span><span class="co">#&gt; [1,] -1.851397 -3.9385712 -0.71366495</span></span>
 <span><span class="co">#&gt; [2,] -2.288577 -0.7470118 -0.05549845</span></span>
@@ -453,11 +453,11 @@ environmental variables at sampling coordinates.</p>
 <p>Now, we’re ready to calculate environmental distances.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">env_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/env_dist.html">env_dist</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/env%20dist-1.png" width="700"></p>
 <p>We can make a heat map in ggplot with the pairwise distances.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">"sample"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="st">"sample"</span>, names_to <span class="op">=</span> <span class="st">"sample_comp"</span>, values_to <span class="op">=</span> <span class="st">"dist"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sample</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sample_comp</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">dist</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -493,12 +493,12 @@ with the <code>lyr</code> argument</p></li>
 </h4>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_dist.html">geo_dist</a></span><span class="op">(</span><span class="va">liz_coords</span>, type <span class="op">=</span> <span class="st">"Euclidean"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/geo%20dist-1.png" width="700"></p>
 <p>We can make a heat map in ggplot with the pairwise distances.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a fun heat map with the pairwise distances</span></span>
-<span><span class="va">geo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span>
+<span><span class="va">geo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span>
 <span><span class="va">geo_dist</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">"sample"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -524,12 +524,12 @@ using the geodata package, cropping to California using the
 <span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geodata/man/elevation.html" class="external-link">elevation_30s</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"USA"</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Crop to California limits</span></span>
-<span><span class="va">CA_dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">dem</span>, <span class="va">CA_env</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">CA_dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">dem</span>, <span class="va">CA_env</span><span class="op">)</span></span></code></pre></div>
 <p>Take a look at what the DEM looks like, with samples plotted on
 top.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">CA_dem</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">CA_dem</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/plot%20dem-1.png" width="700"></p>
 <p>Now, let’s calculate topographic distances using the
 <code>CA_dem</code> object as our layer with the <code>lyr</code>
@@ -540,7 +540,7 @@ argument.</p>
 <p>Plot the resulting topographic distances as a heatmap.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a fun heat map with the pairwise distances</span></span>
-<span><span class="va">topo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">topo_dist</span><span class="op">)</span></span>
+<span><span class="va">topo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">topo_dist</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">topo_dist</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">53</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">topo_dist</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">53</span></span>
 <span></span>

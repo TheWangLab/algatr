@@ -161,7 +161,7 @@ environmental PC layers as a SpatRaster object for this purpose.</p>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; -------------------------------------------------</span></span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="va">envlayer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">envlayer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="generate-raster-layer-for-sliding-window">Generate raster layer for sliding window<a class="anchor" aria-label="anchor" href="#generate-raster-layer-for-sliding-window"></a>
@@ -312,7 +312,7 @@ sample count information (sample_count).</p>
 <code class="sourceCode R"><span><span class="va">kgd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/krig_gd.html" class="external-link">krig_gd</a></span><span class="op">(</span><span class="va">wgd</span>, index <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">liz_lyr</span>, disagg_grd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [using ordinary kriging]</span></span>
 <span><span class="co">#&gt; [using ordinary kriging]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kgd</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kgd</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        pi           sample_count    </span></span>
 <span><span class="co">#&gt;  Min.   :0.03367   Min.   : 0.0000  </span></span>
 <span><span class="co">#&gt;  1st Qu.:0.06715   1st Qu.: 0.0000  </span></span>
@@ -368,13 +368,13 @@ using our <code>envlayer</code> object.</p>
 you need to ensure that pixels match between the object to be masked and
 the object to use as a mask. If they aren’t the same, or if their
 extents are different, you will either get an error or the map will look
-wonky. To remedy this, we can use terra’s <code><a href="https://rdrr.io/pkg/terra/man/resample.html" class="external-link">resample()</a></code>
+wonky. To remedy this, we can use terra’s <code><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample()</a></code>
 function. This function will resample a raster (here,
 <code>envlayer</code>) based on an inputted raster (here,
 <code>mgd_1</code>).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Resample envlayer based on masked layer</span></span>
-<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">envlayer</span>, <span class="va">mgd_1</span><span class="op">)</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/resample.html" class="external-link">resample</a></span><span class="op">(</span><span class="va">envlayer</span>, <span class="va">mgd_1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Perform masking</span></span>
 <span><span class="va">mgd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/mask_gd.html" class="external-link">mask_gd</a></span><span class="op">(</span><span class="va">mgd_1</span>, <span class="va">r</span><span class="op">)</span></span>

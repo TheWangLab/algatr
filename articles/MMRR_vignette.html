@@ -157,7 +157,7 @@ function. For more information on how these two functions work, please
 refer to algatr’s environmental data processing vignette.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract enviro vars</span></span>
-<span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
+<span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
 <span><span class="co"># Calculate environmental distances</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/env_dist.html">env_dist</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
 <span><span class="co"># Add geographic distance to X</span></span>
@@ -1460,7 +1460,7 @@ distances.</p>
 <code class="sourceCode R"><span><span class="co"># here we aggregate the layer for computational speed</span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span>, <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MMRR_vignette_files/figure-html/toy%20resist%20surface-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
