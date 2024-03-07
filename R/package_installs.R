@@ -122,7 +122,7 @@ genetic_distance_packages <- function(){
 #'   \item "gdistance"
 #'   \item "topoDistance"
 #'   \item "rmapshaper"
-#'   \item "wingen"(from GitHub repository AnushaPB/wingen)
+#'   \item "wingen"
 #' }
 #'
 #' @return None
@@ -140,7 +140,7 @@ envirodata_packages <- function(){
   if (!require("gdistance", quietly = TRUE)) install.packages("gdistance")
   if (!require("topoDistance", quietly = TRUE)) install.packages("topoDistance")
   if (!require("rmapshaper", quietly = TRUE)) install.packages("rmapshaper")
-  if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
+  if (!require("wingen", quietly = TRUE)) install.packages("wingen")
 }
 
 
@@ -290,7 +290,7 @@ tess_packages <- function(){
 #'
 #' @details
 #' The following package will be installed if not already present:
-#' - "wingen" (from GitHub repository AnushaPB/wingen)
+#' - "wingen"
 #'
 #' @return None
 #'
@@ -299,5 +299,5 @@ tess_packages <- function(){
 #' @examples
 #' \dontrun{wingen_packages()}
 wingen_packages <- function(){
-  if (!require("wingen", quietly = TRUE)) devtools::install_github("AnushaPB/wingen")
+  if (!require("wingen", quietly = TRUE)) install.packages("wingen")
   }
