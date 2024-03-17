@@ -24,7 +24,7 @@ vcf_check <- function(x) {
 
 #' Remove islands from mapping
 #'
-#' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
+#' @param input SpatRaster or Raster* object with islands to be removed; also accepts coords
 #' @param shape SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object
 #' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)
 #'
@@ -36,12 +36,15 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
 
   no_island <- rmapshaper::ms_filter_islands(shape, min_vertices = min_vertices)
 
-  if (class(input)[1] == "RasterLayer" | class(input)[1] == "RasterStack") {
+  # convert SpatRaster to Raster
+  if (inherits(input, "SpatRaster")) input <- raster::stack(input)
+
+  if (inherits(input, "Raster")) {
     raster_noIsland <- raster::mask(input, no_island)
     return(raster_noIsland)
   }
 
-  if (class(input)[1] == "data.frame" & all(colnames(input) %in% c("ID", "x", "y"))) {
+  if (inherits(input, "data.frame") & all(colnames(input) %in% c("ID", "x", "y"))) {
     sp <- coords
     coordinates(sp) <- ~ x + y
     crs(sp) <- raster::crs("+proj=longlat +datum=WGS84 +no_defs")
@@ -55,7 +58,7 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
 
 #' Scale three layers of environmental data to R, G, and B for mapping
 #'
-#' @param env object of type SpatRaster or RasterStack
+#' @param env SpatRaster or Raster* with three layers
 #'
 #' @return RGB-scaled values
 #' @export

@@ -4,7 +4,7 @@
 #'
 #' @param method method to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.
 #'
-#' @return raster mask where values of 1 indicate areas that fall outside of observation range
+#' @return SpatRaster where values of 1 indicate areas that fall outside of observation range
 #'
 #' @details method can either be:
 #' 1. range - uses \code{\link{range_mask}}, mask all areas with values outside of the range of any of the values of the coords
@@ -47,10 +47,13 @@ extrap_mask <- function(coords, envlayers, method = "range", nsd = 2, buffer_wid
 #' @describeIn extrap_mask mask based on range of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
-#' @param envlayers stack of rasters with environmental values to base mask on
+#' @param envlayers SpatRaster or Raster* object with environmental values to base mask on
 #'
 #' @export
 range_mask <- function(coords, envlayers) {
+  # Convert to spatRaster
+  if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
+
   # Extract values at all coords
   vals <- terra::extract(envlayers, coords, ID = FALSE)
 
@@ -83,7 +86,7 @@ range_mask <- function(coords, envlayers) {
 #' @describeIn extrap_mask mask based on mean and standard deviation of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
-#' @param envlayers stack of rasters with environmental values to base mask on
+#' @param envlayers SpatRaster or Raster* object with environmental values to base mask on
 #' @param nsd number of standard deviations to use if using the "sd" method
 #'
 #' @export
@@ -119,7 +122,7 @@ sd_mask <- function(coords, envlayers, nsd) {
 #' @describeIn extrap_mask mask based on buffers around points
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
-#' @param envlayers stack of rasters with environmental values to base mask on
+#' @param envlayers SpatRaster or Raster* object with environmental values to base mask on
 #' @param buffer_width buffer width to supply to \code{gBuffer} if using "buffer" or "chull" method. If "buffer" method is used, defaults to 0.8 and if "chull" method is used, defaults to null (no buffer)
 #'
 #' @export
@@ -145,7 +148,7 @@ buffer_mask <- function(coords, envlayers, buffer_width = 0.8) {
 #' @describeIn extrap_mask mask based on range of data
 #'
 #' @param coords data frame of coordinates (first column should be x and second should be y)
-#' @param envlayers stack of rasters with environmental values to base mask on
+#' @param envlayers SpatRaster or Raster* object with environmental values to base mask on
 #' @param buffer_width buffer width to supply to \code{gBuffer} if using "buffer" method
 #'
 #' @export
@@ -181,8 +184,8 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
 #'
 #' @description Plots a raster with another raster "mask" on top of it
 #'
-#' @param map_r raster you want masked
-#' @param map_mask raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
+#' @param map_r SpatRaster or Raster* object to be masked
+#' @param map_mask SpatRaster or Raster* object with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
 #' @param RGB_cols whether the plot should be RGB-based or not
 #' @param mask_col color and transparency of mask (defaults to black and alpha = 0.9)
 #'

@@ -39,7 +39,7 @@ To perform an LFMM analysis ([Caye et al. 2019](https://academic.oup.com/mbe/art
 
 ### Read in and process data files
 
-To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental variables based on our sampling coordinates.
+To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental data for our sampling coordinates from our environmental raster stack (CA_env).
 
 ```{r data, warning = FALSE}
 load_algatr_example()

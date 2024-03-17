@@ -21,5 +21,5 @@
 
 #' Example environmental data, calculated by performing a raster PCA on 18 bioclimatic variables for state of California
 #'
-#' @format A RasterStack object with three environmental PCs
+#' @format A RasterStack object with three environmental PC layers
 "CA_env"

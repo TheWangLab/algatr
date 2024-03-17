@@ -20,7 +20,7 @@ load_algatr_example <- function(quiet = FALSE) {
       crayon::yellow(crayon::bold("\n*liz_gendist*")),
       crayon::yellow(paste0("genetic distance matrix (Plink Distance)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
-      crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with PC environmental layers"),
+      crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with example environmental layers"),
       crayon::cyan(crayon::bold("\n\n-------------------------------------------------\n"))
     )))
   }
