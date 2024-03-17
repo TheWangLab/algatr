@@ -118,7 +118,7 @@ Other RDA functions:
 \code{\link{rda_plot}()},
 \code{\link{rda_run}()},
 \code{\link{rda_table}()},
-\code{\link{rda_varpart_table}()},
-\code{\link{rda_varpart}()}
+\code{\link{rda_varpart}()},
+\code{\link{rda_varpart_table}()}
 }
 \concept{RDA functions}

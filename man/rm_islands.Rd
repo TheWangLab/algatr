@@ -7,7 +7,7 @@
 rm_islands(input, shape, min_vertices = 10000)
 }
 \arguments{
-\item{input}{RasterLayer or RasterStack object with islands to be removed; also accepts coords}
+\item{input}{SpatRaster or Raster* object with islands to be removed; also accepts coords}
 
 \item{shape}{SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object}
 

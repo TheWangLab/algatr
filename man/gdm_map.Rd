@@ -17,7 +17,7 @@ gdm_map(
 \arguments{
 \item{gdm_model}{GDM model}
 
-\item{envlayers}{stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)}
+\item{envlayers}{SpatRaster or Raster* object (LAYER NAMES MUST CORRESPOND WITH GDM MODEL)}
 
 \item{coords}{data frame with x and y coordinates}
 

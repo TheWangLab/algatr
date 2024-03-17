@@ -11,7 +11,7 @@ geo_dist(coords, type = "Euclidean", lyr = NULL)
 
 \item{type}{the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.}
 
-\item{lyr}{DEM raster for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)}
+\item{lyr}{SpatRaster or Raster* DEM for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)}
 }
 \value{
 geographic distance matrix

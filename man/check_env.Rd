@@ -7,7 +7,7 @@
 check_env(envlayers, threshold = 0.7)
 }
 \arguments{
-\item{envlayers}{a RasterStack of data layers}
+\item{envlayers}{SpatRaster or Raster* object}
 
 \item{threshold}{the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)}
 }
