@@ -1,7 +1,7 @@
 
 #' Check environmental layers for collinearity
 #'
-#' @param envlayers a RasterStack of data layers
+#' @param envlayers SpatRaster or Raster* object
 #' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric; defaults to 0.7)
 #'
 #' @return a matrix of correlation coefficients
@@ -18,7 +18,7 @@ check_env <- function(envlayers, threshold = 0.7) {
 
 #' Check extracted values for collinearity
 #'
-#' @param envlayers a RasterStack of data layers
+#' @param envlayers SpatRaster or Raster* object
 #' @param coords dataframe with x and y sample coordinates
 #' @param threshold the cutoff correlation coefficient for flagging variables as collinear (numeric)
 #'
@@ -41,7 +41,7 @@ check_vals <- function(envlayers, coords, threshold = 0.7) {
 
 #' Check geographic and environmental distances for collinearity
 #'
-#' @param envlayers a RasterStack of data layers
+#' @param envlayers SpatRaster or Raster* object
 #' @param coords dataframe with x and y sample coordinates
 #' @param sig significance threshold for Mantel test
 #' @param type the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances

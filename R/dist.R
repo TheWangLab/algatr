@@ -30,7 +30,7 @@ env_dist_helper <- function(env, stdz = TRUE) {
 #'
 #' @param coords dataframe with x and y coordinates
 #' @param type the type of geographic distance to be calculated; options are "Euclidean" for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances.
-#' @param lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)
+#' @param lyr SpatRaster or Raster* DEM for calculating topographic distances or resistance raster for calculating resistance distances (RasterLayer or SpatRaster object)
 #' @details
 #' Euclidean, or linear, distances are calculated using the geodist package: Padgham M, Sumner M (2021). geodist: Fast, Dependency-Free Geodesic Distance Calculations. R package version 0.0.7, Available: https://CRAN.R-project.org/package=geodist.
 #' Topographic distances are calculated using the topoDistance package: Wang I.J. (2020) Topographic path analysis for modeling dispersal and functional connectivity: calculating topographic distances using the TOPODISTANCE R package. Methods in Ecology and Evolution, 11: 265-272.

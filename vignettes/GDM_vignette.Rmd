@@ -62,7 +62,7 @@ load_algatr_example()
 
 ### Extract environmental variables
 
-To run GDM, we need to generate a site-pair table in which extracted you have extracted variable values for each site. Because we only have environmental layers for our example dataset, we need to extract the environmental values from these layers for each sampling locality in which lizards were collected:
+To run GDM, we need to generate a site-pair table in which extracted you have extracted variable values for each site. Because we only have environmental layers (i.e., CA_env) for our example dataset, we need to extract the environmental values from these layers for each sampling locality in which lizards were collected:
 
 ```{r extract enviro vars}
 env <- raster::extract(CA_env, liz_coords)

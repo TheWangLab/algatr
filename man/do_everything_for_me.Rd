@@ -11,7 +11,7 @@ do_everything_for_me(gen, coords, envlayers, quiet = FALSE, gators = FALSE)
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
-\item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
+\item{envlayers}{SpatRaster or Raster* for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 

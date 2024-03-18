@@ -1,7 +1,7 @@
 #' Check CRS of coords and layer
 #'
 #' @param coords sf object, data frame, or matrix representing coordinates
-#' @param lyr RasterLayer or SpatRaster
+#' @param lyr SpatRaster or Raster* object
 #'
 #' @return NULL
 #' @export

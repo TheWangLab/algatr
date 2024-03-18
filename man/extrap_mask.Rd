@@ -21,7 +21,7 @@ chull_mask(coords, envlayers, buffer_width = NULL)
 \arguments{
 \item{coords}{data frame of coordinates (first column should be x and second should be y)}
 
-\item{envlayers}{stack of rasters with environmental values to base mask on}
+\item{envlayers}{SpatRaster or Raster* object with environmental values to base mask on}
 
 \item{method}{method to create mask (can be "range", "sd", "buffer", defaults to "range"). See details for more information.}
 
@@ -30,7 +30,7 @@ chull_mask(coords, envlayers, buffer_width = NULL)
 \item{buffer_width}{buffer width to supply to \code{gBuffer} if using "buffer" method}
 }
 \value{
-raster mask where values of 1 indicate areas that fall outside of observation range
+SpatRaster where values of 1 indicate areas that fall outside of observation range
 }
 \description{
 Creates a raster that can be used to mask areas falling outside the observation range of a dataset, as defined by coordinates and corresponding raster values

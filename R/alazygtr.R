@@ -5,7 +5,7 @@
 #'
 #' @param gen path to vcf file, a `vcfR` type object, or a dosage matrix
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
-#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
+#' @param envlayers SpatRaster or Raster* for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @param gators set to TRUE to see some gators...
 #'

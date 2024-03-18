@@ -49,7 +49,7 @@ Y <- as.matrix(liz_gendist)
 Let's calculate environmental distances with our extracted environmental values using the `env_dist()` function, and add on geographic distances to this matrix using the `geo_dist()` function. For more information on how these two functions work, please refer to algatr's environmental data processing vignette.
 
 ```{r enviro data}
-# Extract enviro vars
+# Extract values from our environmental raster (CA_env)
 env <- raster::extract(CA_env, liz_coords)
 # Calculate environmental distances
 X <- env_dist(env)

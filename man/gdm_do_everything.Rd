@@ -24,7 +24,7 @@ gdm_do_everything(
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
-\item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
+\item{envlayers}{SpatRaster or Raster* object for mapping (if \verb{env`` is provided, the dataframe column names and }envlayers`` layer names should be the same)}
 
 \item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 

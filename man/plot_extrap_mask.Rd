@@ -12,9 +12,9 @@ plot_extrap_mask(
 )
 }
 \arguments{
-\item{map_r}{raster you want masked}
+\item{map_r}{SpatRaster or Raster* object to be masked}
 
-\item{map_mask}{raster layer with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})}
+\item{map_mask}{SpatRaster or Raster* object with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})}
 
 \item{RGB_cols}{whether the plot should be RGB-based or not}
 

@@ -2,7 +2,7 @@
 #'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
-#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
+#' @param envlayers SpatRaster or Raster* object for mapping (if `env`` is provided, the dataframe column names and `envlayers`` layer names should be the same)
 #' @param env dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"
 #' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
@@ -285,7 +285,7 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
 #' Make map from model
 #'
 #' @param gdm_model GDM model
-#' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
+#' @param envlayers SpatRaster or Raster* object (LAYER NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param coords data frame with x and y coordinates
 #' @param scl constant for rescaling variable vectors for plotting (defaults to 1)
 #' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
