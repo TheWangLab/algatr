@@ -140,7 +140,7 @@ information on how to generate this in algatr using a vcf file.</p>
 <span><span class="co"><span style="color: #BBBB00; font-weight: bold;">#&gt; *liz_vcf*</span> <span style="color: #BBBB00;">vcfR object (1000 loci x 53 samples)</span> </span></span>
 <span><span class="co"><span style="color: #BBBB00; font-weight: bold;">#&gt; *liz_gendist*</span> <span style="color: #BBBB00;">genetic distance matrix (Plink Distance)</span> </span></span>
 <span><span class="co"><span style="color: #00BB00; font-weight: bold;">#&gt; *liz_coords*</span> <span style="color: #00BB00;">dataframe with x and y coordinates</span> </span></span>
-<span><span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; *CA_env*</span> <span style="color: #BB00BB;">RasterStack with PC environmental layers</span> </span></span>
+<span><span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; *CA_env*</span> <span style="color: #BB00BB;">RasterStack with example environmental layers</span> </span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; -------------------------------------------------</span></span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
@@ -156,7 +156,7 @@ on geographic distances to this matrix using the <code><a href="../reference/geo
 function. For more information on how these two functions work, please
 refer to algatr’s environmental data processing vignette.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract enviro vars</span></span>
+<code class="sourceCode R"><span><span class="co"># Extract values from our environmental raster (CA_env)</span></span>
 <span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
 <span><span class="co"># Calculate environmental distances</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/env_dist.html">env_dist</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>

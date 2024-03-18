@@ -143,7 +143,7 @@ coordinates</p></li>
 <span><span class="co"><span style="color: #BBBB00; font-weight: bold;">#&gt; *liz_vcf*</span> <span style="color: #BBBB00;">vcfR object (1000 loci x 53 samples)</span> </span></span>
 <span><span class="co"><span style="color: #BBBB00; font-weight: bold;">#&gt; *liz_gendist*</span> <span style="color: #BBBB00;">genetic distance matrix (Plink Distance)</span> </span></span>
 <span><span class="co"><span style="color: #00BB00; font-weight: bold;">#&gt; *liz_coords*</span> <span style="color: #00BB00;">dataframe with x and y coordinates</span> </span></span>
-<span><span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; *CA_env*</span> <span style="color: #BB00BB;">RasterStack with PC environmental layers</span> </span></span>
+<span><span class="co"><span style="color: #BB00BB; font-weight: bold;">#&gt; *CA_env*</span> <span style="color: #BB00BB;">RasterStack with example environmental layers</span> </span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; -------------------------------------------------</span></span></span>
 <span><span class="co"><span style="color: #00BBBB; font-weight: bold;">#&gt; </span></span></span>
@@ -340,9 +340,9 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning: The distances for 121 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   var1 var2    p         r</span></span>
-<span><span class="co">#&gt; 1  geo bio2 0.04 0.1465585</span></span>
+<span><span class="co">#&gt; 1  geo bio2 0.01 0.1465585</span></span>
 <span><span class="co">#&gt; 2 bio2 bio3 0.01 0.3687943</span></span>
-<span><span class="co">#&gt; 3  geo bio4 0.04 0.1660475</span></span>
+<span><span class="co">#&gt; 3  geo bio4 0.02 0.1660475</span></span>
 <span><span class="co">#&gt; 4 bio2 bio4 0.01 0.5724731</span></span>
 <span><span class="co">#&gt; 5 bio3 bio4 0.01 0.8417016</span></span>
 <span><span class="co">#&gt; 6 bio1 bio5 0.01 0.3036129</span></span></code></pre></div>
@@ -360,9 +360,9 @@ significantly correlated.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $p</span></span>
 <span><span class="co">#&gt;          [,1] [,2] [,3] [,4] [,5]</span></span>
-<span><span class="co">#&gt; geo        NA 0.08 0.63 0.01 0.26</span></span>
-<span><span class="co">#&gt; ID         NA   NA 0.81 0.13 0.10</span></span>
-<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.49 0.86</span></span>
+<span><span class="co">#&gt; geo        NA 0.08 0.69 0.01 0.25</span></span>
+<span><span class="co">#&gt; ID         NA   NA 0.72 0.11 0.10</span></span>
+<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.45 0.88</span></span>
 <span><span class="co">#&gt; CA_rPCA2   NA   NA   NA   NA 0.01</span></span>
 <span><span class="co">#&gt; CA_rPCA3   NA   NA   NA   NA   NA</span></span>
 <span><span class="co">#&gt; </span></span>
