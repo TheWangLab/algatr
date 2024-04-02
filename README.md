@@ -6,6 +6,8 @@
 [![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml)
 [![license:
 MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![Zenodo
+DOI](https://zenodo.org/badge/523130808.svg)](https://zenodo.org/doi/10.5281/zenodo.10535497)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
