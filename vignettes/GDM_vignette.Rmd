@@ -163,7 +163,7 @@ map <- gdm_map(gdm_full$model, CA_env, liz_coords)
 ```
 
 The output of `gdm_map()` is a list containing the GDM transformed raster layers (`map$rastTrans`) and the raster PCA of the GDM transformed layers, rescaled from 0 to 250 for RGB plotting (`map$pcaRastRGB`)
-```{r GDM plots, fig.width = 5, fig.height = 5, results='hide'}
+```{r GDM plot transformed layers, fig.width = 5, fig.height = 5, results='hide'}
 # We can use the map output to plot the individual GDM transformed raster layers
 plot(map$rastTrans, col = viridis(100))
 
