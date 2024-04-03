@@ -88,7 +88,7 @@ gdm_full <- gdm_run(
 
 ### GDM with model selection
 
-We can also run a GDM using only significant variables (i.e., a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection without geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
+We can also perform variable selection using GDM (i.e., produce a "best" model). In this case, a variable selection process is done using a permutation test to assess significance: predictor variables are randomly permuted between sites and the deviance explained from the fitted model is compared to that obtained with random permutation. It is important to be aware that GDM (as implemented in the gdm package) always considers geographic distance as a variable and does not, by default, allow a user to perform variable selection without geographic distances considered. algatr has adjusted this functionality and will do variable selection on all predictor variables, including geographic distances.
 
 There are a few additional considerations to make if running GDM with model selection. The first is the number of permutations performed (the `nperm` argument); these permutations represent the number of times site-pair tables are permuted to perform a backwards elimination procedure for variable selection. The next argument is `sig`, specifying the significance threshold (alpha value).
 
@@ -96,13 +96,13 @@ There are a few additional considerations to make if running GDM with model sele
 
 See below for an example of how model selection would be run; this code is not run within the vignette because there is no significant GDM model for the algatr test dataset.
 
-```
+```r
 gdm_best <- gdm_run(gendist = liz_gendist, 
                     coords = liz_coords, 
                     env = env, 
                     model = "best", 
                     scale_gendist = TRUE,
-                    nperm = 500, 
+                    nperm = 1000, 
                     sig = 0.05)
 
 # Look at p-values
@@ -135,8 +135,12 @@ gdm_plot_diss(gdm_full$model)
 Let's plot the GDM-fitted functions for our full model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable. The y-axis ("partial regression distance") relates the genetic distances to the variable when all other variables are held constant. We can look at these I-splines using the `gdm_plot_isplines()` function. In general, three I-splines have been found to be sufficient to capture dissimilarity across a gradient and avoids over-fitting (see [Mokany et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13459) for further information). As we can see from the below plots, PCA1 has no relationship with genetic distance, which is also why the coefficient for this variable is 0.
 
 ```{r isplines, fig.width = 3, fig.height = 3}
-par(mfrow = c(2, 2))
-gdm_plot_isplines(gdm_full$model)
+# Plot the I-splines with free x and y-axes
+gdm_plot_isplines(gdm_full$model, scales = "free")
+
+# Plot the I-splines with a free x-axis and a fixed y-axis
+# This allows for visualization of relative importance (i.e., the height of the I-splines)
+gdm_plot_isplines(gdm_full$model, scales = "free_x")
 ```
 
 ### Table of GDM statistics
@@ -153,7 +157,7 @@ gdm_table(gdm_full)
 
 There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance (i.e., based on the I-splines), run a raster PCA on these environmental layers, and visualize the first three PC axes by assigning each axis to a red, green, or blue color scales to create an RGB plot. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector and coloring the individual points in the same PC RGB space.
 
-```{r GDM plots, results='hide'}
+```{r GDM plots, fig.width = 5, fig.height = 5, results='hide'}
 gdm_map(gdm_full$model, CA_env, liz_coords)
 ```
 
