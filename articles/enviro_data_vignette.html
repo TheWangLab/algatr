@@ -337,15 +337,15 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: The distances for 119 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
+<span><span class="co">#&gt; Warning: The distances for 123 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   var1 var2    p         r</span></span>
-<span><span class="co">#&gt; 1  geo bio2 0.02 0.1465585</span></span>
-<span><span class="co">#&gt; 2  geo bio3 0.02 0.1153701</span></span>
-<span><span class="co">#&gt; 3 bio2 bio3 0.01 0.3687943</span></span>
-<span><span class="co">#&gt; 4  geo bio4 0.01 0.1660475</span></span>
-<span><span class="co">#&gt; 5 bio2 bio4 0.01 0.5724731</span></span>
-<span><span class="co">#&gt; 6 bio3 bio4 0.01 0.8417016</span></span></code></pre></div>
+<span><span class="co">#&gt;   var1 var2    p          r</span></span>
+<span><span class="co">#&gt; 1  geo bio2 0.03 0.14655852</span></span>
+<span><span class="co">#&gt; 2 bio2 bio3 0.01 0.36879426</span></span>
+<span><span class="co">#&gt; 3  geo bio4 0.01 0.16604751</span></span>
+<span><span class="co">#&gt; 4   ID bio4 0.04 0.07768818</span></span>
+<span><span class="co">#&gt; 5 bio2 bio4 0.01 0.57247312</span></span>
+<span><span class="co">#&gt; 6 bio3 bio4 0.01 0.84170158</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can see that PC2 from CA_env and geo dists are significantly correlated!</span></span>
 <span><span class="fu"><a href="../reference/check_dists.html">check_dists</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span>
@@ -355,16 +355,16 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning: The distances for 4 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="co">#&gt; $mantel_df</span></span>
 <span><span class="co">#&gt;       var1     var2    p          r</span></span>
-<span><span class="co">#&gt; 1      geo       ID 0.03 0.07244890</span></span>
+<span><span class="co">#&gt; 1      geo       ID 0.04 0.07244890</span></span>
 <span><span class="co">#&gt; 2      geo CA_rPCA2 0.01 0.20374038</span></span>
-<span><span class="co">#&gt; 3       ID CA_rPCA3 0.03 0.08223415</span></span>
+<span><span class="co">#&gt; 3       ID CA_rPCA3 0.04 0.08223415</span></span>
 <span><span class="co">#&gt; 4 CA_rPCA2 CA_rPCA3 0.01 0.25441819</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $p</span></span>
 <span><span class="co">#&gt;          [,1] [,2] [,3] [,4] [,5]</span></span>
-<span><span class="co">#&gt; geo        NA 0.03 0.58 0.01 0.25</span></span>
-<span><span class="co">#&gt; ID         NA   NA 0.85 0.10 0.03</span></span>
-<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.65 0.80</span></span>
+<span><span class="co">#&gt; geo        NA 0.04 0.59 0.01 0.30</span></span>
+<span><span class="co">#&gt; ID         NA   NA 0.75 0.09 0.04</span></span>
+<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.51 0.77</span></span>
 <span><span class="co">#&gt; CA_rPCA2   NA   NA   NA   NA 0.01</span></span>
 <span><span class="co">#&gt; CA_rPCA3   NA   NA   NA   NA   NA</span></span>
 <span><span class="co">#&gt; </span></span>
