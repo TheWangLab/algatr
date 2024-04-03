@@ -455,9 +455,8 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
       tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
 
     # Generate plot, faceting on RDA axis
-    rda_hist(loadings, binwidth = binwidth)
+    print(rda_hist(loadings, binwidth = binwidth))
   }
-
 
   # If outliers found -------------------------------------------------------
 
@@ -470,28 +469,28 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
     # Make RDA plots
     if (rdaplot) {
       if (length(axes) == 1) {
-        rda_hist(TAB_snps, binwidth = binwidth)
+        print(rda_hist(TAB_snps, binwidth = binwidth))
       } else if (!is.null(biplot_axes)) {
-        if (is.vector(biplot_axes)) rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes)
+        if (is.vector(biplot_axes)) print(rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes))
         if (is.list(biplot_axes)) {
           lapply(biplot_axes, function(x) {
-            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
+            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
           })
         }
       } else {
         cb <- combn(length(axes), 2)
         if (!is.null(dim(cb))) {
           apply(cb, 2, function(x) {
-            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
+            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
           })
         } else {
-          rda_biplot(TAB_snps, TAB_var, biplot_axes = cb)
+          print(rda_biplot(TAB_snps, TAB_var, biplot_axes = cb))
         }
       }
     }
 
     # Make Manhattan plot
-    if (manhattan & !is.null(pvalues)) rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig)
+    if (manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
   }
 }
 
@@ -532,7 +531,7 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1, 2)) {
   TAB_var_sub$y <- TAB_var_sub$y * max(TAB_snps_sub$y) / stats::quantile(TAB_var_sub$y)[4]
 
   ## Biplot of RDA SNPs and scores for variables
-  ggplot2::ggplot() +
+  plt_biplot <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
     ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x = x, y = y, colour = type), size = 1.4) +
@@ -551,6 +550,8 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1, 2)) {
       legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
       strip.text = ggplot2::element_text(size = 11)
     )
+
+  return(plt_biplot)
 }
 
 #' Helper function to plot RDA manhattan plot
@@ -567,7 +568,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
 
   TAB_manhattan <- TAB_manhattan[order(TAB_manhattan$pos), ]
 
-  ggplot2::ggplot(data = TAB_manhattan) +
+  plt_manhat <- ggplot2::ggplot(data = TAB_manhattan) +
     ggplot2::geom_point(ggplot2::aes(x = pos, y = -log10(pvalues), col = type), size = 1.4) +
     ggplot2::scale_color_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF", "#6B4596FF")) +
     ggplot2::xlab("position") +
@@ -585,6 +586,8 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
       legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
       strip.text = ggplot2::element_text(size = 11)
     )
+
+  return(plt_manhat)
 }
 
 #' Helper function to plot RDA histogram
@@ -597,7 +600,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
 #' @family RDA functions
 rda_hist <- function(data, binwidth = NULL) {
   if ("type" %in% names(data)) {
-    ggplot2::ggplot() +
+    plt_hist <- ggplot2::ggplot() +
       ggplot2::geom_histogram(data = data, ggplot2::aes(fill = type, x = get(colnames(data)[2])), binwidth = binwidth) +
       ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
       ggplot2::guides(fill = ggplot2::guide_legend(title = "SNP type")) +
@@ -614,7 +617,7 @@ rda_hist <- function(data, binwidth = NULL) {
         strip.text = ggplot2::element_text(size = 11)
       )
   } else {
-    ggplot2::ggplot() +
+    plt_hist <- ggplot2::ggplot() +
       ggplot2::geom_histogram(data = data, ggplot2::aes(x = loading), bins = binwidth) +
       ggplot2::facet_wrap(~axis) +
       ggplot2::theme_bw() +
@@ -625,6 +628,8 @@ rda_hist <- function(data, binwidth = NULL) {
         strip.text = ggplot2::element_text(size = 11)
       )
   }
+
+  return(plt_hist)
 }
 
 #' Create `gt` table of RDA results
