@@ -54,7 +54,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (!quiet) print(gdm_table(gdm_result))
 
   # Plot I-splines if output printed
-  if (!quiet) gdm_plot_isplines(gdm_result$model)
+  if (!quiet) print(gdm_plot_isplines(gdm_result$model))
 
   # check if all env splines are zero
   zero_env <-
@@ -394,25 +394,37 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 #' Plot I-splines for each variable
 #'
 #' @param gdm_model GDM model
-#'
+#' @param scales Whether scales should be free ("free"; default), free in one dimension ("free_x", "free_y") or fixed ("fixed"). We recommend setting this to "free_x" to allow the x-axis to vary while keeping the y-axis fixed across all plots such that relative importance can be visualized.
+#' @param nrow Number of rows 
+#' @param ncol Number of cols
+#' 
 #' @return plot for each I-spline
 #'
 #' @family GDM functions
 #'
 #' @export
-gdm_plot_isplines <- function(gdm_model) {
+gdm_plot_isplines <- function(gdm_model, scales = "free", nrow = NULL, ncol = NULL) {
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
-
-  purrr::walk(1:ncol(gdm_model_splineDat$x), function(i) {
-    dat <- cbind(as.data.frame(gdm_model_splineDat$x[, i]), as.data.frame(gdm_model_splineDat$y[, i]))
-    plot <- ggplot2::ggplot(dat) +
-      ggplot2::geom_line(ggplot2::aes(x = gdm_model_splineDat$x[, i], y = gdm_model_splineDat$y[, i])) +
+  
+  gdm_spline_df <- 
+    dplyr::bind_rows(
+      data.frame(gdm_model_splineDat$x, var = "x", ID = 1:nrow(gdm_model_splineDat$x)), 
+      data.frame(gdm_model_splineDat$y, var = "y", ID = 1:nrow(gdm_model_splineDat$y))
+      ) %>%
+    tidyr::pivot_longer(-c("var", "ID"), names_to = "name", values_to = "value") %>%
+    tidyr::pivot_wider(names_from = "var", values_from = "value") %>%
+    dplyr::mutate(name = factor(name, levels = unique(name)))
+  
+  plt <-
+    ggplot2::ggplot(gdm_spline_df) +
+      ggplot2::geom_line(ggplot2::aes(x = x, y = y)) +
+      ggplot2::facet_wrap(~name, scales = scales, nrow = nrow, ncol = ncol, strip.position = "bottom") +
       ggplot2::theme_bw() +
-      ggplot2::xlab(colnames(gdm_model_splineDat$x)[i]) +
-      ggplot2::ylab("Partial Regression Distance")
+      ggplot2::xlab("") +
+      ggplot2::ylab("Partial Regression Distance") +
+      ggplot2::theme(strip.placement = "outside", strip.background = ggplot2::element_blank())
 
-    print(plot)
-  })
+  return(plt)
 }
 
 

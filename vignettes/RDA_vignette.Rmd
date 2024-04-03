@@ -73,7 +73,7 @@ gen[1:5, 1:5]
 Let's extract environmental variables using the `extract()` function from the raster package. We also need to standardize environmental variables. This is particularly important if we are using (for example) bioclimatic variables as input, as units of measurement are completely different (e.g., mm for precipitation vs. degrees Celsius for temperature). To do so, we'll use the `scale()` function within the raster package.
 
 ```{r enviro data}
-#  Extract values from our environmental raster (CA_env)
+# Extract environmental vars
 env <- raster::extract(CA_env, liz_coords)
 
 # Standardize environmental variables and make into dataframe
