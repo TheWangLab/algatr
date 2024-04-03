@@ -24,6 +24,8 @@ library(algatr)
 library(wingen)
 library(raster)
 library(terra)
+library(ggplot2)
+library(sf)
 ```
 
 **If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods in Ecology and Evolution. DOI: <https://doi.org/10.1111/2041-210X.14090>.**
@@ -48,19 +50,41 @@ There are five key functions within wingen:
 
 ### Read in and process input data
 
-wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as a SpatRaster object for this purpose.
+wingen requires a vcf, sampling coordinates, and a raster layer upon which to move the sliding window across. 
 
 ```{r test data}
 load_algatr_example()
-envlayer <- rast(CA_env$CA_rPCA1)
 ```
+
+Coordinates and rasters used in wingen should be in a projected (planar) coordinate system such that raster cells are of equal sizes. Therefore, spherical systems (including latitude-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given. Here we reproject our latitude-longitude coordinates to an equal-area projection for California.
+
+```{r}
+# First, we reformat our dataframe of coordinates into sf coordinates
+coords_longlat <- st_as_sf(liz_coords, coords = c("x", "y"), crs = "+proj=longlat")
+
+# Next, the coordinates and raster can be projected to an equal area projection, in this case NAD83 / California Albers (EPSG 3310)
+coords_proj <- st_transform(coords_longlat, crs = 3310)
+```
+
+We'll also want the shape of California for subsequent plotting, so we'll save one of the environmental PC layers as a SpatRaster object for this purpose and reproject to the same coordinate reference system as the coordinates.
+
+```{r}
+envlayer <- rast(CA_env[[1]])
+
+# Aggregate the layer so plotting is a bit faster
+envlayer <- aggregate(envlayer, 5)
+
+# Reproject to same crs as the projected coordinates
+envlayer <- project(envlayer, crs(coords_proj))
+```
+
 
 ### Generate raster layer for sliding window
 
-Although we can use one of the PCs within our CA_env object as a raster for wingen, the resolution of those layers is unnecessarily high given our sampling localities, and running wingen (particularly the kriging step) will take a very long time. To remedy this, we can generate a raster layer using the `coords_to_raster()` function in algatr by providing our sampling coordinates. Using this function, we can specify the resolution of our raster with the `res` argument.
+Although we can use one of the PCs within our CA_env object as a raster for wingen, the resolution of those layers is unnecessarily high given our sampling localities, and running wingen (particularly the kriging step) will take a very long time. To remedy this, we can generate a raster layer using the `coords_to_raster()` function in algatr by providing our sampling coordinates. Using this function, we can specify the resolution of our raster with the `res` argument. Here we choose a very low resolution (i.e., large cells) of 50 km to make processing time faster. Note that the resolution units depend on the coordinate reference system.
 
-```{r coords to raster}
-liz_lyr <- coords_to_raster(liz_coords, res = 0.5, buffer = 5)
+```{r coords to raster, fig.width = 5, fig.height = 5}
+liz_lyr <- coords_to_raster(coords_proj, res = 50000, buffer = 5, plot = TRUE)
 ```
 
 ## Moving window calculations using `preview_gd()` and `window_gd()`
@@ -73,15 +97,13 @@ There are a number of additional arguments within this function, and the wingen 
 
 ### Preview the moving window
 
-First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. We want adjust the window size (using the `wdim` argument) to ensure (to some extent) that our window size is capturing samples as it slides across the landscape. Ideally, `wdim` should be set with the study system in mind (e.g., the dispersal distance or neighborhood size of the species). We will also specify that genetic diversity only be calculated for windows that contain at least two samples (`min_n`). This function will generate two figures: one that allows us to visualize the size of our window compared to the raster layer and sampling coordinates, and also a map of how many samples will be included in each cell's calculation (specified using `sample_count`).
+First, we can get an idea of what the size of the cell and moving window look like using the `preview_gd()` function. We want adjust the window size (using the `wdim` argument) to ensure (to some extent) that our window size is capturing samples as it slides across the landscape. Ideally, `wdim` should be set with the study system in mind (e.g., the dispersal distance or neighborhood size of the species). We will also specify that genetic diversity only be calculated for windows that contain at least two samples (`min_n`). This function produces a plot that allows us to visualize the size of our window compared to the raster layer and sampling coordinates. The function also returns a sample count raster map where the value of each cell is how many samples will be included in each cell's calculation (to stop this raster from being produced set `sample_count = FALSE`).
 
-```{r preview gd, fig.width = 7, fig.height = 7, fig.align='center', warning=FALSE, message=FALSE}
-par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
-preview_gd(liz_lyr,
-  liz_coords,
-  wdim = 3,
-  fact = 0
-)
+```{r preview gd, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE, message=FALSE}
+sample_count <- preview_gd(liz_lyr, coords_proj, wdim = 3, fact = 0)
+
+# Visualize the sample count layer
+ggplot_count(sample_count)
 ```
 
 ### Run the moving window
@@ -90,7 +112,7 @@ Next, let's run the moving window function (`window_gd()`) using the parameters 
 
 ```{r window gd, warning=FALSE}
 wgd <- window_gd(liz_vcf,
-  liz_coords,
+  coords_proj,
   liz_lyr,
   stat = "pi",
   wdim = 3,
@@ -102,16 +124,16 @@ wgd <- window_gd(liz_vcf,
 
 ------------------------------------------------------------------------
 
-### Plot wingen results with `plot_gd()` and `plot_count()`
+### Plot wingen results with `ggplot_gd()` and `ggplot_count()`
 
-wingen allows for plotting maps in two ways: `plot_gd()` plots the genetic diversity layer, while `plot_count()` plots the sample count layer. We can also provide a background map using the `bkg` argument.
+wingen allows for plotting maps in two ways: `ggplot_gd()` plots the genetic diversity layer, while `ggplot_count()` plots the sample count layer. We can also provide a background map using the `bkg` argument. You can produce base R plots using `plot_gd()` and `plot_count()`
 
-```{r plot window, warning=FALSE, fig.width=7, fig.height=7, fig.align='center'}
-par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
+```{r plot window, warning=FALSE, fig.width=5, fig.height=5, fig.align='center'}
 # Plot map of pi
-plot_gd(wgd, main = "Moving window pi", bkg = envlayer)
+ggplot_gd(wgd, bkg = envlayer) + ggtitle("Moving window pi")
+
 # Plot sample count map
-plot_count(wgd, main = "Sample counts")
+ggplot_count(wgd) + ggtitle("Sample count")
 ```
 
 ### Krige results
@@ -127,12 +149,12 @@ summary(kgd)
 
 Let's look at the plots for the kriged results, and let's avoid including the background shape for now (i.e., no `bkg` argument). Note that the overall shape of this kriged map is rectangular because of the `lyr` raster shape.
 
-```{r plot krige, fig.height=7, fig.width=7, fig.align='center', warning=FALSE}
-par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
+```{r plot krige, fig.height=5, fig.width=5, fig.align='center', warning=FALSE}
 # Plot kriged map of pi
-plot_gd(kgd, main = "Kriged pi")
+ggplot_gd(kgd) + ggtitle("Kriged pi")
+
 # Plot kriged sample count map
-plot_count(kgd, main = "Kriged sample counts")
+ggplot_count(kgd) + ggtitle("Kriged sample counts")
 ```
 
 ### Mask using sample counts
@@ -141,13 +163,12 @@ Finally, we may want to mask out any areas that we're not interested in using th
 
 As you can see, more areas are masked as we increase `minval`.
 
-```{r mask sample count, fig.align='center', fig.width=7, fig.height=7, warning=FALSE}
+```{r mask sample count, fig.align='center', fig.width=5, fig.height=5, warning=FALSE}
 mgd_1 <- mask_gd(kgd, kgd[["sample_count"]], minval = 1)
 mgd_2 <- mask_gd(kgd, kgd[["sample_count"]], minval = 2)
 
-par(mfrow = c(1, 2), oma = rep(1, 4), mar = rep(2, 4))
-plot_gd(mgd_1, main = "Kriged & masked pi", bkg = envlayer)
-plot_gd(mgd_2, main = "Kriged & masked pi", bkg = envlayer)
+ggplot_gd(mgd_1, bkg = envlayer) + ggtitle("Kriged & masked pi")
+ggplot_gd(mgd_2, bkg = envlayer) + ggtitle("Kriged & masked pi")
 ```
 
 ### Mask using state boundaries
@@ -164,7 +185,7 @@ r <- terra::resample(envlayer, mgd_1)
 mgd <- mask_gd(mgd_1, r)
 
 # Plot masked map
-plot_gd(mgd, main = "Kriged & masked pi", bkg = r)
+ggplot_gd(mgd, bkg = envlayer) + ggtitle("Kriged & masked pi")
 ```
 
 ## Running wingen with `wingen_do_everything()`
@@ -191,11 +212,11 @@ Below, we'll run wingen with the following:
 
 -   Plot kriged and masked sample count (`plot_count = TRUE`)
 
-```{r wingen do everything, warning=FALSE, results='hide'}
+```{r wingen do everything, warning=FALSE, results='hide', fig.width = 5, fig.height = 5}
 results <- wingen_do_everything(
   gen = liz_vcf,
   lyr = liz_lyr,
-  coords = liz_coords,
+  coords = coords_proj,
   wdim = 3,
   fact = 0,
   sample_count = TRUE,
