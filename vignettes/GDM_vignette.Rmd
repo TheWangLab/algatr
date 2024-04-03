@@ -26,6 +26,7 @@ gdm_packages()
 library(algatr)
 library(raster)
 library(terra)
+library(viridis)
 ```
 
 **If using GDM, please cite the following: for the GDM method, Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment, and for the `gdm` package, Fitzpatrick M., Mokany K., Manion G., Nieto-Lugilde D., Ferrier S. (2022). gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.**
@@ -134,7 +135,7 @@ gdm_plot_diss(gdm_full$model)
 
 Let's plot the GDM-fitted functions for our full model. These functions are fitted I-splines that relate each predictor variable to the genetic distance data. Briefly, the maximum height of the curve indicates the contribution of that predictor variable to changes (dissimilarity) in genetic distances, and the shape of the curve provides information on how genetic distances change across an environment gradient for that predictor variable. The y-axis ("partial regression distance") relates the genetic distances to the variable when all other variables are held constant. We can look at these I-splines using the `gdm_plot_isplines()` function. In general, three I-splines have been found to be sufficient to capture dissimilarity across a gradient and avoids over-fitting (see [Mokany et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.13459) for further information). As we can see from the below plots, PCA1 has no relationship with genetic distance, which is also why the coefficient for this variable is 0.
 
-```{r isplines, fig.width = 3, fig.height = 3}
+```{r isplines, fig.width = 5, fig.height = 5}
 # Plot the I-splines with free x and y-axes
 gdm_plot_isplines(gdm_full$model, scales = "free")
 
@@ -158,7 +159,16 @@ gdm_table(gdm_full)
 There are two ways we can visualize the results from GDM within algatr, both using the `gdm_map()` function. First, we can transform the original environmental layers based on biological importance (i.e., based on the I-splines), run a raster PCA on these environmental layers, and visualize the first three PC axes by assigning each axis to a red, green, or blue color scales to create an RGB plot. In this way, more similar colors on the map correspond to more similar genetic composition of our samples. Secondly, we can visualize how genetic composition is associated with each of these variables by plotting each as a vector and coloring the individual points in the same PC RGB space.
 
 ```{r GDM plots, fig.width = 5, fig.height = 5, results='hide'}
-gdm_map(gdm_full$model, CA_env, liz_coords)
+map <- gdm_map(gdm_full$model, CA_env, liz_coords)
+```
+
+The output of `gdm_map()` is a list containing the GDM transformed raster layers (`map$rastTrans`) and the raster PCA of the GDM transformed layers, rescaled from 0 to 250 for RGB plotting (`map$pcaRastRGB`)
+```{r GDM plots, fig.width = 5, fig.height = 5, results='hide'}
+# We can use the map output to plot the individual GDM transformed raster layers
+plot(map$rastTrans, col = viridis(100))
+
+# And the individual PCA layers
+plot(map$pcaRastRGB, col = viridis(100))
 ```
 
 ### Masking out irrelevant areas
@@ -167,10 +177,10 @@ An important consideration for a researcher to be aware of is to not overinterpr
 
 ```{r gdm masked, warning=FALSE, fig.align='center', fig.width=5, fig.height=5, warning = FALSE}
 # Extract the GDM map from the GDM model object
-map <- gdm_map(gdm_full$model, CA_env, liz_coords, plot_vars = FALSE)
 maprgb <- map$pcaRastRGB
 
-# Now, use `extrap_mask()` to do buffer-based masking
+# Now, use `extrap_mask()` to do buffer-based masking 
+# (i.e., mask out areas outside a buffer around our sampling coordinates)
 map_mask <- extrap_mask(liz_coords, maprgb, method = "buffer", buffer_width = 1.25)
 
 # Plot the resulting masked map
