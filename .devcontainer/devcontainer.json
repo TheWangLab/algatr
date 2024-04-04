@@ -12,6 +12,6 @@
 		}
 	},
 
-	// Use 'postAttachCommand' to run commands after the container is started.
-	"postAttachCommand": "sudo rstudio-server start"
+	// Use 'postAttachCommand' to run commands after the container is started
+	"postAttachCommand": "sudo rstudio-server start &> /dev/null && bash .devcontainer/welcome.sh"
 }
