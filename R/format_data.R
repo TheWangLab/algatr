@@ -22,29 +22,29 @@ vcf_check <- function(x) {
   return(vcf)
 }
 
-
 #' Remove islands from mapping
 #'
-#' @param input RasterLayer or RasterStack object with islands to be removed; also accepts coords
+#' @param input SpatRaster or Raster* object with islands to be removed; also accepts coords
 #' @param shape SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object
 #' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)
 #'
 #' @return object (of input type) with islands removed
 #' @export
-#'
-#' @examples
 rm_islands <- function(input, shape, min_vertices = 10000) {
   # Convert if SpatVector provided ------------------------------------------
   if (inherits(shape, "SpatVector")) shape <- sf::st_as_sf(shape)
 
   no_island <- rmapshaper::ms_filter_islands(shape, min_vertices = min_vertices)
 
-  if (class(input)[1] == "RasterLayer" | class(input)[1] == "RasterStack") {
+  # convert SpatRaster to Raster
+  if (inherits(input, "SpatRaster")) input <- raster::stack(input)
+
+  if (inherits(input, "Raster")) {
     raster_noIsland <- raster::mask(input, no_island)
     return(raster_noIsland)
   }
 
-  if (class(input)[1] == "data.frame" & all(colnames(input) %in% c("ID", "x", "y"))) {
+  if (inherits(input, "data.frame") & all(colnames(input) %in% c("ID", "x", "y"))) {
     sp <- coords
     coordinates(sp) <- ~ x + y
     crs(sp) <- raster::crs("+proj=longlat +datum=WGS84 +no_defs")
@@ -56,37 +56,12 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
   }
 }
 
-
-#' Impute NA values
-#' NOTE: use extreme caution when using this form of simplistic imputation. We mainly provide this code for creating test datasets and highly discourage its use in analyses.
-#' @param x matrix
-#' @param f function to use for imputation (defaults to median)
-#'
-#' @return
-#' @export
-#'
-#' @examples
-simple_impute <- function(x, FUN = median) {
-  x_noNA <- apply(x, 2, impute_helper, FUN)
-  return(x_noNA)
-}
-
-#' Helper function for imputation
-#' @export
-#' @noRd
-impute_helper <- function(i, FUN = median) {
-  i[which(is.na(i))] <- FUN(i[-which(is.na(i))], na.rm = TRUE)
-  return(i)
-}
-
 #' Scale three layers of environmental data to R, G, and B for mapping
 #'
-#' @param env object of type SpatRaster or RasterStack
+#' @param env SpatRaster or Raster* with three layers
 #'
-#' @return
+#' @return RGB-scaled values
 #' @export
-#'
-#' @examples
 scaleRGB <- function(env) {
   # Convert to SpatRaster if RasterStack provided ---------------------------
   if (!inherits(env, "SpatRaster")) env <- terra::rast(env)

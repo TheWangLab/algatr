@@ -12,9 +12,9 @@ tess_do_everything(
   K_selection = "manual",
   plot_method = "maxQ",
   col_breaks = 20,
-  col_alpha = 0.5,
   minQ = 0.1,
   tess_method = "projected.ls",
+  lambda = 1,
   ploidy = 2,
   correct_kriged_Q = TRUE,
   quiet = FALSE
@@ -31,13 +31,15 @@ tess_do_everything(
 
 \item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
 
-\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
+\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
 
 \item{col_breaks}{number of breaks for plotting (defaults to 20)}
 
-\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
+\item{minQ}{threshold for minimum Q value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
 
 \item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
+
+\item{lambda}{numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.}
 
 \item{ploidy}{ploidy of data (defaults to 2)}
 
@@ -59,8 +61,12 @@ See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). 
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
+\code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_ktest}()},

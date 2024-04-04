@@ -2,15 +2,15 @@
 #'
 #' @param gendist matrix of genetic distances (must range between 0 and 1 or set scale_gendist = TRUE)
 #' @param coords dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order
-#' @param envlayers envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)
+#' @param envlayers SpatRaster or Raster* object for mapping (if `env`` is provided, the dataframe column names and `envlayers`` layer names should be the same)
 #' @param env dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers
-#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")
+#' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"
 #' @param sig alpha value for significance threshold (defaults to 0.05); only used if model = "best"
 #' @param nperm number of permutations to use to calculate variable importance; only used if model = "best" (defaults to 50)
 #' @param geodist_type the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances. Note: creation and plotting of the GDM raster is only possible for "Euclidean" distances
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
-#' @param plot_vars whether to create variable vector loading plot (defaults to TRUE)
+#' @param plot_vars whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #'
 #' @details
@@ -21,11 +21,11 @@
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
-gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "best", sig = 0.05, nperm = 50,
+gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, model = "full", sig = 0.05, nperm = 50,
                               geodist_type = "Euclidean", dist_lyr = NULL, scale_gendist = FALSE, plot_vars = TRUE,
                               quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Check CRS of envlayers and coords
   crs_check(coords, envlayers)
 
@@ -55,7 +55,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (!quiet) print(gdm_table(gdm_result))
 
   # Plot I-splines if output printed
-  if (!quiet) gdm_plot_isplines(gdm_result$model)
+  if (!quiet) print(gdm_plot_isplines(gdm_result$model))
 
   # check if all env splines are zero
   zero_env <-
@@ -72,8 +72,8 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   if (zero_env == 0) map <- NULL
 
   # Create and plot map
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) {
-    if (zero_env == 0) {
+  if (geodist_type == "Euclidean" & !is.null(envlayers)) {
+    if (zero_env == 0){
       warning("All model splines for environmental variables are zero, skipping creation of GDM map")
     } else {
       map <- gdm_map(gdm_result$model, envlayers, coords, plot_vars = plot_vars, quiet = quiet)
@@ -89,7 +89,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
   # Add varimp
   results[["varimp"]] <- gdm_result$varimp
   # Add raster(s)
-  if (geodist_type == "Euclidean" & !is.null(envlayers) & plot_vars) results[["rast"]] <- map else results[["rast"]] <- NULL
+  if (geodist_type == "Euclidean" & !is.null(envlayers)) results[["rast"]] <- map else results[["rast"]] <- NULL
 
   return(results)
 }
@@ -103,9 +103,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #'
 #' @return GDM model
 #' @export
-#'
-#' @examples
-gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50, scale_gendist = FALSE,
+gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
   # convert env to spat raster if it is a RasterLayer/RasterStack
@@ -147,7 +145,6 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
   }
 
-
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
   # If model = "full", the final GDM model is just the full model
@@ -184,7 +181,7 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
     }
 
     # Get subset of variables for final model
-    gdm_varimp <- gdm_var_select(gdmData, sig = sig, nperm = nperm)
+    gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
     finalvars <- gdm_varimp$finalvars
 
     # Stop if there are no significant final variables
@@ -230,21 +227,16 @@ gdm_run <- function(gendist, coords, env, model = "best", sig = 0.05, nperm = 50
 }
 
 
-
 #' Get best set of variables from a GDM model
 #'
 #' @param gdmData data formatted using GDM package
 #' @param sig sig level for determining variable significance
 #' @param nperm number of permutations to run for variable testing
 #'
-#' @return
-#'
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
-gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
+gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
     geo = FALSE,
@@ -291,14 +283,12 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
 }
 
 
-
 #' Make map from model
 #'
 #' @param gdm_model GDM model
-#' @param envlayers stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)
-#' @param plot_vars whether to create PCA plot to help in variable and map interpretation
+#' @param envlayers SpatRaster or Raster* object (LAYER NAMES MUST CORRESPOND WITH GDM MODEL)
 #' @param coords data frame with x and y coordinates
-#' @param scl constant for rescaling variable vectors for plotting
+#' @param scl constant for rescaling variable vectors for plotting (defaults to 1)
 #' @param display_axes display PC axes text, labels, and ticks (defaults to FALSE)
 #' @inheritParams gdm_do_everything
 #'
@@ -307,8 +297,6 @@ gdm_var_select <- function(gdmData, sig = 0.05, nperm = 10) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, display_axes = FALSE, quiet = FALSE) {
   # convert envlayers to SpatRaster
   if (!inherits(envlayers, "SpatRaster")) envlayers <- terra::rast(envlayers)
@@ -335,7 +323,6 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Subset envlayers to only include variables in final model
   envlayers_sub <- terra::subset(envlayers, model_vars)
-
 
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
@@ -388,14 +375,14 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Plot raster if quiet = FALSE
   if (!quiet) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
-  if (!is.null(coords)) points(coords, cex = 1.5)
+  if (!is.null(coords) & !quiet) points(coords, cex = 1.5)
 
   # Plot variable vectors
-  if (plot_vars & (n_layers == 3)) {
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes, quiet = quiet)
+  if (!quiet & plot_vars & (n_layers == 3)) {
+    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
   }
 
-  if (plot_vars & (n_layers != 3)) {
+  if (!quiet & plot_vars & (n_layers != 3)) {
     warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
   }
 
@@ -408,29 +395,38 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 #' Plot I-splines for each variable
 #'
 #' @param gdm_model GDM model
-#'
+#' @param scales Whether scales should be free ("free"; default), free in one dimension ("free_x", "free_y") or fixed ("fixed"). We recommend setting this to "free_x" to allow the x-axis to vary while keeping the y-axis fixed across all plots such that relative importance can be visualized.
+#' @param nrow Number of rows 
+#' @param ncol Number of cols
+#' 
 #' @return plot for each I-spline
 #'
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
-gdm_plot_isplines <- function(gdm_model) {
+gdm_plot_isplines <- function(gdm_model, scales = "free", nrow = NULL, ncol = NULL) {
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
-
-  purrr::walk(1:ncol(gdm_model_splineDat$x), function(i) {
-    dat <- cbind(as.data.frame(gdm_model_splineDat$x[, i]), as.data.frame(gdm_model_splineDat$y[, i]))
-    plot <- ggplot2::ggplot(dat) +
-      ggplot2::geom_line(ggplot2::aes(x = gdm_model_splineDat$x[, i], y = gdm_model_splineDat$y[, i])) +
+  
+  gdm_spline_df <- 
+    dplyr::bind_rows(
+      data.frame(gdm_model_splineDat$x, var = "x", ID = 1:nrow(gdm_model_splineDat$x)), 
+      data.frame(gdm_model_splineDat$y, var = "y", ID = 1:nrow(gdm_model_splineDat$y))
+      ) %>%
+    tidyr::pivot_longer(-c("var", "ID"), names_to = "name", values_to = "value") %>%
+    tidyr::pivot_wider(names_from = "var", values_from = "value") %>%
+    dplyr::mutate(name = factor(name, levels = unique(name)))
+  
+  plt <-
+    ggplot2::ggplot(gdm_spline_df) +
+      ggplot2::geom_line(ggplot2::aes(x = x, y = y)) +
+      ggplot2::facet_wrap(~name, scales = scales, nrow = nrow, ncol = ncol, strip.position = "bottom") +
       ggplot2::theme_bw() +
-      ggplot2::xlab(colnames(gdm_model_splineDat$x)[i]) +
-      ggplot2::ylab("Partial Regression Distance")
+      ggplot2::xlab("") +
+      ggplot2::ylab("Partial Regression Distance") +
+      ggplot2::theme(strip.placement = "outside", strip.background = ggplot2::element_blank())
 
-    print(plot)
-  })
+  return(plt)
 }
-
 
 
 #' Plot compositional dissimilarity spline plots
@@ -444,8 +440,6 @@ gdm_plot_isplines <- function(gdm_model) {
 #' @details code is modified from the `plot.gdm()` function in the gdm package (Fitzpatrick et al. 2022)
 #'
 #' @export
-#'
-#' @examples
 gdm_plot_diss <- function(gdm_model) {
   obs <- tidyr::as_tibble(gdm_model$observed) %>% dplyr::rename(observed = value)
   pred <- tidyr::as_tibble(gdm_model$predicted) %>% dplyr::rename(predicted = value)
@@ -484,7 +478,6 @@ gdm_plot_diss <- function(gdm_model) {
 }
 
 
-
 #' Create a PCA plot for GDM
 #'
 #' @param pcaSamp PCA results from running prcomp()
@@ -495,16 +488,13 @@ gdm_plot_diss <- function(gdm_model) {
 #' @param y y-axis PC
 #' @param scl constant for rescaling variable vectors for plotting
 #' @param display_axes whether to display axes
-#' @inheritParams gdm_do_everything
 #'
 #' @return GDM PCA plot
 #'
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
-gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE, quiet = FALSE) {
+gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = 1, display_axes = FALSE) {
   # Confirm there are exactly 3 axes
   if (terra::nlyr(pcaRastRGB) > 3) {
     stop("Only three PC layers (RGB) can be used for creating the variable plot (too many provided)")
@@ -536,7 +526,6 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
     v1 = scl * scldat * varpc[, x],
     v2 = scl * scldat * varpc[, y]
   )
-
 
   # GET RGB VALS FOR EACH COORD----------------------------------------------------------------------------------------
 
@@ -611,8 +600,9 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   }
 
   # Plot
-  if (!quiet) print(plot)
+  print(plot)
 }
+
 
 #' Helper function to create rgb vector
 #'
@@ -622,6 +612,7 @@ create_rgb_vec <- function(vec) {
   if (any(is.na(vec))) x <- NA else x <- rgb(vec[1], vec[2], vec[3], maxColorValue = 255)
   return(x)
 }
+
 
 #' Scale a raster stack from 0 to 255
 #'
@@ -634,6 +625,7 @@ stack_to_rgb <- function(s) {
   new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb))
   return(new_stack)
 }
+
 
 #' Scale raster from 0 to 255
 #'
@@ -662,8 +654,6 @@ raster_to_rgb <- function(r) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_coeffs <- function(gdm_model) {
   # Vector to store coefficient sums
   coefSums <- c()
@@ -683,6 +673,7 @@ gdm_coeffs <- function(gdm_model) {
   return(coeffs)
 }
 
+
 #' Create dataframe of GDM results
 #'
 #' @param gdm_result output of \link[algatr]{gdm_run}
@@ -692,13 +683,12 @@ gdm_coeffs <- function(gdm_model) {
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 gdm_df <- function(gdm_result) {
   coeff_df <- gdm_coeffs(gdm_result$model)
   if (!is.null(gdm_result$pvalues)) coeff_df$p <- gdm_result$pvalues
   return(coeff_df)
 }
+
 
 #' Create `gt` table of GDM results
 #'
@@ -758,6 +748,7 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
   tbl
 }
 
+
 #' Scale genetic distances from 0 to 1
 #'
 #' @param x genetic distance matrix
@@ -767,8 +758,6 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 #' @family GDM functions
 #'
 #' @export
-#'
-#' @examples
 scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }

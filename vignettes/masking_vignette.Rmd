@@ -1,8 +1,8 @@
 ---
-title: "masking_vignette"
+title: "Masking"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{masking_vignette}
+  %\VignetteIndexEntry{Masking}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,11 +20,7 @@ knitr::opts_chunk$set(
 library(algatr)
 library(raster)
 library(terra)
-library(rgeos)
-library(here)
 library(viridis)
-library(rmapshaper)
-library(geodata)
 ```
 
 Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled at all). This allows users to avoid over-interpreting results from several analyses where mapping is a useful visualization tool (e.g., generalized dissimilarity modeling).
@@ -40,7 +36,7 @@ This vignette makes use of the following masking functions:
 ### Read in data
 
 ```{r data, fig.align='center', fig.height=5, fig.width=5}
-# Load test data, including CA_env which are the envlayers we'll be using
+# Load test data, including CA_env which are the environmental raster layers we'll be using
 load_algatr_example()
 
 # For the purposes of simplicity, let's just use one of the PCs for mapping:
@@ -109,7 +105,7 @@ plot_extrap_mask(envlayers, map_mask, RGB = FALSE, mask_col = rgb(1, 1, 1, alpha
 
 ### Convex hull-based mask
 
-A convex hull describes the smallest convex polygon that contains sets or points (in this case, sampling coordinates). We can mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument (this largely uses the `gConvexHull()` function in the rgeos package). As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` argument
+A convex hull describes the smallest convex polygon that contains sets or points (in this case, sampling coordinates). We can mask all areas outside of a convex hull around the coordinates provided using the `"chull"` argument (this largely uses the `st_convex_hull()` function in the sf package). As with the buffer-based masking, this masking is also agnostic to environment, and the size of the buffer is once again changed with the `buffer_width` argument
 
 ```{r chull mask, fig.align='center', fig.height=5, fig.width=5}
 par(mar = c(0, 0, 0, 0))

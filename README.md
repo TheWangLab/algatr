@@ -1,44 +1,116 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# algatr <img src="man/figures/logo_review.png" align="right" height="140"/>
+# algatr <img src="man/figures/logo.png" align="right" height="160"/>
+
+[![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml)
+[![license:
+MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![Zenodo
+DOI](https://zenodo.org/badge/523130808.svg)](https://zenodo.org/doi/10.5281/zenodo.10535497)
 
 **A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
 (**algatr**) was built to provide researchers with a step-by-step,
-start-to-finish pipeline to perform various landscape genomics methods
-with their data.
+start-to-finish pipeline to perform core landscape genomic analysis
+methods with their data.
 
-# <img src="man/figures/algatr_review.png" align="center" width="794" height="133"/>
+## Citation
+
+------------------------------------------------------------------------
+
+Please cite our paper if you use this package:
+
+**Chambers, E.A., Bishop, A.P., & Wang, I.J. (2023). Individual-based
+landscape genomics for conservation: An analysis pipeline. *Molecular
+Ecology
+Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
+
+Because algatr makes use of existing software, please also be sure to
+cite the papers for the relevant corresponding method:
+
+|          |                             |                                                                                           |
+|----------|-----------------------------|-------------------------------------------------------------------------------------------|
+| `wingen` | Bishop et al. (2023)        | DOI: [10.1111/2041-210X.14090](https://doi.org/10.1111/2041-210X.14090)                   |
+| `TESS`   | Caye et al. (2016)          | DOI: [10.1111/1755-0998.12471](https://doi.org/10.1111/1755-0998.12471)                   |
+| `MMRR`   | Wang (2013)                 | DOI: [10.1111/evo.12134](https://doi.org/10.1111/evo.12134)                               |
+| `GDM`    | Ferrier et al. (2007)       | DOI: [10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x) |
+|          | Fitzpatrick et al. (2022)   | gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.                     |
+| `RDA`    | Capblancq & Forester (2021) | DOI: [10.1111/2041-210X.13722](https://doi.org/10.1111/2041-210X.13722)                   |
+| `LFMM`   | Caye et al. (2019)          | DOI: [10.1093/molbev/msz008](https://doi.org/10.1093/molbev/msz008)                       |
+|          | Jumentier (2021)            | lfmm: Latent Factor Mixed Models. R package version 1.1.                                  |
 
 ## Installation
 
 ------------------------------------------------------------------------
 
-You can install the development version of algatr from
-[GitHub](https://github.com/) using the following code:
+algatr can be installed with the following code:
 
 ``` r
-# Some dependencies of algatr must first be installed from BiocManager and GitHub:
-#install.packages("BiocManager")
-BiocManager::install("qvalue")
-BiocManager::install("gdsfmt")
-BiocManager::install("SeqArray")
-BiocManager::install("SNPRelate")
-BiocManager::install("LEA") # required by tess3r
-BiocManager::install("ggtree") # required by harrietr
+devtools::install_github("TheWangLab/algatr")
+```
 
-#install.packages("devtools")
-devtools::install_github("bcm-uga/TESS3_encho_sen")
-devtools::install_github("bleutner/RStoolbox")
-devtools::install_github("AnushaPB/wingen")
+The algatr package depends on many packages for all of the different
+methods implemented. To ensure that algatr can still be installed even
+if one of the many dependencies breaks, the packages required for each
+method are suggested rather than imported. To install all of the
+suggested packages set `dependencies = TRUE` when running
+`install_github()`. To install just the packages required for each
+method, use the `*_packages()` functions below. This is helpful if
+you’re only interested in using a subset of the methods provided and
+don’t want to install unnecessary packages.
 
-# Then algatr can be installed
-devtools::install_github("TheWangLab/algatr", build_vignettes = TRUE)
+``` r
+# Install algatr
+devtools::install_github("TheWangLab/algatr")
+
+library(algatr)
+
+# Option 1: Install all of the packages for algatr
+alazygatr_packages()
+
+# Option 2: Install subsets of packages based on what methods you want to use:
+## Genetic distance processing:
+gen_dist_packages()
+## Genetic data processing:
+data_processing_packages()
+## Environmental and geographic data processing:
+envirodata_packages()
+## LFMM:
+lfmm_packages()
+## RDA:
+rda_packages()
+## MMRR:
+mmrr_packages()
+## GDM:
+gdm_packages()
+## TESS:
+tess_packages()
+## wingen:
+wingen_packages()
 ```
 
 If you’re installing on Ubuntu, you may run into issues installing the
 rmapshaper package; scroll to the bottom of the README for more
 information.
+
+Alternatively, algatr can be run using
+[Docker](https://docs.docker.com/get-started/), in which case prior
+installation of package dependencies is not required. First, install
+Docker, and then start algatr within a Docker container:
+
+``` bash
+docker run --rm -ti ghcr.io/thewanglab/algatr
+```
+
+You can also run the container in an RStudio instance:
+
+``` bash
+docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/algatr
+```
+
+Open localhost:8787 in your browser and log in with username:rstudio and
+password:yourpassword (substitute yourpassword for whatever password you
+would like)
 
 ## Introduction
 
@@ -76,26 +148,31 @@ several other outputs. All of the `[method]_do_everything` functions has
 a `quiet` argument which, when set to `"TRUE"`, will not automatically
 print figures and outputs.
 
-However, to better understand what’s going on under the hood of these
+To better understand what’s going on under the hood of these
 `[method]_do_everything()` functions, the algatr vignettes provide a
-line-by-line breakdown of the individual functions contained within the
-`[method]_do_everything()` function to (a) increase a user’s
+line-by-line breakdown of the individual user-facing functions contained
+within the `[method]_do_everything()` function to (a) increase a user’s
 understanding of how the method actually works, and (b) allow users with
 more customizability in how they run their own analysis, if so desired.
+**We strongly encourage all researchers to only use the**
+`[method]_do_everything()` **functions as an initial first-pass
+examination of their data; users should follow the workflows provided in
+the vignettes for more nuanced parameter control and to generally better
+understand how each of these methods works.**
 
 When deciding on methods to have within algatr, we found it best to
 first identify the questions that these methods seek to answer, and we
 think this is a good framework for anyone (particularly beginner
 landscape genomicists) to think about landscape genomic methods. These
-questions fall into four broad categories of analyses.
+questions fall into four broad categories of analyses:
 
 <table style="width:99%;">
 <colgroup>
-<col style="width: 19%" />
-<col style="width: 21%" />
-<col style="width: 40%" />
+<col style="width: 17%" />
+<col style="width: 16%" />
+<col style="width: 32%" />
+<col style="width: 24%" />
 <col style="width: 7%" />
-<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -111,7 +188,9 @@ questions fall into four broad categories of analyses.
 <td>How do we delineate population units for management?</td>
 <td>Population structure</td>
 <td>TESS (Caye et al. 2016)</td>
-<td>TESS_vignette.Rmd</td>
+<td><a
+href="https://thewanglab.github.io/algatr/articles/TESS_vignette.html">TESS
+vignette</a></td>
 <td><code>tess_do_everything()</code></td>
 </tr>
 <tr class="even">
@@ -119,7 +198,9 @@ questions fall into four broad categories of analyses.
 <td>Genetic diversity</td>
 <td>Moving windows of genetic diversity; wingen (Bishop et
 al. 2023)</td>
-<td>wingen_vignette.Rmd</td>
+<td><a
+href="https://thewanglab.github.io/algatr/articles/wingen_vignette.html">wingen
+vignette</a></td>
 <td><code>wingen_do_everything()</code></td>
 </tr>
 <tr class="odd">
@@ -129,23 +210,35 @@ al. 2023)</td>
 2013)</p>
 <p>Generalized dissimilarity modeling; GDM (Ferrier et al. 2007;
 Freedman et al. 2010; Fitzpatrick &amp; Keller 2015)</p></td>
-<td><p>MMRR_vignette.Rmd</p>
-<p>GDM_vignette.Rmd</p></td>
+<td><p><a
+href="https://thewanglab.github.io/algatr/articles/MMRR_vignette.html">MMRR
+vignette</a></p>
+<p><a
+href="https://thewanglab.github.io/algatr/articles/GDM_vignette.html">GDM
+vignette</a></p></td>
 <td><p><code>mmrr_do_everything()</code></p>
 <p><code>gdm_do_everything()</code></p></td>
 </tr>
 <tr class="even">
-<td>How can we protect adaptive genetic variation?</td>
+<td>How can we identify and protect adaptive genetic variation?</td>
 <td>Genotype-environment associations (GEA)</td>
 <td><p>Redundancy analysis; RDA (Capblancq &amp; Forester 2021)</p>
 <p>Latent factor mixed models; LFMM (Caye et al. 2019)</p></td>
-<td><p>RDA_vignette.Rmd</p>
-<p>LFMM_vignette.Rmd</p></td>
+<td><p><a
+href="https://thewanglab.github.io/algatr/articles/RDA_vignette.html">RDA
+vignette</a></p>
+<p><a
+href="https://thewanglab.github.io/algatr/articles/LFMM_vignette.html">LFMM
+vignette</a></p></td>
 <td><p><code>rda_do_everything()</code></p>
 <p><code>lfmm_do_everything()</code></p></td>
 </tr>
 </tbody>
 </table>
+
+You can also view the knitted versions of this README and all of
+algatr’s vignettes on the **package’s pkgdown website
+[here](%5Bhttps://thewanglab.github.io/algatr/).**
 
 ### The example dataset
 
@@ -263,8 +356,13 @@ vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
 ```
 
 You’ll now want to do some processing of these data, such as file
-conversions and LD-pruning (see the **data processing vignette**) and
-calculating genetic distances (see the **genetic distances vignette**).
+conversions and LD-pruning (see the [**data processing
+vignette**](https://thewanglab.github.io/algatr/articles/data_processing_vignette.html)),
+environmental data checking and manipulation (see the [**environmental
+data processing
+vignette**](https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html)),
+and calculating genetic distances (see the [**genetic distances
+vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)).
 
 <table style="width:98%;">
 <colgroup>
@@ -362,7 +460,7 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 </tr>
 <tr class="even">
 <td>wingen</td>
-<td>wingen</td>
+<td><a href="https://github.com/AnushaPB/wingen">wingen</a></td>
 <td><code>wingen_do_everything()</code></td>
 <td><ul>
 <li>VCF file</li>
@@ -382,10 +480,13 @@ href="https://cran.r-project.org/web/packages/vegan/index.html">vegan</a></td>
 
 ------------------------------------------------------------------------
 
-As an example of algatr, let’s run through all of its functionality
-which we’ve coded up into a single function, `do_everything_for_me()`.
-For obvious reasons, we ***strongly*** advise against actually using
-this function for your analyses.
+Do alligators alligate? You can run through all of algatr’s
+functionality which we’ve coded up into a single function,
+`do_everything_for_me()`. The `do_everything` functions provide a useful
+first pass at analyses, but each of algatr’s methods should be
+thoroughly tested and parameterized based on input data. Given this, we
+***strongly*** advise against using this function for any final
+analyses.
 
 ``` r
 # do_everything_for_me(liz_vcf, liz_coords, CA_env)

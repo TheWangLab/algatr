@@ -24,9 +24,11 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
                                  preview = FALSE, stat = "pi", rarify = FALSE,
                                  kriged = FALSE, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL,
                                  masked = FALSE, mask = NULL, bkg = NULL, plot_count = FALSE, quiet = FALSE) {
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   if (preview == TRUE) {
     if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
-    if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
+    if (terra::ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
     print(wingen::preview_gd(lyr = lyr, coords = coords, wdim = wdim, fact = fact, sample_count = sample_count, min_n = min_n))
     input <- utils::menu(c("Y", "N"), title = "Would you like to continue running wingen with these parameters?")
     if (input == 1) {
@@ -38,12 +40,11 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
   }
 
   if (fact == 0) lyr <- lyr * 0 else lyr <- terra::aggregate(lyr, fact, fun = mean) * 0
-  if (ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
+  if (terra::ncell(lyr) > 10000) warning("The number of cells exceeds 10,000; you may want to increase the aggregation factor using the `fact` argument to decrease computational time!")
   map <- wingen::window_gd(
     gen = gen, coords = coords, lyr = lyr, stat = stat,
     wdim = wdim, fact = fact, rarify = rarify
   )
-
 
   # KRIGING -----------------------------------------------------------------
 
@@ -53,6 +54,10 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 
   if (masked == TRUE) {
     if (!inherits(mask, "SpatRaster")) mask <- terra::rast(mask)
+    if (terra::nlyr(mask) > 1) {
+      warning("More than one mask layer provided, using the first layer")
+      mask <- mask[[1]]
+    }
 
     # Resample to match
     if (!terra::compareGeom(mask, map, stopOnError = FALSE)) {
@@ -66,7 +71,7 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 
   # RESULTS -----------------------------------------------------------------
   # Plot genetic diversity
-  if (!quiet) print(wingen::plot_gd(map, bkg = bkg, index = index))
+  if (!quiet) wingen::plot_gd(map, bkg = bkg, index = index)
 
   # Plot sample counts
   if (plot_count == TRUE) print(wingen::plot_count(map))
@@ -88,23 +93,28 @@ wingen_do_everything <- function(gen, lyr, coords, wdim = 3, fact = 0, sample_co
 #' @return kriged map
 #' @export
 #' @family wingen functions
-#'
-#' @examples
+#' @keywords internal
 krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd = NULL, agg_r = NULL, disagg_r = NULL) {
+
   # Perform checks ----------------------------------------------------------
   if (!is.null(agg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = agg_grd, agg_spec = "agg")
   if (!is.null(disagg_grd)) grd <- krig_agg_helper(to_krig = grd, agg_disagg = disagg_grd, agg_spec = "disagg")
-  if (!is.null(agg_r)) grd <- krig_agg_helper(to_krig = r, agg_disagg = agg_r, agg_spec = "agg")
-  if (!is.null(disagg_r)) grd <- krig_agg_helper(to_krig = r, agg_disagg = disagg_r, agg_spec = "disagg")
+  if (!is.null(agg_r)) r <- krig_agg_helper(to_krig = r, agg_disagg = agg_r, agg_spec = "agg")
+  if (!is.null(disagg_r)) r <- krig_agg_helper(to_krig = r, agg_disagg = disagg_r, agg_spec = "disagg")
 
   # Warning if too many cells in agg/disagg raster
   if (terra::ncell(grd) > 10000) {
     warning("The resolution of your kriging raster layer is very high and no aggregation is being performed; you should perform aggregation to reduce computational time!")
   }
 
-  map <- wingen::krig_gd(map, grd = grd, index = index)
+  quiet_krig <- purrr::quietly(wingen::krig_gd)
+  krig_map <- quiet_krig(map, grd = grd, index = index)
+  krig_map <- krig_map$result
 
-  return(map)
+  # rename layers back to genetic diversity stats
+  names(krig_map) <- names(map)[index]
+
+  return(krig_map)
 }
 
 #' Helper function for krig_helper; calculates aggregated/disaggregated raster cell size
@@ -116,8 +126,7 @@ krig_helper <- function(map, grd = NULL, index = 1, agg_grd = NULL, disagg_grd =
 #' @return number of cells contained in final (aggregated or disaggregated) raster layer
 #' @export
 #' @family wingen functions
-#'
-#' @examples
+#' @keywords internal
 krig_agg_helper <- function(to_krig, agg_disagg, agg_spec = "agg") {
   if (agg_spec == "agg") terra::aggregate(to_krig, agg_disagg)
   if (agg_spec == "disagg") terra::disagg(to_krig, agg_disagg)

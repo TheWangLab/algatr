@@ -10,6 +10,7 @@ tess_ktest(
   Kvals = 1:10,
   grid = NULL,
   tess_method = "projected.ls",
+  lambda = 1,
   K_selection = "manual",
   ploidy = 2,
   quiet = FALSE
@@ -26,11 +27,16 @@ tess_ktest(
 
 \item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
 
+\item{lambda}{numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.}
+
 \item{K_selection}{how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})}
 
 \item{ploidy}{ploidy of data (defaults to 2)}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+}
+\value{
+list with results from testing different K-values
 }
 \description{
 Test multiple K values
@@ -39,9 +45,13 @@ Test multiple K values
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
+\code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_plot_allK}()}

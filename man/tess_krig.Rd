@@ -15,6 +15,9 @@ tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 }
+\value{
+Raster\* type object of kriged Q values
+}
 \description{
 Krige admixture values
 }
@@ -22,9 +25,13 @@ Krige admixture values
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
+\code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_ggplot}()},
 \code{\link{tess_ktest}()},
 \code{\link{tess_plot_allK}()}

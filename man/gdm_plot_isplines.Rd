@@ -4,10 +4,16 @@
 \alias{gdm_plot_isplines}
 \title{Plot I-splines for each variable}
 \usage{
-gdm_plot_isplines(gdm_model)
+gdm_plot_isplines(gdm_model, scales = "free", nrow = NULL, ncol = NULL)
 }
 \arguments{
 \item{gdm_model}{GDM model}
+
+\item{scales}{Whether scales should be free ("free"; default), free in one dimension ("free_x", "free_y") or fixed ("fixed"). We recommend setting this to "free_x" to allow the x-axis to vary while keeping the y-axis fixed across all plots such that relative importance can be visualized.}
+
+\item{nrow}{Number of rows}
+
+\item{ncol}{Number of cols}
 }
 \value{
 plot for each I-spline
@@ -25,7 +31,7 @@ Other GDM functions:
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
 \code{\link{gdm_table}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_var_sel}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

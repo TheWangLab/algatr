@@ -1,8 +1,13 @@
 #' LFMM function to do everything
 #'
-#' @param gen genotype dosage matrix (rows = individuals & columns = snp) or `vcfR` object
+#' @param gen genotype dosage matrix (rows = individuals & columns = SNPs) or `vcfR` object
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
-#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)
+#' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values are not provided)
+#' @param impute if NAs in `gen`, imputation will be performed on missing values; options are "structure" which uses the `str_impute()` function to impute based on population structure inferred with `LEA::snmf` (default); other option is "simple" based on `simple_impute()` which imputes to the median
+#' @param K_impute if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
+#' @param quiet_impute if `impute = "structure"`, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
+#' @param save_output if `impute = "structure"`, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
+#' @param output_filename if `impute = "structure"` and `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
 #' @param lfmm_method lfmm method (either \code{"ridge"} (default) or \code{"lasso"})
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
@@ -11,6 +16,7 @@
 #' @param quiet whether to print output tables and figures (defaults to FALSE)
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
+#' @inheritParams LEA::snmf
 #'
 #' @family LFMM functions
 #'
@@ -18,26 +24,44 @@
 #' LFMM is run using the lfmm package: Jumentier, B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.
 #' See also: Caye, K., Jumentier, B., Lepeule, J., & François, O. (2019). LFMM 2: Fast and accurate inference of gene-environment associations in genome-wide studies. Mol. Biol. Evol. 36(4):852-860. doi: https://doi.org/10.1093/molbev/msz008
 #'
-#' @return
+#' @return list with candidate SNPs, model results, and K-value
 #' @export
-#'
-#' @examples
-lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = "ridge",
+lfmm_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_impute = 3,
+                               entropy = TRUE, repetitions = 10, project = "new",
+                               quiet_impute = TRUE, save_output = FALSE, output_filename = NULL,
+                               K = NULL, lfmm_method = "ridge",
                                K_selection = "tracy_widom", Kvals = 1:10, sig = 0.05,
                                p_adj = "fdr", calibrate = "gif", criticalpoint = 2.0234,
                                low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10, quiet = FALSE) {
+
+  message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
+
   # Get and check environmental data
   if (inherits(env, "Raster")) env <- terra::rast(env)
   if (inherits(env, "SpatRaster")) crs_check(coords = coords, lyr = env)
   if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords_to_sf(coords), ID = FALSE)
 
   # Convert vcf to dosage matrix
-  if (inherits(gen, "vcfR")) gen <- wingen::vcf_to_dosage(gen)
+  if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Perform imputation with warning
+  # Perform imputation with warning
   if (any(is.na(gen))) {
-    gen <- simple_impute(gen, median)
-    warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    if (impute == "simple") {
+      gen <- simple_impute(gen, median)
+      warning("NAs found in genetic data, imputing to the median (NOTE: this simplified imputation approach is strongly discouraged. Consider using another method of removing missing data)")
+    }
+    if (impute == "structure") {
+      gen <- str_impute(gen,
+                        K = K_impute,
+                        entropy = entropy,
+                        repetitions = repetitions,
+                        project = project,
+                        quiet = quiet_impute,
+                        save_output = save_output,
+                        output_filename = output_filename)
+      warning("NAs found in genetic data, imputing based on sNMF clusters")
+    }
   }
 
   # PCA to determine number of latent factors
@@ -60,7 +84,7 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
   if (!quiet) print(lfmm_manhattanplot(results$df, sig))
 
   # Make table
-  if (!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, nrow = 10, sig = sig))
+  if (!quiet) print(lfmm_table(results$df, top = TRUE, order = TRUE, rows = 10, sig = sig))
 
   return(results)
 }
@@ -73,6 +97,11 @@ lfmm_do_everything <- function(gen, env, coords = NULL, K = NULL, lfmm_method = 
 #' @export
 #'
 lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.05, calibrate = "gif") {
+  # Check for NAs
+  if (any(is.na(gen))) {
+    stop("Missing values found in gen data")
+  }
+
   # gen matrix
   genmat <- as.matrix(gen)
   # env matrix
@@ -116,10 +145,10 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
   # Make tidy dataframe of results
   result_df <- lfmm_df(lfmm_test_result)
 
-  # Subset out candidate snp
-  cand_snp <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
+  # Subset out candidate SNPs
+  lfmm_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
 
-  return(list(cand_snp = cand_snp, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
+  return(list(lfmm_snps = lfmm_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }
 
 
@@ -131,7 +160,6 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_df <- function(x) {
   # Extract names of elements from lfmm_test_result
   df_names <- names(x)[purrr::map_lgl(x, function(x) !is.null(rownames(x)))]
@@ -148,11 +176,10 @@ lfmm_df <- function(x) {
 #' @param colname names of elements within lfmm_test_result
 #' @param lfmm_test_result LFMM test results
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
+#' @keywords internal
 lfmm_test_tidy <- function(colname, lfmm_test_result) {
   x <- lfmm_test_result[[colname]]
   if (is.null(rownames(x))) rownames(x) <- paste0("snp", 1:nrow(x))
@@ -169,12 +196,12 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' Create `gt` table of LFMM results
 #'
 #' @param df df element from \code{\link{lfmm_run}} results
-#' @param sig alpha level for determining candidate snp (defaults to 0.5)
-#' @param sig_only only include snp that exceeded the significance threshold in the table
-#' @param top if there are snp that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
+#' @param sig alpha level for determining candidate snps (defaults to 0.5)
+#' @param sig_only only include SNPs that exceeded the significance threshold in the table (defaults to TRUE)
+#' @param top if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)
 #' @param order if TRUE, will order rows by decreasing B value (defaults to FALSE and orders rows based on variable)
-#' @param var display significant snp associated with particular environmental variable (defaults to NULL)
-#' @param rows number of rows to include in table (defaults to NULL; will only include significant snp)
+#' @param var display significant SNPs associated with particular environmental variable (defaults to NULL)
+#' @param rows number of rows to include in table (defaults to NULL)
 #' @param digits number of decimal points to include (defaults to 2)
 #' @inheritParams lfmm_do_everything
 #'
@@ -182,8 +209,7 @@ lfmm_test_tidy <- function(colname, lfmm_test_result) {
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
-lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, nrow = NULL, digits = 2, footnotes = TRUE) {
+lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FALSE, var = NULL, rows = NULL, digits = 2, footnotes = TRUE) {
   if (!is.null(var)) df <- df[df$var %in% var, ]
   if (sig_only) df <- df[df$adjusted.pvalue < sig, ]
   if (order) df <- df[order(abs(df$B), decreasing = TRUE), ]
@@ -192,9 +218,9 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
       dplyr::group_by(snp) %>%
       dplyr::filter(abs(B) == max(abs(B)))
   }
-  if (!is.null(nrow)) {
-    if (nrow > nrow(df)) nrow <- nrow(df)
-    df <- df[1:nrow, ]
+  if (!is.null(rows)) {
+    if (rows > nrow(df)) rows <- nrow(df)
+    df <- df[1:rows, ]
   }
 
   df <- df %>%
@@ -228,24 +254,21 @@ lfmm_table <- function(df, sig = 0.05, sig_only = TRUE, top = FALSE, order = FAL
   tbl
 }
 
-
 #' K selection
 #'
 #' @param gen genotype matrix
 #' @param K_selection method for performing K selection (options: "tracy_widom" (default), "quick_elbow", or "tess")
-#' @param coords if "tess" method is used, coordinates for TESS based K selection (defaults to NULL)
+#' @param coords if `K_selection = "tess"` used, coordinates for TESS based K selection (defaults to NULL)
 #' @param Kvals values of K to test if using "tess" method of K selection (defaults to 1:10)
-#' @param criticalpoint if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
-#' @param low if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
-#' @param max.pc if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
-#' @param perc.pca if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
-#' @param max.n.clust if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
+#' @param criticalpoint if `K_selection = "tracy_widom"`, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)
+#' @param low if `K_selection = "quick_elbow"`, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).
+#' @param max.pc if `K_selection = "quick_elbow"`, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).
+#' @param perc.pca if `K_selection = "find_clusters"`, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).
+#' @param max.n.clust if `K_selection = "find_clusters"`, an integer indicating the maximum number of clusters to try. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)
 #'
 #' @return prints the best K value given the specified K selection procedure
 #' @export
 #' @family LFMM functions
-#'
-#' @examples
 select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:10, criticalpoint = 2.023,
                      low = 0.08, max.pc = 0.9, perc.pca = 90, max.n.clust = 10) {
   if (K_selection == "tracy_widom") K <- select_K_tw(gen, criticalpoint)
@@ -259,16 +282,14 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
   return(K)
 }
 
-
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
-#' @inheritParams AssocTests::tw
 #'
-#' @return
+#' @note uses the \link[AssocTests]{tw} function
+#'
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_tw <- function(gen, criticalpoint = 2.0234) {
   # Turn gen into df
   df <- data.frame(gen)
@@ -293,13 +314,10 @@ select_K_tw <- function(gen, criticalpoint = 2.0234) {
 
 #' @describeIn select_K select K using PCA and \code{quick_elbow} method
 #' @param gen genotype matrix
-#' @inheritParams quick_elbow
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
   # Run PCA
   pc <- prcomp(gen)
@@ -318,7 +336,6 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
   return(K)
 }
 
-
 #' @describeIn select_K select K using TESS and \code{bestK} method
 #' @param gen genotype matrix
 #' @param coords coordinates for "tess"
@@ -326,11 +343,9 @@ select_K_elbow <- function(gen, low = 0.08, max.pc = 0.9) {
 #' @param tess_method method to use for "tess"
 #' @param ploidy ploidy for "tess"
 #'
-#' @return
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls", ploidy = 2) {
   # Run TESS for all K values
   coords <- coords_to_matrix(coords)
@@ -349,16 +364,15 @@ select_K_tess <- function(gen, coords, Kvals = 1:10, tess_method = "projected.ls
   return(K)
 }
 
-
 #' @describeIn select_K select K using find.clusters method
 #'
 #' @param gen a genotype matrix
 #'
-#' @return
+#' @note uses the \link[adegenet]{find.clusters} function
+#'
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 select_K_fc <- function(gen, perc.pca, max.n.clust) {
   fc <- adegenet::find.clusters(gen,
     pca.select = "percVar",
@@ -373,9 +387,10 @@ select_K_fc <- function(gen, perc.pca, max.n.clust) {
   return(K)
 }
 
-#' Quickly choose an elbow for a PC.
-#' At variance below 5% per component, choose the largest % drop
-#' Designed for variance percentages, but will also work given a full set of Evalues
+#' Quickly choose an elbow for a PC
+#'
+#' At variance below 5% per component, choose the largest % drop.
+#' Designed for variance percentages, but will also work given a full set of Evalues.
 #' Quickly estimate the 'elbow' of a scree plot (PCA)
 #'
 #' This function uses a rough algorithm to estimate a sensible 'elbow' to
@@ -447,7 +462,6 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
   return(elbow)
 }
 
-
 #' LFMM QQplot
 #'
 #' @param df dataframe of LFMM test results produced by \code{lfmm_df}
@@ -456,7 +470,6 @@ quick_elbow <- function(varpc, low = 0.08, max.pc = 0.9) {
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_qqplot <- function(df) {
   plt <- ggplot2::ggplot(df, ggplot2::aes(sample = -log10(adjusted.pvalue))) +
     ggplot2::stat_qq() +
@@ -477,11 +490,10 @@ lfmm_qqplot <- function(df) {
 #' @param df dataframe of lfmm test results produced by \code{lfmm_df}
 #' @param sig significance cutoff
 #'
-#' @return
+#' @return Manhattan plot
 #' @export
 #'
 #' @family LFMM functions
-#' @examples
 lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Subset variables
   if (!is.null(var)) df <- df[df$var %in% var, ]

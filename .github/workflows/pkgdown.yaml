@@ -1,0 +1,67 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    paths:
+      - "R/**.R"
+      - "vignettes/**.Rmd"
+      - .github/workflows/pkgdown.yaml
+      - renv.lock
+      - inst/CITATION
+      - README.md
+      - _pkgdown.yml
+    branches: [ "main" ]
+name: pkgdown
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    container:
+      image: ghcr.io/thewanglab/algatr:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install gdebi-core and rsync
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdebi-core
+          sudo apt-get install -y rsync
+
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install pkgdown
+        run:  install.packages("pkgdown")
+        shell: Rscript {0}
+
+      - name: Install packages
+        run:  renv::restore()
+        shell: Rscript {0}
+
+      - name: Install algatr
+        run: |
+          install.packages("devtools")
+          devtools::install()
+        shell: Rscript {0}
+
+      - name: Build site
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        shell: Rscript {0}
+
+      - name: Deploy to GitHub pages 🚀
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          clean: false
+          branch: gh-pages
+          folder: docs

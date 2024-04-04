@@ -10,7 +10,9 @@ tess_ggplot(
   plot_method = "maxQ",
   ggplot_fill = algatr_col_default("ggplot"),
   minQ = 0.1,
-  plot_axes = FALSE
+  plot_axes = FALSE,
+  rel_widths = c(3, 1),
+  list = FALSE
 )
 }
 \arguments{
@@ -18,13 +20,20 @@ tess_ggplot(
 
 \item{coords}{dataframe with x and y coordinates for plotting (optional)}
 
-\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Qvalues greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
+\item{plot_method}{method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)}
 
 \item{ggplot_fill}{any ggplot2 scale fill discrete function (default: \link[algatr]{scale_fill_viridis_d}, \code{option = "turbo"})}
 
-\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{method = "all"} is used (defaults to 0.10)}
+\item{minQ}{threshold for minimum Q-value for rainbow plotting if \code{plot_method = "allQ"} or \code{plot_method = "allQ_poly"} is used (defaults to 0.10)}
 
 \item{plot_axes}{whether to plot axes or not (defaults to FALSE)}
+
+\item{rel_widths}{if \code{plot_method = "maxQ"} or \code{plot_method = "allQ"} is used, sets relative widths of kriged TESS map and legend (defaults to 3:1), from \link[cowplot]{plot_grid}}
+
+\item{list}{if \code{plot_method = "maxQ"} or \code{"allQ"}, whether to output list of ggplots (i.e., the base plot and legend; TRUE) or a single plot (FALSE; default). Use \code{list = TRUE} if you would like to add additional ggplot2 functions to the plot}
+}
+\value{
+ggplot object of TESS results
 }
 \description{
 ggplot of TESS results
@@ -33,9 +42,13 @@ ggplot of TESS results
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{ggbarplot_helper}()},
+\code{\link{krig_legend}()},
+\code{\link{pops_helper}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
+\code{\link{tess_ggbarplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_ktest}()},
 \code{\link{tess_plot_allK}()}

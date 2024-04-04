@@ -8,6 +8,14 @@ lfmm_do_everything(
   gen,
   env,
   coords = NULL,
+  impute = "structure",
+  K_impute = 3,
+  entropy = TRUE,
+  repetitions = 10,
+  project = "new",
+  quiet_impute = TRUE,
+  save_output = FALSE,
+  output_filename = NULL,
   K = NULL,
   lfmm_method = "ridge",
   K_selection = "tracy_widom",
@@ -24,11 +32,40 @@ lfmm_do_everything(
 )
 }
 \arguments{
-\item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
+\item{gen}{genotype dosage matrix (rows = individuals & columns = SNPs) or \code{vcfR} object}
 
 \item{env}{dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted}
 
-\item{coords}{dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values aren't provided)}
+\item{coords}{dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values are not provided)}
+
+\item{impute}{if NAs in \code{gen}, imputation will be performed on missing values; options are "structure" which uses the \code{str_impute()} function to impute based on population structure inferred with \code{LEA::snmf} (default); other option is "simple" based on \code{simple_impute()} which imputes to the median}
+
+\item{K_impute}{if \code{impute = "structure"}, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)}
+
+\item{entropy}{
+    A boolean value. If true, the cross-entropy criterion is calculated 
+    (see \code{\link[LEA]{create.dataset}} and 
+    \code{\link[LEA]{cross.entropy.estimation}}).
+}
+
+\item{repetitions}{
+    An integer corresponding with the number of repetitions for each value of 
+    \code{K}.
+}
+
+\item{project}{
+    A character string among "continue", "new", and "force". If "continue",
+    the results are stored in the current project. If "new", the current 
+    project is removed and a new one is created to store the result. If 
+    "force", the results are stored in the current project even if the input 
+    file has been modified since the creation of the project.
+}
+
+\item{quiet_impute}{if \code{impute = "structure"}, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy}
+
+\item{save_output}{if \code{impute = "structure"}, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)}
+
+\item{output_filename}{if \code{impute = "structure"} and \code{save_output = TRUE}, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)}
 
 \item{K}{number of latent factors (if left as NULL (default), K value selection will be conducted)}
 
@@ -48,17 +85,20 @@ uses a robust estimate of the variance of z-scores called "genomic inflation fac
 If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If \code{NULL}, the
 pvalues are not calibrated.}
 
-\item{criticalpoint}{if "tracy_widom" method is used, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
+\item{criticalpoint}{if \code{K_selection = "tracy_widom"}, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
 
-\item{low}{if "quick_elbow" method is used, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
+\item{low}{if \code{K_selection = "quick_elbow"}, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}
 
-\item{max.pc}{if "quick_elbow" method is used, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
+\item{max.pc}{if \code{K_selection = "quick_elbow"}, maximum percentage of the variance to capture before the elbow (cumulative sum to PC 'n'; defaults to 0.90).}
 
-\item{perc.pca}{if "find_clusters" method is used, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
+\item{perc.pca}{if \code{K_selection = "find_clusters"}, a numeric value between 0 and 100 indicating the minimal percentage of the total variance of the data to be expressed by the retained axes of PCA (defaults to 90).}
 
-\item{max.n.clust}{if "find_clusters" method is used, an integer indicating the maximum number of clusters to be tried. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
+\item{max.n.clust}{if \code{K_selection = "find_clusters"}, an integer indicating the maximum number of clusters to try. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+}
+\value{
+list with candidate SNPs, model results, and K-value
 }
 \description{
 LFMM function to do everything

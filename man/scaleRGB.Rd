@@ -7,7 +7,10 @@
 scaleRGB(env)
 }
 \arguments{
-\item{env}{object of type SpatRaster or RasterStack}
+\item{env}{SpatRaster or Raster* with three layers}
+}
+\value{
+RGB-scaled values
 }
 \description{
 Scale three layers of environmental data to R, G, and B for mapping

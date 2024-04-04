@@ -20,4 +20,16 @@ usethis::use_data_raw()
 usethis::use_pipe()
 ```
 
-`{r} usethis::use_logo("logo.png") usethis::use_readme_rmd() 2`
+```{r} 
+usethis::use_logo("logo.png") 
+usethis::use_readme_rmd()
+```
+
+```{r}
+# Run once to configure package to use pkgdown
+#usethis::use_pkgdown()
+# Run to build the website
+pkgdown::build_site()
+usethis::use_pkgdown_github_pages()
+```
+

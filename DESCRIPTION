@@ -1,6 +1,6 @@
 Package: algatr
 Title: A Landscape Genomic Analysis Toolkit in R
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: c(
             person("Anusha", "Bishop", , email = "anusha.bishop@berkeley.edu", role = c("aut", "cre"), 
                    comment = c(ORCID="0000-0003-1731-8683")),
@@ -16,20 +16,14 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Depends: 
-    R (>= 2.10)
-LazyData: true
-Imports: 
+    rmarkdown,
     adegenet,
     AssocTests,
     automap,
+    BiocManager,
     corrplot,
     cowplot,
-    crayon,
     devtools,
-    dplyr,
     ecodist,
     fansi,
     gdistance,
@@ -37,39 +31,43 @@ Imports:
     gdsfmt,
     geodata,
     GGally,
-    ggplot2,
     ggrepel,
     graphics,
-    grDevices,
-    gridExtra,
-    gt,
-    gtExtras,
-    harrietr,
-    here,
+    LEA,
     lfmm,
-    purrr,
     qvalue,
-    raster,
     readr,
     renv,
-    rgeos,
     rmapshaper,
     robust,
     RStoolbox,
     SeqArray,
-    sf,
     SNPRelate,
+    tess3r,
+    tibble,
+    topoDistance,
+    usethis,
+    vegan,
+    wingen
+VignetteBuilder: knitr
+Depends: 
+    R (>= 3.5.0)
+LazyData: true
+Imports: 
+    crayon,
+    dplyr,
+    ggplot2,
+    gt,
+    gtExtras,
+    here,
+    purrr,
+    raster,
+    sf,
     sp,
     stats,
     terra,
-    tess3r,
-    tibble,
     tidyr,
-    tigris,
-    topoDistance,
-    usethis,
     utils,
     vcfR,
-    vegan,
-    viridis,
-    wingen
+    viridis
+URL: https://thewanglab.github.io/algatr/

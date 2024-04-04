@@ -9,7 +9,7 @@ gdm_do_everything(
   coords,
   envlayers = NULL,
   env = NULL,
-  model = "best",
+  model = "full",
   sig = 0.05,
   nperm = 50,
   geodist_type = "Euclidean",
@@ -24,11 +24,11 @@ gdm_do_everything(
 
 \item{coords}{dataframe with x (i.e., longitude) and y (i.e., latitude) coordinates; must be in this order}
 
-\item{envlayers}{envlayers for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
+\item{envlayers}{SpatRaster or Raster* object for mapping (if \verb{env`` is provided, the dataframe column names and }envlayers`` layer names should be the same)}
 
 \item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"}
 
 \item{sig}{alpha value for significance threshold (defaults to 0.05); only used if model = "best"}
 
@@ -40,7 +40,7 @@ gdm_do_everything(
 
 \item{scale_gendist}{whether to scale genetic distance data from 0 to 1 (defaults to FALSE)}
 
-\item{plot_vars}{whether to create variable vector loading plot (defaults to TRUE)}
+\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)}
 
 \item{quiet}{whether to print output tables and figures (defaults to FALSE)}
 }
@@ -63,7 +63,7 @@ Other GDM functions:
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
 \code{\link{gdm_table}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_var_sel}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

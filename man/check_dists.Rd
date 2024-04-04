@@ -7,7 +7,7 @@
 check_dists(envlayers, coords, type = "Euclidean", lyr = NULL, sig = 0.05)
 }
 \arguments{
-\item{envlayers}{a RasterStack of data layers}
+\item{envlayers}{SpatRaster or Raster* object}
 
 \item{coords}{dataframe with x and y sample coordinates}
 

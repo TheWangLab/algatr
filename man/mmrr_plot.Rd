@@ -26,16 +26,18 @@ mmrr_plot(
 
 \item{var_names}{add variable names to plot (defaults to NULL)}
 }
+\value{
+plots of MMRR single variable relationships, the fitted relationship, and the covariances between predictor variables
+}
 \description{
 Plot MMRR results
 }
 \seealso{
 Other MMRR functions: 
 \code{\link{MMRR}()},
-\code{\link{mmrr_best}()},
 \code{\link{mmrr_df}()},
 \code{\link{mmrr_do_everything}()},
-\code{\link{mmrr_full}()},
+\code{\link{mmrr_run}()},
 \code{\link{mmrr_table}()},
 \code{\link{mmrr_var_sel}()},
 \code{\link{unfold}()}

@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    paths:
+      - "R/**.R"
+      - .github/workflows/build-test.yml
+      - "vignettes/**.Rmd"
+      - "renv.lock"
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thewanglab/algatr:latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore renv Environment
+        run: R -e 'renv::restore()'
+
+      - name: Build R Package
+        run: R -e 'devtools::build()'
+

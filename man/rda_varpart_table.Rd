@@ -13,6 +13,9 @@ rda_varpart_table(df, digits = 2, call_col = FALSE)
 
 \item{call_col}{whether to include column with RDA call (defaults to FALSE)}
 }
+\value{
+object of class \code{gt} with RDA variance partitioning results
+}
 \description{
 Create \code{gt} table with RDA variance partitioning results
 }

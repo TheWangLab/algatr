@@ -4,10 +4,8 @@
 #'
 #' @param quiet whether to load without messages
 #'
-#' @return
+#' @return loads liz_vcf, liz_gendist, liz_coords, and CA_env objects
 #' @export
-#'
-#' @examples
 load_algatr_example <- function(quiet = FALSE) {
   # Load all data
   utils::data(list = c("liz_vcf", "liz_coords", "liz_gendist", "CA_env"))
@@ -22,7 +20,7 @@ load_algatr_example <- function(quiet = FALSE) {
       crayon::yellow(crayon::bold("\n*liz_gendist*")),
       crayon::yellow(paste0("genetic distance matrix (Plink Distance)")),
       crayon::green(crayon::bold("\n*liz_coords*")), crayon::green("dataframe with x and y coordinates"),
-      crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with PC environmental layers"),
+      crayon::magenta(crayon::bold("\n*CA_env*")), crayon::magenta("RasterStack with example environmental layers"),
       crayon::cyan(crayon::bold("\n\n-------------------------------------------------\n"))
     )))
   }

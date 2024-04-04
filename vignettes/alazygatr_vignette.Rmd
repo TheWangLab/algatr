@@ -1,8 +1,8 @@
 ---
-title: "alazygatr_vignette"
+title: "Alazygatr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{alazygatr_vignette}
+  %\VignetteIndexEntry{Alazygatr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,9 +16,14 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 )
 ```
 
-```{r setup, include = FALSE, warning = FALSE, message = FALSE}
-library(algatr)
-library(terra)
+Install all of the required packages:
+```{r, eval = FALSE}
+alazygatr_packages()
+```
+
+```{r setup, warning = FALSE, message = FALSE}
+#library(algatr)
+devtools::load_all()
 ```
 
 Are you a lazy algatr? The `do_everything_for_me()` function runs all six landscape genomic methods in the algatr package (wingen, TESS, GDM, MMRR, RDA, and LFMM) and provides limited options for customizability. This function primarily exists for fun and to demonstrate that algatr really can be run using on a vcf and sampling coordinates; we **do not** encourage researchers to actually perform analyses on their data using this function!
@@ -36,12 +41,10 @@ envlayers <- CA_env
 
 Now, let's run the function:
 
-```{r alazygatr, warning = FALSE}
+```{r alazygatr, warning = FALSE, message = FALSE, results = 'asis', fig.width = 6, fig.height = 6}
 lazy_results <- do_everything_for_me(gen, coords, envlayers, quiet = FALSE)
 ```
 
 The `do_everything_for_me()` function returns a list with each analysis's results as objects named according to the method. These formats are identical to those obtained when running respective "do_everything" functions (e.g., `tess_do_everything()` function output is identical to that within the `tess` object).
 
 For methods with model selection (e.g., GDM and MMRR), the default of `do_everything_for_me()` is to run with model selection (`"best"`), and if no significant variables are found, the function will revert to running the `"full"` model for these methods.
-
-

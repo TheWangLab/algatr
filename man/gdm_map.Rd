@@ -17,13 +17,13 @@ gdm_map(
 \arguments{
 \item{gdm_model}{GDM model}
 
-\item{envlayers}{stack of raster layers (NAMES MUST CORRESPOND WITH GDM MODEL)}
+\item{envlayers}{SpatRaster or Raster* object (LAYER NAMES MUST CORRESPOND WITH GDM MODEL)}
 
 \item{coords}{data frame with x and y coordinates}
 
-\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation}
+\item{plot_vars}{whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)}
 
-\item{scl}{constant for rescaling variable vectors for plotting}
+\item{scl}{constant for rescaling variable vectors for plotting (defaults to 1)}
 
 \item{display_axes}{display PC axes text, labels, and ticks (defaults to FALSE)}
 
@@ -45,7 +45,7 @@ Other GDM functions:
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_run}()},
 \code{\link{gdm_table}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_var_sel}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

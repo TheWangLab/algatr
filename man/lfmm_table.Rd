@@ -11,7 +11,7 @@ lfmm_table(
   top = FALSE,
   order = FALSE,
   var = NULL,
-  nrow = NULL,
+  rows = NULL,
   digits = 2,
   footnotes = TRUE
 )
@@ -21,7 +21,7 @@ lfmm_table(
 
 \item{sig}{alpha level for determining candidate snps (defaults to 0.5)}
 
-\item{sig_only}{only include SNPs that exceeded the significance threshold in the table}
+\item{sig_only}{only include SNPs that exceeded the significance threshold in the table (defaults to TRUE)}
 
 \item{top}{if there are SNPs that are significantly associated with multiple environmental variables, only display the top association (i.e., variable with the maximum B value; defaults to FALSE)}
 
@@ -29,9 +29,9 @@ lfmm_table(
 
 \item{var}{display significant SNPs associated with particular environmental variable (defaults to NULL)}
 
-\item{digits}{number of decimal points to include (defaults to 2)}
+\item{rows}{number of rows to include in table (defaults to NULL)}
 
-\item{rows}{number of rows to include in table (defaults to NULL; will only include significant SNPs)}
+\item{digits}{number of decimal points to include (defaults to 2)}
 }
 \value{
 table of LFMM results

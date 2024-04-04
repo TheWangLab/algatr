@@ -8,7 +8,7 @@ gdm_run(
   gendist,
   coords,
   env,
-  model = "best",
+  model = "full",
   sig = 0.05,
   nperm = 50,
   scale_gendist = FALSE,
@@ -24,7 +24,7 @@ gdm_run(
 
 \item{env}{dataframe or raster object with environmental values for each coordinate; if not provided, it will be calculated based on coords/envlayers}
 
-\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); (defaults to "best")}
+\item{model}{whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"}
 
 \item{sig}{alpha value for significance threshold (defaults to 0.05); only used if model = "best"}
 
@@ -52,7 +52,7 @@ Other GDM functions:
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},
 \code{\link{gdm_table}()},
-\code{\link{gdm_var_select}()},
+\code{\link{gdm_var_sel}()},
 \code{\link{scale01}()}
 }
 \concept{GDM functions}

@@ -9,3 +9,8 @@
 ^knit_everything_for_me\.R$
 ^doc$
 ^Meta$
+^scan_dependencies\.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

@@ -1,8 +1,8 @@
 ---
-title: "RDA_vignette"
+title: "RDA"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{RDA_vignette}
+  %\VignetteIndexEntry{RDA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,15 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages
+rda_packages()
+```
+
 # Redundancy analysis (RDA)
 
 ```{r setup, warning=FALSE, message=FALSE}
 library(algatr)
 library(dplyr)
-library(here)
 library(raster)
-library(terra)
-library(wingen)
 library(vegan)
 ```
 
@@ -34,7 +36,7 @@ Model selection is performed by starting with a null model wherein the response 
 
 Some of the earliest examples of uses of RDA for identifying environment-associated loci are [Lasky et al. 2012](https://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2012.05709.x) and [Forester et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/mec.13476). Since then, there have been several reviews and walkthroughs of the method that provide additional information, including workflows and comparisons with other GEA methods (e.g., [Forester et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.14584)). Much of algatr's code is adapted from one such paper, [Capblancq & Forester 2021](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13722), the code of which is available [here](https://github.com/Capblancq/RDA-landscape-genomics). algatr's general workflow roughly follows the framework of Capblancq & Forester (2021).
 
-RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll opt to impute to the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+RDA cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. For example, algatr contains the `str_impute()` function to impute missing values based on population structure using the `LEA::impute()` function. However, here, we'll opt to impute to the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses (please use `str_impute()` instead!).
 
 The general workflow to perform an RDA with algatr is as follows:
 
@@ -52,7 +54,7 @@ Running an RDA requires two data files for input: a genotype dosage matrix (the 
 
 ```{r gen data, warning = FALSE}
 load_algatr_example()
-# Convert from vcf to dosage matrix using the wingen package:
+# Convert from vcf to dosage matrix:
 gen <- vcf_to_dosage(liz_vcf)
 ```
 
@@ -337,7 +339,7 @@ rda_table(cor_df, var = "CA_rPCA2", nrow = 5)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but can also generate figures, the correlation test table (`cortest`; default is TRUE), and variance partitioning (`varpart`; default is FALSE).
+The algatr package also has an option to run all of the above functionality in a single function, `rda_do_everything()`. This function is similar in structure to `rda_run()`, but also performs imputation (`impute` option), can generate figures, the correlation test table (`cortest` option; default is TRUE), and variance partitioning (`varpart` option; default is FALSE). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 The resulting object from `rda_do_everything()` contains:
 
@@ -357,32 +359,34 @@ The resulting object from `rda_do_everything()` contains:
 
 -   Variance partitioning results: `varpart`
 
-Let's first run a simple RDA with variable selection and the p-value outlier method:
+Let's first run a simple RDA, imputing to the median, with variable selection and the p-value outlier method:
 
 ```{r simple RDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
-results <- rda_do_everything(gen, CA_env, liz_coords,
-  correctGEO = FALSE,
-  correctPC = FALSE,
-  outlier_method = "p",
-  sig = 0.05,
-  p_adj = "fdr",
-  cortest = TRUE,
-  varpart = FALSE
+results <- rda_do_everything(liz_vcf, CA_env, liz_coords,
+                             impute = "simple",
+                             correctGEO = FALSE,
+                             correctPC = FALSE,
+                             outlier_method = "p",
+                             sig = 0.05,
+                             p_adj = "fdr",
+                             cortest = TRUE,
+                             varpart = FALSE
 )
 ```
 
-Now, let's run a partial RDA, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
+Now, let's run a partial RDA, imputing based on 3 sNMF clusters, correcting for both geography and structure, and instead using the Z-score method to detect outlier loci, including variance partitioning. We'll keep the number of PCs for population structure set to the default, which is three axes (`nPC`):
 
 ```{r pRDA do everything, warning=FALSE, message=FALSE, results='asis', fig.align='center'}
-results <- rda_do_everything(gen, env, liz_coords,
-  model = "full",
-  correctGEO = TRUE,
-  correctPC = TRUE,
-  nPC = 3,
-  varpart = TRUE,
-  outlier_method = "z",
-  z = 3,
-  p_adj = "fdr"
+results <- rda_do_everything(liz_vcf, CA_env, liz_coords,
+                             impute = "structure",
+                             K_impute = 3,
+                             model = "full",
+                             correctGEO = TRUE,
+                             correctPC = TRUE,
+                             nPC = 3,
+                             varpart = TRUE,
+                             outlier_method = "z",
+                             z = 3
 )
 ```
 

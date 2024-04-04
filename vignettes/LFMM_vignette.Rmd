@@ -1,8 +1,8 @@
 ---
-title: "LFMM_vignette"
+title: "LFMM"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LFMM_vignette}
+  %\VignetteIndexEntry{LFMM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,13 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, eval = FALSE}
+# Install packages
+lfmm_packages()
+```
+
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 library(raster)
-library(wingen)
 ```
 
 **If using LFMM, please cite the following: for the LFMM method, Caye et al. 2019. For the `lfmm` package, please cite Jumentier B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.**
@@ -29,13 +33,13 @@ LFMM ([Frichot et al. 2013](https://academic.oup.com/mbe/article/30/7/1687/97209
 
 There are a variety of ways to determine the best number of latent factors in LFMM (which are called K values, although these are *not* the same as TESS K values). algatr provides the option to test using four such methods: (1) Tracy-Widom test; (2) quick elbow test (i.e., scree test); (3) using the clustering algorithm from TESS (i.e., determining latent factors corresponding to some measure of population structure); and (4) K-means clustering. We will explore each of these, and compare results, in this vignette.
 
-Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. Here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses.
+Importantly, as with RDA, LFMM cannot take in missing values. Imputation based on the per-site median is commonly performed, but there are several other ways researchers can deal with missing values. For example, algatr contains the `str_impute()` function to impute missing values based on population structure using the `LEA::impute()` function. However, here, we'll impute on the median, but strongly urge researchers to use extreme caution when using this form of simplistic imputation. We mainly provide code to impute on the median for testing datasets and highly discourage its use in further analyses (please use `str_impute()` instead!).
 
 To perform an LFMM analysis ([Caye et al. 2019](https://academic.oup.com/mbe/article/36/4/852/5290100)), algatr uses the lfmm package (see [here](https://bcm-uga.github.io/lfmm/index.html) for details). Despite its name, this package implements the LFMM2 method, which is similar to the original LFMM algorithm, but is computationally faster. The LEA package ([Frichot & Francois 2015](https://rdrr.io/bioc/LEA/)) also provides a wrapper for lfmm2 using the `lfmm2()` function.
 
 ### Read in and process data files
 
-To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function in the wingen package, and extract environmental variables based on our sampling coordinates.
+To run LFMM, we will need a genotype dosage matrix and environmental values extracted at sampling coordinates. Let's load the example dataset, convert the vcf to a dosage matrix using the `vcf_to_dosage()` function, and extract environmental data for our sampling coordinates from our environmental raster stack (CA_env).
 
 ```{r data, warning = FALSE}
 load_algatr_example()
@@ -111,7 +115,7 @@ lasso_results <- lfmm_run(gen, env, K = 6, lfmm_method = "lasso")
 
 The results object from `lfmm_run()` contains 5 elements:
 
--   `cand_snps`: a list of candidate SNPs that are statistically significantly associated with environmental variables, including all relevant information pertaining to the LFMM analysis (e.g., p-values, fixed effects, etc.)
+-   `lfmm_snps`: a list of candidate SNPs that are statistically significantly associated with environmental variables, including all relevant information pertaining to the LFMM analysis (e.g., p-values, fixed effects, etc.)
 
 -   `df`: all of the SNPs and their associations, including all relevant information pertaining to the LFMM analysis
 
@@ -208,10 +212,14 @@ head(lopocv_result$support)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will automatically extract relevant values from our environmental layers given our coordinate data; it will also automatically convert a vcf object to a dosage matrix for us. The output looks the same as the output from `lfmm_run()` above, and plots will be automatically produced.
+The algatr package also has an option to run all of the above functionality in a single function, `lfmm_do_everything()`. This function will automatically extract relevant values from our environmental layers given our coordinate data; it will also automatically convert a vcf object to a dosage matrix for us and impute missing values if present. The output looks the same as the output from `lfmm_run()` above, and plots will be automatically produced. **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
-```{r do everything, warning = FALSE,  results = FALSE, message = FALSE, warning = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
-results <- lfmm_do_everything(gen = gen, env = CA_env, coords = liz_coords, lfmm_method = "lasso", K_selection = "tracy_widom")
+```{r do everything, warning = FALSE,  results = 'asis', message = FALSE, fig.height=4, fig.width = 6, fig.align='center'}
+lfmm_full_everything <- lfmm_do_everything(liz_vcf, CA_env, liz_coords, 
+                              impute = "structure",
+                              K_impute = 3,
+                              lfmm_method = "lasso", 
+                              K_selection = "tracy_widom")
 ```
 
 ## Additional documentation and citations

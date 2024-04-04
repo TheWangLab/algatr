@@ -7,7 +7,7 @@
 check_vals(envlayers, coords, threshold = 0.7)
 }
 \arguments{
-\item{envlayers}{a RasterStack of data layers}
+\item{envlayers}{SpatRaster or Raster* object}
 
 \item{coords}{dataframe with x and y sample coordinates}
 

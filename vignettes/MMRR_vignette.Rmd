@@ -1,8 +1,8 @@
 ---
-title: "MMRR_vignette"
+title: "MMRR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MMRR_vignette}
+  %\VignetteIndexEntry{MMRR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,6 +12,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+```
+
+```{r, eval = FALSE}
+# Install packages
+mmrr_packages()
 ```
 
 # Multiple matrix regression with randomization (MMRR)
@@ -44,7 +49,7 @@ Y <- as.matrix(liz_gendist)
 Let's calculate environmental distances with our extracted environmental values using the `env_dist()` function, and add on geographic distances to this matrix using the `geo_dist()` function. For more information on how these two functions work, please refer to algatr's environmental data processing vignette.
 
 ```{r enviro data}
-# Extract enviro vars
+# Extract values from our environmental raster (CA_env)
 env <- raster::extract(CA_env, liz_coords)
 # Calculate environmental distances
 X <- env_dist(env)
@@ -56,7 +61,7 @@ X[["geodist"]] <- geo_dist(liz_coords)
 
 ------------------------------------------------------------------------
 
-We can run MMRR either by running the full model (with no variable selection) using the `mmrr_full()` function, or by running a variable selection procedure using backwards elimination using the `mmrr_best()` function. Regardless of the function, the arguments are the same:
+We can run MMRR using the `mmrr_run()` function. We can either run the full model (with no variable selection) by setting `model = "full"`, or by running a variable selection procedure using backwards elimination by setting `model = "best"` within this function. The arguments to `mmrr_run()` are as follows:
 
 -   `Y`: matrix of genetic distances
 
@@ -66,18 +71,16 @@ We can run MMRR either by running the full model (with no variable selection) us
 
 -   `stdz`: whether matrices are standardized
 
--   `quiet`: whether to plot results
-
 ### MMRR with all variables
 
 First, let's run the full MMRR model with all variables included (i.e., no variable selection).
 
 ```{r mmrr full}
 set.seed(10)
-results_full <- mmrr_full(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
+results_full <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "full")
 ```
 
-The results from MMRR "full" contains four elements:
+The results from running the "full" MMRR model contains four elements:
 
 -   `coeff_df`: a dataframe with statistics relating to each variable's distance related to genetic distance, including coefficient values for each environmental variable and geographic distance
 
@@ -92,10 +95,10 @@ Now, let's run MMRR with variable selection.
 ```{r mmrr best}
 # Run MMRR with all variables
 set.seed(01)
-results_best <- mmrr_best(Y, X, nperm = 99, stdz = TRUE, quiet = TRUE)
+results_best <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "best")
 ```
 
-Once again, the results from `mmrr_best()` contains the same elements as `mmrr_full()`, except that `mmrr_best()` now also has `X_best`, which contains values for significant variables; in this case, the only significant variable found was geographic distance. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance).
+Once again, the results from running `mmrr_run()` with model selection contains the same elements as "full", except that the "best" model result now also has an `X_best` element, which contains values for significant variables; in this case, the only significant variable found was geographic distance. You can also see that the `coeff_df` element is reduced from all four variables to only those variables that were significantly associated with genetic distance (in the test example case, only geographic distance).
 
 ## Visualizing MMRR results
 
@@ -138,20 +141,45 @@ mmrr_table(results_full, digits = 2, summary_stats = TRUE)
 
 ------------------------------------------------------------------------
 
-The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function runs MMRR while specifying whether a user would like to run variable selection or not (using the `model` argument), producing a table and all plots automatically. It will automatically extract environmental variables based on coordinates and calculate environmental distances from these data.
+The algatr package also has an option to run all of the above functionality in a single function, `mmrr_do_everything()`. This function runs MMRR while specifying whether a user would like to run variable selection or not (using the `model` argument), producing a table and all plots automatically. It will automatically extract environmental variables based on coordinates and  calculate environmental distances from these data. Users can also choose to include geographic distances within the independent variable matrix by setting `geo = TRUE` (the default setting). **Please be aware that the `do_everything()` functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.**
 
 ### MMRR with all variables
 
-```{r all vars, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE}
+```{r all vars, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE, results = 'asis', message = FALSE}
 set.seed(01)
-mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, model = "full")
+mmrr_full_everything <- mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, geo = TRUE, model = "full")
 ```
 
-### MMRR with model selection
+### Extending MMRR's functionality with resistance distances
 
-```{r best vars, fig.width = 5, fig.height = 5, fig.align='center', warning=FALSE}
-set.seed(10)
-mmrr_do_everything(liz_gendist, liz_coords, env = CA_env, model = "best", nperm = 100)
+The relationships between geographic distance and/or environmental variables on spatial genetic variation result in patterns of isolation by distance (IBD) or isolation by environment (IBE), respectively. However, one other key phenomenon that can occur - and one in which landscape genomicists are often interested in examining - is one in which landscape features act to restrict gene flow, resulting in a pattern known as isolation by resistance (IBR). IBR is typically investigated by first generating a resistance surface which provides information about how the landscape "resists" gene flow given the study organism. Then, given the resistance surface, resistance distances can be calculated using (once again) a variety of methods, but most typically use [circuit theory](https://conbio.onlinelibrary.wiley.com/doi/abs/10.1111/cobi.13230) to model connectivity across the landscape.
+
+The resistance surface can be generated using species distribution models, habitat suitability models, or other types of approaches that simulate forward evolution given sampling localities and genotypes (e.g., resistanceGA; [Peterman 2018](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12984)). Building a reliable resistance surface can be quite complex, requiring many decisions on the part of the researcher and, in some cases, extensive parameterization and model testing to generate this type of surface. These sets of decisions are precisely why algatr does not explicitly implement any IBR methods, but below we describe one way in which the package can be extended to do so.
+
+As was briefly mentioned in the environmental data vignette, the `geo_dist()` function is able to calculate resistance-based distances, largely using the [gdistance](https://cran.r-project.org/web/packages/gdistance/index.html) package ([van Etten 2017](https://www.jstatsoft.org/article/view/v076i13)). Importantly, a user must provide a resistance surface using whichever their preferred method is by specifying the `lyr` argument. The function then creates a transition surface and calculates circuit distances (random-walk commute distances) using the `gdistance::commuteDistance()` function.
+
+Although algatr does not have the explicit functionality to quantify and visualize IBR, we can investigate IBR using MMRR given that this method conducts a multiple Mantel test given some distance metric. Thus, it is possible to run `geo_dist()` specifying `lyr` with your resistance raster and use the resulting distances as input into MMRR. The following is a *toy* example of how this could be done. For this example we'll pretend our resistance surface is one of our environmental layers (where greater values indicate more resistance) and use it to calculate our resistance distances. 
+
+```{r toy resist surface, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE}
+# here we aggregate the layer for computational speed
+lyr <- aggregate(CA_env$CA_rPCA1, 50)
+plot(lyr)
+points(liz_coords)
+
+# Recreate MMRR input with resistance distances
+# Calculate environmental distances
+X <- env_dist(env)
+# Add geographic distance to X
+X[["resistdist"]] <- geo_dist(liz_coords, type = "resistance", lyr = lyr)
+```
+
+Now, we can run MMRR as we did above but including resistance-based distances in our input data.
+
+```{r mmrr resist, fig.width = 5, fig.height = 5, fig.align = 'center', warning = FALSE, results = 'asis'}
+# Run MMRR with resistance distances
+results_resist <- mmrr_run(Y, X, nperm = 99, stdz = TRUE, model = "full")
+mmrr_plot(Y, X, mod = results_resist$mod, plot_type = "all", stdz = TRUE)
+mmrr_table(results_resist)
 ```
 
 ## Additional documentation and citations
