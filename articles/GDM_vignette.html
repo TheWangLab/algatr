@@ -96,7 +96,8 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thewanglab.github.io/algatr/">algatr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span></code></pre></div>
 <p><strong>If using GDM, please cite the following: for the GDM method,
 Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized
 dissimilarity modelling to analyse and predict patterns of beta
@@ -218,7 +219,7 @@ arguments are only for model selection and so will not be used.</p>
 <div class="section level4">
 <h4 id="gdm-with-model-selection">GDM with model selection<a class="anchor" aria-label="anchor" href="#gdm-with-model-selection"></a>
 </h4>
-<p>We can also run a GDM using only significant variables (i.e., a
+<p>We can also perform variable selection using GDM (i.e., produce a
 “best” model). In this case, a variable selection process is done using
 a permutation test to assess significance: predictor variables are
 randomly permuted between sites and the deviance explained from the
@@ -243,17 +244,18 @@ permutations were specified.</em></p>
 <p>See below for an example of how model selection would be run; this
 code is not run within the vignette because there is no significant GDM
 model for the algatr test dataset.</p>
-<pre><code><span><span class="va">gdm_best</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_run.html">gdm_run</a></span><span class="op">(</span>gendist <span class="op">=</span> <span class="va">liz_gendist</span>, </span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gdm_best</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_run.html">gdm_run</a></span><span class="op">(</span>gendist <span class="op">=</span> <span class="va">liz_gendist</span>, </span>
 <span>                    coords <span class="op">=</span> <span class="va">liz_coords</span>, </span>
 <span>                    env <span class="op">=</span> <span class="va">env</span>, </span>
 <span>                    model <span class="op">=</span> <span class="st">"best"</span>, </span>
 <span>                    scale_gendist <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                    nperm <span class="op">=</span> <span class="fl">500</span>, </span>
+<span>                    nperm <span class="op">=</span> <span class="fl">1000</span>, </span>
 <span>                    sig <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Look at p-values</span></span>
 <span><span class="va">gdm_best</span><span class="op">$</span><span class="va">pvalues</span></span>
-<span><span class="va">gdm_best</span><span class="op">$</span><span class="va">varimp</span></span></code></pre>
+<span><span class="va">gdm_best</span><span class="op">$</span><span class="va">varimp</span></span></code></pre></div>
 <p>Within the resulting object(<code>gdm_best</code>), the
 <code>pvalues</code> and <code>varimp</code> elements are no longer NULL
 (as they were with the full model); this is because model selection was
@@ -288,7 +290,7 @@ dissimilarity within the <code>observed</code> element.</p>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] GDM Modelling Summary</span></span>
-<span><span class="co">#&gt; [1] Creation Date:  Wed Apr  3 22:30:58 2024</span></span>
+<span><span class="co">#&gt; [1] Creation Date:  Thu Apr  4 01:30:34 2024</span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] Name:  $        Name:  gdm_full Name:  model   </span></span>
 <span><span class="co">#&gt; [1] </span></span>
@@ -374,9 +376,15 @@ et al. 2022</a> for further information). As we can see from the below
 plots, PCA1 has no relationship with genetic distance, which is also why
 the coefficient for this variable is 0.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/gdm_plot_isplines.html">gdm_plot_isplines</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/isplines-1.png" width="288"><img src="GDM_vignette_files/figure-html/isplines-2.png" width="288"><img src="GDM_vignette_files/figure-html/isplines-3.png" width="288"><img src="GDM_vignette_files/figure-html/isplines-4.png" width="288"></p>
+<code class="sourceCode R"><span><span class="co"># Plot the I-splines with free x and y-axes</span></span>
+<span><span class="fu"><a href="../reference/gdm_plot_isplines.html">gdm_plot_isplines</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/isplines-1.png" width="480"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Plot the I-splines with a free x-axis and a fixed y-axis</span></span>
+<span><span class="co"># This allows for visualization of relative importance (i.e., the height of the I-splines)</span></span>
+<span><span class="fu"><a href="../reference/gdm_plot_isplines.html">gdm_plot_isplines</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/isplines-2.png" width="480"></p>
 </div>
 <div class="section level4">
 <h4 id="table-of-gdm-statistics">Table of GDM statistics<a class="anchor" aria-label="anchor" href="#table-of-gdm-statistics"></a>
@@ -390,25 +398,25 @@ significantly associated with genetic dissimilarity. The coefficients
 contained in this table are the sum of the three I-spline coefficients
 we saw above when we looked at the <code>coefficients</code> element
 within the GDM model.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gdm_table.html">gdm_table</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">)</span></span></code></pre></div>
-<div id="chjtuaymrc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#chjtuaymrc table {
+<div id="wctuweneeb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wctuweneeb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#chjtuaymrc thead, #chjtuaymrc tbody, #chjtuaymrc tfoot, #chjtuaymrc tr, #chjtuaymrc td, #chjtuaymrc th {
+#wctuweneeb thead, #wctuweneeb tbody, #wctuweneeb tfoot, #wctuweneeb tr, #wctuweneeb td, #wctuweneeb th {
   border-style: none;
 }
 
-#chjtuaymrc p {
+#wctuweneeb p {
   margin: 0;
   padding: 0;
 }
 
-#chjtuaymrc .gt_table {
+#wctuweneeb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -434,12 +442,12 @@ within the GDM model.</p>
   border-left-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_caption {
+#wctuweneeb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#chjtuaymrc .gt_title {
+#wctuweneeb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -451,7 +459,7 @@ within the GDM model.</p>
   border-bottom-width: 0;
 }
 
-#chjtuaymrc .gt_subtitle {
+#wctuweneeb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -463,7 +471,7 @@ within the GDM model.</p>
   border-top-width: 0;
 }
 
-#chjtuaymrc .gt_heading {
+#wctuweneeb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -475,13 +483,13 @@ within the GDM model.</p>
   border-right-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_bottom_border {
+#wctuweneeb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_col_headings {
+#wctuweneeb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -496,7 +504,7 @@ within the GDM model.</p>
   border-right-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_col_heading {
+#wctuweneeb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -516,7 +524,7 @@ within the GDM model.</p>
   overflow-x: hidden;
 }
 
-#chjtuaymrc .gt_column_spanner_outer {
+#wctuweneeb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -528,15 +536,15 @@ within the GDM model.</p>
   padding-right: 4px;
 }
 
-#chjtuaymrc .gt_column_spanner_outer:first-child {
+#wctuweneeb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#chjtuaymrc .gt_column_spanner_outer:last-child {
+#wctuweneeb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#chjtuaymrc .gt_column_spanner {
+#wctuweneeb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -548,11 +556,11 @@ within the GDM model.</p>
   width: 100%;
 }
 
-#chjtuaymrc .gt_spanner_row {
+#wctuweneeb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#chjtuaymrc .gt_group_heading {
+#wctuweneeb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -578,7 +586,7 @@ within the GDM model.</p>
   text-align: left;
 }
 
-#chjtuaymrc .gt_empty_group_heading {
+#wctuweneeb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -593,15 +601,15 @@ within the GDM model.</p>
   vertical-align: middle;
 }
 
-#chjtuaymrc .gt_from_md > :first-child {
+#wctuweneeb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#chjtuaymrc .gt_from_md > :last-child {
+#wctuweneeb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#chjtuaymrc .gt_row {
+#wctuweneeb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -620,7 +628,7 @@ within the GDM model.</p>
   overflow-x: hidden;
 }
 
-#chjtuaymrc .gt_stub {
+#wctuweneeb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -633,7 +641,7 @@ within the GDM model.</p>
   padding-right: 5px;
 }
 
-#chjtuaymrc .gt_stub_row_group {
+#wctuweneeb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -647,15 +655,15 @@ within the GDM model.</p>
   vertical-align: top;
 }
 
-#chjtuaymrc .gt_row_group_first td {
+#wctuweneeb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#chjtuaymrc .gt_row_group_first th {
+#wctuweneeb .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#chjtuaymrc .gt_summary_row {
+#wctuweneeb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -665,16 +673,16 @@ within the GDM model.</p>
   padding-right: 5px;
 }
 
-#chjtuaymrc .gt_first_summary_row {
+#wctuweneeb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_first_summary_row.thick {
+#wctuweneeb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#chjtuaymrc .gt_last_summary_row {
+#wctuweneeb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -684,7 +692,7 @@ within the GDM model.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_grand_summary_row {
+#wctuweneeb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -694,7 +702,7 @@ within the GDM model.</p>
   padding-right: 5px;
 }
 
-#chjtuaymrc .gt_first_grand_summary_row {
+#wctuweneeb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -704,7 +712,7 @@ within the GDM model.</p>
   border-top-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_last_grand_summary_row_top {
+#wctuweneeb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -714,11 +722,11 @@ within the GDM model.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_striped {
+#wctuweneeb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#chjtuaymrc .gt_table_body {
+#wctuweneeb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -727,7 +735,7 @@ within the GDM model.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_footnotes {
+#wctuweneeb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -741,7 +749,7 @@ within the GDM model.</p>
   border-right-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_footnote {
+#wctuweneeb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -750,7 +758,7 @@ within the GDM model.</p>
   padding-right: 5px;
 }
 
-#chjtuaymrc .gt_sourcenotes {
+#wctuweneeb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -764,7 +772,7 @@ within the GDM model.</p>
   border-right-color: #D3D3D3;
 }
 
-#chjtuaymrc .gt_sourcenote {
+#wctuweneeb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -772,63 +780,63 @@ within the GDM model.</p>
   padding-right: 5px;
 }
 
-#chjtuaymrc .gt_left {
+#wctuweneeb .gt_left {
   text-align: left;
 }
 
-#chjtuaymrc .gt_center {
+#wctuweneeb .gt_center {
   text-align: center;
 }
 
-#chjtuaymrc .gt_right {
+#wctuweneeb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#chjtuaymrc .gt_font_normal {
+#wctuweneeb .gt_font_normal {
   font-weight: normal;
 }
 
-#chjtuaymrc .gt_font_bold {
+#wctuweneeb .gt_font_bold {
   font-weight: bold;
 }
 
-#chjtuaymrc .gt_font_italic {
+#wctuweneeb .gt_font_italic {
   font-style: italic;
 }
 
-#chjtuaymrc .gt_super {
+#wctuweneeb .gt_super {
   font-size: 65%;
 }
 
-#chjtuaymrc .gt_footnote_marks {
+#wctuweneeb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#chjtuaymrc .gt_asterisk {
+#wctuweneeb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#chjtuaymrc .gt_indent_1 {
+#wctuweneeb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#chjtuaymrc .gt_indent_2 {
+#wctuweneeb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#chjtuaymrc .gt_indent_3 {
+#wctuweneeb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#chjtuaymrc .gt_indent_4 {
+#wctuweneeb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#chjtuaymrc .gt_indent_5 {
+#wctuweneeb .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -889,9 +897,22 @@ genetic composition of our samples. Secondly, we can visualize how
 genetic composition is associated with each of these variables by
 plotting each as a vector and coloring the individual points in the same
 PC RGB space.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gdm_map.html">gdm_map</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, <span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/GDM%20plots-1.png" width="700"><img src="GDM_vignette_files/figure-html/GDM%20plots-2.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_map.html">gdm_map</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, <span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plots-1.png" width="480"><img src="GDM_vignette_files/figure-html/GDM%20plots-2.png" width="480"></p>
+<p>The output of <code><a href="../reference/gdm_map.html">gdm_map()</a></code> is a list containing the GDM
+transformed raster layers (<code>map$rastTrans</code>) and the raster
+PCA of the GDM transformed layers, rescaled from 0 to 250 for RGB
+plotting (<code>map$pcaRastRGB</code>)</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We can use the map output to plot the individual GDM transformed raster layers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">rastTrans</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-1.png" width="480"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># And the individual PCA layers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-2.png" width="480"></p>
 <div class="section level4">
 <h4 id="masking-out-irrelevant-areas">Masking out irrelevant areas<a class="anchor" aria-label="anchor" href="#masking-out-irrelevant-areas"></a>
 </h4>
@@ -906,19 +927,17 @@ algatr’s <code><a href="../reference/extrap_mask.html">extrap_mask()</a></code
 for more information), we can mask out areas from the GDM map in several
 ways. Below, we mask out areas (in white) that fall outside a
 user-defined buffer around our sampling coordinates.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the GDM map from the GDM model object</span></span>
-<span><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_map.html">gdm_map</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, <span class="va">CA_env</span>, <span class="va">liz_coords</span>, plot_vars <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/gdm%20masked-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">maprgb</span> <span class="op">&lt;-</span> <span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span></span>
+<span><span class="va">maprgb</span> <span class="op">&lt;-</span> <span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span></span>
 <span></span>
-<span><span class="co"># Now, use `extrap_mask()` to do buffer-based masking</span></span>
+<span><span class="co"># Now, use `extrap_mask()` to do buffer-based masking </span></span>
+<span><span class="co"># (i.e., mask out areas outside a buffer around our sampling coordinates)</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">maprgb</span>, method <span class="op">=</span> <span class="st">"buffer"</span>, buffer_width <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the resulting masked map</span></span>
 <span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">maprgb</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">TRUE</span>, mask_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/gdm%20masked-2.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="GDM_vignette_files/figure-html/gdm%20masked-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -938,7 +957,7 @@ data files for input: a genetic distance matrix (the
 <code>gendist</code> argument), coordinates for samples (the
 <code>coords</code> argument), and environmental layers (the
 <code>envlayers</code> argument).</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gdm_full_everything</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_do_everything.html">gdm_do_everything</a></span><span class="op">(</span><span class="va">liz_gendist</span>,</span>
 <span>  <span class="va">liz_coords</span>,</span>
 <span>  envlayers <span class="op">=</span> <span class="va">CA_env</span>,</span>
@@ -949,23 +968,23 @@ data files for input: a genetic distance matrix (the
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span></code></pre></div>
-<div id="yxbldpmohu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yxbldpmohu table {
+<div id="skfeaozfqh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#skfeaozfqh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#yxbldpmohu thead, #yxbldpmohu tbody, #yxbldpmohu tfoot, #yxbldpmohu tr, #yxbldpmohu td, #yxbldpmohu th {
+#skfeaozfqh thead, #skfeaozfqh tbody, #skfeaozfqh tfoot, #skfeaozfqh tr, #skfeaozfqh td, #skfeaozfqh th {
   border-style: none;
 }
 
-#yxbldpmohu p {
+#skfeaozfqh p {
   margin: 0;
   padding: 0;
 }
 
-#yxbldpmohu .gt_table {
+#skfeaozfqh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -991,12 +1010,12 @@ data files for input: a genetic distance matrix (the
   border-left-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_caption {
+#skfeaozfqh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#yxbldpmohu .gt_title {
+#skfeaozfqh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1008,7 +1027,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-width: 0;
 }
 
-#yxbldpmohu .gt_subtitle {
+#skfeaozfqh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1020,7 +1039,7 @@ data files for input: a genetic distance matrix (the
   border-top-width: 0;
 }
 
-#yxbldpmohu .gt_heading {
+#skfeaozfqh .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1032,13 +1051,13 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_bottom_border {
+#skfeaozfqh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_col_headings {
+#skfeaozfqh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1053,7 +1072,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_col_heading {
+#skfeaozfqh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1073,7 +1092,7 @@ data files for input: a genetic distance matrix (the
   overflow-x: hidden;
 }
 
-#yxbldpmohu .gt_column_spanner_outer {
+#skfeaozfqh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1085,15 +1104,15 @@ data files for input: a genetic distance matrix (the
   padding-right: 4px;
 }
 
-#yxbldpmohu .gt_column_spanner_outer:first-child {
+#skfeaozfqh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#yxbldpmohu .gt_column_spanner_outer:last-child {
+#skfeaozfqh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#yxbldpmohu .gt_column_spanner {
+#skfeaozfqh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1105,11 +1124,11 @@ data files for input: a genetic distance matrix (the
   width: 100%;
 }
 
-#yxbldpmohu .gt_spanner_row {
+#skfeaozfqh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#yxbldpmohu .gt_group_heading {
+#skfeaozfqh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1135,7 +1154,7 @@ data files for input: a genetic distance matrix (the
   text-align: left;
 }
 
-#yxbldpmohu .gt_empty_group_heading {
+#skfeaozfqh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1150,15 +1169,15 @@ data files for input: a genetic distance matrix (the
   vertical-align: middle;
 }
 
-#yxbldpmohu .gt_from_md > :first-child {
+#skfeaozfqh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#yxbldpmohu .gt_from_md > :last-child {
+#skfeaozfqh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#yxbldpmohu .gt_row {
+#skfeaozfqh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1177,7 +1196,7 @@ data files for input: a genetic distance matrix (the
   overflow-x: hidden;
 }
 
-#yxbldpmohu .gt_stub {
+#skfeaozfqh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1190,7 +1209,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#yxbldpmohu .gt_stub_row_group {
+#skfeaozfqh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1204,15 +1223,15 @@ data files for input: a genetic distance matrix (the
   vertical-align: top;
 }
 
-#yxbldpmohu .gt_row_group_first td {
+#skfeaozfqh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#yxbldpmohu .gt_row_group_first th {
+#skfeaozfqh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#yxbldpmohu .gt_summary_row {
+#skfeaozfqh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1222,16 +1241,16 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#yxbldpmohu .gt_first_summary_row {
+#skfeaozfqh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_first_summary_row.thick {
+#skfeaozfqh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#yxbldpmohu .gt_last_summary_row {
+#skfeaozfqh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1241,7 +1260,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_grand_summary_row {
+#skfeaozfqh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1251,7 +1270,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#yxbldpmohu .gt_first_grand_summary_row {
+#skfeaozfqh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1261,7 +1280,7 @@ data files for input: a genetic distance matrix (the
   border-top-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_last_grand_summary_row_top {
+#skfeaozfqh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1271,11 +1290,11 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_striped {
+#skfeaozfqh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#yxbldpmohu .gt_table_body {
+#skfeaozfqh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1284,7 +1303,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_footnotes {
+#skfeaozfqh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1298,7 +1317,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_footnote {
+#skfeaozfqh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1307,7 +1326,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#yxbldpmohu .gt_sourcenotes {
+#skfeaozfqh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1321,7 +1340,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#yxbldpmohu .gt_sourcenote {
+#skfeaozfqh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1329,63 +1348,63 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#yxbldpmohu .gt_left {
+#skfeaozfqh .gt_left {
   text-align: left;
 }
 
-#yxbldpmohu .gt_center {
+#skfeaozfqh .gt_center {
   text-align: center;
 }
 
-#yxbldpmohu .gt_right {
+#skfeaozfqh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#yxbldpmohu .gt_font_normal {
+#skfeaozfqh .gt_font_normal {
   font-weight: normal;
 }
 
-#yxbldpmohu .gt_font_bold {
+#skfeaozfqh .gt_font_bold {
   font-weight: bold;
 }
 
-#yxbldpmohu .gt_font_italic {
+#skfeaozfqh .gt_font_italic {
   font-style: italic;
 }
 
-#yxbldpmohu .gt_super {
+#skfeaozfqh .gt_super {
   font-size: 65%;
 }
 
-#yxbldpmohu .gt_footnote_marks {
+#skfeaozfqh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#yxbldpmohu .gt_asterisk {
+#skfeaozfqh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#yxbldpmohu .gt_indent_1 {
+#skfeaozfqh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#yxbldpmohu .gt_indent_2 {
+#skfeaozfqh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#yxbldpmohu .gt_indent_3 {
+#skfeaozfqh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#yxbldpmohu .gt_indent_4 {
+#skfeaozfqh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#yxbldpmohu .gt_indent_5 {
+#skfeaozfqh .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1456,7 +1475,7 @@ The percentage of null deviance explained by the fitted GDM model.
 </tr></tfoot>
 </table>
 </div>
-<p><img src="GDM_vignette_files/figure-html/do%20everything-1.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-2.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-3.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-4.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-5.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="GDM_vignette_files/figure-html/do%20everything-1.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-2.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-3.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="additional-documentation-and-citations">Additional documentation and citations<a class="anchor" aria-label="anchor" href="#additional-documentation-and-citations"></a>

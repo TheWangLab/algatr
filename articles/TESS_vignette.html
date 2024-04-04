@@ -321,12 +321,12 @@ function with which we can visualize results.</p>
 <span><span class="co"># qmat contains ancestry coefficient values for each individual (row) and each K value (column)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">qmat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              [,1]         [,2]         [,3]</span></span>
-<span><span class="co">#&gt; [1,] 8.912318e-06 9.999822e-01 8.912318e-06</span></span>
-<span><span class="co">#&gt; [2,] 9.078581e-06 9.078581e-06 9.999818e-01</span></span>
-<span><span class="co">#&gt; [3,] 1.400880e-01 7.283417e-01 1.315702e-01</span></span>
-<span><span class="co">#&gt; [4,] 8.160929e-01 1.177097e-01 6.619744e-02</span></span>
-<span><span class="co">#&gt; [5,] 9.826377e-06 8.991739e-01 1.008163e-01</span></span>
-<span><span class="co">#&gt; [6,] 7.303619e-02 9.269539e-01 9.867361e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,] 8.930202e-06 8.930202e-06 9.999821e-01</span></span>
+<span><span class="co">#&gt; [2,] 9.999818e-01 9.084295e-06 9.084295e-06</span></span>
+<span><span class="co">#&gt; [3,] 1.297517e-01 1.457517e-01 7.244965e-01</span></span>
+<span><span class="co">#&gt; [4,] 6.404452e-02 8.244480e-01 1.115075e-01</span></span>
+<span><span class="co">#&gt; [5,] 9.923300e-02 9.834727e-06 9.007572e-01</span></span>
+<span><span class="co">#&gt; [6,] 9.847913e-06 8.206684e-02 9.179233e-01</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="krige-q-values">Krige Q values<a class="anchor" aria-label="anchor" href="#krige-q-values"></a>
@@ -362,7 +362,7 @@ plot.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tess_barplot.html">tess_barplot</a></span><span class="op">(</span><span class="va">qmat</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/barplot-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; $order</span></span>
-<span><span class="co">#&gt;  [1]  4 13 20 28 29 31 32 35 36 52 53  2 10 19 24 25 40 41 49 50 51  1  3  5  6</span></span>
+<span><span class="co">#&gt;  [1]  2 10 19 24 25 40 41 49 50 51  4 13 20 28 29 31 32 35 36 52 53  1  3  5  6</span></span>
 <span><span class="co">#&gt; [26]  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 37 38 39 42 43 44 45</span></span>
 <span><span class="co">#&gt; [51] 46 47 48</span></span></code></pre>
 <p>We can also build bar plots using ggplot2 with the
@@ -441,7 +441,7 @@ barplot is <code><a href="https://rspatial.github.io/terra/reference/barplot.htm
 <span><span class="co">#&gt; Use CreatePalette() to define color palettes.</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/tess%20default%20barplot-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; $order</span></span>
-<span><span class="co">#&gt;  [1]  4 13 20 28 29 31 32 35 36 52 53  2 10 19 24 25 40 41 49 50 51  1  3  5  6</span></span>
+<span><span class="co">#&gt;  [1]  2 10 19 24 25 40 41 49 50 51  4 13 20 28 29 31 32 35 36 52 53  1  3  5  6</span></span>
 <span><span class="co">#&gt; [26]  7  8  9 11 12 14 15 16 17 18 21 22 23 26 27 30 33 34 37 38 39 42 43 44 45</span></span>
 <span><span class="co">#&gt; [51] 46 47 48</span></span></code></pre>
 <p>You can also map kriged Q-values using tess3r with the
