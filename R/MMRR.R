@@ -10,7 +10,7 @@
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
 #' @param geodist_type if `geo = TRUE`, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
 #' @param dist_lyr if `geodist_type = "topographic"`, DEM raster for calculating topographic distances or if `geodist_type = "resistance"`, resistance raster for calculating resistance distances
-#' @param quiet whether to plot results (default = FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #' @param plot_type if `quiet = FALSE`, which plots to produce (options: (1) "vars" to plot single variable relationships, (2) "fitted" to plot the fitted relationship, (3) "cov" to plot covariances between the predictor variables, (4) "all" to produce all plots (default))
 #'
 #' @details

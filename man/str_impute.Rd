@@ -42,7 +42,7 @@ str_impute(
     file has been modified since the creation of the project.
 }
 
-\item{quiet}{whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
+\item{quiet}{whether to operate quietly and suppress the results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
 
 \item{save_output}{if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)}
 

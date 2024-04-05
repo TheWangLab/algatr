@@ -33,7 +33,7 @@ tess_ktest(
 
 \item{ploidy}{ploidy of data (defaults to 2)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 list with results from testing different K-values

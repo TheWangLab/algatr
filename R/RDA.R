@@ -57,12 +57,6 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
   # Format coords
   if (!is.null(coords)) coords <- coords_to_df(coords)
 
-  # Check that env var names don't match coord names
-  if(any(colnames(coords) %in% colnames(env))) {
-    colnames(env) <- paste(colnames(env), "_env")
-    warning("env names contain x and y, which are used as coordinate names for RDA. Appending 'env_' to env names to distinguish them.")
-  }
-
   # Modify genetic data -----------------------------------------------------
 
   # Convert vcf to dosage
@@ -170,16 +164,13 @@ rda_do_everything <- function(gen, env, coords = NULL, impute = "structure", K_i
 #' @family RDA functions
 rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE, correctPC = FALSE, nPC = 3,
                     Pin = 0.05, R2permutations = 1000, R2scope = T) {
-  # Format coordinates ------------------------------------------------------
+
+  # Format coordinates
   if (!is.null(coords)) coords <- coords_to_df(coords)
 
-  # Check that env var names don't match coord names
-  if(any(colnames(coords) %in% colnames(env))) {
-    colnames(env) <- paste(colnames(env), "_env", sep = "")
-    warning("env names should differ from x and y. Appending 'env' to env names")
-  }
-
   # Handle NA values -----------------------------------------------------
+
+  # Check for NAs
   if (any(is.na(gen))) {
     stop("Missing values found in gen data")
   }
@@ -203,11 +194,6 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
     stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[, 1:nPC]
-    # Check env var naming ----------------------------------------------------
-    if(any(colnames(pc) %in% colnames(env))) {
-      colnames(env) <- paste(colnames(env), "_env", sep = "")
-      warning("env names should differ from PC1, PC2, etc if correctPC is TRUE. Appending 'env' to env names")
-    }
     moddf <- data.frame(env, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+"), "+ Condition(", paste(colnames(pc), collapse = "+"), ")"))
   }
@@ -224,11 +210,6 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
     stats::screeplot(pcres, type = "barplot", npcs = length(pcres$sdev), main = "PCA Eigenvalues")
     if (nPC == "manual") nPC <- readline("Number of PC axes to retain:")
     pc <- pcres$x[, 1:nPC]
-    # Check env var naming ----------------------------------------------------
-    if(any(colnames(pc) %in% colnames(env))) {
-      colnames(env) <- paste(colnames(env), "_env", sep = "")
-      warning("Enviro var names should differ from PC1, PC2, etc if correctPC is TRUE. Appending env to enviro var names")
-    }
     moddf <- data.frame(env, coords, pc)
     f <- as.formula(paste0("gen ~ ", paste(colnames(env), collapse = "+"), "+ Condition(", paste(colnames(pc), collapse = "+"), "+ x + y)"))
   }
@@ -455,8 +436,9 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
       tidyr::pivot_longer(!SNP, names_to = "axis", values_to = "loading")
 
     # Generate plot, faceting on RDA axis
-    print(rda_hist(loadings, binwidth = binwidth))
+    rda_hist(loadings, binwidth = binwidth)
   }
+
 
   # If outliers found -------------------------------------------------------
 
@@ -469,28 +451,28 @@ rda_plot <- function(mod, rda_snps = NULL, pvalues = NULL, axes = "all", biplot_
     # Make RDA plots
     if (rdaplot) {
       if (length(axes) == 1) {
-        print(rda_hist(TAB_snps, binwidth = binwidth))
+        rda_hist(TAB_snps, binwidth = binwidth)
       } else if (!is.null(biplot_axes)) {
-        if (is.vector(biplot_axes)) print(rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes))
+        if (is.vector(biplot_axes)) rda_biplot(TAB_snps, TAB_var, biplot_axes = biplot_axes)
         if (is.list(biplot_axes)) {
           lapply(biplot_axes, function(x) {
-            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
+            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
           })
         }
       } else {
         cb <- combn(length(axes), 2)
         if (!is.null(dim(cb))) {
           apply(cb, 2, function(x) {
-            print(rda_biplot(TAB_snps, TAB_var, biplot_axes = x))
+            rda_biplot(TAB_snps, TAB_var, biplot_axes = x)
           })
         } else {
-          print(rda_biplot(TAB_snps, TAB_var, biplot_axes = cb))
+          rda_biplot(TAB_snps, TAB_var, biplot_axes = cb)
         }
       }
     }
 
     # Make Manhattan plot
-    if (manhattan & !is.null(pvalues)) print(rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig))
+    if (manhattan & !is.null(pvalues)) rda_manhattan(TAB_snps, rda_snps, pvalues, sig = sig)
   }
 }
 
@@ -531,7 +513,7 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1, 2)) {
   TAB_var_sub$y <- TAB_var_sub$y * max(TAB_snps_sub$y) / stats::quantile(TAB_var_sub$y)[4]
 
   ## Biplot of RDA SNPs and scores for variables
-  plt_biplot <- ggplot2::ggplot() +
+  ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
     ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x = x, y = y, colour = type), size = 1.4) +
@@ -550,8 +532,6 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1, 2)) {
       legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
       strip.text = ggplot2::element_text(size = 11)
     )
-
-  return(plt_biplot)
 }
 
 #' Helper function to plot RDA manhattan plot
@@ -568,7 +548,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
 
   TAB_manhattan <- TAB_manhattan[order(TAB_manhattan$pos), ]
 
-  plt_manhat <- ggplot2::ggplot(data = TAB_manhattan) +
+  ggplot2::ggplot(data = TAB_manhattan) +
     ggplot2::geom_point(ggplot2::aes(x = pos, y = -log10(pvalues), col = type), size = 1.4) +
     ggplot2::scale_color_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF", "#6B4596FF")) +
     ggplot2::xlab("position") +
@@ -586,8 +566,6 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
       legend.text = ggplot2::element_text(size = ggplot2::rel(.8)),
       strip.text = ggplot2::element_text(size = 11)
     )
-
-  return(plt_manhat)
 }
 
 #' Helper function to plot RDA histogram
@@ -600,7 +578,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
 #' @family RDA functions
 rda_hist <- function(data, binwidth = NULL) {
   if ("type" %in% names(data)) {
-    plt_hist <- ggplot2::ggplot() +
+    ggplot2::ggplot() +
       ggplot2::geom_histogram(data = data, ggplot2::aes(fill = type, x = get(colnames(data)[2])), binwidth = binwidth) +
       ggplot2::scale_fill_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF")) +
       ggplot2::guides(fill = ggplot2::guide_legend(title = "SNP type")) +
@@ -617,7 +595,7 @@ rda_hist <- function(data, binwidth = NULL) {
         strip.text = ggplot2::element_text(size = 11)
       )
   } else {
-    plt_hist <- ggplot2::ggplot() +
+    ggplot2::ggplot() +
       ggplot2::geom_histogram(data = data, ggplot2::aes(x = loading), bins = binwidth) +
       ggplot2::facet_wrap(~axis) +
       ggplot2::theme_bw() +
@@ -628,8 +606,6 @@ rda_hist <- function(data, binwidth = NULL) {
         strip.text = ggplot2::element_text(size = 11)
       )
   }
-
-  return(plt_hist)
 }
 
 #' Create `gt` table of RDA results

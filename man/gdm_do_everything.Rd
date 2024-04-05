@@ -42,7 +42,7 @@ gdm_do_everything(
 
 \item{plot_vars}{whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 list with final model, predictor coefficients, and PCA RGB map

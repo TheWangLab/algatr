@@ -45,7 +45,7 @@ tess_do_everything(
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 list with all TESS results, final K value, and final kriged raster

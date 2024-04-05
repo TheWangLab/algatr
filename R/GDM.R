@@ -11,7 +11,7 @@
 #' @param dist_lyr DEM raster for calculating topographic distances or resistance raster for calculating resistance distances
 #' @param scale_gendist whether to scale genetic distance data from 0 to 1 (defaults to FALSE)
 #' @param plot_vars whether to create PCA plot to help in variable and map interpretation (defaults to TRUE)
-#' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #'
 #' @details
 #' GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto-Lugilde, D., & Ferrier, S. (2022). gdm: Generalized dissimilarity modeling. R package version 1.5.0-3.

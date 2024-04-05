@@ -13,7 +13,7 @@
 #' @param lambda numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
-#' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #'
 #' @family TESS functions
 #'

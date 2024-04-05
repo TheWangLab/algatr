@@ -4,7 +4,7 @@
 #' @param kriged whether to smooth out mapped values using kriging using \link[wingen]{krig_gd} (default = FALSE)
 #' @param masked whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)
 #' @param plot_count if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)
-#' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #' @inheritParams wingen::preview_gd
 #' @inheritParams wingen::window_gd
 #' @inheritParams wingen::krig_gd

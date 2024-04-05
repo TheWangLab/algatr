@@ -52,7 +52,7 @@ wingen_do_everything(
 
 \item{kriged}{whether to smooth out mapped values using kriging using \link[wingen]{krig_gd} (default = FALSE)}
 
-\item{grd}{object to create grid for kriging; can be a SpatRaster, RasterLayer, SpatialPointsDataFrame, or a gridded object as defined by 'sp'. If undefined, will use \code{r} to create a grid.}
+\item{grd}{object to create grid for kriging; can be a SpatRaster or RasterLayer. If undefined, will use \code{r} to create a grid.}
 
 \item{index}{integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer)}
 
@@ -68,7 +68,7 @@ wingen_do_everything(
 
 \item{plot_count}{if TRUE, whether to visualize sample counts using \link[wingen]{plot_count} (default = FALSE)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 RasterBrick object final raster
