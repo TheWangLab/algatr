@@ -3,6 +3,25 @@
 	"image": "ghcr.io/thewanglab/algatr:latest",
 	"runArgs": [ "--security-opt", "seccomp=unconfined" ],
 	"waitFor": "onCreateCommand",
+	"customizations": {
+		"codespaces": {
+			"openFiles": ["README.md"]
+		  },
+		  "vscode": {
+		  "settings": {
+			"r.rterm.linux": "/usr/local/bin/radian",
+			"r.bracketedPaste": true,
+			"r.plot.useHttpgd": true,
+			"[r]": {
+			  "editor.wordSeparators": "`~!@#%$^&*()-=+[{]}\\|;:'\",<>/?"
+			}
+		  },
+		  "extensions": [
+			"reditorsupport.r",
+			"rdebugger.r-debugger"		
+			]
+		}
+	  },
 	// Forward Jupyter and RStudio ports
 	"forwardPorts": [8787],
 	"portsAttributes": {
