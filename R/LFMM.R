@@ -501,8 +501,8 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Build plot
   plt <-
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
-    ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed", size = 0.6) +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
+    ggplot2::geom_hline(yintercept = -log10(sig), color = "black", linetype = "dashed", size = 0.6) +
     ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
     ggplot2::xlab("SNPs") +
     ggplot2::ylab("-log10(p)") +
