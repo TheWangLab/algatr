@@ -495,7 +495,7 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Convert to df to not get tidy warnings about uninitialized columns
   df <- data.frame(df)
   df$type[df$adjusted.pvalue < sig] <- "Outlier"
-  df$type[!(df$adjusted.pvalue < sig)] <- "Neutral"
+  df$type[!(df$adjusted.pvalue < sig)] <- "Non-outlier"
   df$index <- 1:length(unique(df$snp))
 
   # Build plot
@@ -503,7 +503,7 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
     ggplot2::geom_hline(yintercept = -log10(sig), color = "red", linetype = "dashed") +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
-    ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
+    ggplot2::scale_color_manual(values = c("Non-outlier" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
     ggplot2::xlab("SNPs") +
     ggplot2::ylab("-log10(p)") +
     ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", size = 0.6) +
