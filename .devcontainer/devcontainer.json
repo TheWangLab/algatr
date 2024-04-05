@@ -1,7 +1,8 @@
 {
 	"name": "R Data Science Environment",
 	"image": "ghcr.io/thewanglab/algatr:latest",
-
+	"runArgs": [ "--security-opt", "seccomp=unconfined" ],
+	"waitFor": "onCreateCommand",
 	// Forward Jupyter and RStudio ports
 	"forwardPorts": [8787],
 	"portsAttributes": {
@@ -12,6 +13,8 @@
 		}
 	},
 
-	// Use 'postAttachCommand' to run commands after the container is started
-	"postAttachCommand": "sudo rstudio-server start &> /dev/null && bash .devcontainer/welcome.sh"
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+	"postAttachCommand": "sudo rstudio-server start &> /dev/null && bash .devcontainer/welcome.sh",
+	"remoteUser": "rstudio"
 }
