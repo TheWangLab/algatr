@@ -1,6 +1,6 @@
 # Dockerfile modified from: http://haines-lab.com/post/2022-01-23-automating-computational-reproducibility-with-r-using-renv-docker-and-github-actions/
 # Start with geospatial v 4.3.1
-FROM rocker/geospatial:4.3.1
+FROM ghcr.io/rocker-org/devcontainer/geospatial:4.3
 
 # Relabel docker
 LABEL org.opencontainers.image.description=""
