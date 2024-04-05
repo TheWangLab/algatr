@@ -11,7 +11,7 @@ mmrr_run(Y, X, nperm = 999, stdz = TRUE, model = "full")
 
 \item{X}{list of independent distance matrices (with optional names)}
 
-\item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
+\item{nperm}{number of permutations to be used in significance tests (default = 999)}
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 
