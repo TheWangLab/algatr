@@ -3,6 +3,15 @@
 	"image": "ghcr.io/thewanglab/algatr:latest",
 	"runArgs": [ "--security-opt", "seccomp=unconfined" ],
 	"waitFor": "onCreateCommand",
+	"features": {
+		"ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {},
+		// Install JupyterLab and IRkernel.
+		// More info: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
+		"ghcr.io/rocker-org/devcontainer-features/r-rig:1": {
+			"version": "none",
+			"installJupyterlab": true
+		}
+	  },
 	"customizations": {
 		"codespaces": {
 			"openFiles": ["README.md"]
