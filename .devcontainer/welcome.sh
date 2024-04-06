@@ -1,3 +1,4 @@
+# Modified from: https://github.com/boettiger-lab/nasa-topst-env-justice/blob/main/.devcontainer/welcome.sh
 mkdir -p ~/.local/share/rstudio/projects_settings
 export RPROJ"=$(ls ${CODESPACE_VSCODE_FOLDER}/*.Rproj)"
 echo ${RPROJ} > ~/.local/share/rstudio/projects_settings/last-project-path
