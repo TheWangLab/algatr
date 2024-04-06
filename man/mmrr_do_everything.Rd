@@ -33,7 +33,7 @@ mmrr_do_everything(
 
 \item{dist_lyr}{if \code{geodist_type = "topographic"}, DEM raster for calculating topographic distances or if \code{geodist_type = "resistance"}, resistance raster for calculating resistance distances}
 
-\item{nperm}{number of permutations to use to calculate variable importance; only used if \code{model = "best"} (default = 999)}
+\item{nperm}{number of permutations to be used in significance tests (default = 999)}
 
 \item{stdz}{if TRUE then matrices will be standardized (default = TRUE)}
 

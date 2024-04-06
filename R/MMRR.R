@@ -6,7 +6,7 @@
 #' @param env dataframe with environmental data or a Raster* type object from which environmental values for the coordinates can be extracted
 #' @param geo whether to include geographic, topographic, or resistance distance as an independent variable (defaults to TRUE)
 #' @param model whether to fit the model with all variables (`"full"`) or to perform variable selection to determine the best set of variables (`"best"`); defaults to "full"
-#' @param nperm number of permutations to use to calculate variable importance; only used if `model = "best"` (default = 999)
+#' @param nperm number of permutations to be used in significance tests (default = 999)
 #' @param stdz if TRUE then matrices will be standardized (default = TRUE)
 #' @param geodist_type if `geo = TRUE`, the type of geographic distance to be calculated; options are "Euclidean" (default) for direct distance, "topographic" for topographic distances, and "resistance" for resistance distances
 #' @param dist_lyr if `geodist_type = "topographic"`, DEM raster for calculating topographic distances or if `geodist_type = "resistance"`, resistance raster for calculating resistance distances

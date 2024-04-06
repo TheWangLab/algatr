@@ -9,6 +9,11 @@ on:
       - "renv.lock"
     branches: [ "main" ]
   pull_request:
+    paths:
+        - "R/**.R"
+        - .github/workflows/build-test.yml
+        - "vignettes/**.Rmd"
+        - "renv.lock"
     branches: [ "main" ]
 
 jobs:
