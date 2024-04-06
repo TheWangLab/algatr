@@ -1,3 +1,6 @@
+# Ignore Rprofile (!needed for codespaces to ignore renv)
+.Rprofile
+
 # History files
 .Rhistory
 .Rapp.history
