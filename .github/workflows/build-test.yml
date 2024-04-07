@@ -22,7 +22,7 @@ jobs:
     container:
       image: ghcr.io/thewanglab/algatr:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Restore renv Environment
         run: R -e 'renv::restore()'
