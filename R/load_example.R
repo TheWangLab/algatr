@@ -2,7 +2,7 @@
 #'
 #' Example dataset from [Bouzid et al. 2022](https://doi.org/10.1111/mec.15836). The code used to create this dataset can be found under data-raw/DATASET
 #'
-#' @param quiet whether to load without messages
+#' @param quiet whether to operate quietly and suppress messages (defaults to FALSE)
 #'
 #' @return loads liz_vcf, liz_gendist, liz_coords, and CA_env objects
 #' @export

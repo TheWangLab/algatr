@@ -5,7 +5,7 @@
 #' @param coords dataframe with coordinates (only needed if correctGEO = TRUE) or if env is a Raster* from which values should be extracted
 #' @param impute if NAs in `gen`, imputation will be performed on missing values; options are "structure" which uses the `str_impute()` function to impute based on population structure inferred with `LEA::snmf` (default); other option is "simple" based on `simple_impute()` which imputes to the median
 #' @param K_impute if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
-#' @param quiet_impute if `impute = "structure"`, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
+#' @param quiet_impute if `impute = "structure"`, whether to suppress results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
 #' @param save_output if `impute = "structure"`, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
 #' @param output_filename if `impute = "structure"` and `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #' @param model whether to fit the model with all variables ("full") or to perform variable selection to determine the best set of variables ("best"); defaults to "full"
@@ -23,7 +23,7 @@
 #' @param R2permutations if `model = "best"`, number of permutations used in the estimation of adjusted R2 for cca using RsquareAdj (see \link[vegan]{ordiR2step}) (defaults to 1000)
 #' @param R2scope if `model = "best"` and set to TRUE (default), use adjusted R2 as the stopping criterion: only models with lower adjusted R2 than scope are accepted (see \link[vegan]{ordiR2step})
 #' @param stdz whether to center and scale environmental data (defaults to TRUE)
-#' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #' @inheritParams LEA::snmf
 #'
 #' @importFrom vegan rda
@@ -503,9 +503,9 @@ rda_ggtidy <- function(mod, rda_snps, axes) {
   snp_scores <- vegan::scores(mod, choices = axes, display = "species", scaling = "none") # vegan references "species", here these are the snps
   TAB_snps <- data.frame(names = row.names(snp_scores), snp_scores)
 
-  TAB_snps$type <- "Neutral"
-  TAB_snps$type[TAB_snps$names %in% rda_snps] <- "Outliers"
-  TAB_snps$type <- factor(TAB_snps$type, levels = c("Neutral", "Outliers"))
+  TAB_snps$type <- "Non-outlier"
+  TAB_snps$type[TAB_snps$names %in% rda_snps] <- "Outlier"
+  TAB_snps$type <- factor(TAB_snps$type, levels = c("Non-outlier", "Outlier"))
   TAB_var <- as.data.frame(vegan::scores(mod, choices = axes, display = "bp")) # pull the biplot scores
 
   tidy_list <- list(TAB_snps = TAB_snps, TAB_var = TAB_var)
@@ -563,7 +563,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
   TAB_manhattan <- data.frame(
     pos = 1:nrow(TAB_snps),
     pvalues = pvalues,
-    type = factor(TAB_snps$type, levels = c("Neutral", "Outliers"))
+    type = factor(TAB_snps$type, levels = c("Non-outlier", "Outlier"))
   )
 
   TAB_manhattan <- TAB_manhattan[order(TAB_manhattan$pos), ]

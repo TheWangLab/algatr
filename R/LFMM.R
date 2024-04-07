@@ -5,7 +5,7 @@
 #' @param coords dataframe with coordinates (only needed if K selection is performed with TESS or if environmental values are not provided)
 #' @param impute if NAs in `gen`, imputation will be performed on missing values; options are "structure" which uses the `str_impute()` function to impute based on population structure inferred with `LEA::snmf` (default); other option is "simple" based on `simple_impute()` which imputes to the median
 #' @param K_impute if `impute = "structure"`, an integer vector (range or single value) corresponding to the number of ancestral populations for which the sNMF algorithm estimates have to be calculated (defaults to 3)
-#' @param quiet_impute if `impute = "structure"`, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
+#' @param quiet_impute if `impute = "structure"`, whether to suppress the results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy
 #' @param save_output if `impute = "structure"`, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)
 #' @param output_filename if `impute = "structure"` and `save_output = TRUE`, name prefix for saved .geno file, SNMF project file, and SNMF output file results (defaults to FALSE, in which no files are saved)
 #' @param K number of latent factors (if left as NULL (default), K value selection will be conducted)
@@ -13,7 +13,7 @@
 #' @param K_selection method for performing k selection (can either by "tracy_widom" (default), "quick_elbow", "tess", or "find_clusters")
 #' @param sig alpha level for determining candidate SNPs (defaults to 0.05)
 #' @param p_adj method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}
-#' @param quiet whether to print output tables and figures (defaults to FALSE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #' @inheritParams lfmm::lfmm_test
 #' @inheritParams select_K
 #' @inheritParams LEA::snmf
@@ -495,15 +495,14 @@ lfmm_manhattanplot <- function(df, sig, group = NULL, var = NULL) {
   # Convert to df to not get tidy warnings about uninitialized columns
   df <- data.frame(df)
   df$type[df$adjusted.pvalue < sig] <- "Outlier"
-  df$type[!(df$adjusted.pvalue < sig)] <- "Neutral"
+  df$type[!(df$adjusted.pvalue < sig)] <- "Non-outlier"
   df$index <- 1:length(unique(df$snp))
 
   # Build plot
   plt <-
     ggplot2::ggplot(df, ggplot2::aes(x = index, y = -log10(adjusted.pvalue))) +
     ggplot2::geom_point(alpha = 0.75, pch = 16, ggplot2::aes(col = type)) +
-    ggplot2::geom_hline(yintercept = -log10(sig), color = "black", linetype = "dashed", size = 0.6) +
-    ggplot2::scale_color_manual(values = c("Neutral" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
+    ggplot2::scale_color_manual(values = c("Non-outlier" = rgb(0.7, 0.7, 0.7, 0.5), "Outlier" = "#F9A242FF"), na.translate = F) +
     ggplot2::xlab("SNPs") +
     ggplot2::ylab("-log10(p)") +
     ggplot2::guides(color = ggplot2::guide_legend(title = "SNP type")) +

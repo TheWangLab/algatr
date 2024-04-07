@@ -13,7 +13,7 @@ do_everything_for_me(gen, coords, envlayers, quiet = FALSE, gators = FALSE)
 
 \item{envlayers}{SpatRaster or Raster* for mapping (if env is provided, the dataframe column names and envlayers layer names should be the same)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 
 \item{gators}{set to TRUE to see some gators...}
 }

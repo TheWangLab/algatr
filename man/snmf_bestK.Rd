@@ -11,7 +11,7 @@ snmf_bestK(snmf_proj, K, quiet)
 
 \item{K}{integer corresponding to K-value}
 
-\item{quiet}{whether to print results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
+\item{quiet}{whether to operate quietly and suppress the results of cross-entropy scores (defaults to TRUE; only does so if more than one K-value); only displays run with minimum cross-entropy}
 }
 \value{
 list with best K-value and run number and all cross-entropy scores

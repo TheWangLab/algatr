@@ -61,7 +61,7 @@ lfmm_do_everything(
     file has been modified since the creation of the project.
 }
 
-\item{quiet_impute}{if \code{impute = "structure"}, whether to print results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy}
+\item{quiet_impute}{if \code{impute = "structure"}, whether to suppress the results of cross-entropy scores (defaults to TRUE; only does so if K is range of values); only displays run with minimum cross-entropy}
 
 \item{save_output}{if \code{impute = "structure"}, if TRUE, saves SNP GDS and ped (plink) files with retained SNPs in new directory; if FALSE returns object (defaults to FALSE)}
 
@@ -95,7 +95,7 @@ pvalues are not calibrated.}
 
 \item{max.n.clust}{if \code{K_selection = "find_clusters"}, an integer indicating the maximum number of clusters to try. Values of 'k' will be picked up between 1 and max.n.clust (defaults to 10)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 list with candidate SNPs, model results, and K-value

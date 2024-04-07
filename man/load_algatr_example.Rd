@@ -7,7 +7,7 @@
 load_algatr_example(quiet = FALSE)
 }
 \arguments{
-\item{quiet}{whether to load without messages}
+\item{quiet}{whether to operate quietly and suppress messages (defaults to FALSE)}
 }
 \value{
 loads liz_vcf, liz_gendist, liz_coords, and CA_env objects

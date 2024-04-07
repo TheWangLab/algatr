@@ -27,7 +27,7 @@ gdm_map(
 
 \item{display_axes}{display PC axes text, labels, and ticks (defaults to FALSE)}
 
-\item{quiet}{whether to print output tables and figures (defaults to FALSE)}
+\item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }
 \value{
 GDM RGB map
