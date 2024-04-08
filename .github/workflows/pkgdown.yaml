@@ -44,14 +44,16 @@ jobs:
         run:  install.packages("pkgdown")
         shell: Rscript {0}
 
-      - name: Install packages
-        run:  renv::restore()
-        shell: Rscript {0}
-
       - name: Install algatr
         run: |
           install.packages("devtools")
           devtools::install()
+        shell: Rscript {0}
+
+      - name: Install algatr dependencies
+        run: |
+          library(algatr)
+          alazygatr_packages()
         shell: Rscript {0}
 
       - name: Build site
