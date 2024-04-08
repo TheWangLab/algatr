@@ -340,7 +340,7 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning: The distances for 124 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_results</span><span class="op">$</span><span class="va">mantel_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   var1 var2    p         r</span></span>
-<span><span class="co">#&gt; 1  geo bio2 0.01 0.1465585</span></span>
+<span><span class="co">#&gt; 1  geo bio2 0.03 0.1465585</span></span>
 <span><span class="co">#&gt; 2 bio2 bio3 0.01 0.3687943</span></span>
 <span><span class="co">#&gt; 3  geo bio4 0.02 0.1660475</span></span>
 <span><span class="co">#&gt; 4 bio2 bio4 0.01 0.5724731</span></span>
@@ -352,18 +352,17 @@ significantly correlated.</p>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: The distances for 3 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
+<span><span class="co">#&gt; Warning: The distances for 2 pairs of variables are significantly correlated. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span>
 <span><span class="co">#&gt; $mantel_df</span></span>
 <span><span class="co">#&gt;       var1     var2    p         r</span></span>
-<span><span class="co">#&gt; 1      geo       ID 0.03 0.0724489</span></span>
-<span><span class="co">#&gt; 2      geo CA_rPCA2 0.01 0.2037404</span></span>
-<span><span class="co">#&gt; 3 CA_rPCA2 CA_rPCA3 0.01 0.2544182</span></span>
+<span><span class="co">#&gt; 1      geo CA_rPCA2 0.01 0.2037404</span></span>
+<span><span class="co">#&gt; 2 CA_rPCA2 CA_rPCA3 0.01 0.2544182</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $p</span></span>
 <span><span class="co">#&gt;          [,1] [,2] [,3] [,4] [,5]</span></span>
-<span><span class="co">#&gt; geo        NA 0.03 0.59 0.01 0.21</span></span>
-<span><span class="co">#&gt; ID         NA   NA 0.85 0.12 0.07</span></span>
-<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.61 0.89</span></span>
+<span><span class="co">#&gt; geo        NA 0.06 0.57 0.01 0.24</span></span>
+<span><span class="co">#&gt; ID         NA   NA 0.78 0.11 0.08</span></span>
+<span><span class="co">#&gt; CA_rPCA1   NA   NA   NA 0.56 0.84</span></span>
 <span><span class="co">#&gt; CA_rPCA2   NA   NA   NA   NA 0.01</span></span>
 <span><span class="co">#&gt; CA_rPCA3   NA   NA   NA   NA   NA</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -408,7 +407,9 @@ data, and so only those will be considered for further analyses.</p>
 <p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-3.png" width="700"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/RStoolbox/man/ggRGB.html" class="external-link">ggRGB</a></span><span class="op">(</span><span class="va">env_pcs</span><span class="op">$</span><span class="va">map</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, stretch <span class="op">=</span> <span class="st">"lin"</span>, q <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/RStoolbox/man/ggRGB.html" class="external-link">ggRGB</a></span><span class="op">(</span><span class="va">env_pcs</span><span class="op">$</span><span class="va">map</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, stretch <span class="op">=</span> <span class="st">"lin"</span>, q <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in matrix(z, nrow = nrow(rr), ncol = ncol(rr), byrow = TRUE): data</span></span>
+<span><span class="co">#&gt; length [9115] is not a sub-multiple or multiple of the number of rows [113]</span></span></code></pre></div>
 <p><img src="enviro_data_vignette_files/figure-html/comp%20raster-1.png" width="700"></p>
 </div>
 <div class="section level3">
