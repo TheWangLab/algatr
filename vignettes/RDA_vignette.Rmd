@@ -15,17 +15,19 @@ knitr::opts_chunk$set(
 ```
 
 # Redundancy analysis (RDA)
-
-```{r setup, warning=FALSE, message=FALSE}
+```{r}
 library(algatr)
-library(dplyr)
-library(raster)
-library(vegan)
 ```
 
 ```{r, eval = FALSE}
-# Install packages
+#Install required packages
 rda_packages()
+```
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+library(raster)
+library(vegan)
 ```
 
 **If using RDA, please cite the following: Capblancq T., Forester B.R. (2021) Redundancy analysis: A Swiss Army Knife for landscape genomics. Methods in Ecology and Evolution 12:2298-2309. DOI:10.1111/2041-210X.13722**

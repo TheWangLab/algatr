@@ -16,15 +16,18 @@ knitr::opts_chunk$set(
 
 # Multiple matrix regression with randomization (MMRR)
 
-```{r setup, warning = FALSE, message = FALSE}
+```{r}
 library(algatr)
-library(here)
-library(raster)
 ```
 
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 mmrr_packages()
+```
+
+```{r, warning = FALSE, message = FALSE}
+library(here)
+library(raster)
 ```
 
 **If using MMRR, please cite the following: Wang I.J. (2013) Examining the full effects of landscape heterogeneity on spatial genetic variation: a multiple matrix regression approach for quantifying geographic and ecological isolation. Evolution 67(1):3403-3411. DOI:10.1111/evo.12134**

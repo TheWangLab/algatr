@@ -15,7 +15,7 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
 )
 ```
 
-```{r setup, warning = FALSE, message = FALSE}
+```{r, warning = FALSE, message = FALSE}
 library(algatr)
 ```
 

@@ -14,18 +14,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, warning = FALSE, message = FALSE}
+# wingen
+```{r}
 library(algatr)
+```
+
+```{r, eval = FALSE}
+# Install required packages
+wingen_packages()
+```
+
+```{r, warning = FALSE, message = FALSE}
 library(wingen)
 library(raster)
 library(terra)
 library(ggplot2)
 library(sf)
-```
-
-```{r, eval = FALSE}
-# Install packages
-wingen_packages()
 ```
 
 **If using wingen, please cite the following: Bishop A.P., Chambers E.A., Wang I.J. (2023) Generating continuous maps of genetic diversity using moving windows. Methods in Ecology and Evolution. DOI: <https://doi.org/10.1111/2041-210X.14090>.**

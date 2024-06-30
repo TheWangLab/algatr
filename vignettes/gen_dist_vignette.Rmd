@@ -16,14 +16,17 @@ knitr::opts_chunk$set(
 
 # Calculating genetic distances
 
-```{r setup, warning = FALSE, message = FALSE}
+```{r}
 library(algatr)
-library(cowplot)
 ```
 
 ```{r, eval = FALSE}
-# Install packages 
+# Install required packages
 gen_dist_packages()
+```
+
+```{r, warning = FALSE, message = FALSE}
+library(cowplot)
 ```
 
 For several landscape genomics analyses, a pairwise genetic distance matrix is required as input. There are a variety of ways to calculate genetic distance, and the main function in this package, `gen_dist()`, allows a user to choose from five different genetic distances and saves square distance matrices as csv files. The five genetic distance metrics are specified using the `dist_type` argument and are as follows:
