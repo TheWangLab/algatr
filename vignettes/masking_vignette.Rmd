@@ -16,11 +16,20 @@ knitr::opts_chunk$set(
 
 # Masking maps for landscape genomics
 
-```{r setup}
+```{r}
 library(algatr)
+```
+
+```{r, eval = FALSE}
+# Install required packages
+masking_packages()
+```
+
+```{r, warning = FALSE, message = FALSE}
 library(raster)
 library(terra)
 library(viridis)
+library(geodata)
 ```
 
 Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled at all). This allows users to avoid over-interpreting results from several analyses where mapping is a useful visualization tool (e.g., generalized dissimilarity modeling).
@@ -135,8 +144,7 @@ First, let's get the shape (polygon) for the state of California. This will incl
 ```{r cali polygon, fig.align='center', fig.height=5, fig.width=5}
 par(mar = c(0, 0, 0, 0))
 
-states <- getData("GADM", country = "United States", level = 1)
-# states <- gadm("United States", level = 1, path = here())
+states <- gadm("United States", level = 1, path = here())
 cali <- states[states$NAME_1 == "California", ]
 plot(cali)
 ```
