@@ -153,13 +153,13 @@ head(qmat)
 
 The `tess_krig()` function will take in ancestry coefficient values (in the Q-matrix) and will krige the values based on the raster provided (`krig_raster` from above). This will produce a Raster\* type object.
 
-Coordinates and rasters used for krigin should be in a projected (planar) coordinate system. Therefore, spherical systems (including latitude-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given and the function will assume the data are provided in a projected system.
+Coordinates and rasters used for kriging should be in a projected (planar) coordinate system. Therefore, spherical systems (including latitude-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given and the function will assume the data are provided in a projected system.
 
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
 # First, create sf coordinates (note: EPSG 4326 is WGS84/latitude-longitude)
 coords_proj <- st_as_sf(liz_coords, coords = c("x", "y"), crs = 4326)
 
-# Next, we project these coordinates to to California Albers (EPSG 3310) since these coordinates are in California
+# Next, we project these coordinates to California Albers (EPSG 3310) since these coordinates are in California
 coords_proj <- st_transform(coords_proj, crs = 3310)
 
 # Finally, reproject the kriging raster to the same CRS as the coordinates
@@ -238,12 +238,15 @@ barplot(qmat, sort.by.Q = TRUE, border = NA, space = 0, xlab = "Individuals", yl
 You can also map kriged Q-values using tess3r with the `plot()` function.
 
 ```{r, fig.width = 5, fig.height = 5, fig.align = 'center', message = FALSE, warning = FALSE}
+# TESS requires a coordinate matrix, so we need to convert the sf object to a matrix
+coords_proj_mat <- st_coordinates(coords_proj)
+
 plot(qmat,
-  liz_coords,
+  coords_proj_mat,
   method = "map.max",
   interpol = FieldsKrigModel(10),
   main = "Ancestry coefficients",
-  xlab = "Longitude", ylab = "Latitude",
+  xlab = "x", ylab = "y",
   col.palette = CreatePalette(),
   resolution = c(300, 300), cex = .4
 )
