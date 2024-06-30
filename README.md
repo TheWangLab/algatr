@@ -93,10 +93,12 @@ If you’re installing on Ubuntu, you may run into issues installing the
 rmapshaper package; scroll to the bottom of the README for more
 information.
 
-Alternatively, algatr can be run using
-[Docker](https://docs.docker.com/get-started/), in which case prior
-installation of package dependencies is not required. First, install
-Docker, and then start algatr within a Docker container:
+### Docker
+
+algatr can be run using [Docker](https://docs.docker.com/get-started/),
+in which case prior installation of package dependencies is not
+required. First, install Docker, and then start algatr within a Docker
+container:
 
 ``` bash
 docker run --rm -ti ghcr.io/thewanglab/algatr
@@ -111,6 +113,18 @@ docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/alg
 Open localhost:8787 in your browser and log in with username:rstudio and
 password:yourpassword (substitute yourpassword for whatever password you
 would like)
+
+### Codespace
+
+algatr can also be run using GitHub codespaces — a cloud-based
+development environment with everything you need installed and ready to
+go. To start a codespace, click the green “Code” button at the top of
+the repository and select “Open with Codespaces”. This will open a new
+codespace with the algatr repository loaded. If you want to make changes
+to any of the files, you will need to fork the repository to save them.
+GitHub Free personal accounts automatically come with 120 codespace core
+hours per month free. For more information about codespaces see
+[here](https://docs.github.com/en/codespaces/overview).
 
 ## Introduction
 
@@ -278,7 +292,7 @@ load_algatr_example()
 #> *liz_vcf* vcfR object (1000 loci x 53 samples) 
 #> *liz_gendist* genetic distance matrix (Plink Distance) 
 #> *liz_coords* dataframe with x and y coordinates 
-#> *CA_env* RasterStack with PC environmental layers 
+#> *CA_env* RasterStack with example environmental layers 
 #> 
 #> -------------------------------------------------
 #> 
@@ -366,8 +380,8 @@ vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)
 
 <table style="width:98%;">
 <colgroup>
-<col style="width: 6%" />
-<col style="width: 38%" />
+<col style="width: 5%" />
+<col style="width: 39%" />
 <col style="width: 15%" />
 <col style="width: 25%" />
 <col style="width: 12%" />
