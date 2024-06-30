@@ -114,9 +114,9 @@ Open localhost:8787 in your browser and log in with username:rstudio and
 password:yourpassword (substitute yourpassword for whatever password you
 would like)
 
-### Codespace
+### Codespaces
 
-algatr can also be run using GitHub codespaces — a cloud-based
+You can also try out algatr using GitHub codespaces — a cloud-based
 development environment with everything you need installed and ready to
 go. To start a codespace, click the green “Code” button at the top of
 the repository and select “Open with Codespaces”. This will open a new
@@ -380,7 +380,7 @@ vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)
 
 <table style="width:98%;">
 <colgroup>
-<col style="width: 5%" />
+<col style="width: 6%" />
 <col style="width: 39%" />
 <col style="width: 15%" />
 <col style="width: 25%" />
