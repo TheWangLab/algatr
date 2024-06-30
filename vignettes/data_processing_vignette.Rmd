@@ -14,11 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, eval = FALSE}
-# Install packages 
-data_processing_packages()
-```
-
 # Processing genomic data files
 
 ```{r setup, warning = FALSE, message = FALSE}
@@ -27,6 +22,11 @@ library(purrr)
 library(dplyr)
 library(ggplot2)
 library(here)
+```
+
+```{r, eval = FALSE}
+# Install packages 
+data_processing_packages()
 ```
 
 For landscape genomic analyses, we first need to process our input data files in various ways. It is important to understand what this data processing is doing, so in this vignette, we'll do the following:

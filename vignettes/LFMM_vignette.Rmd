@@ -14,17 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, eval = FALSE}
-# Install packages
-lfmm_packages()
-```
-
 # Latent factor mixed models (LFMM)
 
 ```{r setup, warning = FALSE, message = FALSE}
 library(algatr)
 library(here)
 library(raster)
+```
+
+```{r, eval = FALSE}
+# Install packages
+lfmm_packages()
 ```
 
 **If using LFMM, please cite the following: for the LFMM method, Caye et al. 2019. For the `lfmm` package, please cite Jumentier B. (2021). lfmm: Latent Factor Mixed Models. R package version 1.1.**

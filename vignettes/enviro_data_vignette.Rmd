@@ -14,11 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, eval = FALSE}
-# Install packages
-envirodata_packages()
-```
-
 # Processing environmental data for landscape genomics
 
 ```{r setup, warning = FALSE, message = FALSE}
@@ -32,6 +27,11 @@ library(viridis)
 library(wingen)
 library(tidyr)
 library(tibble)
+```
+
+```{r, eval = FALSE}
+# Install packages
+envirodata_packages()
 ```
 
 For landscape genomic analyses, environmental data layers must be processed in several ways before they can be used as input into methods. This vignette will explore several ways to process environmental data:

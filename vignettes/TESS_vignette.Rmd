@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r, eval = FALSE}
 # Install packages
-tess_packages()
+algatr::tess_packages()
 ```
 
 # TESS
