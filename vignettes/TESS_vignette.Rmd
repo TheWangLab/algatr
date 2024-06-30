@@ -33,6 +33,7 @@ library(fields)
 library(rworldmap)
 library(automap)
 library(cowplot)
+library(sf)
 
 # for plotting (from TESS)
 source("http://membres-timc.imag.fr/Olivier.Francois/Conversion.R")
@@ -152,8 +153,22 @@ head(qmat)
 
 The `tess_krig()` function will take in ancestry coefficient values (in the Q-matrix) and will krige the values based on the raster provided (`krig_raster` from above). This will produce a Raster\* type object.
 
+Coordinates and rasters used for krigin should be in a projected (planar) coordinate system. Therefore, spherical systems (including latitude-longitude coordinate systems) should be projected prior to use. An example of how this can be accomplished is shown below. If no CRS is provided, a warning will be given and the function will assume the data are provided in a projected system.
+
 ```{r, cache = TRUE, results = FALSE, warning = FALSE}
-krig_admix <- tess_krig(qmat, liz_coords, krig_raster)
+# First, create sf coordinates (note: EPSG 4326 is WGS84/latitude-longitude)
+coords_proj <- st_as_sf(liz_coords, coords = c("x", "y"), crs = 4326)
+
+# Next, we project these coordinates to to California Albers (EPSG 3310) since these coordinates are in California
+coords_proj <- st_transform(coords_proj, crs = 3310)
+
+# Finally, reproject the kriging raster to the same CRS as the coordinates
+krig_raster <- projectRaster(krig_raster, crs = "epsg:3310")
+# If you are using a SpatRaster you can reproject the coordinates like this:
+# krig_raster <- terra::project(krig_raster, "epsg:3310")
+
+# Now, we can run kriging using these coordinates
+krig_admix <- tess_krig(qmat, coords_proj, krig_raster)
 ```
 
 ## Visualizing TESS results
@@ -260,7 +275,7 @@ The `tess_do_everything()` function will print out the barplot, the cross-valida
 
 ```{r do everything, cache = TRUE, results = FALSE, warning = FALSE, fig.width = 5, fig.height = 5, fig.align = 'center'}
 # One could also use krig_raster as the grid object
-results <- tess_do_everything(liz_vcf, liz_coords, grid = CA_env[[1]], Kvals = 1:10, K_selection = "auto")
+results <- tess_do_everything(liz_vcf, coords_proj, grid = krig_raster, Kvals = 1:10, K_selection = "auto")
 ```
 
 ## Additional documentation and citations

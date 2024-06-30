@@ -2,7 +2,7 @@
 #' TESS function to do everything
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
-#' @param coords dataframe with x and y coordinates
+#' @param coords  coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)
 #' @param grid SpatRaster for kriging
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
@@ -21,6 +21,10 @@
 #' TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
 #' See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471
 #'
+#' Coordinates and rasters should be in a projected (planar) coordinate system.
+#' Therefore, spherical systems (including latitute-longitude coordinate systems) should be projected prior to use.
+#' Transformation can be performed using \link[sf]{st_set_crs} for coordinates or \link[terra]{project} for rasters (see vignette for more details).
+#'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
 tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
@@ -35,18 +39,16 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   if (inherits(gen, "vcfR")) gen <- vcf_to_dosage(gen)
 
   # Convert sf coords to matrix
-  if (inherits(coords, "sf")) {
-    coords <- sf::st_coordinates(coords)
-  }
+  coords_mat <- if (inherits(coords, "sf")) sf::st_coordinates(coords) else coords
 
   # Convert coords to matrix
-  coords <- as.matrix(coords)
-  colnames(coords) <- c("x", "y")
+  coords_mat <- as.matrix(coords_mat)
+  colnames(coords_mat) <- c("x", "y")
 
   # Test different k values, if more than one provided
   if (length(Kvals) > 1) {
     # Run TESS K test
-    tess_results <- tess_ktest(gen, coords, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
+    tess_results <- tess_ktest(gen, coords_mat, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
 
     # Get K
     K <- tess_results[["K"]]
@@ -65,7 +67,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 
     # Run tess for given K value
     tess_quiet <- purrr::quietly(tess3r::tess3)
-    tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+    tess3_obj <- tess_quiet(X = gen, coord = coords_mat, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
     tess3_obj <- tess3_obj$result
 
     # Get population assignments
@@ -84,7 +86,11 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   if (is.null(grid)) warning("Grid not provided, skipping kriging")
 
   # Krige Qmatrix
-  if (K != 1 & !is.null(grid)) krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q) else krig_admix <- NULL
+  if (K != 1 & !is.null(grid)) {
+    krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q)
+  } else {
+    krig_admix <- NULL
+  }
 
   # PLOTS --------------------------------------------------------------------------------------------------------
 
@@ -331,7 +337,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   plt <- plt + ggplot_fill
 
   # Add themes and coord controls
-  plt <- plt + ggplot2::coord_equal() + ggplot2::theme_bw()
+  plt <- plt + ggplot2::theme_bw()
 
   # Add axes
   if (plot_axes) {
@@ -339,8 +345,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
       panel.grid.minor.y = ggplot2::element_blank(),
       panel.grid.major.y = ggplot2::element_blank(),
       panel.grid.minor.x = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-      aspect.ratio = 1
+      panel.grid.major.x = ggplot2::element_blank()
     )
   }
 
@@ -356,13 +361,18 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
       axis.title.y = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank(),
-      panel.border = ggplot2::element_blank(),
-      aspect.ratio = 1
+      panel.border = ggplot2::element_blank()
     )
   }
 
   # Add coords
-  if (!is.null(coords)) plt <- plt + ggplot2::geom_point(data = data.frame(coords), ggplot2::aes(x = x, y = y))
+  if (!is.null(coords)) {
+    if (inherits(coords, "sf")) {
+      plt <- plt + ggplot2::geom_sf(data = coords)
+    } else {
+      plt <- plt + ggplot2::geom_point(data = coords, ggplot2::aes(x = x, y = y))
+    }
+  }
 
   # Produce plot with krig_legend for "allQ" or "maxQ" as a combined figure (base plot and legend)
   if (plot_method == "allQ" | plot_method == "maxQ" & (!list)) {
@@ -371,9 +381,12 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
       ggplot2::theme(legend.position = "none")
 
     # Add secondary plot (which will become the legend) with combined K and Q values using helper function
-    plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
-
-    plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
+    # Suppressing a warning about using alpha for a discrete variable
+    suppressWarnings ({
+      plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
+      
+      plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
+      })
   }
 
   # Produce plot with krig_legend for "allQ" or "maxQ" as a list of two elements
@@ -649,8 +662,7 @@ pops_helper <- function(gen, tess3_obj, K) {
   # Replace Vs with Ks for clarity
   colnames(qmat) <- stringr::str_replace_all(colnames(qmat), "V", "K")
 
-  pops <- dplyr::bind_cols(names, qmat) %>%
-    dplyr::rename(individual = `...1`)
+  pops <- data.frame(individual = names, qmat) 
 
   # Get population assignment based on max Q value
   pops <- pops %>%
