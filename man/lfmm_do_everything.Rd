@@ -79,6 +79,12 @@ lfmm_do_everything(
 
 \item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
+\item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
+significance values are calibrated by using the genomic control method. Genomic control
+uses a robust estimate of the variance of z-scores called "genomic inflation factor".
+If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If \code{NULL}, the
+pvalues are not calibrated.}
+
 \item{criticalpoint}{if \code{K_selection = "tracy_widom"}, a numeric value corresponding to the significance level. If the significance level is 0.05, 0.01, 0.005, or 0.001, the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively (defaults to 2.0234)}
 
 \item{low}{if \code{K_selection = "quick_elbow"}, numeric, between zero and one, the threshold that defines whether a principal component explains 'much' of the variance (defaults to 0.08).}

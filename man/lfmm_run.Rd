@@ -26,6 +26,12 @@ lfmm_run(
 \item{p_adj}{method to use for p-value correction (defaults to "fdr"); other options can be found in \code{\link{p.adjust}}}
 
 \item{sig}{alpha level for determining candidate SNPs (defaults to 0.05)}
+
+\item{calibrate}{a character string, "gif" or "median+MAD". If the "gif" option is set (default),
+significance values are calibrated by using the genomic control method. Genomic control
+uses a robust estimate of the variance of z-scores called "genomic inflation factor".
+If the "median+MAD" option is set, the pvalues are calibrated by computing the median and MAD of the zscores. If \code{NULL}, the
+pvalues are not calibrated.}
 }
 \description{
 Run LFMM
