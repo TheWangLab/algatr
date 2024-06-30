@@ -1,5 +1,5 @@
 {
-	"name": "R Data Science Environment",
+	"name": "The Swamp",
 	"image": "ghcr.io/thewanglab/algatr:latest",
 	"runArgs": [ "--security-opt", "seccomp=unconfined" ],
 	"waitFor": "onCreateCommand",
