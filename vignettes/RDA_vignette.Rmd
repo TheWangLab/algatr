@@ -14,15 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Redundancy analysis (RDA)
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages
+#Install required packages
 rda_packages()
 ```
 
-# Redundancy analysis (RDA)
-
-```{r setup, warning=FALSE, message=FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(dplyr)
 library(raster)
 library(vegan)

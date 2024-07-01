@@ -26,6 +26,8 @@ alazygatr_packages <- function(){
   data_processing_packages()
   ## Environmental and geographic data processing:
   envirodata_packages()
+  ## Masking:
+  masking_packages()
   ## LFMM:
   lfmm_packages()
   ## RDA:
@@ -143,6 +145,24 @@ envirodata_packages <- function(){
   if (!require("wingen", quietly = TRUE)) install.packages("wingen")
 }
 
+#' Install masking packages
+#'
+#' Checks for the presence of packages required for masking.
+#' If the package is not already installed, it will automatically install it.
+#'
+#' @details
+#' The following package will be installed if not already present:
+#' - "geodata"
+#'
+#' @return None
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{masking_packages()}
+masking_packages <- function(){
+  if (!require("geodata", quietly = TRUE)) install.packages("geodata")
+}
 
 #' Install LFMM packages
 #'

@@ -14,16 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Generalized dissimilarity modeling (GDM)
+
+```{r}
+library(algatr)
+```
 
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 gdm_packages()
 ```
 
-# Generalized dissimilarity modeling (GDM)
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(raster)
 library(terra)
 library(viridis)

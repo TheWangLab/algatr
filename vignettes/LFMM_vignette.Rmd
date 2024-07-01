@@ -14,15 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Latent factor mixed models (LFMM)
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 lfmm_packages()
 ```
 
-# Latent factor mixed models (LFMM)
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(here)
 library(raster)
 ```

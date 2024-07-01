@@ -14,15 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Processing genomic data files
+
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages 
+# Install required packages
 data_processing_packages()
 ```
 
-# Processing genomic data files
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(purrr)
 library(dplyr)
 library(ggplot2)

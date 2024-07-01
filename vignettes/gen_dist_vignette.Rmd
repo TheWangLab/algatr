@@ -14,15 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Calculating genetic distances
+
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages 
+# Install required packages
 gen_dist_packages()
 ```
 
-# Calculating genetic distances
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(cowplot)
 ```
 
