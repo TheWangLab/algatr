@@ -115,6 +115,14 @@ gdm_best$varimp
 
 Within the resulting object(`gdm_best`), the `pvalues` and `varimp` elements are no longer NULL (as they were with the full model); this is because model selection was performed. `pvalues` indicate the significance of each environmental variable with genetic distance (given the user-defined threshold), and `varimp` contains information about variable importance and relevant statistics about the model.
 
+### GDM with custom predictor distance matrices
+
+```{r}
+# add distance matrix seperatley 
+geodist <- geo_dist(coords[,c("x","y")])
+gdmDist <- cbind(site, geodist)
+gdmData <- formatsitepair(gdmData, 4, predData=gdmPred, siteColumn="site", distPreds=list(geodist = as.matrix(gdmDist)))
+```
 ## Interpreting GDM results
 
 ------------------------------------------------------------------------

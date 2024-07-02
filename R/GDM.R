@@ -103,7 +103,7 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 #' @return GDM model
 #' @export
 gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
-                    geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
+                    geodist_type = "Euclidean", dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
   # convert env to spat raster if it is a RasterLayer/RasterStack
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -141,6 +141,145 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     gdmDist <- cbind(site, distmat)
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
   } else {
+    gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+  }
+
+  # RUN GDM -------------------------------------------------------------------------------------------------------
+
+  # If model = "full", the final GDM model is just the full model
+  if (model == "full") {
+    # Remove any remaining incomplete cases
+    cc <- stats::complete.cases(gdmData)
+    if (!all(cc)) {
+      gdmData <- gdmData[cc, ]
+      warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))
+    }
+
+    # Run GDM with all predictors
+    if (geodist_type == "resistance" | geodist_type == "topographic") {
+      gdm_model_final <- gdm::gdm(gdmData, geo = FALSE)
+    } else {
+      gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
+    }
+  }
+
+  # If model = "best", conduct variable selection procedure
+  if (model == "best") {
+    # Add distance matrix separately
+    if (geodist_type == "Euclidean") {
+      geodist <- geo_dist(coords)
+      gdmDist <- cbind(site, geodist)
+      gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+    }
+
+    # Remove any remaining incomplete cases
+    cc <- stats::complete.cases(gdmData)
+    if (!all(cc)) {
+      gdmData <- gdmData[cc, ]
+      warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))
+    }
+
+    # Get subset of variables for final model
+    gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
+    finalvars <- gdm_varimp$finalvars
+
+    # Stop if there are no significant final variables
+    if (is.null(finalvars) | length(finalvars) == 0) {
+      warning("No significant combination of variables, found returning NULL object")
+      return(NULL)
+    }
+
+    # Check if x is in finalvars (i.e., if geography is significant/should be included)
+    if ("geo" %in% finalvars) {
+      geo <- TRUE
+      # Remove geo from finalvars before subsetting
+      finalvars <- finalvars[which(finalvars != "geo")]
+    } else {
+      geo <- FALSE
+    }
+
+    # Subset predictor data frame
+    gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
+
+    # Reformat for GDM
+    gdmData_final <- gdm::formatsitepair(gdmGen,
+      bioFormat = 3,
+      predData = gdmPred_final,
+      XColumn = "x",
+      YColumn = "y",
+      siteColumn = "site"
+    )
+
+    # Remove any remaining incomplete cases (there shouldn't be any at this point, but added as a check)
+    cc <- stats::complete.cases(gdmData_final)
+    if (!all(cc)) {
+      gdmData_final <- gdmData_final[cc, ]
+      warning(paste(sum(!cc), "NA values found in final gdmData, removing;", sum(cc), "values remain"))
+    }
+
+    # Run final model
+    gdm_model_final <- gdm::gdm(gdmData_final, geo = geo)
+
+    return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp))
+  }
+  return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL))
+}
+
+
+#' Run GDM with custom predictor matrices and return model object
+#'
+#' @inheritParams gdm_do_everything
+#'
+#' @family GDM functions
+#'
+#' @return GDM model
+#' @export
+gdm_run_custom <- function(gendist, coords, distPreds, env = NULL, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE, geodist_type = "Euclidean", dist_lyr = NULL) {
+  # FORMAT DATA ---------------------------------------------------------------------------------------------------
+  # convert env to spat raster if it is a RasterLayer/RasterStack
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+
+  # Extract environmental data if env is a raster
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
+
+  # Scale genetic distance data from 0 to 1
+  if (scale_gendist) {
+    gendist <- scale01(gendist)
+  }
+  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale_gendist = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale_gendist = TRUE to rescale from 0 to 1")
+
+  # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
+  site <- 1:nrow(gendist)
+
+  # Bind vector of sites with gen distances
+  gdmGen <- cbind(site, gendist)
+
+  # Convert coords to df
+  coords_df <- coords_to_df(coords)
+
+  # Create dataframe of predictor variables
+  if (!is.null(env)) {
+    gdmPred <- data.frame(
+      site = site,
+      x = coords_df$x,
+      y = coords_df$y,
+      env
+    )
+  } else {
+    gdmPred <- data.frame(
+      site = site,
+      x = coords_df$x,
+      y = coords_df$y
+    )
+  }
+
+  # Format data for GDM
+  if (geodist_type == "resistance" | geodist_type == "topographic") {
+    distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+    gdmDist <- cbind(site, distmat)
+    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+   } else {
     gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
   }
 
