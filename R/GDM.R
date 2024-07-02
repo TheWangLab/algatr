@@ -136,13 +136,13 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
   )
 
   # Format data for GDM
+  gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+
   if (geodist_type == "resistance" | geodist_type == "topographic") {
     distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
     gdmDist <- cbind(site, distmat)
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
-  } else {
-    gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
-  }
+  } 
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -182,6 +182,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     # Get subset of variables for final model
     gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
     finalvars <- gdm_varimp$finalvars
+    # For code testing you can set finalvars to a vector (i.e. c("geo", "CA_rPCA1"))
 
     # Stop if there are no significant final variables
     if (is.null(finalvars) | length(finalvars) == 0) {
@@ -189,7 +190,8 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
       return(NULL)
     }
 
-    # Check if x is in finalvars (i.e., if geography is significant/should be included)
+    # Check if geo is in finalvars (i.e., if geography is significant/should be included)
+    # geo is the name given to any geographic distance matrix (matrix_1) by the gdm_var_sel function
     if ("geo" %in% finalvars) {
       geo <- TRUE
       # Remove geo from finalvars before subsetting
@@ -200,16 +202,17 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 
     # Subset predictor data frame
     gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
+    gdmData_final <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred_final)
 
-    # Reformat for GDM
-    gdmData_final <- gdm::formatsitepair(gdmGen,
-      bioFormat = 3,
-      predData = gdmPred_final,
-      XColumn = "x",
-      YColumn = "y",
-      siteColumn = "site"
-    )
-
+    # If geo = TRUE and geodist_type is resistance or topographic, add the distance matrix 
+    if (geodist_type == "resistance" | geodist_type == "topographic"){
+      if (geo){
+        gdmData_final <- gdm::formatsitepair(gdmData_final, 4, predData = gdmPred_final, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+        # Set geo to FALSE (since it's already included, we don't want to also include euclidean distance)
+        geo <- FALSE
+      } 
+    } 
+   
     # Remove any remaining incomplete cases (there shouldn't be any at this point, but added as a check)
     cc <- stats::complete.cases(gdmData_final)
     if (!all(cc)) {
@@ -231,21 +234,24 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 #' @param gdmData data formatted using GDM package
 #' @param sig sig level for determining variable significance
 #' @param nperm number of permutations to run for variable testing
+#' @param predSelect whether to perform variable selection (defaults to TRUE); if set to FALSE, the function will return p-values for all variables
 #'
 #' @family GDM functions
 #'
 #' @export
-gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
+gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10, predSelect = TRUE) {
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
     geo = FALSE,
     splines = NULL,
     nPerm = nperm,
-    predSelect = TRUE
+    predSelect = predSelect
   )
 
   # Get p-values from variable selection model
   pvalues <- vars[[3]]
+
+  if (!predSelect) return(pvalues)
 
   # Identify which cells have p-values lower than sig and not NA
   # NB: NA occurs when variables are removed during model testing
