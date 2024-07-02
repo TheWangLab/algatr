@@ -234,18 +234,17 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 #' @param gdmData data formatted using GDM package
 #' @param sig sig level for determining variable significance
 #' @param nperm number of permutations to run for variable testing
-#' @param predSelect whether to perform variable selection (defaults to TRUE); if set to FALSE, the function will return p-values for all variables
 #'
 #' @family GDM functions
 #'
 #' @export
-gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10, predSelect = TRUE) {
+gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Check var importance/significance (THIS STEP CAN TAKE A WHILE)
   vars <- gdm::gdm.varImp(gdmData,
     geo = FALSE,
     splines = NULL,
     nPerm = nperm,
-    predSelect = predSelect
+    predSelect = TRUE
   )
 
   # Get p-values from variable selection model
