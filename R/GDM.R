@@ -165,7 +165,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 
   # If model = "best", conduct variable selection procedure
   if (model == "best") {
-    # Add distance matrix separately
+    # Add Euclidean distance matrix separately (otherwise geography will not be evaluated for removal)
     if (geodist_type == "Euclidean") {
       geodist <- geo_dist(coords)
       gdmDist <- cbind(site, geodist)
@@ -204,11 +204,11 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
     gdmData_final <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred_final)
 
-    # If geo = TRUE and geodist_type is resistance or topographic, add the distance matrix 
+    # If geo = TRUE and geodist_type is resistance or topographic, add the gdmDist matrix 
     if (geodist_type == "resistance" | geodist_type == "topographic"){
       if (geo){
         gdmData_final <- gdm::formatsitepair(gdmData_final, 4, predData = gdmPred_final, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
-        # Set geo to FALSE (since it's already included, we don't want to also include euclidean distance)
+        # Set geo to FALSE (since it's already included, we don't want to also include Euclidean distances)
         geo <- FALSE
       } 
     } 
