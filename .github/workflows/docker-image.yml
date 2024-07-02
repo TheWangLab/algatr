@@ -7,6 +7,8 @@ on:
       - .github/workflows/docker-image.yml
       - renv.lock
       - Dockerfile
+      - "man/*"
+      - "man/figures/*"
     branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
