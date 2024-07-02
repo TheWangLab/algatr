@@ -229,16 +229,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 }
 
 
-#' Run GDM and return model object
-#'
-#' @inheritParams gdm_do_everything
-#'
-#' @family GDM functions
-#'
-#' @return GDM model
-#' @export
-gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
-                    geodist_type = "Euclidean", dist_lyr = NULL) {
+gdm_run_custom <- function(gendist, coords, predData, env = NULL, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE, geodist_type = "Euclidean", dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
   # convert env to spat raster if it is a RasterLayer/RasterStack
   if (inherits(env, "Raster")) env <- terra::rast(env)
@@ -259,34 +250,52 @@ gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig 
   # Bind vector of sites with gen distances
   gdmGen <- cbind(site, gendist)
 
+  # Bind vector of sites with distPreds
+  distPreds <- purrr::map(distPreds, ~as.matrix(cbind(site, .x)))
+
   # Convert coords to df
   coords_df <- coords_to_df(coords)
 
   # Create dataframe of predictor variables
-  if (is.null(env)){
-    gdmPred <- data.frame(
-      site = site,
-      x = coords_df$x,
-      y = coords_df$y
-    )
-  } else {
-    gdmPred <- data.frame(
-      site = site,
-      x = coords_df$x,
-      y = coords_df$y,
-      env
-    )
-  }
+  gdmPred <- data.frame(
+    site = site,
+    x = coords_df$x,
+    y = coords_df$y
+  )
 
+  if (!is.null(env)){
+    gdmPred <- data.frame(gdmPred, env)
+  }
+  
   # Format data for GDM
+  gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+
   if (geodist_type == "resistance" | geodist_type == "topographic") {
     distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
     gdmDist <- as.matrix(cbind(site, distmat))
-    distPreds <- c(geodist = gdmDist, distPreds)
+    distPreds <- c(list(geodist = gdmDist), distPreds)
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = distPreds)
   } else {
-    gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = distPreds)
   }
+
+  # If the list of distPreds has unamed slots replace them 
+  distPreds_names <- names(distPreds)
+  if (any(distPreds_names == "")){
+    empty_names <- distPreds_names[distPreds_names == ""]
+    distPreds_names[distPreds_names == ""] <- paste0("matrix", seq_along(empty_names))
+  }
+
+  # Convert the gdmData names from matrix_1, matrix_2, etc. to the actual variable names
+  gdm_names <- paste0("matrix_", 1:length(distPreds_names))
+  key = data.frame(gdm_names = gdm_names, distPreds_names = distPreds_names)
+  # function to rename columns based on a single pair of gdm_name and var_name
+  rename_columns <- function(data, gdm_name, var_name) {
+    names(data) <- ifelse(grepl(gdm_name, names(data)), sub(gdm_name, var_name, names(data)), names(data))
+    return(data)
+  }
+  # Use purrr::reduce to apply it iteratively over the gdmData
+  gdmData <- purrr::reduce2(key$gdm_names, key$distPreds_names, rename_columns, .init = gdmData)
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -309,10 +318,11 @@ gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig 
 
   # If model = "best", conduct variable selection procedure
   if (model == "best") {
-    # Add distance matrix separately
+    # Add Euclidean distance matrix separately (otherwise geography will not be evaluated for removal)
     if (geodist_type == "Euclidean") {
-      geodist <- geo_dist(coords)
-      gdmDist <- cbind(site, geodist)
+      distmat <- geo_dist(coords)
+      gdmDist <- as.matrix(cbind(site, distmat))
+      distPreds <- c(list(geodist = gdmDist), distPreds)
       gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
     }
 
@@ -326,6 +336,7 @@ gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig 
     # Get subset of variables for final model
     gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
     finalvars <- gdm_varimp$finalvars
+    # For code testing you can set finalvars to a vector (i.e. c("geo", "CA_rPCA1"))
 
     # Stop if there are no significant final variables
     if (is.null(finalvars) | length(finalvars) == 0) {
@@ -333,7 +344,8 @@ gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig 
       return(NULL)
     }
 
-    # Check if x is in finalvars (i.e., if geography is significant/should be included)
+    # Check if geo is in finalvars (i.e., if geography is significant/should be included)
+    # geo is the name given to any geographic distance matrix (matrix_1) by the gdm_var_sel function
     if ("geo" %in% finalvars) {
       geo <- TRUE
       # Remove geo from finalvars before subsetting
@@ -344,97 +356,17 @@ gdm_run <- function(gendist, coords, predDists, env = NULL, model = "full", sig 
 
     # Subset predictor data frame
     gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
+    gdmData_final <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred_final)
 
-    # Reformat for GDM
-    gdmData_final <- gdm::formatsitepair(gdmGen,
-      bioFormat = 3,
-      predData = gdmPred_final,
-      XColumn = "x",
-      YColumn = "y",
-      siteColumn = "site"
-    )
-
-    # Remove any remaining incomplete cases (there shouldn't be any at this point, but added as a check)
-    cc <- stats::complete.cases(gdmData_final)
-    if (!all(cc)) {
-      gdmData_final <- gdmData_final[cc, ]
-      warning(paste(sum(!cc), "NA values found in final gdmData, removing;", sum(cc), "values remain"))
-    }
-
-    # Run final model
-    gdm_model_final <- gdm::gdm(gdmData_final, geo = geo)
-
-    return(list(model = gdm_model_final, pvalues = gdm_varimp$pvalues, varimp = gdm_varimp$varimp))
-  }
-  return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL))
-}
-
-  # RUN GDM -------------------------------------------------------------------------------------------------------
-
-  # If model = "full", the final GDM model is just the full model
-  if (model == "full") {
-    # Remove any remaining incomplete cases
-    cc <- stats::complete.cases(gdmData)
-    if (!all(cc)) {
-      gdmData <- gdmData[cc, ]
-      warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))
-    }
-
-    # Run GDM with all predictors
-    if (geodist_type == "resistance" | geodist_type == "topographic") {
-      gdm_model_final <- gdm::gdm(gdmData, geo = FALSE)
-    } else {
-      gdm_model_final <- gdm::gdm(gdmData, geo = TRUE)
-    }
-  }
-
-  # If model = "best", conduct variable selection procedure
-  if (model == "best") {
-    # Add distance matrix separately
-    if (geodist_type == "Euclidean") {
-      geodist <- geo_dist(coords)
-      gdmDist <- cbind(site, geodist)
-      gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
-    }
-
-    # Remove any remaining incomplete cases
-    cc <- stats::complete.cases(gdmData)
-    if (!all(cc)) {
-      gdmData <- gdmData[cc, ]
-      warning(paste(sum(!cc), "NA values found in gdmData, removing;", sum(cc), "values remain"))
-    }
-
-    # Get subset of variables for final model
-    gdm_varimp <- gdm_var_sel(gdmData, sig = sig, nperm = nperm)
-    finalvars <- gdm_varimp$finalvars
-
-    # Stop if there are no significant final variables
-    if (is.null(finalvars) | length(finalvars) == 0) {
-      warning("No significant combination of variables, found returning NULL object")
-      return(NULL)
-    }
-
-    # Check if x is in finalvars (i.e., if geography is significant/should be included)
-    if ("geo" %in% finalvars) {
-      geo <- TRUE
-      # Remove geo from finalvars before subsetting
-      finalvars <- finalvars[which(finalvars != "geo")]
-    } else {
-      geo <- FALSE
-    }
-
-    # Subset predictor data frame
-    gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
-
-    # Reformat for GDM
-    gdmData_final <- gdm::formatsitepair(gdmGen,
-      bioFormat = 3,
-      predData = gdmPred_final,
-      XColumn = "x",
-      YColumn = "y",
-      siteColumn = "site"
-    )
-
+    # If geo = TRUE and geodist_type is resistance or topographic, add the gdmDist matrix 
+    if (geodist_type == "resistance" | geodist_type == "topographic"){
+      if (geo){
+        gdmData_final <- gdm::formatsitepair(gdmData_final, 4, predData = gdmPred_final, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+        # Set geo to FALSE (since it's already included, we don't want to also include Euclidean distances)
+        geo <- FALSE
+      } 
+    } 
+   
     # Remove any remaining incomplete cases (there shouldn't be any at this point, but added as a check)
     cc <- stats::complete.cases(gdmData_final)
     if (!all(cc)) {
@@ -501,6 +433,11 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   if ("matrix_1" %in% finalvars) {
     # Remove matrix
     finalvars <- finalvars[which(finalvars != "matrix_1")]
+    # Add geo
+    finalvars <- c("geo", finalvars)
+  } else if ("geodist" %in% finalvars) {
+    # Remove geodist
+    finalvars <- finalvars[which(finalvars != "geodist")]
     # Add geo
     finalvars <- c("geo", finalvars)
   }
