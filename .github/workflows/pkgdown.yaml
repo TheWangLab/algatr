@@ -10,6 +10,8 @@ on:
       - inst/CITATION
       - README.md
       - _pkgdown.yml
+      - man/*
+      - man/figures/*
     branches: [ "main" ]
 name: pkgdown
 
