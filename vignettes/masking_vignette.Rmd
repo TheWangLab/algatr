@@ -30,6 +30,7 @@ library(raster)
 library(terra)
 library(viridis)
 library(geodata)
+library(here)
 ```
 
 Often, we may want to mask areas of maps to visualize landscape genomics results. For example, we may want to mask areas beyond a study organism's range, or in areas that are undersampled (or not sampled at all). This allows users to avoid over-interpreting results from several analyses where mapping is a useful visualization tool (e.g., generalized dissimilarity modeling).
