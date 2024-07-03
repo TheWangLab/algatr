@@ -14,13 +14,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+# wingen
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 wingen_packages()
 ```
 
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(wingen)
 library(raster)
 library(terra)

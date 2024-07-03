@@ -14,15 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Processing environmental data for landscape genomics
+
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 envirodata_packages()
 ```
 
-# Processing environmental data for landscape genomics
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(terra)
 library(raster)
 library(RStoolbox)

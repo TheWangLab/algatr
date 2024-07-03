@@ -54,6 +54,7 @@ reference:
   - contents:
     - ends_with("mask")
     - plot_extrap_mask
+    - starts_with("masking")
   - title: Genetic distances
   - contents:
     - starts_with("gen_dist")

@@ -14,15 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# TESS
+
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages
+# Install required packages
 tess_packages()
 ```
 
-# TESS
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(here)
 library(wingen)
 library(tess3r)

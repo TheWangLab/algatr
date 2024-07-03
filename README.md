@@ -93,10 +93,12 @@ If you’re installing on Ubuntu, you may run into issues installing the
 rmapshaper package; scroll to the bottom of the README for more
 information.
 
-Alternatively, algatr can be run using
-[Docker](https://docs.docker.com/get-started/), in which case prior
-installation of package dependencies is not required. First, install
-Docker, and then start algatr within a Docker container:
+### Docker
+
+algatr can be run using [Docker](https://docs.docker.com/get-started/),
+in which case prior installation of package dependencies is not
+required. First, install Docker, and then start algatr within a Docker
+container:
 
 ``` bash
 docker run --rm -ti ghcr.io/thewanglab/algatr
@@ -111,6 +113,18 @@ docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/alg
 Open localhost:8787 in your browser and log in with username:rstudio and
 password:yourpassword (substitute yourpassword for whatever password you
 would like)
+
+### Codespaces
+
+You can also try out algatr using GitHub codespaces — a cloud-based
+development environment with everything you need installed and ready to
+go. To start a codespace, click the green “Code” button at the top of
+the repository and select “Open with Codespaces”. This will open a new
+codespace with the algatr repository loaded. If you want to make changes
+to any of the files, you will need to fork the repository to save them.
+GitHub Free personal accounts automatically come with 120 codespace core
+hours per month free. For more information about codespaces see
+[here](https://docs.github.com/en/codespaces/overview).
 
 ## Introduction
 
@@ -238,7 +252,7 @@ vignette</a></p></td>
 
 You can also view the knitted versions of this README and all of
 algatr’s vignettes on the **package’s pkgdown website
-[here](%5Bhttps://thewanglab.github.io/algatr/).**
+[here](https://thewanglab.github.io/algatr/index.html).**
 
 ### The example dataset
 
@@ -278,7 +292,7 @@ load_algatr_example()
 #> *liz_vcf* vcfR object (1000 loci x 53 samples) 
 #> *liz_gendist* genetic distance matrix (Plink Distance) 
 #> *liz_coords* dataframe with x and y coordinates 
-#> *CA_env* RasterStack with PC environmental layers 
+#> *CA_env* RasterStack with example environmental layers 
 #> 
 #> -------------------------------------------------
 #> 
@@ -293,7 +307,7 @@ retaining the top 3 PCs. Let’s take a look at the rasters:
 plot(CA_env, col = turbo(100), axes = FALSE)
 ```
 
-<img src="man/figures/README-plot rasters-1.png" width="100%" />
+<img src="man/figures/README-rasters-1.png" width="100%" />
 
 We can combine all three PCs into a single map by scaling each of the
 rasters such that they each correspond to either R, G, or B using the
@@ -308,7 +322,7 @@ plotRGB(env, r = 1, g = 2, b = 3)
 points(liz_coords, pch = 19)
 ```
 
-<img src="man/figures/README-RGB plot-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-RGB-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Your NGS data
 

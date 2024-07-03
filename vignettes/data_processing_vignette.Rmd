@@ -14,15 +14,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Processing genomic data files
+
+```{r}
+library(algatr)
+```
+
 ```{r, eval = FALSE}
-# Install packages 
+# Install required packages
 data_processing_packages()
 ```
 
-# Processing genomic data files
-
-```{r setup, warning = FALSE, message = FALSE}
-library(algatr)
+```{r, warning = FALSE, message = FALSE}
 library(purrr)
 library(dplyr)
 library(ggplot2)
@@ -68,7 +71,7 @@ Because of their underlying statistical framework, several landscape genomics me
 
 algatr has the functionality to impute missing values in two ways: the simplistic median-based approach described above using `simple_impute()` and a more sophisticated imputation method, `str_impute()` that uses underlying population structure to assign missing values. Let's first take a look at `simple_impute()` using the dosage matrix we just generated in the step prior to this one:
 
-```{r simple impute}
+```{r simpleimpute}
 # Are there NAs in the data?
 dosage[1:5, 1:5]
 simple_dos <- simple_impute(dosage)
@@ -94,13 +97,13 @@ There are a number of arguments in the `str_impute()` function, most of which in
 
 -   `save_output` specifies whether you would like output files to be saved to file (a string) or not (left NULL; this is the default). If a string is provided, output files will be saved with this argument's string as a prefix. Files to be saved include SNMF results, the original dosage matrix as .geno and .lfmm files, and an imputed .lfmm file
 
-```{r str impute, message = FALSE, results = 'hide', warning = FALSE, fig.align = 'center'}
+```{r strimpute, message = FALSE, results = 'hide', warning = FALSE, fig.align = 'center'}
 str_dos <- str_impute(gen = dosage, K = 1:3, entropy = TRUE, repetitions = 3, quiet = FALSE, save_output = FALSE)
 ```
 
 Let's take a look at how the two imputation methods compare by calculating genetic distances for each and then using the `gen_dist_corr()` function which plots the relationship between two distance metrics (please see the genetic distances vignette for further information).
 
-```{r compare impute, message = FALSE, warning = FALSE, fig.align = 'center'}
+```{r compareimpute, message = FALSE, warning = FALSE, fig.align = 'center'}
 str_dist <- as.matrix(ecodist::distance(str_dos, method = "euclidean"))
 simple_dist <- as.matrix(ecodist::distance(simple_dos, method = "euclidean"))
 gen_dist_corr(dist_x = simple_dist, dist_y = str_dist, metric_name_x = "simple", metric_name_y = "SNMF")
@@ -149,7 +152,7 @@ if (!require("hexbin", quietly = TRUE)) install.packages("hexbin")
 library(hexbin)
 ```
 
-```{r geom hex, message = FALSE, warning = FALSE, fig.align = 'center'}
+```{r geomhex, message = FALSE, warning = FALSE, fig.align = 'center'}
 # Gather data
 plot <- gen_dist_corr(dist_x = simple_dist, dist_y = str_dist, metric_name_x = "simple", metric_name_y = "SNMF")
 
@@ -170,6 +173,6 @@ ggplot(plot$data, aes(x = simple, y = SNMF) ) +
 
 Retrieve SNPRelate's vignette:
 
-```{r package vignette}
+```{r packagevignette}
 vignette("SNPRelate")
 ```
