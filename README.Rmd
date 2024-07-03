@@ -154,7 +154,7 @@ When deciding on methods to have within algatr, we found it best to first identi
 |                                                             |                                                          | Latent factor mixed models; LFMM (Caye et al. 2019)                                                            | [LFMM vignette](https://thewanglab.github.io/algatr/articles/LFMM_vignette.html)     | `lfmm_do_everything()`   |
 +-------------------------------------------------------------+----------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------+
 
-You can also view the knitted versions of this README and all of algatr's vignettes on the **package's pkgdown website [here](%5Bhttps://thewanglab.github.io/algatr/).**
+You can also view the knitted versions of this README and all of algatr's vignettes on the **package's pkgdown website [here](https://thewanglab.github.io/algatr/index.html).**
 
 ### The example dataset
 
