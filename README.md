@@ -307,7 +307,7 @@ retaining the top 3 PCs. Let’s take a look at the rasters:
 plot(CA_env, col = turbo(100), axes = FALSE)
 ```
 
-<img src="man/figures/README-plot rasters-1.png" width="100%" />
+<img src="man/figures/README-rasters-1.png" width="100%" />
 
 We can combine all three PCs into a single map by scaling each of the
 rasters such that they each correspond to either R, G, or B using the
@@ -322,7 +322,7 @@ plotRGB(env, r = 1, g = 2, b = 3)
 points(liz_coords, pch = 19)
 ```
 
-<img src="man/figures/README-RGB plot-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-RGB-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Your NGS data
 
@@ -381,7 +381,7 @@ vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)
 <table style="width:98%;">
 <colgroup>
 <col style="width: 6%" />
-<col style="width: 39%" />
+<col style="width: 38%" />
 <col style="width: 15%" />
 <col style="width: 25%" />
 <col style="width: 12%" />
