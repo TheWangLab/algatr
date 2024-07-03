@@ -28,7 +28,7 @@ jobs:
       image: ghcr.io/thewanglab/algatr:latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install gdebi-core and rsync
         run: |
