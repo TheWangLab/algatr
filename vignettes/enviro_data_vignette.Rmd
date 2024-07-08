@@ -174,7 +174,7 @@ plots[[3]]
 
 ```{r comp raster}
 # We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)
-ggRGB(env_pcs$map, 1, 2, 3, stretch = "lin", q = 0)
+ggRGB(env_pcs$map, 1, 2, 3, stretch = "lin", q = 0, geom_raster = TRUE)
 ```
 
 ## Create raster from coordinates with wingen: `coords_to_raster()`
