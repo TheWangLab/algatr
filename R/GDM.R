@@ -696,7 +696,7 @@ gdm_df <- function(gdm_result) {
 
 #' Create `gt` table of GDM results
 #'
-#' @param gdm_result output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything}
+#' @param gdm_result output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything} or a GDM model object
 #' @param digits number of digits to include (defaults to 2)
 #'
 #' @family GDM functions
@@ -704,6 +704,10 @@ gdm_df <- function(gdm_result) {
 #' @return An object of class `gt_tbl`
 #' @export
 gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = TRUE) {
+
+  # Format GDM model output as a list
+  if (inherits(gdm_result, "gdm")) gdm_result <- list(model = gdm_result)
+  
   gdm_df <- gdm_df(gdm_result)
 
   d <- max(abs(min(gdm_df$coefficient, na.rm = TRUE)), abs(max(gdm_df$coefficient)))

@@ -7,7 +7,7 @@
 gdm_table(gdm_result, digits = 2, summary_stats = TRUE, footnote = TRUE)
 }
 \arguments{
-\item{gdm_result}{output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything}}
+\item{gdm_result}{output of \link[algatr]{gdm_run} or \link[algatr]{gdm_do_everything} or a GDM model object}
 
 \item{digits}{number of digits to include (defaults to 2)}
 }
