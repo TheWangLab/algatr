@@ -106,6 +106,7 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/AndySouth/rworldmap/" class="external-link">rworldmap</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">automap</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/" class="external-link">cowplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># for plotting (from TESS)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"http://membres-timc.imag.fr/Olivier.Francois/Conversion.R"</span><span class="op">)</span></span>
@@ -337,8 +338,26 @@ function with which we can visualize results.</p>
 coefficient values (in the Q-matrix) and will krige the values based on
 the raster provided (<code>krig_raster</code> from above). This will
 produce a Raster* type object.</p>
+<p>Coordinates and rasters used for kriging should be in a projected
+(planar) coordinate system. Therefore, spherical systems (including
+latitude-longitude coordinate systems) should be projected prior to use.
+An example of how this can be accomplished is shown below. If no CRS is
+provided, a warning will be given and the function will assume the data
+are provided in a projected system.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">krig_admix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_krig.html">tess_krig</a></span><span class="op">(</span><span class="va">qmat</span>, <span class="va">liz_coords</span>, <span class="va">krig_raster</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># First, create sf coordinates (note: EPSG 4326 is WGS84/latitude-longitude)</span></span>
+<span><span class="va">coords_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">liz_coords</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Next, we project these coordinates to California Albers (EPSG 3310) since these coordinates are in California</span></span>
+<span><span class="va">coords_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">coords_proj</span>, crs <span class="op">=</span> <span class="fl">3310</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Finally, reproject the kriging raster to the same CRS as the coordinates</span></span>
+<span><span class="va">krig_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/projectRaster.html" class="external-link">projectRaster</a></span><span class="op">(</span><span class="va">krig_raster</span>, crs <span class="op">=</span> <span class="st">"epsg:3310"</span><span class="op">)</span></span>
+<span><span class="co"># If you are using a SpatRaster you can reproject the coordinates like this:</span></span>
+<span><span class="co"># krig_raster &lt;- terra::project(krig_raster, "epsg:3310")</span></span>
+<span></span>
+<span><span class="co"># Now, we can run kriging using these coordinates</span></span>
+<span><span class="va">krig_admix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_krig.html">tess_krig</a></span><span class="op">(</span><span class="va">qmat</span>, <span class="va">coords_proj</span>, <span class="va">krig_raster</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualizing-tess-results">Visualizing TESS results<a class="anchor" aria-label="anchor" href="#visualizing-tess-results"></a>
@@ -393,12 +412,10 @@ instead of continuous Q values</p></li>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, pty <span class="op">=</span> <span class="st">"s"</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/tess_ggplot.html">tess_ggplot</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"maxQ"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Using alpha for a discrete variable is not advised.</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/tess_ggplot.html">tess_ggplot</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"maxQ"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/basic%20ggplot-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tess_ggplot.html">tess_ggplot</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"allQ"</span>, minQ <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Using alpha for a discrete variable is not advised.</span></span>
 <span><span class="co">#&gt; $plot</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/basic%20ggplot-2.png" width="480" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
@@ -421,7 +438,11 @@ TESS results. If users want more control over color, they can use the
 to be displayed, this can be set using the <code>plot_axes</code>
 argument:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/tess_ggplot.html">tess_ggplot</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"maxQ"</span>, ggplot_fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#bd9dac"</span>, <span class="st">"#257b94"</span>, <span class="st">"#476e9e"</span><span class="op">)</span><span class="op">)</span>, plot_axes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/tess_ggplot.html">tess_ggplot</a></span><span class="op">(</span><span class="va">krig_admix</span>, </span>
+<span>            plot_method <span class="op">=</span> <span class="st">"maxQ"</span>, </span>
+<span>            ggplot_fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#bd9dac"</span>, <span class="st">"#257b94"</span>, <span class="st">"#476e9e"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            plot_axes <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>            coords <span class="op">=</span> <span class="va">coords_proj</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/extended%20mapping-1.png" width="480" style="display: block; margin: auto;"></p>
 <p>We may also want to plot individual layers (K values), which we can
 using <code><a href="../reference/tess_plot_allK.html">tess_plot_allK()</a></code>.</p>
@@ -448,27 +469,26 @@ barplot is <code><a href="https://rspatial.github.io/terra/reference/barplot.htm
 <p>You can also map kriged Q-values using tess3r with the
 <code><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot()</a></code> function.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">qmat</span>,</span>
-<span>  <span class="va">liz_coords</span>,</span>
+<code class="sourceCode R"><span><span class="co"># TESS requires a coordinate matrix, so we need to convert the sf object to a matrix</span></span>
+<span><span class="va">coords_proj_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">coords_proj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">qmat</span>,</span>
+<span>  <span class="va">coords_proj_mat</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"map.max"</span>,</span>
 <span>  interpol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/FieldsKrigModel.html" class="external-link">FieldsKrigModel</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">"Ancestry coefficients"</span>,</span>
-<span>  xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"x"</span>, ylab <span class="op">=</span> <span class="st">"y"</span>,</span>
 <span>  col.palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/tess3r/man/CreatePalette.html" class="external-link">CreatePalette</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">300</span>, <span class="fl">300</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">.4</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: </span></span>
 <span><span class="co">#&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">#&gt;   (REML) Restricted maximum likelihood </span></span>
-<span><span class="co">#&gt;    minimum at  right endpoint  lambda  =  0.003324997 (eff. df= 38.94999 )</span></span>
+<span><span class="co">#&gt;    minimum at  right endpoint  lambda  =  0.06699675 (eff. df= 38.95001 )</span></span>
 <span><span class="co">#&gt; Warning: </span></span>
 <span><span class="co">#&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">#&gt;   (REML) Restricted maximum likelihood </span></span>
-<span><span class="co">#&gt;    minimum at  right endpoint  lambda  =  0.003324997 (eff. df= 38.94999 )</span></span>
-<span><span class="co">#&gt; Warning: </span></span>
-<span><span class="co">#&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
-<span><span class="co">#&gt;   (REML) Restricted maximum likelihood </span></span>
-<span><span class="co">#&gt;    minimum at  right endpoint  lambda  =  0.003324997 (eff. df= 38.94999 )</span></span></code></pre></div>
+<span><span class="co">#&gt;    minimum at  right endpoint  lambda  =  0.06699675 (eff. df= 38.95001 )</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;"></p>
 <p>As you can see from the above, interpolation is done using a
 different method in tess3r, which is why the resulting smoothed surface
@@ -508,10 +528,8 @@ mapped</p></li>
 </ul>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One could also use krig_raster as the grid object</span></span>
-<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_do_everything.html">tess_do_everything</a></span><span class="op">(</span><span class="va">liz_vcf</span>, <span class="va">liz_coords</span>, grid <span class="op">=</span> <span class="va">CA_env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, Kvals <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, K_selection <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span>
-<span><span class="co">#&gt; New names:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `` -&gt; `...1`</span></span></code></pre></div>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_do_everything.html">tess_do_everything</a></span><span class="op">(</span><span class="va">liz_vcf</span>, <span class="va">coords_proj</span>, grid <span class="op">=</span> <span class="va">krig_raster</span>, Kvals <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, K_selection <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/do%20everything-1.png" width="480" style="display: block; margin: auto;"><img src="TESS_vignette_files/figure-html/do%20everything-2.png" width="480" style="display: block; margin: auto;"><img src="TESS_vignette_files/figure-html/do%20everything-3.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
