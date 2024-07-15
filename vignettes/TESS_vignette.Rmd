@@ -220,7 +220,11 @@ tess_ggplot(krig_admix, plot_method = "allQ_poly", minQ = 0.20)
 In many cases, a user may want more customizability in mapping their TESS results. If users want more control over color, they can use the `ggplot_fill` argument. Also, if users they want x and y axes to be displayed, this can be set using the `plot_axes` argument:
 
 ```{r extended mapping, fig.width = 5, fig.height = 5, warning = FALSE, fig.align = 'center'}
-tess_ggplot(krig_admix, plot_method = "maxQ", ggplot_fill = scale_fill_manual(values = c("#bd9dac", "#257b94", "#476e9e")), plot_axes = TRUE)
+tess_ggplot(krig_admix, 
+            plot_method = "maxQ", 
+            ggplot_fill = scale_fill_manual(values = c("#bd9dac", "#257b94", "#476e9e")),
+            plot_axes = TRUE, 
+            coords = coords_proj)
 ```
 
 We may also want to plot individual layers (K values), which we can using `tess_plot_allK()`.
