@@ -154,6 +154,21 @@ We can generate a nice table with relevant GDM statistics to report using the `g
 gdm_table(gdm_full)
 ```
 
+### Variable importance and significance
+
+If you would like to calculate variable importance and p-values you can use the `gdm::gdm.varImp()` function from the gdm package. 
+
+```{r GDM variable importance}
+# To run gdm.varImp() you need a gdmData object, which you can create using gdm_format()
+gdmData <- gdm_format(liz_gendist, liz_coords, liz_env, scale_gendist = TRUE)
+
+# Then you can run gdm.varImp(), specifying whether you want to use geographic distance as a variable as well as the number of permutations you wish to run
+varimp <- gdm.varImp(gdmData, geo = TRUE, nPerm = 50)
+
+# You can visualize the results using gdm_varimp_table()
+gdm_varimp_table(varimp)
+```
+
 ## Visualizing GDM results
 
 ------------------------------------------------------------------------

@@ -105,44 +105,21 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
-  # convert env to spat raster if it is a RasterLayer/RasterStack
-  if (inherits(env, "Raster")) env <- terra::rast(env)
-
-  # Extract environmental data if env is a raster
-  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
-
-  # Scale genetic distance data from 0 to 1
-  if (scale_gendist) {
-    gendist <- scale01(gendist)
-  }
-  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale_gendist = TRUE to rescale from 0 to 1")
-  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale_gendist = TRUE to rescale from 0 to 1")
-
-  # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
-  site <- 1:nrow(gendist)
-
-  # Bind vector of sites with gen distances
-  gdmGen <- cbind(site, gendist)
-
-  # Convert coords to df
-  coords_df <- coords_to_df(coords)
-
-  # Create dataframe of predictor variables
-  gdmPred <- data.frame(
-    site = site,
-    x = coords_df$x,
-    y = coords_df$y,
-    env
-  )
-
-  # Format data for GDM
-  gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
-
-  if (geodist_type == "resistance" | geodist_type == "topographic") {
-    distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
-    gdmDist <- cbind(site, distmat)
-    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
-  } 
+  
+  formatted_data <- 
+    gdm_format(
+      gendist = gendist, 
+      coords = coords, 
+      env = env,
+      scale_gendist = scale_gendist, 
+      geodist_type = geodist_type, 
+      distPreds = distPreds, 
+      dist_lyr = dist_lyr
+      )
+  
+  gdmData <- formatted_data$gdmData
+  gdmPred <- formatted_data$gdmPred
+  gdmGen <- formatted_data$gdmGen
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -228,6 +205,64 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
   return(list(model = gdm_model_final, pvalues = NULL, varimp = NULL))
 }
 
+#' Format Data for Generalized Dissimilarity Modeling (GDM)
+#'
+#' @inheritParams gdm_do_everything
+#' @param gdmGen whether to include the gdm formatted genetic data seperately (defaults to FALSE)
+#' @param gdmPred whether to include the gdm formatted predictor data seperately (defaults to FALSE)
+#'
+#' @family GDM functions
+#'
+#' @return either a gdmData object if gdmGen and gdmPred are FALSE or a list of gdm data objects
+#' @export
+gdm_format <- function(gendist, coords, env, scale_gendist = FALSE, geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL, gdmPred = FALSE, gdmGen = FALSE) {
+  
+  # convert env to spat raster if it is a RasterLayer/RasterStack
+  if (inherits(env, "Raster")) env <- terra::rast(env)
+
+  # Extract environmental data if env is a raster
+  if (inherits(env, "SpatRaster")) env <- terra::extract(env, coords, ID = FALSE)
+
+  # Scale genetic distance data from 0 to 1
+  if (scale_gendist) {
+    gendist <- scale01(gendist)
+  }
+  if (!scale_gendist & max(gendist) > 1) stop("Maximum genetic distance is greater than 1, set scale_gendist = TRUE to rescale from 0 to 1")
+  if (!scale_gendist & min(gendist) < 0) stop("Minimum genetic distance is less than 0, set scale_gendist = TRUE to rescale from 0 to 1")
+
+  # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
+  site <- 1:nrow(gendist)
+
+  # Bind vector of sites with gen distances
+  gdmGen <- cbind(site, gendist)
+
+  # Convert coords to df
+  coords_df <- coords_to_df(coords)
+
+  # Create dataframe of predictor variables
+  gdmPred <- data.frame(
+    site = site,
+    x = coords_df$x,
+    y = coords_df$y,
+    env
+  )
+
+  # Format data for GDM
+  gdmData <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred)
+
+  if (geodist_type == "resistance" | geodist_type == "topographic") {
+    distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
+    gdmDist <- cbind(site, distmat)
+    gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
+  } 
+
+  if (!gdmPred & !gdmGen) return(gdmData)
+  if (!gdmPred) gdmPred <- NULL
+  if (!gdmGen) gdmGen <- NULL
+  result <- purrr::compact(list(gdmData = gdmData, gdmGen = gdmGen, gdmPred = gdmPred))
+
+  return(result)
+}
 
 #' Get best set of variables from a GDM model
 #'
@@ -768,4 +803,83 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 #' @export
 scale01 <- function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+}
+
+
+#' Generate a Variable Importance Table for GDM Models
+#'
+#' This function generates a table displaying the variable importance for Generalized Dissimilarity Models (GDM). 
+#' It can take either a `gdmData` object or a precomputed variable importance object and outputs a formatted table.
+#'
+#' @param varimp a `gdmData` object or a variable importance object created by running \link[gdm]{gdm.varImp}.
+#' @param digits number of digits to include (defaults to 2)
+#' @param summary_stats whether to add summary statistics to bottom of table (defaults to TRUE).
+#' @param nPerm number of permutations to use if `varimp` is a `gdmData` object. Default is 50.
+#' @param geo whether to include geographic distance in the GDM model. Default is TRUE.
+#'
+#' @return A `gt` table object displaying the variable importance.
+#'
+#' @export
+gdm_varimp_table <- function(varimp, digits = 2, summary_stats = TRUE, nPerm = 50, geo = TRUE) {
+
+  # If varimp is a gdmData object, run gdm.varImp
+  if (inherits(varimp, "gdmData")) {
+    varimp <- gdm::gdm.varImp(varimp, predSelect = FALSE, nPerm = nPerm, geo = geo)
+  }
+
+  # Make df
+  df <- 
+    varimp[-1] %>% 
+    purrr::imap(\(x, i) {
+      colnames(x) <- i
+      x$Predictor <- row.names(x)
+      return(x)
+    }) %>% 
+    purrr::reduce(dplyr::left_join, by = "Predictor") %>% 
+    dplyr::select(Predictor, dplyr::everything())
+
+  varstats <- varimp[[1]]
+
+  # Round decimal places based on digits
+  if (digits) df$`Predictor Importance` <- round(df$`Predictor Importance`, digits)
+  d <- max(abs(min(df$`Predictor Importance`)), abs(max(df$`Predictor Importance`)))
+
+  # Build table
+  suppressWarnings({
+    tbl <- 
+      df %>% 
+      gt::gt() %>% 
+      gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>% 
+      gt::sub_missing(missing_text = "")
+
+    # Add summary stats to bottom of table
+    if (summary_stats) {
+      stat_names <- c("Model deviance:", "Percent deviance explained:", "Model p-value:", "Fitted permutations:")
+      stats <- varstats[,"All predictors"]
+      df <- 
+        df %>% 
+        rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, df)) %>% 
+        dplyr::mutate(dplyr::across(-c(Predictor), as.numeric))
+
+      tbl <- 
+        df %>% 
+        gt::gt() %>% 
+        gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>% 
+        gt::sub_missing(missing_text = "") %>% 
+        gt::tab_row_group(label = NA, id = "model", rows = which(!(df$Predictor %in% stat_names))) %>% 
+        gtExtras::gt_highlight_rows(rows = which(df$Predictor %in% stat_names), fill = "white") %>% 
+        gt::tab_style(
+          style = list(
+            gt::cell_borders(sides = "top", color = "white"),
+            gt::cell_text(align = "left"),
+            "padding-top:2px;padding-bottom:2px;"
+          ),
+          locations = gt::cells_body(rows = which(df$Predictor %in% stat_names))
+        )
+    }
+
+    if (!is.null(digits)) tbl <- tbl %>% gt::fmt_number(columns = -Predictor, decimals = 2)
+  })
+
+  tbl
 }
