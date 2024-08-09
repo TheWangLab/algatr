@@ -44,7 +44,7 @@ do_everything_for_me <- function(gen, coords, envlayers, quiet = FALSE, gators =
 
   if (is.null(gdm)) {
     warning("GDM model = \"best\" did not find a significant model, running a full model instead")
-    gdm <- quiet_gdm(gendist, coords, envlayers, model = "full", scale_gendist = TRUE, quiet = quiet)
+    gdm <- gdm_do_everything(gendist, coords, envlayers, model = "full", scale_gendist = TRUE, quiet = quiet)
   }
 
   if (gators & !quiet) ascii_alligator("GDM")
