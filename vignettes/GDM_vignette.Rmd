@@ -160,7 +160,7 @@ If you would like to calculate variable importance and p-values you can use the 
 
 ```{r GDM variable importance}
 # To run gdm.varImp() you need a gdmData object, which you can create using gdm_format()
-gdmData <- gdm_format(liz_gendist, liz_coords, liz_env, scale_gendist = TRUE)
+gdmData <- gdm_format(liz_gendist, liz_coords, env, scale_gendist = TRUE)
 
 # Then you can run gdm.varImp(), specifying whether you want to use geographic distance as a variable as well as the number of permutations you wish to run
 varimp <- gdm.varImp(gdmData, geo = TRUE, nPerm = 50)
@@ -213,12 +213,14 @@ The algatr package also has an option to run all of the above functionality in a
 Running a GDM with `gdm_do_everything()` requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
 ```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='asis'}
-gdm_full_everything <- gdm_do_everything(liz_gendist,
-  liz_coords,
-  envlayers = CA_env,
-  model = "full",
-  scale_gendist = TRUE
-)
+gdm_full_everything <- 
+  gdm_do_everything(
+    liz_gendist,
+    liz_coords,
+    envlayers = CA_env,
+    model = "full",
+    scale_gendist = TRUE
+  )
 ```
 
 ## Additional documentation and citations

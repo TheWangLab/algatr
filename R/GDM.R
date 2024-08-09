@@ -106,6 +106,7 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
   
+  # Create GDM formatted data objects
   formatted_data <- 
     gdm_format(
       gendist = gendist, 
@@ -114,12 +115,17 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
       scale_gendist = scale_gendist, 
       geodist_type = geodist_type, 
       distPreds = distPreds, 
-      dist_lyr = dist_lyr
+      dist_lyr = dist_lyr,
+      gdmPred = TRUE,
+      gdmGen = TRUE
       )
   
   gdmData <- formatted_data$gdmData
   gdmPred <- formatted_data$gdmPred
   gdmGen <- formatted_data$gdmGen
+
+  # Vector of sites (for individual-based sampling, this is just assigning 1 site to each individual)
+  site <- 1:nrow(gendist)
 
   # RUN GDM -------------------------------------------------------------------------------------------------------
 
@@ -208,16 +214,20 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
 #' Format Data for Generalized Dissimilarity Modeling (GDM)
 #'
 #' @inheritParams gdm_do_everything
-#' @param gdmGen whether to include the gdm formatted genetic data seperately (defaults to FALSE)
-#' @param gdmPred whether to include the gdm formatted predictor data seperately (defaults to FALSE)
+#' @param gdmGen whether to include the gdm formatted genetic data seperately (defaults to FALSE). This dataframe contains the genetic distance matrix with an additional column for site number.
+#' @param gdmPred whether to include the gdm formatted predictor data seperately (defaults to FALSE). This dataframe contains the site number, coordinates, and environmental values at each site
 #'
 #' @family GDM functions
 #'
 #' @return either a gdmData object if gdmGen and gdmPred are FALSE or a list of gdm data objects
 #' @export
 gdm_format <- function(gendist, coords, env, scale_gendist = FALSE, geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL, gdmPred = FALSE, gdmGen = FALSE) {
+
+  # Rename gdmPred/gdmGen arguments as they will later be overwritten
+  gdmPred_lgl <- gdmPred
+  gdmGen_lgl <- gdmGen
   
-  # convert env to spat raster if it is a RasterLayer/RasterStack
+  # Convert env to spat raster if it is a RasterLayer/RasterStack
   if (inherits(env, "Raster")) env <- terra::rast(env)
 
   # Extract environmental data if env is a raster
@@ -256,9 +266,10 @@ gdm_format <- function(gendist, coords, env, scale_gendist = FALSE, geodist_type
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
   } 
 
-  if (!gdmPred & !gdmGen) return(gdmData)
-  if (!gdmPred) gdmPred <- NULL
-  if (!gdmGen) gdmGen <- NULL
+ 
+  if (!gdmPred_lgl & !gdmGen_lgl) return(gdmData)
+  if (!gdmPred_lgl) gdmPred <- NULL
+  if (!gdmGen_lgl) gdmGen <- NULL
   result <- purrr::compact(list(gdmData = gdmData, gdmGen = gdmGen, gdmPred = gdmPred))
 
   return(result)
