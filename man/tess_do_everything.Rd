@@ -23,7 +23,7 @@ tess_do_everything(
 \arguments{
 \item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{grid}{SpatRaster for kriging}
 
@@ -56,6 +56,10 @@ TESS function to do everything
 \details{
 TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
 See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471
+
+Coordinates and rasters should be in a projected (planar) coordinate system.
+Therefore, spherical systems (including latitute-longitude coordinate systems) should be projected prior to use.
+Transformation can be performed using \link[sf]{st_set_crs} for coordinates or \link[terra]{project} for rasters (see vignette for more details).
 }
 \seealso{
 Other TESS functions: 

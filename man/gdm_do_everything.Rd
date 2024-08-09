@@ -57,6 +57,7 @@ GDM is run using the gdm package: Fitzpatrick, M., Mokany, K., Manion, G., Nieto
 Other GDM functions: 
 \code{\link{gdm_coeffs}()},
 \code{\link{gdm_df}()},
+\code{\link{gdm_format}()},
 \code{\link{gdm_map}()},
 \code{\link{gdm_plot_diss}()},
 \code{\link{gdm_plot_isplines}()},

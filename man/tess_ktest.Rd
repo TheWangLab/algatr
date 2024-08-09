@@ -19,7 +19,7 @@ tess_ktest(
 \arguments{
 \item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{Kvals}{vector of K values to test}
 
