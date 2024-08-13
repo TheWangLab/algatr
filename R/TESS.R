@@ -4,6 +4,7 @@
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords  coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)
 #' @param grid SpatRaster for kriging
+#' @param krig_method type of kriging to perform; options are "autoKrige" (default; uses `automap::autoKrige()` function) or "fields" (uses `fields::Krig()` function)
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
@@ -12,6 +13,7 @@
 #' @param tess_method the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)
 #' @param lambda numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.
 #' @param ploidy ploidy of data (defaults to 2)
+#' @param rep numeric value for the number of times TESS will be repeated for each value of K (defaults to 1)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
 #' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #'
@@ -29,8 +31,8 @@
 #' @export
 tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
-                               tess_method = "projected.ls", lambda = 1, ploidy = 2, correct_kriged_Q = TRUE,
-                               quiet = FALSE) {
+                               tess_method = "projected.ls", lambda = 1, ploidy = 2, rep = 1,
+                               correct_kriged_Q = TRUE, quiet = FALSE) {
   message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
@@ -48,7 +50,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
   # Test different k values, if more than one provided
   if (length(Kvals) > 1) {
     # Run TESS K test
-    tess_results <- tess_ktest(gen, coords_mat, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, quiet = quiet)
+    tess_results <- tess_ktest(gen, coords_mat, Kvals = Kvals, tess_method = tess_method, lambda = lambda, K_selection = K_selection, ploidy = ploidy, rep = rep, quiet = quiet)
 
     # Get K
     K <- tess_results[["K"]]
@@ -127,7 +129,7 @@ tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selecti
 #' @export
 #'
 #' @family TESS functions
-tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE) {
+tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "projected.ls", lambda = 1, K_selection = "manual", ploidy = 2, quiet = FALSE, rep = 1) {
   if (length(Kvals) == 1) {
     message("Only a single value for K provided; proceeding with running TESS without K selection...")
     K <- Kvals
@@ -147,7 +149,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 
   # Run TESS for all K values
   tess_quiet <- purrr::quietly(tess3r::tess3)
-  tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy)
+  tess3_obj <- tess_quiet(X = gen, coord = coords, K = Kvals, method = tess_method, lambda = lambda, ploidy = ploidy, rep = rep)
   tess3_obj <- tess3_obj$result
 
   if (length(Kvals) > 1) {
@@ -199,7 +201,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #' @export
 #'
 #' @family TESS functions
-tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
+tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE, krig_method = "autoKrige") {
   # Check CRS
   crs_check(coords, grid)
 
@@ -208,18 +210,28 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
 
   # Make grid for kriging
   if (!inherits(grid, "SpatRaster")) grid <- terra::rast(grid)
-  krig_grid <- raster_to_grid(grid)
 
   # Convert coords
   krig_df <- coords_to_sp(coords)
 
+  # Convert grid
+  krig_grid <- raster_to_grid(grid)
+
   # Krige each K value
-  krig_admix <-
-    purrr::map(1:K, krig_K, qmat, krig_grid, krig_df) %>%
-    terra::rast()
+  if (krig_method == "autoKrige") {
+    krig_admix <-
+      purrr::map(1:K, krig_K, qmat, krig_grid, krig_df, krig_method) %>%
+      terra::rast()
+  }
+
+  if (krig_method == "fields") {
+    krig_admix <-
+      purrr::map(1:K, krig_K, krig_df, qmat, krig_raster) %>%
+      terra::rast()
+  }
 
   # mask with original raster layer because the grid fills in all NAs
-  #( note: we don't remove NAs because it can change the extent)
+  # (note: we don't remove NAs because it can change the extent)
   grid <- terra::resample(grid, krig_admix[[1]])
   krig_admix <- terra::mask(krig_admix, grid)
 
@@ -244,7 +256,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
 #' @export
 #' @noRd
 #' @family TESS functions
-krig_K <- function(K, qmat, krig_grid, krig_df) {
+krig_K <- function(K, qmat, krig_grid = NULL, krig_raster = NULL, krig_df, krig_method) {
   # Add Q values to spatial dataframe
   krig_df$Q <- qmat[, K]
 
@@ -254,18 +266,37 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
     return(NULL)
   }
 
-  # Krige (capture output so it is not printed automatically)
-  quiet_krig <- purrr::quietly(automap::autoKrige)
-  co <- capture.output(krig_res <- quiet_krig(Q ~ 1, krig_df, new_data = krig_grid))
-  krig_res <- krig_res$result
+  if (krig_method == "autoKrige") {
+    # Krige (capture output so it is not printed automatically)
+    quiet_krig <- purrr::quietly(automap::autoKrige)
+    co <- capture.output(krig_res <- quiet_krig(Q ~ 1, krig_df, new_data = krig_grid))
+    krig_res <- krig_res$result
 
-  # Get Krige output
-  krig_spdf <- krig_res$krige_output
+    # Get Krige output
+    krig_spdf <- krig_res$krige_output
 
-  # turn spdf into raster
-  krig_r <- terra::rast(krig_spdf, type = "xyz", crs = terra::crs(krig_grid))
-  # return just the prediction (may want to provide var/stdev in the future)
-  krig_r <- krig_r[[1]]
+    # turn spdf into raster
+    krig_r <- terra::rast(krig_spdf, type = "xyz", crs = terra::crs(krig_grid))
+    # return just the prediction (may want to provide var/stdev in the future)
+    krig_r <- krig_r[[1]]
+  }
+
+  if (krig_method == "fields") {
+    # coords_mat <- st_coordinates(krig_df)
+    coords_mat <- as.matrix(sp::coordinates(krig_df))
+    # Krige (capture output so it is not printed automatically)
+    quiet_krig <- purrr::quietly(fields::Krig)
+    co <- capture.output(krig_res <- quiet_krig(coords_mat, krig_df$Q))
+    krig_res <- krig_res$result
+
+    krig_r <- terra::interpolate(krig_raster, krig_res)
+    krig_r <- terra::rast(krig_r)
+
+    # interpol.stack <- raster::stack()
+    # model <- fields::Krig(coords_mat, krig_df$Q)
+    # interpol.stack <- raster::stack(interpol.stack, raster::interpolate(krig_raster, model))
+    # krig_r <- terra::rast(interpol.stack)
+  }
 
   return(krig_r)
 }
@@ -384,7 +415,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     # Suppressing a warning about using alpha for a discrete variable
     suppressWarnings ({
       plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
-      
+
       plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
       })
   }
@@ -662,7 +693,7 @@ pops_helper <- function(gen, tess3_obj, K) {
   # Replace Vs with Ks for clarity
   colnames(qmat) <- stringr::str_replace_all(colnames(qmat), "V", "K")
 
-  pops <- data.frame(individual = names, qmat) 
+  pops <- data.frame(individual = names, qmat)
 
   # Get population assignment based on max Q value
   pops <- pops %>%

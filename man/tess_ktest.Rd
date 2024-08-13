@@ -13,13 +13,14 @@ tess_ktest(
   lambda = 1,
   K_selection = "manual",
   ploidy = 2,
-  quiet = FALSE
+  quiet = FALSE,
+  rep = 1
 )
 }
 \arguments{
 \item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{Kvals}{vector of K values to test}
 
@@ -34,6 +35,8 @@ tess_ktest(
 \item{ploidy}{ploidy of data (defaults to 2)}
 
 \item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
+
+\item{rep}{numeric value for the number of times TESS will be repeated for each value of K (defaults to 1)}
 }
 \value{
 list with results from testing different K-values

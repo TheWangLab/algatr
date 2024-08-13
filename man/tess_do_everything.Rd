@@ -16,6 +16,7 @@ tess_do_everything(
   tess_method = "projected.ls",
   lambda = 1,
   ploidy = 2,
+  rep = 1,
   correct_kriged_Q = TRUE,
   quiet = FALSE
 )
@@ -23,7 +24,7 @@ tess_do_everything(
 \arguments{
 \item{gen}{genotype dosage matrix (rows = individuals & columns = snps) or \code{vcfR} object}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{grid}{SpatRaster for kriging}
 
@@ -43,9 +44,13 @@ tess_do_everything(
 
 \item{ploidy}{ploidy of data (defaults to 2)}
 
+\item{rep}{numeric value for the number of times TESS will be repeated for each value of K (defaults to 1)}
+
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
 
 \item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
+
+\item{krig_method}{type of kriging to perform; options are "autoKrige" (default; uses \code{automap::autoKrige()} function) or "fields" (uses \code{fields::Krig()} function)}
 }
 \value{
 list with all TESS results, final K value, and final kriged raster
@@ -56,6 +61,10 @@ TESS function to do everything
 \details{
 TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
 See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471
+
+Coordinates and rasters should be in a projected (planar) coordinate system.
+Therefore, spherical systems (including latitute-longitude coordinate systems) should be projected prior to use.
+Transformation can be performed using \link[sf]{st_set_crs} for coordinates or \link[terra]{project} for rasters (see vignette for more details).
 }
 \seealso{
 Other TESS functions: 

@@ -4,16 +4,24 @@
 \alias{tess_krig}
 \title{Krige admixture values}
 \usage{
-tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
+tess_krig(
+  qmat,
+  coords,
+  grid = NULL,
+  correct_kriged_Q = TRUE,
+  krig_method = "autoKrige"
+)
 }
 \arguments{
 \item{qmat}{qmatrix}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{grid}{SpatRaster for kriging}
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
+
+\item{krig_method}{type of kriging to perform; options are "autoKrige" (default; uses \code{automap::autoKrige()} function) or "fields" (uses \code{fields::Krig()} function)}
 }
 \value{
 Raster\* type object of kriged Q values
