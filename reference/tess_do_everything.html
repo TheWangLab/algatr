@@ -82,7 +82,7 @@
 
 
 <dt>coords</dt>
-<dd><p>dataframe with x and y coordinates</p></dd>
+<dd><p>coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)</p></dd>
 
 
 <dt>grid</dt>
@@ -139,6 +139,9 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>TESS is run using the tess3r package: Caye, K., François, O. (2016). tess3r: Inference of Spatial Population Genetic Structure. R package version 1.1.0.
 See also: Caye, K., Deist, T.M., Martins, H., Michel, O., François, O. (2016). TESS3: fast inference of spatial population structure and genome scans for selection. Mol. Ecol. Res. 16(2):540-548. https://doi.org/10.1111/1755-0998.12471</p>
+<p>Coordinates and rasters should be in a projected (planar) coordinate system.
+Therefore, spherical systems (including latitute-longitude coordinate systems) should be projected prior to use.
+Transformation can be performed using <a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a> for coordinates or <a href="https://rspatial.github.io/terra/reference/project.html" class="external-link">project</a> for rasters (see vignette for more details).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

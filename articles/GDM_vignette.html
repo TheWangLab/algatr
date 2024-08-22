@@ -98,7 +98,8 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mfitzpatrick.al.umces.edu/gdm/" class="external-link">gdm</a></span><span class="op">)</span></span></code></pre></div>
 <p><strong>If using GDM, please cite the following: for the GDM method,
 Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized
 dissimilarity modelling to analyse and predict patterns of beta
@@ -124,7 +125,7 @@ including a thorough <a href="https://cran.microsoft.com/snapshot/2018-01-13/web
 that describes some of the theory behind GDM.</p>
 <p>Within algatr, there is one main function to perform a GDM analysis:
 <code><a href="../reference/gdm_do_everything.html">gdm_do_everything()</a></code>. This function runs the GDM (using the
-<code>gdm()</code> function within the gdm package) and allows a user to
+<code><a href="https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.html" class="external-link">gdm()</a></code> function within the gdm package) and allows a user to
 run a GDM with all variables, or with model selection to choose the
 best-supported variables.</p>
 <p>Contained within <code><a href="../reference/gdm_do_everything.html">gdm_do_everything()</a></code> are the following
@@ -291,7 +292,7 @@ dissimilarity within the <code>observed</code> element.</p>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] GDM Modelling Summary</span></span>
-<span><span class="co">#&gt; [1] Creation Date:  Mon Jul 15 23:06:33 2024</span></span>
+<span><span class="co">#&gt; [1] Creation Date:  Thu Aug 22 17:21:34 2024</span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] Name:  $        Name:  gdm_full Name:  model   </span></span>
 <span><span class="co">#&gt; [1] </span></span>
@@ -882,6 +883,537 @@ within the GDM model.</p>
 </table>
 </div>
 </div>
+<div class="section level4">
+<h4 id="variable-importance-and-significance">Variable importance and significance<a class="anchor" aria-label="anchor" href="#variable-importance-and-significance"></a>
+</h4>
+<p>If you would like to calculate variable importance and p-values you
+can use the <code><a href="https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.varImp.html" class="external-link">gdm::gdm.varImp()</a></code> function from the gdm
+package.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># To run gdm.varImp() you need a gdmData object, which you can create using gdm_format()</span></span>
+<span><span class="va">gdmData</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_format.html">gdm_format</a></span><span class="op">(</span><span class="va">liz_gendist</span>, <span class="va">liz_coords</span>, <span class="va">env</span>, scale_gendist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Then you can run gdm.varImp(), specifying whether you want to use geographic distance as a variable as well as the number of permutations you wish to run</span></span>
+<span><span class="va">varimp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.varImp.html" class="external-link">gdm.varImp</a></span><span class="op">(</span><span class="va">gdmData</span>, geo <span class="op">=</span> <span class="cn">TRUE</span>, nPerm <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Fitting initial model with all 4 predictors...</span></span>
+<span><span class="co">#&gt; Sum of I-spline coefficients for predictor CA_rPCA1 = 0</span></span>
+<span><span class="co">#&gt; Removing CA_rPCA1 and proceeding with permutation testing...</span></span>
+<span><span class="co">#&gt; Creating 50 permuted site-pair tables...</span></span>
+<span><span class="co">#&gt; Starting model assessment...</span></span>
+<span><span class="co">#&gt; Percent deviance explained by the full model =  36.89</span></span>
+<span><span class="co">#&gt; Fitting GDMs to the permuted site-pair tables...</span></span>
+<span><span class="co">#&gt; Assessing importance of geographic distance...</span></span>
+<span><span class="co">#&gt; Assessing importance of CA_rPCA2...</span></span>
+<span><span class="co">#&gt; Assessing importance of CA_rPCA3...</span></span>
+<span><span class="co">#&gt; Backwards elimination not selected by user (predSelect=F). Ceasing assessment.</span></span>
+<span><span class="co">#&gt; Percent deviance explained by final model = 36.89</span></span>
+<span><span class="co">#&gt; Final set of predictors returned:</span></span>
+<span><span class="co">#&gt; Geographic</span></span>
+<span><span class="co">#&gt; CA_rPCA2</span></span>
+<span><span class="co">#&gt; CA_rPCA3</span></span>
+<span></span>
+<span><span class="co"># You can visualize the results using gdm_varimp_table()</span></span>
+<span><span class="fu"><a href="../reference/gdm_varimp_table.html">gdm_varimp_table</a></span><span class="op">(</span><span class="va">varimp</span><span class="op">)</span></span></code></pre></div>
+<div id="vlmtfvlolq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vlmtfvlolq table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#vlmtfvlolq thead, #vlmtfvlolq tbody, #vlmtfvlolq tfoot, #vlmtfvlolq tr, #vlmtfvlolq td, #vlmtfvlolq th {
+  border-style: none;
+}
+
+#vlmtfvlolq p {
+  margin: 0;
+  padding: 0;
+}
+
+#vlmtfvlolq .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#vlmtfvlolq .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#vlmtfvlolq .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#vlmtfvlolq .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#vlmtfvlolq .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#vlmtfvlolq .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#vlmtfvlolq .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#vlmtfvlolq .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#vlmtfvlolq .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#vlmtfvlolq .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#vlmtfvlolq .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vlmtfvlolq .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#vlmtfvlolq .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#vlmtfvlolq .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#vlmtfvlolq .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vlmtfvlolq .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#vlmtfvlolq .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#vlmtfvlolq .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#vlmtfvlolq .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vlmtfvlolq .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#vlmtfvlolq .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vlmtfvlolq .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#vlmtfvlolq .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vlmtfvlolq .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vlmtfvlolq .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vlmtfvlolq .gt_left {
+  text-align: left;
+}
+
+#vlmtfvlolq .gt_center {
+  text-align: center;
+}
+
+#vlmtfvlolq .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#vlmtfvlolq .gt_font_normal {
+  font-weight: normal;
+}
+
+#vlmtfvlolq .gt_font_bold {
+  font-weight: bold;
+}
+
+#vlmtfvlolq .gt_font_italic {
+  font-style: italic;
+}
+
+#vlmtfvlolq .gt_super {
+  font-size: 65%;
+}
+
+#vlmtfvlolq .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#vlmtfvlolq .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#vlmtfvlolq .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#vlmtfvlolq .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#vlmtfvlolq .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#vlmtfvlolq .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#vlmtfvlolq .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Predictor">Predictor</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Predictor Importance">Predictor Importance</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Predictor p-values">Predictor p-values</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Model Convergence">Model Convergence</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr class="gt_group_heading_row">
+<th colspan="4" class="gt_empty_group_heading" scope="colgroup" id=""></th>
+    </tr>
+<tr class="gt_row_group_first">
+<td headers="model  Predictor" class="gt_row gt_left">Geographic</td>
+<td headers="model  Predictor Importance" class="gt_row gt_right" style="background-color: #7FBF7B; color: #000000;">92.99</td>
+<td headers="model  Predictor p-values" class="gt_row gt_right">0.00</td>
+<td headers="model  Model Convergence" class="gt_row gt_right">50.00</td>
+</tr>
+<tr>
+<td headers="model  Predictor" class="gt_row gt_left">CA_rPCA2</td>
+<td headers="model  Predictor Importance" class="gt_row gt_right" style="background-color: #F7F7F6; color: #000000;">0.65</td>
+<td headers="model  Predictor p-values" class="gt_row gt_right">0.64</td>
+<td headers="model  Model Convergence" class="gt_row gt_right">50.00</td>
+</tr>
+<tr>
+<td headers="model  Predictor" class="gt_row gt_left">CA_rPCA3</td>
+<td headers="model  Predictor Importance" class="gt_row gt_right" style="background-color: #F7F7F7; color: #000000;">0.35</td>
+<td headers="model  Predictor p-values" class="gt_row gt_right">0.72</td>
+<td headers="model  Model Convergence" class="gt_row gt_right">50.00</td>
+</tr>
+<tr class="gt_group_heading_row">
+<th colspan="4" class="gt_empty_group_heading" scope="colgroup" id=""></th>
+    </tr>
+<tr class="gt_row_group_first">
+<td headers="NA  Predictor" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">Model deviance:</td>
+<td headers="NA  Predictor Importance" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">83.01</td>
+<td headers="NA  Predictor p-values" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+<td headers="NA  Model Convergence" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+</tr>
+<tr>
+<td headers="NA  Predictor" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">Percent deviance explained:</td>
+<td headers="NA  Predictor Importance" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">36.89</td>
+<td headers="NA  Predictor p-values" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+<td headers="NA  Model Convergence" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+</tr>
+<tr>
+<td headers="NA  Predictor" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">Model p-value:</td>
+<td headers="NA  Predictor Importance" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">0.00</td>
+<td headers="NA  Predictor p-values" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+<td headers="NA  Model Convergence" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+</tr>
+<tr>
+<td headers="NA  Predictor" class="gt_row gt_left" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">Fitted permutations:</td>
+<td headers="NA  Predictor Importance" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;">50.00</td>
+<td headers="NA  Predictor p-values" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+<td headers="NA  Model Convergence" class="gt_row gt_right" style="background-color: rgba(255,255,255,0.8); color: #000000; font-weight: bold; text-align: left; border-top-width: 1px; border-top-style: solid; border-top-color: white; padding-top:2px;padding-bottom:2px;"><br></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="visualizing-gdm-results">Visualizing GDM results<a class="anchor" aria-label="anchor" href="#visualizing-gdm-results"></a>
@@ -898,18 +1430,18 @@ genetic composition of our samples. Secondly, we can visualize how
 genetic composition is associated with each of these variables by
 plotting each as a vector and coloring the individual points in the same
 PC RGB space.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_map.html">gdm_map</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, <span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
 <p><img src="GDM_vignette_files/figure-html/GDM%20plots-1.png" width="480"><img src="GDM_vignette_files/figure-html/GDM%20plots-2.png" width="480"></p>
 <p>The output of <code><a href="../reference/gdm_map.html">gdm_map()</a></code> is a list containing the GDM
 transformed raster layers (<code>map$rastTrans</code>) and the raster
 PCA of the GDM transformed layers, rescaled from 0 to 250 for RGB
 plotting (<code>map$pcaRastRGB</code>)</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can use the map output to plot the individual GDM transformed raster layers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">rastTrans</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-1.png" width="480"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># And the individual PCA layers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -928,7 +1460,7 @@ algatr’s <code><a href="../reference/extrap_mask.html">extrap_mask()</a></code
 for more information), we can mask out areas from the GDM map in several
 ways. Below, we mask out areas (in white) that fall outside a
 user-defined buffer around our sampling coordinates.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the GDM map from the GDM model object</span></span>
 <span><span class="va">maprgb</span> <span class="op">&lt;-</span> <span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span></span>
 <span></span>
@@ -958,34 +1490,36 @@ data files for input: a genetic distance matrix (the
 <code>gendist</code> argument), coordinates for samples (the
 <code>coords</code> argument), and environmental layers (the
 <code>envlayers</code> argument).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gdm_full_everything</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_do_everything.html">gdm_do_everything</a></span><span class="op">(</span><span class="va">liz_gendist</span>,</span>
-<span>  <span class="va">liz_coords</span>,</span>
-<span>  envlayers <span class="op">=</span> <span class="va">CA_env</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"full"</span>,</span>
-<span>  scale_gendist <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gdm_full_everything</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/gdm_do_everything.html">gdm_do_everything</a></span><span class="op">(</span></span>
+<span>    <span class="va">liz_gendist</span>,</span>
+<span>    <span class="va">liz_coords</span>,</span>
+<span>    envlayers <span class="op">=</span> <span class="va">CA_env</span>,</span>
+<span>    model <span class="op">=</span> <span class="st">"full"</span>,</span>
+<span>    scale_gendist <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span></code></pre></div>
-<div id="fwhbqytmac" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#fwhbqytmac table {
+<div id="cgxmthdhlq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cgxmthdhlq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fwhbqytmac thead, #fwhbqytmac tbody, #fwhbqytmac tfoot, #fwhbqytmac tr, #fwhbqytmac td, #fwhbqytmac th {
+#cgxmthdhlq thead, #cgxmthdhlq tbody, #cgxmthdhlq tfoot, #cgxmthdhlq tr, #cgxmthdhlq td, #cgxmthdhlq th {
   border-style: none;
 }
 
-#fwhbqytmac p {
+#cgxmthdhlq p {
   margin: 0;
   padding: 0;
 }
 
-#fwhbqytmac .gt_table {
+#cgxmthdhlq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1011,12 +1545,12 @@ data files for input: a genetic distance matrix (the
   border-left-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_caption {
+#cgxmthdhlq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#fwhbqytmac .gt_title {
+#cgxmthdhlq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1028,7 +1562,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-width: 0;
 }
 
-#fwhbqytmac .gt_subtitle {
+#cgxmthdhlq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1040,7 +1574,7 @@ data files for input: a genetic distance matrix (the
   border-top-width: 0;
 }
 
-#fwhbqytmac .gt_heading {
+#cgxmthdhlq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1052,13 +1586,13 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_bottom_border {
+#cgxmthdhlq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_col_headings {
+#cgxmthdhlq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1073,7 +1607,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_col_heading {
+#cgxmthdhlq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1093,7 +1627,7 @@ data files for input: a genetic distance matrix (the
   overflow-x: hidden;
 }
 
-#fwhbqytmac .gt_column_spanner_outer {
+#cgxmthdhlq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1105,15 +1639,15 @@ data files for input: a genetic distance matrix (the
   padding-right: 4px;
 }
 
-#fwhbqytmac .gt_column_spanner_outer:first-child {
+#cgxmthdhlq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fwhbqytmac .gt_column_spanner_outer:last-child {
+#cgxmthdhlq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fwhbqytmac .gt_column_spanner {
+#cgxmthdhlq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1125,11 +1659,11 @@ data files for input: a genetic distance matrix (the
   width: 100%;
 }
 
-#fwhbqytmac .gt_spanner_row {
+#cgxmthdhlq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#fwhbqytmac .gt_group_heading {
+#cgxmthdhlq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1155,7 +1689,7 @@ data files for input: a genetic distance matrix (the
   text-align: left;
 }
 
-#fwhbqytmac .gt_empty_group_heading {
+#cgxmthdhlq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1170,15 +1704,15 @@ data files for input: a genetic distance matrix (the
   vertical-align: middle;
 }
 
-#fwhbqytmac .gt_from_md > :first-child {
+#cgxmthdhlq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fwhbqytmac .gt_from_md > :last-child {
+#cgxmthdhlq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fwhbqytmac .gt_row {
+#cgxmthdhlq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1197,7 +1731,7 @@ data files for input: a genetic distance matrix (the
   overflow-x: hidden;
 }
 
-#fwhbqytmac .gt_stub {
+#cgxmthdhlq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1210,7 +1744,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#fwhbqytmac .gt_stub_row_group {
+#cgxmthdhlq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1224,15 +1758,15 @@ data files for input: a genetic distance matrix (the
   vertical-align: top;
 }
 
-#fwhbqytmac .gt_row_group_first td {
+#cgxmthdhlq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#fwhbqytmac .gt_row_group_first th {
+#cgxmthdhlq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#fwhbqytmac .gt_summary_row {
+#cgxmthdhlq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1242,16 +1776,16 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#fwhbqytmac .gt_first_summary_row {
+#cgxmthdhlq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_first_summary_row.thick {
+#cgxmthdhlq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#fwhbqytmac .gt_last_summary_row {
+#cgxmthdhlq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1261,7 +1795,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_grand_summary_row {
+#cgxmthdhlq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1271,7 +1805,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#fwhbqytmac .gt_first_grand_summary_row {
+#cgxmthdhlq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1281,7 +1815,7 @@ data files for input: a genetic distance matrix (the
   border-top-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_last_grand_summary_row_top {
+#cgxmthdhlq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1291,11 +1825,11 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_striped {
+#cgxmthdhlq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fwhbqytmac .gt_table_body {
+#cgxmthdhlq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1304,7 +1838,7 @@ data files for input: a genetic distance matrix (the
   border-bottom-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_footnotes {
+#cgxmthdhlq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1318,7 +1852,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_footnote {
+#cgxmthdhlq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1327,7 +1861,7 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#fwhbqytmac .gt_sourcenotes {
+#cgxmthdhlq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1341,7 +1875,7 @@ data files for input: a genetic distance matrix (the
   border-right-color: #D3D3D3;
 }
 
-#fwhbqytmac .gt_sourcenote {
+#cgxmthdhlq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1349,63 +1883,63 @@ data files for input: a genetic distance matrix (the
   padding-right: 5px;
 }
 
-#fwhbqytmac .gt_left {
+#cgxmthdhlq .gt_left {
   text-align: left;
 }
 
-#fwhbqytmac .gt_center {
+#cgxmthdhlq .gt_center {
   text-align: center;
 }
 
-#fwhbqytmac .gt_right {
+#cgxmthdhlq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fwhbqytmac .gt_font_normal {
+#cgxmthdhlq .gt_font_normal {
   font-weight: normal;
 }
 
-#fwhbqytmac .gt_font_bold {
+#cgxmthdhlq .gt_font_bold {
   font-weight: bold;
 }
 
-#fwhbqytmac .gt_font_italic {
+#cgxmthdhlq .gt_font_italic {
   font-style: italic;
 }
 
-#fwhbqytmac .gt_super {
+#cgxmthdhlq .gt_super {
   font-size: 65%;
 }
 
-#fwhbqytmac .gt_footnote_marks {
+#cgxmthdhlq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#fwhbqytmac .gt_asterisk {
+#cgxmthdhlq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#fwhbqytmac .gt_indent_1 {
+#cgxmthdhlq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#fwhbqytmac .gt_indent_2 {
+#cgxmthdhlq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#fwhbqytmac .gt_indent_3 {
+#cgxmthdhlq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#fwhbqytmac .gt_indent_4 {
+#cgxmthdhlq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#fwhbqytmac .gt_indent_5 {
+#cgxmthdhlq .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1498,7 +2032,7 @@ The percentage of null deviance explained by the fitted GDM model.
 <td>Associated code</td>
 <td><a href="https://cran.r-project.org/web/packages/gdm/gdm.pdf" class="external-link">Fitzpatrick
 et al. 2022</a></td>
-<td>algatr uses the <code>gdm()</code> package; manual contains
+<td>algatr uses the <code><a href="https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.html" class="external-link">gdm()</a></code> package; manual contains
 walkthroughs</td>
 </tr>
 <tr class="even">
