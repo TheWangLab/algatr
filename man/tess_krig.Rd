@@ -9,7 +9,7 @@ tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
 \arguments{
 \item{qmat}{qmatrix}
 
-\item{coords}{dataframe with x and y coordinates}
+\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
 \item{grid}{SpatRaster for kriging}
 

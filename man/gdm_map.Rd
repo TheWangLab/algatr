@@ -40,6 +40,7 @@ Other GDM functions:
 \code{\link{gdm_coeffs}()},
 \code{\link{gdm_df}()},
 \code{\link{gdm_do_everything}()},
+\code{\link{gdm_format}()},
 \code{\link{gdm_plot_diss}()},
 \code{\link{gdm_plot_isplines}()},
 \code{\link{gdm_plot_vars}()},

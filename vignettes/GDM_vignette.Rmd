@@ -29,6 +29,7 @@ gdm_packages()
 library(raster)
 library(terra)
 library(viridis)
+library(gdm)
 ```
 
 **If using GDM, please cite the following: for the GDM method, Ferrier S., Manion G., Elith J., Richardson K. (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment, and for the `gdm` package, Fitzpatrick M., Mokany K., Manion G., Nieto-Lugilde D., Ferrier S. (2022). gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1.**
@@ -154,6 +155,21 @@ We can generate a nice table with relevant GDM statistics to report using the `g
 gdm_table(gdm_full)
 ```
 
+### Variable importance and significance
+
+If you would like to calculate variable importance and p-values you can use the `gdm::gdm.varImp()` function from the gdm package. 
+
+```{r GDM variable importance}
+# To run gdm.varImp() you need a gdmData object, which you can create using gdm_format()
+gdmData <- gdm_format(liz_gendist, liz_coords, env, scale_gendist = TRUE)
+
+# Then you can run gdm.varImp(), specifying whether you want to use geographic distance as a variable as well as the number of permutations you wish to run
+varimp <- gdm.varImp(gdmData, geo = TRUE, nPerm = 50)
+
+# You can visualize the results using gdm_varimp_table()
+gdm_varimp_table(varimp)
+```
+
 ## Visualizing GDM results
 
 ------------------------------------------------------------------------
@@ -198,12 +214,14 @@ The algatr package also has an option to run all of the above functionality in a
 Running a GDM with `gdm_do_everything()` requires three data files for input: a genetic distance matrix (the `gendist` argument), coordinates for samples (the `coords` argument), and environmental layers (the `envlayers` argument).
 
 ```{r do everything, fig.width=5, fig.height=5, fig.align='center', results='asis'}
-gdm_full_everything <- gdm_do_everything(liz_gendist,
-  liz_coords,
-  envlayers = CA_env,
-  model = "full",
-  scale_gendist = TRUE
-)
+gdm_full_everything <- 
+  gdm_do_everything(
+    liz_gendist,
+    liz_coords,
+    envlayers = CA_env,
+    model = "full",
+    scale_gendist = TRUE
+  )
 ```
 
 ## Additional documentation and citations
