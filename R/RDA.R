@@ -260,7 +260,7 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
 rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "fdr", sig = 0.05, z = 3, plot = TRUE) {
   # Running the function with all axes
   if (plot) stats::screeplot(mod, main = "Eigenvalues of constrained axes")
-  if (naxes == "manual") naxes <- readline("Number of RDA axes to retain:")
+  if (naxes == "manual") naxes <- as.numeric(readline("Number of RDA axes to retain:"))
   if (naxes == "all") naxes <- ncol(mod$CCA$v)
 
   if (outlier_method == "p" & naxes == 1) warning("Cannot compute p-values (outlier_method = \"p\") when the number of RDA axes is less than two, using the standard deviation based method (outlier_method = \"z\") instead")
