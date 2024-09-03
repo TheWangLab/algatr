@@ -24,12 +24,13 @@ vcf_check <- function(x) {
 
 #' Remove islands from mapping
 #'
-#' @param input SpatRaster or Raster* object with islands to be removed; also accepts coords
-#' @param shape SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object
+#' @param input raster (SpatRaster or Raster*) or coordinates (sf or two column dataframe) to mask or remove island points from
+#' @param shape SpatialPolygons, sf, or sf object to create island mask
 #' @param min_vertices minimum number of vertices in polygons to retain (defaults to 10000)
 #'
 #' @return object (of input type) with islands removed
 #' @export
+
 rm_islands <- function(input, shape, min_vertices = 10000) {
   # Convert if SpatVector provided ------------------------------------------
   if (inherits(shape, "SpatVector")) shape <- sf::st_as_sf(shape)
@@ -37,23 +38,25 @@ rm_islands <- function(input, shape, min_vertices = 10000) {
   no_island <- rmapshaper::ms_filter_islands(shape, min_vertices = min_vertices)
 
   # convert SpatRaster to Raster
-  if (inherits(input, "SpatRaster")) input <- raster::stack(input)
+  if (inherits(input, "Raster")) input <- terra::rast(input)
 
-  if (inherits(input, "Raster")) {
-    raster_noIsland <- raster::mask(input, no_island)
+  if (inherits(input, "SpatRaster")) {
+    raster_noIsland <- terra::mask(input, no_island)
     return(raster_noIsland)
   }
 
-  if (inherits(input, "data.frame") & all(colnames(input) %in% c("ID", "x", "y"))) {
-    sp <- coords
-    coordinates(sp) <- ~ x + y
-    crs(sp) <- raster::crs("+proj=longlat +datum=WGS84 +no_defs")
+  if (inherits(input, "data.frame") & !inherits(input, "sf")) {
+    if (ncol(input) != 2) stop("Expected two columns (x and y)")
+    colnames(input) <- c("x", "y")
+    input <- sf::st_as_sf(input, coords = c("x", "y"), crs = sf::st_crs(shape))
+  }
 
-    sp_sub <- over(no_island, sp, returnList = TRUE)
-    IDs <- sp_sub[[1]]$ID
-    coords_noIsland <- coords[coords$ID %in% IDs, ]
+  if (inherits(input, "sf")) {
+    input <- sf::st_transform(input, sf::st_crs(shape))
+    coords_noIsland <- sf::st_intersection(input, no_island)
     return(coords_noIsland)
   }
+
 }
 
 #' Scale three layers of environmental data to R, G, and B for mapping
