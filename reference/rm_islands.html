@@ -64,11 +64,11 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>input</dt>
-<dd><p>SpatRaster or Raster* object with islands to be removed; also accepts coords</p></dd>
+<dd><p>raster (SpatRaster or Raster*) or coordinates (sf or two column dataframe) to mask or remove island points from</p></dd>
 
 
 <dt>shape</dt>
-<dd><p>SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object</p></dd>
+<dd><p>SpatialPolygons, sf, or sf object to create island mask</p></dd>
 
 
 <dt>min_vertices</dt>
