@@ -161,6 +161,13 @@ for our sampling coordinates from our environmental raster stack
 <span><span class="co">#&gt; </span></span>
 <span><span class="co"># Convert vcf to dosage matrix</span></span>
 <span><span class="va">gen</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vcf_to_dosage.html">vcf_to_dosage</a></span><span class="op">(</span><span class="va">liz_vcf</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: vcfR</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    *****       ***   vcfR   ***       *****</span></span>
+<span><span class="co">#&gt;    This is vcfR 1.15.0 </span></span>
+<span><span class="co">#&gt;      browseVignettes('vcfR') # Documentation</span></span>
+<span><span class="co">#&gt;      citation('vcfR') # Citation</span></span>
+<span><span class="co">#&gt;    *****       *****      *****       *****</span></span>
 <span><span class="co">#&gt; Loading required namespace: adegenet</span></span>
 <span><span class="co"># Also, our code assumes that sample IDs from gendist and coords are the same order; be sure to check this before moving forward!</span></span>
 <span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
