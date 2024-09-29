@@ -7,9 +7,9 @@
 rm_islands(input, shape, min_vertices = 10000)
 }
 \arguments{
-\item{input}{SpatRaster or Raster* object with islands to be removed; also accepts coords}
+\item{input}{raster (SpatRaster or Raster*) or coordinates (sf or two column dataframe) to mask or remove island points from}
 
-\item{shape}{SpatialPolygons, sf, sfc, or other polygon object to filter; also accepts SpatVector object}
+\item{shape}{SpatialPolygons, sf, or sf object to create island mask}
 
 \item{min_vertices}{minimum number of vertices in polygons to retain (defaults to 10000)}
 }
