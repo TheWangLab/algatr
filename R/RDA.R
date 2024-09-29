@@ -280,14 +280,14 @@ rda_getoutliers <- function(mod, naxes = "all", outlier_method = "p", p_adj = "f
 p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
   rdadapt_env <- rdadapt(mod, naxes)
 
+  # p-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
+  pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
+
   # Get SNP names
   snp_names <- rownames(vegan::scores(mod, choices = naxes, display = "species"))
 
-  # Restore SNP names to rdadapt
-  row.names(rdadapt_env) <- snp_names
-  
-  # p-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
-  pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
+  # Restore SNP names
+  names(pvalues) <- snp_names
 
   # Identifying the SNPs that are below the p-value threshold
   rda_snps <- snp_names[which(pvalues < sig)]

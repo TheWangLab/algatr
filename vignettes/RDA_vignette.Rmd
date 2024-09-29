@@ -258,11 +258,13 @@ length(rda_sig_p$rda_snps)
 As mentioned above, we could also identify outliers based on q-values. To do so, we can extract the q-values from the resulting object from `rda_getoutliers()`.
 
 ```{r q-values}
+# Extract SNP names; choices is number of axes
+snp_names <- rownames(scores(mod_best, choices = 2, display = "species"))
+
 # Identify outliers that have q-values < 0.1
 q_sig <-
   rda_sig_p$rdadapt %>%
-  # Make SNP names column from row names
-  mutate(snp_names = row.names(.)) %>%
+  mutate(snp_names = snp_names) %>%
   filter(q.values <= 0.1)
 
 # How many outlier SNPs were detected?
