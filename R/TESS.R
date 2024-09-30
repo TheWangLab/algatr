@@ -539,13 +539,11 @@ tess_barplot <- function(qmat, col_pal = algatr_col_default("base"), sort_by_Q =
     class(Qm) <- "matrix"
     graphics::barplot(Qm, col = col_pal(K), border = border, space = space, ...)
     legend("bottomright", pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
-    return(list(order = or))
   } else {
     Qm <- t(qmat)
     class(Qm) <- "matrix"
     graphics::barplot(Qm, col = col_pal(ncol(qmat)), border = border, space = space, ...)
     legend(legend_position, pch = 15, legend = paste0("K = ", 1:K), col = col_pal(K))
-    return(list(order = 1:nrow(qmat)))
   }
 }
 
