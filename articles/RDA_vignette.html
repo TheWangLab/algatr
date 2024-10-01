@@ -1542,13 +1542,11 @@ variable selection, <code>mod_best</code>.</p>
 q-values. To do so, we can extract the q-values from the resulting
 object from <code><a href="../reference/rda_getoutliers.html">rda_getoutliers()</a></code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract SNP names; choices is number of axes</span></span>
-<span><span class="va">snp_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/vegan/man/scores.html" class="external-link">scores</a></span><span class="op">(</span><span class="va">mod_best</span>, choices <span class="op">=</span> <span class="fl">2</span>, display <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Identify outliers that have q-values &lt; 0.1</span></span>
+<code class="sourceCode R"><span><span class="co"># Identify outliers that have q-values &lt; 0.1</span></span>
 <span><span class="va">q_sig</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">rda_sig_p</span><span class="op">$</span><span class="va">rdadapt</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>snp_names <span class="op">=</span> <span class="va">snp_names</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Make SNP names column from row names</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>snp_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">q.values</span> <span class="op">&lt;=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># How many outlier SNPs were detected?</span></span>
