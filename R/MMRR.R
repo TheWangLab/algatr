@@ -68,6 +68,18 @@ mmrr_do_everything <- function(gendist, coords, env, geo = TRUE, model = "full",
 #' @export
 #' @family MMRR functions
 mmrr_run <- function(Y, X, nperm = 999, stdz = TRUE, model = "full") {
+
+  # Convert inputs to matrices
+  if (!is.matrix(Y)) Y <- as.matrix(Y)
+  if (any(!sapply(X, is.matrix))) {
+    X <- lapply(X, as.matrix)
+  }
+
+  # Check dimensions
+  Ydim <- dim(Y)
+  Xdim <- as.vector(sapply(X, dim))
+  if (length(unique(c(Xdim, Ydim))) > 1) stop("All matrices must have the same dimensions and be square")
+
   if (model == "best") {
     # Fit model with variable selection
     mod <- mmrr_var_sel(Y, X, nperm = nperm, stdz = stdz)
