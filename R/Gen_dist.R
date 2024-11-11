@@ -21,7 +21,7 @@ gen_dist <- function(gen = NULL, dist_type = "euclidean", plink_file = NULL, pli
   # Read in vcf if path provided
   if (is.character(gen)) gen <- vcfR::read.vcfR(gen)
   # Convert vcf to dosage matrix
-  if (inherits(gen, "vcfR") & dist_type == "euclidean" | dist_type == "bray_curtis" | dist_type == "pc") {
+  if (inherits(gen, "vcfR") & (dist_type == "euclidean" | dist_type == "bray_curtis" | dist_type == "pc")) {
     gen <- vcf_to_dosage(gen)
     # Perform imputation with warning
     if (any(is.na(gen))) {
