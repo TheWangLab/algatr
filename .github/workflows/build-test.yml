@@ -24,9 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore renv Environment
-        run: R -e 'renv::restore()'
-
       - name: Build R Package
         run: R -e 'devtools::build()'
 
