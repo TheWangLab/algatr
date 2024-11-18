@@ -25,5 +25,5 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build R Package
-        run: R -e 'update.packages(ask = FALSE); devtools::build()'
+        run: R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); update.packages(ask = FALSE); devtools::build()'
 
