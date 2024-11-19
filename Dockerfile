@@ -20,6 +20,9 @@ LABEL org.opencontainers.image.description=""
 # Install all R packages specified in renv.lock
 #RUN Rscript -e 'renv::restore()'
 
+# Set default CRAN repo
+RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /usr/local/lib/R/etc/Rprofile.site
+
 # Install the algatr package from GitHub
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = FALSE)'
 RUN Rscript -e 'algatr::alazygatr_packages()'
