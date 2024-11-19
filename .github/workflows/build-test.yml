@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore and Update renv Environment
+        run: |
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore(); renv::update(prompt = FALSE)'
+      
       - name: Build R Package
-        run: R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); update.packages(ask = FALSE); devtools::build()'
-
+        run: R -e 'devtools::build()'
