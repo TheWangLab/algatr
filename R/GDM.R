@@ -378,9 +378,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # Transform GIS layers
   # Convert envlayers to raster
-  envlayers_sub <- raster::stack(envlayers_sub)
   rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
-  rastTrans <- terra::rast(rastTrans)
 
   # Remove NA values
   rastDat <- na.omit(terra::values(rastTrans))
