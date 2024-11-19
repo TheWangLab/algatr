@@ -24,3 +24,4 @@ LABEL org.opencontainers.image.description=""
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = FALSE)'
 RUN Rscript -e 'algatr::alazygatr_packages()'
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = TRUE)'
+
