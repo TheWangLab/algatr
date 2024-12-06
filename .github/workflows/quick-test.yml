@@ -23,6 +23,12 @@ jobs:
       image: ghcr.io/thewanglab/algatr:latest
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Set CRAN
+        env:
+          GITHUB_PAT: ${{ secrets.GITPAT }}
+        run: |
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org"))'
+         
       - name: Build R Package
         run: R -e 'devtools::build()'
