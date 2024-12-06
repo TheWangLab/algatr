@@ -25,6 +25,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Restore and Update renv Environment
+        env:
+          GITHUB_PAT: ${{ secrets.GITPAT }}
         run: |
           R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore(); renv::update(prompt = FALSE)'
       
