@@ -1,0 +1,28 @@
+name: quick-test
+
+on:
+  push:
+    paths:
+      - "R/**.R"
+      - .github/workflows/quick-test.yml
+      - "vignettes/**.Rmd"
+      - "renv.lock"
+    branches: [ "main" ]
+  pull_request:
+    paths:
+        - "R/**.R"
+        - .github/workflows/quick-test.yml
+        - "vignettes/**.Rmd"
+        - "renv.lock"
+    branches: [ "main" ]
+
+jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/thewanglab/algatr:latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build R Package
+        run: R -e 'devtools::build()'
