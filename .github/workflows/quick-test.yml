@@ -26,7 +26,7 @@ jobs:
 
       - name: Restore renv Environment
         run: |
-          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore();
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore()'
          
       - name: Build R Package
         env:
