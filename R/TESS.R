@@ -309,29 +309,11 @@ raster_to_grid <- function(x) {
 #' @return ggplot object of TESS results
 #' @export
 tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_fill = algatr_col_default("ggplot"), minQ = 0.10, plot_axes = FALSE, rel_widths = c(3, 1), list = FALSE) {
-  # Set up ggplot df
-  gg_df <- krig_admix %>%
-    terra::as.data.frame(x, xy = TRUE, na.rm = FALSE) %>%
-    tidyr::as_tibble() %>%
-    tidyr::pivot_longer(names_to = "K", values_to = "Q", -c(x, y)) %>%
-    dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
-    dplyr::group_by(x, y)
-
-  # Use max or all Q
-  if (plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
-  if (plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > minQ)
-
   # Set up base plot
   plt <- ggplot2::ggplot()
 
-  # Plot as polygon or continuous Q
-  if (plot_method == "maxQ_poly" | plot_method == "allQ_poly") {
-    plt <- plt + ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K), alpha = 0.5)
-  } else {
-    plt <- plt +
-      ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K, alpha = Q)) +
-      ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1))
-  }
+  # Add tess geom
+  plt <- plt + geom_tess(krig_admix, plot_method = plot_method, minQ = minQ)
 
   # Add color
   plt <- plt + ggplot_fill
@@ -342,25 +324,18 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   # Add axes
   if (plot_axes) {
     plt <- plt + ggplot2::theme(
-      panel.grid.minor.y = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_blank(),
-      panel.grid.minor.x = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank()
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank()
     )
   }
 
   if (!plot_axes) {
     plt <- plt + ggplot2::theme(
-      panel.grid.minor.y = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_blank(),
-      panel.grid.minor.x = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_blank(),
-      axis.ticks.y = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      axis.title = ggplot2::element_blank(),
+      axis.text = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
       panel.border = ggplot2::element_blank()
     )
   }
@@ -374,7 +349,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     }
   }
 
-  # Produce plot with krig_legend for "allQ" or "maxQ" as a combined figure (base plot and legend)
+  # Produce plot with tess_legend for "allQ" or "maxQ" as a combined figure (base plot and legend)
   if (plot_method == "allQ" | plot_method == "maxQ" & (!list)) {
     # Remove existing legend
     plt <- plt +
@@ -383,13 +358,15 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     # Add secondary plot (which will become the legend) with combined K and Q values using helper function
     # Suppressing a warning about using alpha for a discrete variable
     suppressWarnings ({
-      plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
+      plt_leg <- 
+        tess_legend(krig_admix = krig_admix, plot_method = plot_method, minQ = minQ) +
+        ggplot_fill
       
       plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
       })
   }
 
-  # Produce plot with krig_legend for "allQ" or "maxQ" as a list of two elements
+  # Produce plot with tess_legend for "allQ" or "maxQ" as a list of two elements
   # Each element is a ggplot object: one for the base plot and one for the legend
   if (plot_method == "allQ" | plot_method == "maxQ" & (list)) {
     # Remove existing legend
@@ -397,7 +374,9 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
       ggplot2::theme(legend.position = "none")
 
     # Build secondary plot (which will become the legend) with combined K and Q values using helper function
-    plt_leg <- krig_legend(gg_df = gg_df, plot_method = plot_method, ggplot_fill = ggplot_fill, minQ = minQ)
+    plt_leg <- 
+      tess_legend(krig_admix = krig_admix, plot_method = plot_method, minQ = minQ) +
+      ggplot_fill
 
     # Make list with elements for base plot and legend
     plt <- list(plot = plt, legend = plt_leg)
@@ -406,22 +385,57 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
   return(plt)
 }
 
-#' Helper function to make a custom legend for TESS maps
+#' Create geom of TESS results that can be added to a ggplot object
 #'
-#' @param gg_df dataframe in tidy format of Q values from \link[algatr]{tess_ggplot}
+#' This function creates a ggplot2 geom object for visualizing TESS plots based on kriging admixture data.
+#'
+#' @inheritParams tess_ggplot
+#' 
+#' @family TESS functions
+#'
+#' @return A list containing ggplot2 geom objects for plotting.
+#' @export
+geom_tess <- function(krig_admix, plot_method = "maxQ", minQ = 0.10){
+  # Set up ggplot df
+  gg_df <- 
+    krig_admix %>%
+    terra::as.data.frame(xy = TRUE, na.rm = FALSE) %>%
+    tidyr::as_tibble() %>%
+    tidyr::pivot_longer(names_to = "K", values_to = "Q", -c(x, y)) %>%
+    dplyr::mutate(K = as.factor(gsub("K", "", K))) %>%
+    dplyr::group_by(x, y)
+
+  # Use max or all Q
+  if (plot_method == "maxQ" | plot_method == "maxQ_poly") gg_df <- gg_df %>% dplyr::top_n(1, Q)
+  if (plot_method == "allQ" | plot_method == "allQ_poly") gg_df <- gg_df %>% dplyr::filter(Q > minQ)
+
+  # Plot as polygon or continuous Q
+  if (plot_method == "maxQ_poly" | plot_method == "allQ_poly") {
+    geom <- list(ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K), alpha = 0.5))
+  } else {
+    geom <- list(
+      ggplot2::geom_tile(data = gg_df, ggplot2::aes(x = x, y = y, fill = K, alpha = Q)),
+      ggplot2::scale_alpha_binned(breaks = round(seq(0, 1, by = 0.10), 1))
+    )
+  }
+
+  return(geom)
+}
+
+
+#' Create a custom legend for TESS maps
+#'
 #' @inheritParams tess_ggplot
 #'
 #' @family TESS functions
 #'
 #' @return legend for kriged map from TESS
 #' @export
-#' @family TESS functions
 #' @importFrom ggplot2 '%+replace%'
-#' @keywords internal
-krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
+tess_legend <- function(krig_admix, plot_method = "maxQ", minQ = 0.10){
   if (plot_method == "maxQ") vals <- seq(0, 1, by = 0.10)
   if (plot_method == "allQ") vals <- seq(minQ, 1, by = 0.10)
-  kvals <- 1:length(unique(gg_df$K))
+  kvals <- 1:terra::nlyr(krig_admix)
   dat <- as.data.frame(tidyr::expand_grid(vals, kvals))
   dat$kvals <- as.character(dat$kvals)
   dat$vals <- as.character(dat$vals)
@@ -435,9 +449,7 @@ krig_legend <- function(gg_df, plot_method, ggplot_fill, minQ){
     ggplot2::coord_fixed(ratio = 1) +
     cowplot::theme_cowplot() %+replace% ggplot2::theme(legend.position = "none",
                                                        axis.ticks = ggplot2::element_blank(),
-                                                       axis.line = ggplot2::element_blank()) +
-    ggplot_fill
-
+                                                       axis.line = ggplot2::element_blank()) 
   return(plt_leg)
 }
 

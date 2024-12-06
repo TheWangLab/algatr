@@ -23,8 +23,8 @@ Helper function to get population assignments for best K
 Other TESS functions: 
 \code{\link{allK_plot_helper}()},
 \code{\link{bestK}()},
+\code{\link{geom_tess}()},
 \code{\link{ggbarplot_helper}()},
-\code{\link{krig_legend}()},
 \code{\link{tess_barplot}()},
 \code{\link{tess_col_default}()},
 \code{\link{tess_do_everything}()},
@@ -32,6 +32,7 @@ Other TESS functions:
 \code{\link{tess_ggplot}()},
 \code{\link{tess_krig}()},
 \code{\link{tess_ktest}()},
+\code{\link{tess_legend}()},
 \code{\link{tess_plot_allK}()}
 }
 \concept{TESS functions}
