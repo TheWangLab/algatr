@@ -23,6 +23,10 @@ jobs:
       image: ghcr.io/thewanglab/algatr:latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Restore renv Environment
+        run: |
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore();
          
       - name: Build R Package
         env:
