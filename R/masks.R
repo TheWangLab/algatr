@@ -193,7 +193,7 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
 #' @export
 #'
 #' @seealso \code{\link{extrap_mask}}
-plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)) {
+plot_extrap_mask <- function(map_r, map_mask, RGB_cols = FALSE, mask_col = rgb(0, 0, 0, alpha = 0.9)) {
   if (!inherits(map_r, "SpatRaster")) map_r <- terra::rast(map_r)
   if (!inherits(map_mask, "SpatRaster")) map_mask <- terra::rast(map_mask)
 
