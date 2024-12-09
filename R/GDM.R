@@ -105,21 +105,21 @@ gdm_do_everything <- function(gendist, coords, envlayers = NULL, env = NULL, mod
 gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50, scale_gendist = FALSE,
                     geodist_type = "Euclidean", distPreds = NULL, dist_lyr = NULL) {
   # FORMAT DATA ---------------------------------------------------------------------------------------------------
-  
+
   # Create GDM formatted data objects
-  formatted_data <- 
+  formatted_data <-
     gdm_format(
-      gendist = gendist, 
-      coords = coords, 
+      gendist = gendist,
+      coords = coords,
       env = env,
-      scale_gendist = scale_gendist, 
-      geodist_type = geodist_type, 
-      distPreds = distPreds, 
+      scale_gendist = scale_gendist,
+      geodist_type = geodist_type,
+      distPreds = distPreds,
       dist_lyr = dist_lyr,
       gdmPred = TRUE,
       gdmGen = TRUE
       )
-  
+
   gdmData <- formatted_data$gdmData
   gdmPred <- formatted_data$gdmPred
   gdmGen <- formatted_data$gdmGen
@@ -187,15 +187,15 @@ gdm_run <- function(gendist, coords, env, model = "full", sig = 0.05, nperm = 50
     gdmPred_final <- gdmPred[, c("site", "x", "y", finalvars)]
     gdmData_final <- gdm::formatsitepair(gdmGen, bioFormat = 3, XColumn = "x", YColumn = "y", siteColumn = "site", predData = gdmPred_final)
 
-    # If geo = TRUE and geodist_type is resistance or topographic, add the gdmDist matrix 
+    # If geo = TRUE and geodist_type is resistance or topographic, add the gdmDist matrix
     if (geodist_type == "resistance" | geodist_type == "topographic"){
       if (geo){
         gdmData_final <- gdm::formatsitepair(gdmData_final, 4, predData = gdmPred_final, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
         # Set geo to FALSE (since it's already included, we don't want to also include Euclidean distances)
         geo <- FALSE
-      } 
-    } 
-   
+      }
+    }
+
     # Remove any remaining incomplete cases (there shouldn't be any at this point, but added as a check)
     cc <- stats::complete.cases(gdmData_final)
     if (!all(cc)) {
@@ -226,7 +226,7 @@ gdm_format <- function(gendist, coords, env, scale_gendist = FALSE, geodist_type
   # Rename gdmPred/gdmGen arguments as they will later be overwritten
   gdmPred_lgl <- gdmPred
   gdmGen_lgl <- gdmGen
-  
+
   # Convert env to spat raster if it is a RasterLayer/RasterStack
   if (inherits(env, "Raster")) env <- terra::rast(env)
 
@@ -264,9 +264,9 @@ gdm_format <- function(gendist, coords, env, scale_gendist = FALSE, geodist_type
     distmat <- geo_dist(coords, type = geodist_type, lyr = dist_lyr)
     gdmDist <- cbind(site, distmat)
     gdmData <- gdm::formatsitepair(gdmData, 4, predData = gdmPred, siteColumn = "site", distPreds = list(geodist = as.matrix(gdmDist)))
-  } 
+  }
 
- 
+
   if (!gdmPred_lgl & !gdmGen_lgl) return(gdmData)
   if (!gdmPred_lgl) gdmPred <- NULL
   if (!gdmGen_lgl) gdmGen <- NULL
@@ -377,7 +377,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
   # Transform GIS layers
-  # Convert envlayers to raster
+  # Convert envlayers to GDM transformed raster layers
   rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
 
   # Remove NA values
@@ -403,10 +403,83 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
   pcaRastRGB <- stack_to_rgb(pcaRast)
 
+  # Plot raster if quiet = FALSE
+  if (!quiet) {
+    plt <- ggplot2::ggplot() + 
+      geom_raster_rgb(pcaRastRGB) + 
+      ggplot2::theme_void()
+    
+    if (!is.null(coords)) {
+      plt <- plt + ggplot2::geom_point(data = coords, ggplot2::aes(x = x, y = y), col = "black", size = 1, pch = 1)
+    }
+    
+    print(plt)
+  }
+
+  # Plot variable vectors
+  if (!quiet & plot_vars & (n_layers == 3)) {
+    var_plot <- gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
+    print(var_plot)
+  }
+
+  if (!quiet & plot_vars & (n_layers != 3)) {
+    warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
+  }
+
+  s <- list(rastTrans, pcaRastRGB)
+  names(s) <- c("rastTrans", "pcaRastRGB")
+  return(s)
+}
+
+geom_raster_rgb <- function(x){
+  # Convert three layer raster to RGB raster
+  rastRGB <- make_rgb_stack(x)
+
+  # Rename layers
+  names(rastRGB) <- c("r", "g", "b")
+
+  # Convert to df for ggplot
+  rgb_df <- terra::as.data.frame(rastRGB, xy = TRUE)
+
+  # Create into ggplot object
+  geom <- list(
+    ggplot2::geom_raster(data = rgb_df, ggplot2::aes(x = x, y = y, fill = rgb(r, g, b))),
+    ggplot2::scale_fill_identity()
+  )  
+}
+
+#' Create an RGB stack from a PCA raster object
+#'
+#' This internal function converts a raster object to a SpatRaster, scales the raster layers to RGB colors, 
+#' and ensures there are at least three layers for RGB plotting by adding white substitute layers if necessary.
+#'
+#' @param x A raster object to be converted and scaled.
+#' @return A SpatRaster object with RGB layers.
+#' @keywords internal
+#' @noRd
+#' @export
+make_rgb_stack <- function(x){
+  # Convert from raster to SpatRaster
+  if (!inherits(x, "SpatRaster")) x <- terra::rast(x)
+
+  # Calculate number of layers, we need to make sure there are at least 3 layers for RGB plotting
+  n_layers <- terra::nlyr(x)
+
+  # If there are more than three layers, error
+  if (n_layers > 3) {
+    stop("Only three layers can be used for creating the RGB plot (too many provided)")
+  }
+
+  # If there are three layers and all values are between 0 and 1, return the raster
+  if (n_layers == 3 & all(terra::minmax(x) >= 0 & terra::minmax(x) <= 1)) return(x)
+
+  # Scale rasters to get colors (each layer will correspond with R, G, or B in the final plot)
+  pcaRastRGB <- stack_to_rgb(x, maxval = 1)
+
   # If there are fewer than 3 n_layers (e.g., <3 variables), the RGB plot won't work (because there isn't an R, G, and B)
   # To get around this, create a blank raster (i.e., a white raster), and add it to the stack
   if (n_layers < 3) {
-    warning("Fewer than three non-zero coefficients provided, adding white substitute layers to RGB plot")
+    warning("Fewer than three RGB layers provided, adding white substitute layers to RGB plot")
     # Create white raster by multiplying a layer of pcaRast by 0 and adding 255
     white_raster <- pcaRastRGB[[1]] * 0 + 255
   }
@@ -421,32 +494,16 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
     pcaRastRGB <- c(pcaRastRGB, white_raster, white_raster)
   }
 
-  # Plot raster if quiet = FALSE
-  if (!quiet) terra::plotRGB(pcaRastRGB, r = 1, g = 2, b = 3)
-  if (!is.null(coords) & !quiet) points(coords, cex = 1.5)
-
-  # Plot variable vectors
-  if (!quiet & plot_vars & (n_layers == 3)) {
-    gdm_plot_vars(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "PC2", scl = scl, display_axes = display_axes)
-  }
-
-  if (!quiet & plot_vars & (n_layers != 3)) {
-    warning("variable vector plot is not available for model with fewer than 3 final variables, skipping...")
-  }
-
-  s <- list(rastTrans, pcaRastRGB)
-  names(s) <- c("rastTrans", "pcaRastRGB")
-  return(s)
+  return(pcaRastRGB)
 }
-
 
 #' Plot I-splines for each variable
 #'
 #' @param gdm_model GDM model
 #' @param scales Whether scales should be free ("free"; default), free in one dimension ("free_x", "free_y") or fixed ("fixed"). We recommend setting this to "free_x" to allow the x-axis to vary while keeping the y-axis fixed across all plots such that relative importance can be visualized.
-#' @param nrow Number of rows 
+#' @param nrow Number of rows
 #' @param ncol Number of cols
-#' 
+#'
 #' @return plot for each I-spline
 #'
 #' @family GDM functions
@@ -454,16 +511,16 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 #' @export
 gdm_plot_isplines <- function(gdm_model, scales = "free", nrow = NULL, ncol = NULL) {
   gdm_model_splineDat <- gdm::isplineExtract(gdm_model)
-  
-  gdm_spline_df <- 
+
+  gdm_spline_df <-
     dplyr::bind_rows(
-      data.frame(gdm_model_splineDat$x, var = "x", ID = 1:nrow(gdm_model_splineDat$x)), 
+      data.frame(gdm_model_splineDat$x, var = "x", ID = 1:nrow(gdm_model_splineDat$x)),
       data.frame(gdm_model_splineDat$y, var = "y", ID = 1:nrow(gdm_model_splineDat$y))
       ) %>%
     tidyr::pivot_longer(-c("var", "ID"), names_to = "name", values_to = "value") %>%
     tidyr::pivot_wider(names_from = "var", values_from = "value") %>%
     dplyr::mutate(name = factor(name, levels = unique(name)))
-  
+
   plt <-
     ggplot2::ggplot(gdm_spline_df) +
       ggplot2::geom_line(ggplot2::aes(x = x, y = y)) +
@@ -648,7 +705,7 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
   }
 
   # Plot
-  print(plot)
+  return(plot)
 }
 
 
@@ -662,15 +719,15 @@ create_rgb_vec <- function(vec) {
 }
 
 
-#' Scale a raster stack from 0 to 255
+#' Scale a raster stack to RGB values
 #'
 #' @param s RasterStack
 #'
 #' @noRd
 #' @export
-stack_to_rgb <- function(s) {
+stack_to_rgb <- function(s, maxval = 255) {
   stack_list <- as.list(s)
-  new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb))
+  new_stack <- terra::rast(purrr::map(stack_list, raster_to_rgb, maxval = maxval))
   return(new_stack)
 }
 
@@ -681,13 +738,13 @@ stack_to_rgb <- function(s) {
 #'
 #' @noRd
 #' @export
-raster_to_rgb <- function(r) {
+raster_to_rgb <- function(r, maxval) {
   rmax <- terra::minmax(r)["max", ]
   rmin <- terra::minmax(r)["min", ]
   if ((rmax - rmin) == 0) {
-    r[] <- 255
+    r[] <- maxval
   } else {
-    r <- (r - rmin) / (rmax - rmin) * 255
+    r <- (r - rmin) / (rmax - rmin) * maxval
   }
   return(r)
 }
@@ -751,7 +808,7 @@ gdm_table <- function(gdm_result, digits = 2, summary_stats = TRUE, footnote = T
 
   # Format GDM model output as a list
   if (inherits(gdm_result, "gdm")) gdm_result <- list(model = gdm_result)
-  
+
   gdm_df <- gdm_df(gdm_result)
 
   d <- max(abs(min(gdm_df$coefficient, na.rm = TRUE)), abs(max(gdm_df$coefficient)))
@@ -817,7 +874,7 @@ scale01 <- function(x) {
 
 #' Generate a Variable Importance Table for GDM Models
 #'
-#' This function generates a table displaying the variable importance for Generalized Dissimilarity Models (GDM). 
+#' This function generates a table displaying the variable importance for Generalized Dissimilarity Models (GDM).
 #' It can take either a `gdmData` object or a precomputed variable importance object and outputs a formatted table.
 #'
 #' @param varimp a `gdmData` object or a variable importance object created by running \link[gdm]{gdm.varImp}.
@@ -837,14 +894,14 @@ gdm_varimp_table <- function(varimp, digits = 2, summary_stats = TRUE, nPerm = 5
   }
 
   # Make df
-  df <- 
-    varimp[-1] %>% 
+  df <-
+    varimp[-1] %>%
     purrr::imap(\(x, i) {
       colnames(x) <- i
       x$Predictor <- row.names(x)
       return(x)
-    }) %>% 
-    purrr::reduce(dplyr::left_join, by = "Predictor") %>% 
+    }) %>%
+    purrr::reduce(dplyr::left_join, by = "Predictor") %>%
     dplyr::select(Predictor, dplyr::everything())
 
   varstats <- varimp[[1]]
@@ -855,28 +912,28 @@ gdm_varimp_table <- function(varimp, digits = 2, summary_stats = TRUE, nPerm = 5
 
   # Build table
   suppressWarnings({
-    tbl <- 
-      df %>% 
-      gt::gt() %>% 
-      gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>% 
+    tbl <-
+      df %>%
+      gt::gt() %>%
+      gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>%
       gt::sub_missing(missing_text = "")
 
     # Add summary stats to bottom of table
     if (summary_stats) {
       stat_names <- c("Model deviance:", "Percent deviance explained:", "Model p-value:", "Fitted permutations:")
       stats <- varstats[,"All predictors"]
-      df <- 
-        df %>% 
-        rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, df)) %>% 
+      df <-
+        df %>%
+        rbind(purrr::map2_dfr(.x = stat_names, .y = stats, .f = make_stat_vec, df)) %>%
         dplyr::mutate(dplyr::across(-c(Predictor), as.numeric))
 
-      tbl <- 
-        df %>% 
-        gt::gt() %>% 
-        gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>% 
-        gt::sub_missing(missing_text = "") %>% 
-        gt::tab_row_group(label = NA, id = "model", rows = which(!(df$Predictor %in% stat_names))) %>% 
-        gtExtras::gt_highlight_rows(rows = which(df$Predictor %in% stat_names), fill = "white") %>% 
+      tbl <-
+        df %>%
+        gt::gt() %>%
+        gtExtras::gt_hulk_col_numeric(`Predictor Importance`, trim = TRUE, domain = c(-d, d)) %>%
+        gt::sub_missing(missing_text = "") %>%
+        gt::tab_row_group(label = NA, id = "model", rows = which(!(df$Predictor %in% stat_names))) %>%
+        gtExtras::gt_highlight_rows(rows = which(df$Predictor %in% stat_names), fill = "white") %>%
         gt::tab_style(
           style = list(
             gt::cell_borders(sides = "top", color = "white"),
