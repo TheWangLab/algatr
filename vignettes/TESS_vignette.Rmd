@@ -252,12 +252,13 @@ leg <-
   # Make sure to add your custom color palette to the legend
   scale_fill_manual(values = c("magenta3", "cyan3", "orange3"))
 
-# Drop the original legend from the plot
+# Remove the original legend from the plot
 plt <- plt + theme(legend.position = "none")
 
 # Then use cowplot to combine the two plots
 # (You can ignore any warnings about using alpha for a discrete variable)
 # rel_widths controls the relative size of the plot to the legend
+# ncol controls the number of columns in the plot grid
 cowplot::plot_grid(plt, leg, ncol = 2, rel_widths = c(5, 1))
 ```
 
