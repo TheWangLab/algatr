@@ -285,7 +285,7 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
 
   # Restore SNP names to rdadapt
   row.names(rdadapt_env) <- snp_names
-  
+
   # p-value threshold after p-value adjustment (different from Capblancq & Forester 2021)
   pvalues <- p.adjust(rdadapt_env$p.values, method = p_adj)
 
@@ -301,7 +301,6 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
     pvalues = pvalues,
     rdadapt = rdadapt_env
   )
-
   return(results)
 }
 
@@ -314,9 +313,11 @@ p_outlier_method <- function(mod, naxes, sig = 0.05, p_adj = "fdr") {
 #'
 #' @family RDA functions
 z_outlier_method <- function(mod, naxes, z = 3) {
-  load.rda <- vegan::scores(mod, choices = naxes, display = "species")
+  load.rda <- vegan::scores(mod, choices = 1:naxes, display = "species")
 
-  results <- purrr::map_dfr(data.frame(1:ncol(load.rda)), z_outlier_helper, load.rda, z)
+  results <-
+    purrr::map(1:ncol(load.rda), ~z_outlier_helper(.x, load.rda, z)) %>%
+    dplyr::bind_rows()
 
   return(results)
 }
