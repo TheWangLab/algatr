@@ -446,6 +446,36 @@ using <code><a href="../reference/tess_plot_allK.html">tess_plot_allK()</a></cod
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">krig_admix</span><span class="op">)</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, oma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tess_plot_allK.html">tess_plot_allK</a></span><span class="op">(</span><span class="va">krig_admix</span>, col_breaks <span class="op">=</span> <span class="fl">20</span>, legend.width <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/plot%20all%20K-1.png" width="960" style="display: block; margin: auto;"></p>
+<p>For extra flexibility, we also provide a <code><a href="../reference/geom_tess.html">geom_tess()</a></code>
+function that users can add to existing ggplot objects to plot Q values.
+This function takes in the kriged admixture values and the plot method
+(as described above).</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plt</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_tess.html">geom_tess</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"maxQ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># This allows you to add additional geoms to the plot such as state boundaries or sample coordinates</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">coords_proj</span>, color <span class="op">=</span> <span class="st">"black"</span>, pch <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># You can also use a custom color palette</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"magenta3"</span>, <span class="st">"cyan3"</span>, <span class="st">"orange3"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># And control any other aspect of the ggplot theme</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># If you want to add our custom TESS legend, you can do so using the tess_legend() function</span></span>
+<span><span class="va">leg</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/tess_legend.html">tess_legend</a></span><span class="op">(</span><span class="va">krig_admix</span>, plot_method <span class="op">=</span> <span class="st">"maxQ"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># Make sure to add your custom color palette to the legend</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"magenta3"</span>, <span class="st">"cyan3"</span>, <span class="st">"orange3"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove the original legend from the plot</span></span>
+<span><span class="va">plt</span> <span class="op">&lt;-</span> <span class="va">plt</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Then use cowplot to combine the two plots</span></span>
+<span><span class="co"># (You can ignore any warnings about using alpha for a discrete variable)</span></span>
+<span><span class="co"># rel_widths controls the relative size of the plot to the legend</span></span>
+<span><span class="co"># ncol controls the number of columns in the plot grid</span></span>
+<span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">plt</span>, <span class="va">leg</span>, ncol <span class="op">=</span> <span class="fl">2</span>, rel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="TESS_vignette_files/figure-html/geom_tess-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -454,7 +484,7 @@ using <code><a href="../reference/tess_plot_allK.html">tess_plot_allK()</a></cod
 <p>You can, of course, also plot TESS results using the tess3r package
 defaults and not those provided with algatr. The TESS function for a
 barplot is <code><a href="https://rspatial.github.io/terra/reference/barplot.html" class="external-link">barplot()</a></code>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">qmat</span>, sort.by.Q <span class="op">=</span> <span class="cn">TRUE</span>, border <span class="op">=</span> <span class="cn">NA</span>, space <span class="op">=</span> <span class="fl">0</span>, xlab <span class="op">=</span> <span class="st">"Individuals"</span>, ylab <span class="op">=</span> <span class="st">"Ancestry coefficients"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Use CreatePalette() to define color palettes.</span></span></code></pre></div>
 <p><img src="TESS_vignette_files/figure-html/tess%20default%20barplot-1.png" width="700" style="display: block; margin: auto;"></p>
@@ -464,7 +494,7 @@ barplot is <code><a href="https://rspatial.github.io/terra/reference/barplot.htm
 <span><span class="co">#&gt; [51] 46 47 48</span></span></code></pre>
 <p>You can also map kriged Q-values using tess3r with the
 <code><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot()</a></code> function.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># TESS requires a coordinate matrix, so we need to convert the sf object to a matrix</span></span>
 <span><span class="va">coords_proj_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="va">coords_proj</span><span class="op">)</span></span>
 <span></span>
@@ -522,7 +552,7 @@ cross-entropy scores for each K value tested</p></li>
 <li><p><code>grid</code>: The RasterLayer upon which Q values will be
 mapped</p></li>
 </ul>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One could also use krig_raster as the grid object</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_do_everything.html">tess_do_everything</a></span><span class="op">(</span><span class="va">liz_vcf</span>, <span class="va">coords_proj</span>, grid <span class="op">=</span> <span class="va">krig_raster</span>, Kvals <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, K_selection <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span></code></pre></div>

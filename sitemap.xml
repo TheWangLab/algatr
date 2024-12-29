@@ -157,6 +157,9 @@
     <loc>https://thewanglab.github.io/algatr/reference/geo_dist.html</loc>
   </url>
   <url>
+    <loc>https://thewanglab.github.io/algatr/reference/geom_tess.html</loc>
+  </url>
+  <url>
     <loc>https://thewanglab.github.io/algatr/reference/get_worldclim.html</loc>
   </url>
   <url>
@@ -170,9 +173,6 @@
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/reference/krig_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/krig_legend.html</loc>
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/reference/ld_prune.html</loc>
@@ -323,6 +323,9 @@
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/reference/tess_ktest.html</loc>
+  </url>
+  <url>
+    <loc>https://thewanglab.github.io/algatr/reference/tess_legend.html</loc>
   </url>
   <url>
     <loc>https://thewanglab.github.io/algatr/reference/tess_packages.html</loc>
