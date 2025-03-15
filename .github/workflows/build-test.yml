@@ -10,10 +10,10 @@ on:
     branches: [ "main" ]
   pull_request:
     paths:
-        - "R/**.R"
-        - .github/workflows/build-test.yml
-        - "vignettes/**.Rmd"
-        - "renv.lock"
+      - "R/**.R"
+      - .github/workflows/build-test.yml
+      - "vignettes/**.Rmd"
+      - "renv.lock"
     branches: [ "main" ]
 
 jobs:
@@ -25,10 +25,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Restore renv Environment
+        env:
+          GITHUB_PAT: ${{ secrets.GITPAT }}
         run: |
           R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore()'
          
       - name: Build R Package
         env:
-            GITHUB_PAT: ${{ secrets.GITPAT }}
-        run: R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); devtools::build()'
+          GITHUB_PAT: ${{ secrets.GITPAT }}
+        run: |
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); devtools::build()'
+
