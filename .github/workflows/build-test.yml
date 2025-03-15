@@ -1,4 +1,4 @@
-name: build
+name: build-test
 
 on:
   push:
@@ -27,8 +27,11 @@ jobs:
       - name: Restore and Update renv Environment
         env:
           GITHUB_PAT: ${{ secrets.GITPAT }}
+      - name: Restore renv Environment
         run: |
-          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore(); renv::update(prompt = FALSE)'
-      
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore()'
+         
       - name: Build R Package
-        run: R -e 'devtools::build()'
+        env:
+            GITHUB_PAT: ${{ secrets.GITPAT }}
+        run: R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); devtools::build()'

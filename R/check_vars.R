@@ -59,8 +59,8 @@ check_dists <- function(envlayers, coords, type = "Euclidean", lyr = NULL, sig =
 
   if (sum(!complete.cases(vals))) {
     warning("removing ", sum(!complete.cases(vals)), " locations with environmental NA values for Mantel test")
-    vals <- valsNA[complete.cases(vals), ]
     coords <- coords[complete.cases(vals), ]
+    vals <- vals[complete.cases(vals), ]
   }
 
   edists <- env_dist(vals)

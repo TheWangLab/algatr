@@ -234,6 +234,34 @@ par(mfrow = c(1, nlyr(krig_admix)), mar = rep(2, 4), oma = rep(1, 4))
 tess_plot_allK(krig_admix, col_breaks = 20, legend.width = 2)
 ```
 
+For extra flexibility, we also provide a `geom_tess()` function that users can add to existing ggplot objects to plot Q values. This function takes in the kriged admixture values and the plot method (as described above).
+```{r geom_tess, fig.width = 5, fig.height = 5, warning = FALSE, fig.align = 'center'}
+plt <-
+  ggplot() +
+  geom_tess(krig_admix, plot_method = "maxQ") +
+  # This allows you to add additional geoms to the plot such as state boundaries or sample coordinates
+  geom_sf(data = coords_proj, color = "black", pch = 3) +
+  # You can also use a custom color palette
+  scale_fill_manual(values = c("magenta3", "cyan3", "orange3")) +
+  # And control any other aspect of the ggplot theme
+  theme_void() 
+
+# If you want to add our custom TESS legend, you can do so using the tess_legend() function
+leg <- 
+  tess_legend(krig_admix, plot_method = "maxQ") +
+  # Make sure to add your custom color palette to the legend
+  scale_fill_manual(values = c("magenta3", "cyan3", "orange3"))
+
+# Remove the original legend from the plot
+plt <- plt + theme(legend.position = "none")
+
+# Then use cowplot to combine the two plots
+# (You can ignore any warnings about using alpha for a discrete variable)
+# rel_widths controls the relative size of the plot to the legend
+# ncol controls the number of columns in the plot grid
+cowplot::plot_grid(plt, leg, ncol = 2, rel_widths = c(5, 1))
+```
+
 ## Plotting with default tess3r package functions
 
 You can, of course, also plot TESS results using the tess3r package defaults and not those provided with algatr. The TESS function for a barplot is `barplot()`.

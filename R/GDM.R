@@ -376,9 +376,15 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
 
   # CREATE MAP ----------------------------------------------------------------------------------------------------
 
-  # Transform GIS layers
-  # Convert envlayers to raster
-  rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
+  # Transform environmental layers
+  # TEMPORARY: In new versions of GDM, the input/output rasters are SpatRasters, but for the old version they are rasters
+  if (packageVersion("gdm") >= "1.6.0-4") {
+    rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
+  } else {
+    envlayers_sub_raster <- stack(envlayers_sub)
+    rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub_raster)
+    rastTrans <- terra::rast(rastTrans)
+  }
 
   # Remove NA values
   rastDat <- na.omit(terra::values(rastTrans))
