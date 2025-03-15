@@ -381,7 +381,7 @@ gdm_map <- function(gdm_model, envlayers, coords, plot_vars = TRUE, scl = 1, dis
   if (packageVersion("gdm") >= "1.6.0-4") {
     rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub)
   } else {
-    envlayers_sub_raster <- stack(envlayers_sub)
+    envlayers_sub_raster <- raster::stack(envlayers_sub)
     rastTrans <- gdm::gdm.transform(gdm_model, envlayers_sub_raster)
     rastTrans <- terra::rast(rastTrans)
   }
