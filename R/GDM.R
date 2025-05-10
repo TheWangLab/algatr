@@ -511,7 +511,7 @@ gdm_plot_diss <- function(gdm_model) {
     ggplot2::ggplot(dat) +
     ggplot2::geom_point(ggplot2::aes(x = ecological, y = observed), color = "darkgrey", alpha = 0.6, size = 2) +
     ggplot2::theme_bw() +
-    ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(expand = c(0, 0)) +
     ggplot2::xlab("Predicted ecological distance") +
     ggplot2::ylab("Observed compositional dissimilarity") +
     ggplot2::geom_line(ggplot2::aes(x = overlayX_ecol, y = overlayY_ecol), size = 1)
@@ -520,7 +520,7 @@ gdm_plot_diss <- function(gdm_model) {
     ggplot2::ggplot(dat) +
     ggplot2::geom_point(ggplot2::aes(x = predicted, y = observed), color = "darkgrey", alpha = 0.6, size = 2) +
     ggplot2::theme_bw() +
-    ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(expand = c(0, 0)) +
     ggplot2::xlab("Predicted compositional dissimilarity") +
     ggplot2::ylab("Observed compositional dissimilarity") +
     ggplot2::geom_line(ggplot2::aes(x = overlayX_pred, y = overlayY_pred), size = 1)
