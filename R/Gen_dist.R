@@ -58,7 +58,9 @@ gen_dist <- function(gen = NULL, dist_type = "euclidean", plink_file = NULL, pli
     if (!inherits(gen, "vcfR")) stop("VCF file required for calculating DPS distances")
     # Convert to genind
     genind <- vcfR::vcfR2genind(gen)
-    dists <- adegenet::propShared(genind)
+    # Show DPS warning about previously incorrect calculation
+    dps_warning()
+    dists <- 1 - adegenet::propShared(genind)
     return(as.data.frame(dists))
   }
 
