@@ -505,8 +505,7 @@ gdm_plot_diss <- function(gdm_model) {
   # Get data for overlaid lines
   overlayX_ecol <- seq(from = min(dat$ecological), to = max(dat$ecological), length = datL)
   overlayY_ecol <- 1 - exp(-overlayX_ecol)
-  overlayX_pred <- seq(from = min(dat$predicted), to = max(dat$predicted), length = datL)
-  overlayY_pred <- 1 - exp(-overlayX_pred)
+  overlayY_pred <- overlayX_pred <- seq(from = min(dat$predicted), to = max(dat$predicted), length = datL)
 
   plot_ecol <-
     ggplot2::ggplot(dat) +
