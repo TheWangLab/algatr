@@ -1,4 +1,4 @@
-name: build
+name: build-test
 
 on:
   push:
@@ -10,10 +10,10 @@ on:
     branches: [ "main" ]
   pull_request:
     paths:
-        - "R/**.R"
-        - .github/workflows/build-test.yml
-        - "vignettes/**.Rmd"
-        - "renv.lock"
+      - "R/**.R"
+      - .github/workflows/build-test.yml
+      - "vignettes/**.Rmd"
+      - "renv.lock"
     branches: [ "main" ]
 
 jobs:
@@ -24,9 +24,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore and Update renv Environment
+      - name: Restore renv Environment
+        env:
+          GITHUB_PAT: ${{ secrets.GITPAT }}
         run: |
-          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore(); renv::update(prompt = FALSE)'
-      
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); renv::restore()'
+         
       - name: Build R Package
-        run: R -e 'devtools::build()'
+        env:
+          GITHUB_PAT: ${{ secrets.GITPAT }}
+        run: |
+          R -e 'options(repos = c(CRAN = "https://cloud.r-project.org")); devtools::build()'
+
