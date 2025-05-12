@@ -103,7 +103,7 @@ Let's look at a heatmap of Euclidean distance for our example dataset.
 gen_dist_hm(euc_dists)
 ```
 
-For the proportions of shared alleles distance metric, keep in mind that the more similar two samples are, the *higher* the distance will be, so this metric's heatmap will show the opposite trend as the other distance metrics available within `gen_dist()`:
+Let's look at a heatmap of the DPS measure of genetic distance which is calculated as `1 - proportion of shared alleles`:
 
 ```{r dps hm, fig.align='center', fig.height=5, fig.width=5}
 dps_dists <- gen_dist(liz_vcf, dist_type = "dps")
