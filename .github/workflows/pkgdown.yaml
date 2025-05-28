@@ -12,6 +12,7 @@ on:
       - _pkgdown.yml
       - man/*
       - man/figures/*
+      - Dockerfile
     branches: [ "main" ]
 name: pkgdown
 
