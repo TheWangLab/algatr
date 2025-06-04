@@ -1,348 +1,118 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://thewanglab.github.io/algatr/404.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/GDM_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/LFMM_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/MMRR_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/RDA_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/TESS_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/alazygatr_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/data_processing_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/masking_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/articles/wingen_vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/index.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/CA_env.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/MMRR.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/alazygatr_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/allK_plot_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/bestK.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/check_dists.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/check_env.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/check_vals.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/coords_to_sf.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/coords_to_sp.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/cor_df_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/data_processing_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/do_everything_for_me.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/env_dist.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/envirodata_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/extrap_mask.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_coeffs.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_df.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_format.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_map.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_plot_diss.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_plot_isplines.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_plot_vars.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_run.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_var_sel.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gdm_varimp_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_dist.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_dist_corr.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_dist_hm.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_dist_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/gen_to_geno.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/geno_to_dosage.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/geo_dist.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/geom_tess.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/get_worldclim.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/ggbarplot_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/krig_agg_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/krig_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/ld_prune.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_df.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_manhattanplot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_qqplot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_run.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/lfmm_test_tidy.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/liz_coords.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/liz_gendist.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/liz_vcf.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/load_algatr_example.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/masking_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_df.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_run.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/mmrr_var_sel.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/plot_crossent.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/plot_extrap_mask.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/pops_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/quick_elbow.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_cor.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_getoutliers.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_run.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_varpart.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rda_varpart_table.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/rm_islands.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/scale01.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/scaleRGB.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/select_K.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/simple_impute.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/snmf_bestK.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/snmf_crossent_helper.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/str_impute.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_barplot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_col_default.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_ggbarplot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_ggplot.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_krig.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_ktest.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_legend.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/tess_plot_allK.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/unfold.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/vcf_to_dosage.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/wingen_do_everything.html</loc>
-  </url>
-  <url>
-    <loc>https://thewanglab.github.io/algatr/reference/wingen_packages.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://thewanglab.github.io/algatr/404.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/LICENSE.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/GDM_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/LFMM_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/MMRR_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/RDA_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/TESS_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/alazygatr_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/data_processing_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/index.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/masking_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/articles/wingen_vignette.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/authors.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/index.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/CA_env.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/MMRR.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/alazygatr_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/allK_plot_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/bestK.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/check_dists.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/check_env.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/check_vals.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/coords_to_sf.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/coords_to_sp.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/cor_df_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/data_processing_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/do_everything_for_me.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/env_dist.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/envirodata_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/extrap_mask.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_coeffs.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_df.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_format.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_map.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_plot_diss.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_plot_isplines.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_plot_vars.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_run.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_var_sel.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gdm_varimp_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gen_dist.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gen_dist_corr.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gen_dist_hm.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gen_dist_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/gen_to_geno.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/geno_to_dosage.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/geo_dist.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/geom_tess.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/get_worldclim.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/ggbarplot_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/index.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/krig_agg_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/krig_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/ld_prune.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_df.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_manhattanplot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_qqplot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_run.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/lfmm_test_tidy.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/liz_coords.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/liz_gendist.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/liz_vcf.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/load_algatr_example.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/masking_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_df.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_plot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_run.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/mmrr_var_sel.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/pipe.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/plot_crossent.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/plot_extrap_mask.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/pops_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/quick_elbow.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_cor.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_getoutliers.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_plot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_run.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_varpart.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rda_varpart_table.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/rm_islands.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/scale01.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/scaleRGB.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/select_K.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/simple_impute.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/snmf_bestK.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/snmf_crossent_helper.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/str_impute.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_barplot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_col_default.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_ggbarplot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_ggplot.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_krig.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_ktest.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_legend.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_packages.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/tess_plot_allK.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/unfold.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/vcf_to_dosage.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/wingen_do_everything.html</loc></url>
+<url><loc>https://thewanglab.github.io/algatr/reference/wingen_packages.html</loc></url>
 </urlset>
+
