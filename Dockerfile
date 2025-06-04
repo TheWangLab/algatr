@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     libharfbuzz-dev \
     libfribidi-dev \
     pandoc \
-    pandoc-citeproc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
