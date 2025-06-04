@@ -1,5 +1,5 @@
 # Start from the geospatial base image
-FROM ghcr.io/rocker-org/devcontainer/geospatial:4.3
+FROM ghcr.io/rocker-org/devcontainer/geospatial:4.5
 
 # Set default CRAN repo
 RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /usr/local/lib/R/etc/Rprofile.site
