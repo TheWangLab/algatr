@@ -4,6 +4,10 @@ FROM ghcr.io/rocker-org/devcontainer/geospatial:4.5
 # Set default CRAN repo
 RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /usr/local/lib/R/etc/Rprofile.site
 
+# Relax compiler warnings for R packages
+ENV CFLAGS="-Wno-error=format-security"
+ENV CXXFLAGS="-Wno-error=format-security"
+
 # Install system dependencies for R packages (digest, shiny, etc.)
 RUN apt-get update && apt-get install -y \
     build-essential \
