@@ -281,6 +281,9 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
 #' @export
 #' @noRd
 raster_to_grid <- function(x) {
+  # Ensure raster is a SpatRaster
+  if (!inherits(x, "SpatRaster")) x <- rast(x)
+
   # Convert raster to dataframe
   grd <- terra::as.data.frame(x, xy = TRUE, na.rm = FALSE)
 
@@ -289,6 +292,9 @@ raster_to_grid <- function(x) {
 
   # Convert into gridded object
   sp::gridded(grd) <- TRUE
+
+  # Set CRS
+  if (!is.na(terra::crs(x))) sp::proj4string(grd) <- terra::crs(x)
 
   return(grd)
 }
