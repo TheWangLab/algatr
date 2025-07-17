@@ -274,7 +274,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
 #'
 #' @param x SpatRaster
 #'
-#' @return gridded SpatialPixelsDataFrame
+#' @return sf dataframe grid of points with x and y coordinates
 #'
 #' @family TESS functions
 #'
@@ -287,14 +287,8 @@ raster_to_grid <- function(x) {
   # Convert raster to dataframe
   grd <- terra::as.data.frame(x, xy = TRUE, na.rm = FALSE)
 
-  # Convert dataframe to spatial dataframe
-  sp::coordinates(grd) <- ~ x + y
-
-  # Convert into gridded object
-  sp::gridded(grd) <- TRUE
-
-  # Set CRS
-  if (!is.na(terra::crs(x))) sp::proj4string(grd) <- terra::crs(x)
+  # Convert dataframe to sf dataframe grid of points
+  grd <- sf::st_as_sf(grd, coords = c("x", "y"), crs = terra::crs(x))
 
   return(grd)
 }
