@@ -2,7 +2,7 @@
 #'
 #' @param gen path to vcf file, a `vcfR` type object, or a dosage matrix
 #' @param dist_type the type of genetic distance to calculate (options: `"euclidean"` (default), `"bray_curtis"`, `"dps"` for proportion of shared alleles (requires vcf), `"plink"`, or `"pc"` for PC-based)
-#' @param plink_file if `"plink"` dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)
+#' @param plink_file if `"plink"` dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance). File must be a **square** distance matrix.
 #' @param plink_id_file if `"plink"` dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)
 #' @param npc_selection if `dist_type = "pc"`, how to perform K selection (options: `"auto"` for automatic selection based on significant eigenvalues from Tracy-Widom test (default), or `"manual"` to examine PC screeplot and enter no. PCs into console)
 #' @param criticalpoint if `dist_type = "pc"` used with `npc_selection = "auto"`, the critical point for the significance threshold for the Tracy-Widom test within the PCA (defaults to 2.0234 which corresponds to an alpha of 0.01)

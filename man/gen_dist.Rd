@@ -18,7 +18,7 @@ gen_dist(
 
 \item{dist_type}{the type of genetic distance to calculate (options: \code{"euclidean"} (default), \code{"bray_curtis"}, \code{"dps"} for proportion of shared alleles (requires vcf), \code{"plink"}, or \code{"pc"} for PC-based)}
 
-\item{plink_file}{if \code{"plink"} dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance)}
+\item{plink_file}{if \code{"plink"} dist_type is used, path to plink distance file (typically ".dist"; required only for calculating plink distance). File must be a \strong{square} distance matrix.}
 
 \item{plink_id_file}{if \code{"plink"} dist_type is used, path to plink id file (typically ".dist.id"; required only for calculating plink distance)}
 
