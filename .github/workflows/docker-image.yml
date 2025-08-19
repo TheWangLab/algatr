@@ -1,5 +1,6 @@
 name: docker-build
 on:
+  workflow_dispatch:
   push:
     paths:
       - "R/**.R"
