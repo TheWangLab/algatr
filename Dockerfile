@@ -29,4 +29,4 @@ RUN Rscript -e 'install.packages("remotes", quiet = TRUE)'
 # (Optional) Prewarm cache with your package/deps; skip vignettes first
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = FALSE)'
 RUN Rscript -e 'algatr::alazygatr_packages()'
-RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = TRUE)"
+RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = TRUE)'
