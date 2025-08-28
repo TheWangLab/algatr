@@ -179,30 +179,3 @@ chull_mask <- function(coords, envlayers, buffer_width = NULL) {
 
   return(map_mask)
 }
-
-#' Plot mask on top of map
-#'
-#' @description Plots a raster with another raster "mask" on top of it
-#'
-#' @param map_r SpatRaster or Raster* object to be masked
-#' @param map_mask SpatRaster or Raster* object with 1s where you want to mask and NA everywhere else (i.e., what you want to keep, as produced by \code{\link{extrap_mask}})
-#' @param RGB_cols whether the plot should be RGB-based or not
-#' @param mask_col color and transparency of mask (defaults to black and alpha = 0.9)
-#'
-#' @return plot \code{map} with areas masked based on \code{map_mask}
-#' @export
-#'
-#' @seealso \code{\link{extrap_mask}}
-plot_extrap_mask <- function(map_r, map_mask, RGB_cols = TRUE, mask_col = rgb(0, 0, 0, alpha = 0.9)) {
-  if (!inherits(map_r, "SpatRaster")) map_r <- terra::rast(map_r)
-  if (!inherits(map_mask, "SpatRaster")) map_mask <- terra::rast(map_mask)
-
-  if (RGB_cols) {
-    terra::plotRGB(map_r, r = 1, g = 2, b = 3)
-  } else {
-    terra::plot(map_r)
-  }
-
-  # Plots mask as black semi-transparent layer over map
-  terra::plot(map_mask, col = mask_col, add = TRUE, legend = FALSE)
-}
