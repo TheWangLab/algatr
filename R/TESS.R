@@ -263,7 +263,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
   krig_sf <- krig_res$krige_output
 
   # Turn sf to xyz
-  xy <- as.data.frame(st_coordinates(krig_sf))
+  xy <- as.data.frame(sf::st_coordinates(krig_sf))
   names(xy) <- c("x","y")
   # Note: returns just the prediction (may want to provide var/stdev in the future)
   xyz <- cbind(xy, z = krig_sf[[1]])
