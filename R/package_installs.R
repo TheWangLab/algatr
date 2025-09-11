@@ -77,7 +77,7 @@ data_processing_packages <- function(){
 #' The following packages will be installed if not already present:
 #' \itemize{
 #'   \item "adegenet"
-#'   \item "AssocTests"
+#'   \item "AssocTests" (from CRAN archive)
 #'   \item "readr"
 #'   \item "tibble"
 #'   \item "ecodist"
@@ -92,7 +92,7 @@ data_processing_packages <- function(){
 #' \dontrun{gen_dist_packages()}
 gen_dist_packages <- function(){
   if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-  if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
+  if (!require("AssocTests", quietly = TRUE)) install.packages("https://cran.r-project.org/src/contrib/Archive/AssocTests/AssocTests_1.0-1.tar.gz", repos = NULL, type = "source")
   if (!require("readr", quietly = TRUE)) install.packages("readr")
   if (!require("tibble", quietly = TRUE)) install.packages("tibble")
   if (!require("ecodist", quietly = TRUE)) install.packages("ecodist")
@@ -173,7 +173,7 @@ masking_packages <- function(){
 #' The following packages will be installed if not already present:
 #' \itemize{
 #'   \item "adegenet"
-#'   \item "AssocTests"
+#'   \item "AssocTests" (from CRAN archive)
 #'   \item "lfmm"
 #'   \item "tess3r" (from GitHub repository bcm-uga/TESS3_encho_sen)
 #'   \item "LEA" (from Bioconductor repository)
@@ -188,7 +188,7 @@ masking_packages <- function(){
 lfmm_packages <- function(){
   dev_packages()
   if (!require("adegenet", quietly = TRUE)) install.packages("adegenet")
-  if (!require("AssocTests", quietly = TRUE)) install.packages("AssocTests")
+  if (!require("AssocTests", quietly = TRUE)) install.packages("https://cran.r-project.org/src/contrib/Archive/AssocTests/AssocTests_1.0-1.tar.gz", repos = NULL, type = "source")
   if (!require("lfmm", quietly = TRUE)) install.packages("lfmm")
   if (!require("tess3r", quietly = TRUE)) devtools::install_github("bcm-uga/TESS3_encho_sen")
   if (!require("LEA", quietly = TRUE)) BiocManager::install("LEA")
