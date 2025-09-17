@@ -23,45 +23,64 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Pin R user lib so every step uses the same place
+      R_LIBS_USER: /usr/local/lib/R/site-library
     permissions:
       contents: write
     container:
       image: ghcr.io/thewanglab/algatr:latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Install gdebi-core and rsync
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System deps for source builds
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gdebi-core
-          sudo apt-get install -y rsync
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential gfortran libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libbz2-dev liblzma-dev rsync gdebi-core
+          # sanity: create user lib if missing
+          mkdir -p "$R_LIBS_USER"
 
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Setup R
-        uses: r-lib/actions/setup-r@v2
-
-      - name: Install pkgdown
-        run:  install.packages("pkgdown")
+        
+      - name: Install pkgdown + devtools
         shell: Rscript {0}
-
-      - name: Install algatr
         run: |
-          install.packages("devtools")
-          devtools::install()
-        shell: Rscript {0}
+          install.packages(c("pkgdown","devtools"))
 
-      - name: Install algatr dependencies
+      - name: Install algatr (from source)
+        shell: Rscript {0}
+        run: |
+          devtools::install(dependencies = FALSE)  # you install deps yourself next
+
+      - name: Install deps via helper (should pull AssocTests)
+        shell: Rscript {0}
         run: |
           library(algatr)
           alazygatr_packages()
+
+      # Belt-and-suspenders: ensure AssocTests from CRAN archive and fail fast if missing
+      - name: Ensure AssocTests present
         shell: Rscript {0}
+        run: |
+          options(warn = 2)
+          if (!"AssocTests" %in% rownames(installed.packages())) {
+            install.packages(
+              "https://cran.r-project.org/src/contrib/Archive/AssocTests/AssocTests_1.0-1.tar.gz",
+              repos = NULL, type = "source"
+            )
+          }
+          stopifnot("AssocTests" %in% rownames(installed.packages()))
+          cat("LibPaths:\n"); print(.libPaths())
+          ip <- installed.packages()
+          print(ip[ip[, "Package"] %in% c("AssocTests","adegenet"), c("Package","Version","LibPath")])
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
+        run: |
+          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
