@@ -17,7 +17,7 @@ If any of these packages are not already installed, it will automatically instal
 The following packages will be installed if not already present:
 \itemize{
 \item "adegenet"
-\item "AssocTests"
+\item "AssocTests" (from CRAN archive)
 \item "lfmm"
 \item "tess3r" (from GitHub repository bcm-uga/TESS3_encho_sen)
 \item "LEA" (from Bioconductor repository)

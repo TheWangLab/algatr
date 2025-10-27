@@ -30,39 +30,39 @@ wingen_do_everything(
 )
 }
 \arguments{
-\item{gen}{genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)}
+\item{gen}{Genetic data either as an object of type vcf or a path to a vcf file (\emph{note:} order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this).}
 
-\item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections). For \code{method = "resist"} this should also be the conductivity layer (see \link[wingen]{resist_gd})}
+\item{lyr}{SpatRaster or RasterLayer to slide the window across (see Details for important information about projections). For \code{method = "resist"} this should also be the conductivity layer (see \link[wingen]{resist_gd}).}
 
-\item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
+\item{coords}{Coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections).}
 
-\item{wdim}{if \code{method = "window"}, dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window)}
+\item{wdim}{If \code{method = "window"}, dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window).}
 
-\item{fact}{aggregation factor to apply to \code{lyr} (defaults to 0; \emph{note:} increasing this value reduces computational time)}
+\item{fact}{Aggregation factor to apply to \code{lyr} (defaults to 0; \emph{note:} increasing this value reduces computational time).}
 
-\item{sample_count}{whether to create plot of sample counts for each cell (defaults to TRUE)}
+\item{sample_count}{Whether to create plot of sample counts for each cell (defaults to TRUE).}
 
-\item{min_n}{minimum number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)}
+\item{min_n}{Minimum number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA).}
 
 \item{preview}{whether to produce preview of raster layer, window and focal cell size using \link[wingen]{preview_gd} (default = FALSE)}
 
-\item{stat}{genetic diversity statistic(s) to calculate (see Details, defaults to \code{"pi"}). Can be a single statistic or a vector of statistics}
+\item{stat}{Genetic diversity statistic(s) to calculate (see Details, defaults to \code{"pi"}). Can be a single statistic or a vector of statistics.}
 
-\item{rarify}{if rarify = TRUE, rarefaction is performed (defaults to FALSE)}
+\item{rarify}{If rarify = TRUE, rarefaction is performed (defaults to FALSE).}
 
 \item{kriged}{whether to smooth out mapped values using kriging using \link[wingen]{krig_gd} (default = FALSE)}
 
-\item{grd}{object to create grid for kriging; can be a SpatRaster or RasterLayer. If undefined, will use \code{r} to create a grid.}
+\item{grd}{Object to create grid for kriging; can be a SpatRaster or RasterLayer. If undefined, will use \code{r} to create a grid.}
 
-\item{index}{integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer)}
+\item{index}{Integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer).}
 
-\item{agg_grd}{factor to use for aggregation of \code{grd}, if provided (this will decrease the resolution of the final kriged raster; defaults to NULL)}
+\item{agg_grd}{Factor to use for aggregation of \code{grd}, if provided (this will decrease the resolution of the final kriged raster; defaults to NULL).}
 
-\item{disagg_grd}{factor to use for disaggregation of \code{grd}, if provided (this will increase the resolution of the final kriged raster; defaults to NULL)}
+\item{disagg_grd}{Factor to use for disaggregation of \code{grd}, if provided (this will increase the resolution of the final kriged raster; defaults to NULL).}
 
-\item{agg_r}{factor to use for aggregation of \code{r}, if provided (this will decrease the number of points used in the kriging model; defaults to NULL)}
+\item{agg_r}{Factor to use for aggregation of \code{r}, if provided (this will decrease the number of points used in the kriging model; defaults to NULL).}
 
-\item{disagg_r}{factor to use for disaggregation, of \code{r} if provided (this will increase the number of points used in the kriging model; defaults to NULL)}
+\item{disagg_r}{Factor to use for disaggregation of \code{r}, if provided (this will increase the number of points used in the kriging model; defaults to NULL).}
 
 \item{masked}{whether to mask out areas outside region of interest using \link[wingen]{mask_gd} (default = FALSE)}
 

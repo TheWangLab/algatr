@@ -1,6 +1,7 @@
 name: build-test
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "R/**.R"

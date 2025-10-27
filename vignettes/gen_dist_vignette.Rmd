@@ -39,7 +39,7 @@ For several landscape genomics analyses, a pairwise genetic distance matrix is r
 
 4.  PC-based distance (the `"pc"` argument), which uses the `prcomp()` function within the [stats](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html) package and selects the number of PCs using a Tracy-Widom test (if `npc_selection = "auto"`; also requires specifying `criticalpoint` [see below for details]) or user-inputted PCs based on examining a screeplot and manually entering a value into the console (if `npc_selection = "manual"`)
 
-5.  Processing distances generated using Plink (the `"plink"` argument). This type of distance requires providing paths to two plink output files (the distance file, `plink_file`, and the ID file, `plink_id_file`)
+5.  Processing distances generated using Plink (the `"plink"` argument). This type of distance requires providing paths to two plink output files (the distance file, `plink_file`, and the ID file, `plink_id_file`); the distance file **must** be a square (i.e., symmetric) distance matrix
 
 A good place to start to understand these metrics is [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684), who tested a number of different genetic distance metrics (including most of the above) and compared results for use in landscape genetics analyses.
 
@@ -66,7 +66,7 @@ euc_dists <- gen_dist(liz_vcf, dist_type = "euclidean")
 euc_dists[1:5, 1:5]
 ```
 
-Now, let's process Plink distances:
+Now, let's process Plink distances, keeping in mind that the provided Plink distance matrix must be square (i.e., symmetric). Refer the Plink documentation for how to generate a square distance matrix.
 
 ```{r plink dists}
 plink_dists <- gen_dist(plink_file = system.file("extdata", "liz_test.dist", package = "algatr"), plink_id_file = system.file("extdata", "liz_test.dist.id", package = "algatr"), dist_type = "plink")
@@ -103,7 +103,7 @@ Let's look at a heatmap of Euclidean distance for our example dataset.
 gen_dist_hm(euc_dists)
 ```
 
-For the proportions of shared alleles distance metric, keep in mind that the more similar two samples are, the *higher* the distance will be, so this metric's heatmap will show the opposite trend as the other distance metrics available within `gen_dist()`:
+Let's look at a heatmap of the DPS measure of genetic distance which is calculated as `1 - proportion of shared alleles`:
 
 ```{r dps hm, fig.align='center', fig.height=5, fig.width=5}
 dps_dists <- gen_dist(liz_vcf, dist_type = "dps")
@@ -114,8 +114,8 @@ gen_dist_hm(dps_dists)
 
 ------------------------------------------------------------------------
 
-|                       | Citation/URL                                                                                                                                                                 | Details                                                                                                                |
-|-------------------|-----------------------------|-------------------------|
-| Associated code       | [Goslee & Urban 2007](https://cran.r-project.org/web/packages/ecodist/index.html)                                                                                            | algatr's calculation of Euclidean and Bray-Curtis distances using the `distance()` function within the ecodist package |
-| Associated code       | [Jombart 2008](https://academic.oup.com/bioinformatics/article/24/11/1403/191127); [Jombart & Ahmed 2011](https://academic.oup.com/bioinformatics/article/27/21/3070/218892) | algatr's calculation of proportion of shared alleles using the `propShared()` function within the adegenet package     |
-| Associated literature | [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684)                                                                                        | Paper testing a number of different genetic distance metrics (including those used by algatr) for landscape genomics   |
+|   | Citation/URL | Details |
+|-------------------|----------------------------|-------------------------|
+| Associated code | [Goslee & Urban 2007](https://cran.r-project.org/web/packages/ecodist/index.html) | algatr's calculation of Euclidean and Bray-Curtis distances using the `distance()` function within the ecodist package |
+| Associated code | [Jombart 2008](https://academic.oup.com/bioinformatics/article/24/11/1403/191127); [Jombart & Ahmed 2011](https://academic.oup.com/bioinformatics/article/27/21/3070/218892) | algatr's calculation of proportion of shared alleles using the `propShared()` function within the adegenet package |
+| Associated literature | [Shirk et al., 2017](https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684) | Paper testing a number of different genetic distance metrics (including those used by algatr) for landscape genomics |

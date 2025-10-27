@@ -10,7 +10,9 @@
 ^doc$
 ^Meta$
 ^scan_dependencies\.R$
+^snapshot_renv\.R$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
 ^\.github$
+

@@ -146,7 +146,7 @@ lfmm_run <- function(gen, env, K, lfmm_method = "ridge", p_adj = "fdr", sig = 0.
   result_df <- lfmm_df(lfmm_test_result)
 
   # Subset out candidate SNPs
-  lfmm_snps <- result_df %>% dplyr::filter(adjusted.pvalue < 0.05)
+  lfmm_snps <- result_df %>% dplyr::filter(adjusted.pvalue < sig)
 
   return(list(lfmm_snps = lfmm_snps, df = result_df, model = lfmm_mod, lfmm_test_result = lfmm_test_result, K = K))
 }

@@ -211,11 +211,11 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
   krig_grid <- raster_to_grid(grid)
 
   # Convert coords
-  krig_df <- coords_to_sp(coords)
+  krig_df <- coords_to_sf(coords)
 
   # Krige each K value
   krig_admix <-
-    purrr::map(1:K, krig_K, qmat, krig_grid, krig_df) %>%
+    purrr::map(1:K, ~krig_K(.x, qmat, krig_grid, krig_df)) %>%
     terra::rast()
 
   # mask with original raster layer because the grid fills in all NAs
@@ -260,12 +260,16 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
   krig_res <- krig_res$result
 
   # Get Krige output
-  krig_spdf <- krig_res$krige_output
+  krig_sf <- krig_res$krige_output
 
-  # turn spdf into raster
-  krig_r <- terra::rast(krig_spdf, type = "xyz", crs = terra::crs(krig_grid))
-  # return just the prediction (may want to provide var/stdev in the future)
-  krig_r <- krig_r[[1]]
+  # Turn sf to xyz
+  xy <- as.data.frame(sf::st_coordinates(krig_sf))
+  names(xy) <- c("x","y")
+  # Note: returns just the prediction (may want to provide var/stdev in the future)
+  xyz <- cbind(xy, z = krig_sf[[1]])
+
+  # turn sf into raster
+  krig_r <- terra::rast(xyz, type = "xyz", crs = terra::crs(krig_grid))
 
   return(krig_r)
 }
@@ -274,21 +278,21 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
 #'
 #' @param x SpatRaster
 #'
-#' @return gridded SpatialPixelsDataFrame
+#' @return sf dataframe grid of points with x and y coordinates
 #'
 #' @family TESS functions
 #'
 #' @export
 #' @noRd
 raster_to_grid <- function(x) {
+  # Ensure raster is a SpatRaster
+  if (!inherits(x, "SpatRaster")) x <- rast(x)
+
   # Convert raster to dataframe
   grd <- terra::as.data.frame(x, xy = TRUE, na.rm = FALSE)
 
-  # Convert dataframe to spatial dataframe
-  sp::coordinates(grd) <- ~ x + y
-
-  # Convert into gridded object
-  sp::gridded(grd) <- TRUE
+  # Convert dataframe to sf dataframe grid of points
+  grd <- sf::st_as_sf(grd, coords = c("x", "y"), crs = terra::crs(x))
 
   return(grd)
 }
@@ -358,10 +362,10 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
     # Add secondary plot (which will become the legend) with combined K and Q values using helper function
     # Suppressing a warning about using alpha for a discrete variable
     suppressWarnings ({
-      plt_leg <- 
+      plt_leg <-
         tess_legend(krig_admix = krig_admix, plot_method = plot_method, minQ = minQ) +
         ggplot_fill
-      
+
       plt <- cowplot::plot_grid(plt, plt_leg, rel_widths = rel_widths)
       })
   }
@@ -374,7 +378,7 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
       ggplot2::theme(legend.position = "none")
 
     # Build secondary plot (which will become the legend) with combined K and Q values using helper function
-    plt_leg <- 
+    plt_leg <-
       tess_legend(krig_admix = krig_admix, plot_method = plot_method, minQ = minQ) +
       ggplot_fill
 
@@ -390,14 +394,14 @@ tess_ggplot <- function(krig_admix, coords = NULL, plot_method = "maxQ", ggplot_
 #' This function creates a ggplot2 geom object for visualizing TESS plots based on kriging admixture data.
 #'
 #' @inheritParams tess_ggplot
-#' 
+#'
 #' @family TESS functions
 #'
 #' @return A list containing ggplot2 geom objects for plotting.
 #' @export
 geom_tess <- function(krig_admix, plot_method = "maxQ", minQ = 0.10){
   # Set up ggplot df
-  gg_df <- 
+  gg_df <-
     krig_admix %>%
     terra::as.data.frame(xy = TRUE, na.rm = FALSE) %>%
     tidyr::as_tibble() %>%
@@ -449,7 +453,7 @@ tess_legend <- function(krig_admix, plot_method = "maxQ", minQ = 0.10){
     ggplot2::coord_fixed(ratio = 1) +
     cowplot::theme_cowplot() %+replace% ggplot2::theme(legend.position = "none",
                                                        axis.ticks = ggplot2::element_blank(),
-                                                       axis.line = ggplot2::element_blank()) 
+                                                       axis.line = ggplot2::element_blank())
   return(plt_leg)
 }
 
@@ -672,7 +676,7 @@ pops_helper <- function(gen, tess3_obj, K) {
   # Replace Vs with Ks for clarity
   colnames(qmat) <- stringr::str_replace_all(colnames(qmat), "V", "K")
 
-  pops <- data.frame(individual = names, qmat) 
+  pops <- data.frame(individual = names, qmat)
 
   # Get population assignment based on max Q value
   pops <- pops %>%

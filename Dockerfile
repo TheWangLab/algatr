@@ -1,30 +1,32 @@
-# Dockerfile modified from: http://haines-lab.com/post/2022-01-23-automating-computational-reproducibility-with-r-using-renv-docker-and-github-actions/
-# Start with lastest geospatial 
-FROM ghcr.io/rocker-org/devcontainer/geospatial:4.3
+# Start from the geospatial base image
+FROM ghcr.io/rocker-org/devcontainer/geospatial:4.5
 
-# Relabel docker
-LABEL org.opencontainers.image.description=""
-
-# Use renv version 1.0.2
-#ENV RENV_VERSION 1.0.2
-
-# Install renv
-#RUN Rscript -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
-#RUN Rscript -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
-
-# Create a directory named after our project directory
-#WORKDIR /algatr
-
-# Copy the lockfile over to the Docker image
-#COPY renv.lock renv.lock
-# Install all R packages specified in renv.lock
-#RUN Rscript -e 'renv::restore()'
-
-# Set default CRAN repo
+# Default CRAN
 RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /usr/local/lib/R/etc/Rprofile.site
 
-# Install the algatr package from GitHub
+# Toolchain & headers commonly needed by CRAN packages
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    libgit2-dev \
+    libicu-dev libharfbuzz-dev libfribidi-dev \
+    pandoc && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Relax compiler warnings (avoid -Werror issues)
+ENV CFLAGS="-O2"
+ENV CXXFLAGS="-O2"
+
+# Avoid sandbox hiccups; always compile if needed
+ENV RENV_CONFIG_SANDBOX_ENABLED=false
+ENV R_COMPILE_AND_INSTALL_PACKAGES=always
+
+# Preinstall remotes (optional convenience)
+RUN Rscript -e 'install.packages("remotes", quiet = TRUE)'
+
+# (Optional) Prewarm cache with your package/deps; skip vignettes first
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = FALSE)'
 RUN Rscript -e 'algatr::alazygatr_packages()'
 RUN Rscript -e 'remotes::install_github("TheWangLab/algatr", build_vignettes = TRUE)'
-

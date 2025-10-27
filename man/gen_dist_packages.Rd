@@ -17,7 +17,7 @@ If any of these packages are not already installed, it will automatically instal
 The following packages will be installed if not already present:
 \itemize{
 \item "adegenet"
-\item "AssocTests"
+\item "AssocTests" (from CRAN archive)
 \item "readr"
 \item "tibble"
 \item "ecodist"
