@@ -202,7 +202,8 @@ maprgb <- map$pcaRastRGB
 map_mask <- extrap_mask(liz_coords, maprgb, method = "buffer", buffer_width = 1.25)
 
 # Plot the resulting masked map
-plot_extrap_mask(maprgb, map_mask, RGB = TRUE, mask_col = rgb(1, 1, 1, alpha = 0.6))
+terra::plotRGB(maprgb)
+terra::plot(map_mask, col = "white", add = TRUE, legend = FALSE, alpha = 0.6)
 ```
 
 ## Running GDM with `gdm_do_everything()`
