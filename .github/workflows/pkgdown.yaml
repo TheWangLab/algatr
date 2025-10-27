@@ -55,27 +55,11 @@ jobs:
         run: |
           devtools::install(dependencies = FALSE)  # you install deps yourself next
 
-      - name: Install deps via helper (should pull AssocTests)
+      - name: Install deps via helper
         shell: Rscript {0}
         run: |
           library(algatr)
           alazygatr_packages()
-
-      # Belt-and-suspenders: ensure AssocTests from CRAN archive and fail fast if missing
-      - name: Ensure AssocTests present
-        shell: Rscript {0}
-        run: |
-          options(warn = 2)
-          if (!"AssocTests" %in% rownames(installed.packages())) {
-            install.packages(
-              "https://cran.r-project.org/src/contrib/Archive/AssocTests/AssocTests_1.0-1.tar.gz",
-              repos = NULL, type = "source"
-            )
-          }
-          stopifnot("AssocTests" %in% rownames(installed.packages()))
-          cat("LibPaths:\n"); print(.libPaths())
-          ip <- installed.packages()
-          print(ip[ip[, "Package"] %in% c("AssocTests","adegenet"), c("Package","Version","LibPath")])
 
       - name: Build site
         shell: Rscript {0}

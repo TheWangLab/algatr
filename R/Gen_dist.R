@@ -99,7 +99,7 @@ gen_dist <- function(gen = NULL, dist_type = "euclidean", plink_file = NULL, pli
       # If the significance level is 0.05, 0.01, 0.005, or 0.001,
       # the criticalpoint should be set to be 0.9793, 2.0234, 2.4224, or 3.2724, respectively.
       # The default is 2.0234.
-      tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
+      tw_result <- tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
       npc <- tw_result$SigntEigenL
     }
 
