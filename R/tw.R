@@ -80,7 +80,7 @@ tw <- function(eigenvalues, eigenL, criticalpoint = 2.0234)
     mu  <- (v.st+N.st)^2/v
     sig <- (v.st+N.st)/v * (1/v.st+1/N.st)^(1/3)
 
-    twstat <-(L-mu)/sig
+    twstat <- (L - mu) / sig
 
     #sink(output)
     #cat("TWstat = ", twstat, '\n')
