@@ -87,8 +87,7 @@ tw <- function(eigenvalues, eigenL, criticalpoint = 2.0234)
     if (length(d)==0)
     {
         d <- -100
-    }else
-    {
+    } else {
         d <- d-1
     }
 
