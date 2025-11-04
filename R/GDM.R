@@ -296,8 +296,6 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Get p-values from variable selection model
   pvalues <- vars[[3]]
 
-  if (!predSelect) return(pvalues)
-
   # Identify which cells have p-values lower than sig and not NA
   # NB: NA occurs when variables are removed during model testing
   cond <- (pvalues < sig) | is.na(pvalues)
