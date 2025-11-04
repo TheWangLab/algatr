@@ -82,10 +82,6 @@ tw <- function(eigenvalues, eigenL, criticalpoint = 2.0234)
 
     twstat <- (L - mu) / sig
 
-    #sink(output)
-    #cat("TWstat = ", twstat, '\n')
-    #sink()
-
     d <- which(twstat < criticalpoint)[1]
 
     if (length(d)==0)
