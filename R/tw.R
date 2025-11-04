@@ -60,7 +60,7 @@
 ##' tw(eigenvalues = c(5, 3, 1, 0), eigenL = 4, criticalpoint = 2.0234)
 ##' @export
 
-tw <- function(eigenvalues, eigenL, criticalpoint=2.0234)
+tw <- function(eigenvalues, eigenL, criticalpoint = 2.0234)
 {
     a <- deparse(substitute(eigenvalues))
     dex <- which(eigenvalues <= 1e-8)
