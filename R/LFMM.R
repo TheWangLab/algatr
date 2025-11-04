@@ -279,7 +279,7 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
 #'
-#' @note uses the \link[AssocTests]{tw} function from the archived CRAN package AssocTests
+#' @note uses the \link{tw} function, previously from the archived CRAN package AssocTests
 #'
 #' @export
 #'
