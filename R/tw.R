@@ -99,7 +99,6 @@ tw <- function(eigenvalues, eigenL, criticalpoint = 2.0234)
         data.name = a,
         SigntEigenL = d
         ), 
-    .Names=c("statistic", "alternative", "method", "data.name", "SigntEigenL"), 
     class="htest"
     )
 }
