@@ -75,7 +75,7 @@ K selection
 
 }}
 \note{
-uses the \link[AssocTests]{tw} function
+uses the `tw` function (originally from the archived CRAN package AssocTests)
 
 uses the \link[adegenet]{find.clusters} function
 }

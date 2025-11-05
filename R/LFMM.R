@@ -279,7 +279,7 @@ select_K <- function(gen, K_selection = "tracy_widom", coords = NULL, Kvals = 1:
 #' @describeIn select_K select K using Tracy-Widom Test
 #' @param gen genotype matrix
 #'
-#' @note uses the \link[AssocTests]{tw} function
+#' @note uses the \link{tw} function, previously from the archived CRAN package AssocTests
 #'
 #' @export
 #'
@@ -295,7 +295,7 @@ select_K_tw <- function(gen, criticalpoint = 2.0234) {
   eig <- pc$sdev^2
 
   # Run Tracy-Widom test
-  tw_result <- AssocTests::tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
+  tw_result <- tw(eig, eigenL = length(eig), criticalpoint = criticalpoint)
 
   # Get K based on number of significant eigenvalues
   K <- tw_result$SigntEigenL
