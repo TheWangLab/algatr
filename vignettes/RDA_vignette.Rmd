@@ -106,7 +106,7 @@ mod_full$call
 Now, let's take a look at the summary of this model. One of the most important parts of this object is the partitioning of variance. Within an RDA, the term "inertia" can be interpreted as variance, and our results show us that the amount of variance explained by explanatory variables alone (constrained inertia) is only 9.768%. Unconstrained inertia is the residual variance, which is very high (90.232%). The summary also provides site scores, site constraints, and biplot scores.
 
 ```{r full summary}
-head(summary(mod_full))
+summary(mod_full)
 ```
 
 One of the most relevant statistics to present from an RDA model is the adjusted R2 value. The R2 value *must* be adjusted; if not, it is biased because it will always increase if independent variables are added (i.e., there is no penalization for adding independent variables that aren't significantly affecting dependent variables within the model). The adjusted R2 value from the full (global) model can also help us determine the stopping point when we go on to do variable selection. As we can see, the unadjusted R2 is 0.098, while the adjusted value is 0.042. Be sure to always report *adjusted* R2 values.
@@ -155,7 +155,7 @@ Let's take a look at our partial RDA results. Note that now, the call includes c
 ```{r pRDA results}
 anova(mod_pRDA_geo)
 RsquareAdj(mod_pRDA_geo) # 0.0305
-head(summary(mod_pRDA_geo))
+summary(mod_pRDA_geo)
 ```
 
 ### Run a partial RDA with population genetic structure and geography as covariables
@@ -174,7 +174,7 @@ mod_pRDA_gs <- rda_run(gen, env, liz_coords,
 Now, we see that even more inertia/variance is explained by the conditioning variables.
 
 ```{r pRDA struct+geo summaryl}
-head(summary(mod_pRDA_gs))
+summary(mod_pRDA_gs)
 ```
 
 ## Variance partitioning with partial RDA
