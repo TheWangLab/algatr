@@ -53,7 +53,6 @@ reference:
   - title: Masking
   - contents:
     - ends_with("mask")
-    - plot_extrap_mask
     - starts_with("masking")
   - title: Genetic distances
   - contents:
