@@ -541,11 +541,11 @@ rda_biplot <- function(TAB_snps, TAB_var, biplot_axes = c(1, 2)) {
 
   ## Biplot of RDA SNPs and scores for variables
   plt_biplot <- ggplot2::ggplot() +
-    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
-    ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = gray(.80), size = 0.6) +
+    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = gray(.80), linewidth = 0.6) +
+    ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = gray(.80), linewidth = 0.6) +
     ggplot2::geom_point(data = TAB_snps_sub, ggplot2::aes(x = x, y = y, colour = type), size = 1.4) +
     ggplot2::scale_color_manual(values = c(rgb(0.7, 0.7, 0.7, 0.1), "#F9A242FF")) +
-    ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend = x, yend = y, x = 0, y = 0), colour = "black", size = 0.15, linetype = 1, arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
+  ggplot2::geom_segment(data = TAB_var_sub, ggplot2::aes(xend = x, yend = y, x = 0, y = 0), colour = "black", linewidth = 0.15, linetype = 1, arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc"))) +
     ggrepel::geom_text_repel(data = TAB_var_sub, ggplot2::aes(x = x, y = y, label = row.names(TAB_var_sub)), size = 4) +
     ggplot2::xlab(xax) +
     ggplot2::ylab(yax) +
@@ -582,7 +582,7 @@ rda_manhattan <- function(TAB_snps, rda_snps, pvalues, sig = 0.05) {
     ggplot2::scale_color_manual(values = c(rgb(0.7, 0.7, 0.7, 0.5), "#F9A242FF", "#6B4596FF")) +
     ggplot2::xlab("position") +
     ggplot2::ylab("-log10(p)") +
-    ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", size = 0.6) +
+  ggplot2::geom_hline(yintercept = -log10(sig), linetype = "dashed", color = "black", linewidth = 0.6) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "SNP type")) +
     ggplot2::theme_bw(base_size = 11) +
     ggplot2::theme(

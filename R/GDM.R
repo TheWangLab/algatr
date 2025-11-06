@@ -512,7 +512,7 @@ gdm_plot_diss <- function(gdm_model) {
     ggplot2::scale_y_continuous(expand = c(0, 0)) +
     ggplot2::xlab("Predicted ecological distance") +
     ggplot2::ylab("Observed compositional dissimilarity") +
-    ggplot2::geom_line(ggplot2::aes(x = overlayX_ecol, y = overlayY_ecol), size = 1)
+    ggplot2::geom_line(ggplot2::aes(x = overlayX_ecol, y = overlayY_ecol), linewidth = 1)
 
   plot_pred <-
     ggplot2::ggplot(dat) +
@@ -521,7 +521,7 @@ gdm_plot_diss <- function(gdm_model) {
     ggplot2::scale_y_continuous(expand = c(0, 0)) +
     ggplot2::xlab("Predicted compositional dissimilarity") +
     ggplot2::ylab("Observed compositional dissimilarity") +
-    ggplot2::geom_line(ggplot2::aes(x = overlayX_pred, y = overlayY_pred), size = 1)
+    ggplot2::geom_line(ggplot2::aes(x = overlayX_pred, y = overlayY_pred), linewidth = 1)
 
   plot <- cowplot::plot_grid(plot_ecol, plot_pred, nrow = 1)
 
@@ -612,10 +612,10 @@ gdm_plot_vars <- function(pcaSamp, pcaRast, pcaRastRGB, coords, x = "PC1", y = "
 
     # Create axes that cross through origin
     {
-      if (display_axes) ggplot2::geom_hline(yintercept = 0, size = 0.2, col = "gray")
+      if (display_axes) ggplot2::geom_hline(yintercept = 0, linewidth = 0.2, col = "gray")
     } +
     {
-      if (display_axes) ggplot2::geom_vline(xintercept = 0, size = 0.2, col = "gray")
+      if (display_axes) ggplot2::geom_vline(xintercept = 0, linewidth = 0.2, col = "gray")
     } +
 
     # Plot points from entire raster
