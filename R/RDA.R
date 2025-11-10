@@ -234,13 +234,21 @@ rda_run <- function(gen, env, coords = NULL, model = "full", correctGEO = FALSE,
   }
 
   if (model == "best") {
+    # Fit full and null models
     mod_full <- vegan::rda(f, data = moddf)
     mod_null <- vegan::rda(gen ~ 1, data = moddf)
+
+    # Embed concrete data.frame so re-fits don't need the 'moddf' symbol
+    mod_full$call$data <- moddf
+    mod_null$call$data <- moddf
+    
     mod <- vegan::ordiR2step(mod_null, mod_full, Pin = Pin, R2permutations = R2permutations, R2scope = R2scope)
+
     if (mod$call == mod_null$call) {
       mod <- NULL
       warning("Best model is NULL model, returning NULL")
     }
+
   } else {
     mod <- vegan::rda(f, data = moddf)
   }
