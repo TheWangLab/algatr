@@ -1,5 +1,5 @@
-pandoc: 3.1.11
-pkgdown: 2.1.3
+pandoc: 3.8.2.1
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   alazygatr_vignette: alazygatr_vignette.html
@@ -13,7 +13,7 @@ articles:
   RDA_vignette: RDA_vignette.html
   TESS_vignette: TESS_vignette.html
   wingen_vignette: wingen_vignette.html
-last_built: 2025-06-04T01:55Z
+last_built: 2025-11-10T17:55Z
 urls:
   reference: https://thewanglab.github.io/algatr/reference
   article: https://thewanglab.github.io/algatr/articles

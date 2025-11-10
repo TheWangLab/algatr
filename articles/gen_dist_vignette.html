@@ -114,8 +114,9 @@ console (if <code>npc_selection = "manual"</code>)</p></li>
 <li><p>Processing distances generated using Plink (the
 <code>"plink"</code> argument). This type of distance requires providing
 paths to two plink output files (the distance file,
-<code>plink_file</code>, and the ID file,
-<code>plink_id_file</code>)</p></li>
+<code>plink_file</code>, and the ID file, <code>plink_id_file</code>);
+the distance file <strong>must</strong> be a square (i.e., symmetric)
+distance matrix</p></li>
 </ol>
 <p>A good place to start to understand these metrics is <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.12684" class="external-link">Shirk
 et al., 2017</a>, who tested a number of different genetic distance
@@ -173,7 +174,9 @@ algatr.</p>
 <span><span class="co">#&gt; BLL5   17.26992 17.85357  0.00000 15.76388 12.63922</span></span>
 <span><span class="co">#&gt; BNT5   21.08910 19.50000 15.76388  0.00000 15.99219</span></span>
 <span><span class="co">#&gt; BOF1   18.77498 17.56417 12.63922 15.99219  0.00000</span></span></code></pre></div>
-<p>Now, let’s process Plink distances:</p>
+<p>Now, let’s process Plink distances, keeping in mind that the provided
+Plink distance matrix must be square (i.e., symmetric). Refer the Plink
+documentation for how to generate a square distance matrix.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plink_dists</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_dist.html">gen_dist</a></span><span class="op">(</span>plink_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"liz_test.dist"</span>, package <span class="op">=</span> <span class="st">"algatr"</span><span class="op">)</span>, plink_id_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"liz_test.dist.id"</span>, package <span class="op">=</span> <span class="st">"algatr"</span><span class="op">)</span>, dist_type <span class="op">=</span> <span class="st">"plink"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">53</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">53</span></span></span>
@@ -222,6 +225,14 @@ plot them:</p>
 <code class="sourceCode R"><span><span class="co"># Plot some pairwise comparisons, providing names for the metrics</span></span>
 <span><span class="va">p_euc_plink</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_dist_corr.html">gen_dist_corr</a></span><span class="op">(</span><span class="va">euc_dists</span>, <span class="va">plink_dists</span>, <span class="st">"Euclidean"</span>, <span class="st">"Plink"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(comparison, name)`</span></span>
+<span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">algatr</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span><span class="va">p_pc_plink</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_dist_corr.html">gen_dist_corr</a></span><span class="op">(</span><span class="va">pc_dists</span>, <span class="va">plink_dists</span>, <span class="st">"PC_based"</span>, <span class="st">"Plink"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(comparison, name)`</span></span>
 <span></span>
@@ -229,9 +240,9 @@ plot them:</p>
 <span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p_euc_plink</span>, <span class="va">p_pc_plink</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 1378 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_point()`).</span></span>
-<span><span class="co">#&gt; Removed 1378 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; Warning: Removed 1378 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
-<p><img src="gen_dist_vignette_files/figure-html/gendist%20corr-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="gen_dist_vignette_files/figure-html/gendist%20corr-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="plot-heatmap-of-one-of-the-genetic-distances-with-gen_dist_hm">Plot heatmap of one of the genetic distances with
@@ -241,7 +252,7 @@ plot them:</p>
 dataset.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/gen_dist_hm.html">gen_dist_hm</a></span><span class="op">(</span><span class="va">euc_dists</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gen_dist_vignette_files/figure-html/euc%20hm-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="gen_dist_vignette_files/figure-html/euc%20hm-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <p>Let’s look at a heatmap of the DPS measure of genetic distance which
 is calculated as <code>1 - proportion of shared alleles</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -251,7 +262,7 @@ is calculated as <code>1 - proportion of shared alleles</code>:</p>
 <span><span class="co">#&gt; Please review results from prior versions accordingly. This warning will appear</span></span>
 <span><span class="co">#&gt; once per session. To suppress, set options(wingen.quiet_dps_warning = TRUE).</span></span>
 <span><span class="fu"><a href="../reference/gen_dist_hm.html">gen_dist_hm</a></span><span class="op">(</span><span class="va">dps_dists</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gen_dist_vignette_files/figure-html/dps%20hm-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="gen_dist_vignette_files/figure-html/dps%20hm-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -261,7 +272,7 @@ is calculated as <code>1 - proportion of shared alleles</code>:</p>
 <table class="table">
 <colgroup>
 <col width="26%">
-<col width="39%">
+<col width="38%">
 <col width="34%">
 </colgroup>
 <thead><tr class="header">
@@ -309,7 +320,7 @@ et al., 2017</a></td>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

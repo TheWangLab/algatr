@@ -1,0 +1,660 @@
+# algatr
+
+[![build](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/TheWangLab/algatr/actions/workflows/build-test.yml)
+[![license:
+MIT](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![Zenodo
+DOI](https://zenodo.org/badge/523130808.svg)](https://zenodo.org/doi/10.5281/zenodo.10535497)
+
+**A** **L**andscape **G**enomic **A**nalysis **T**oolkit in **R**
+(**algatr**) was built to provide researchers with a step-by-step,
+start-to-finish pipeline to perform core landscape genomic analysis
+methods with their data.
+
+## Citation
+
+------------------------------------------------------------------------
+
+Please cite our paper if you use this package:
+
+**Chambers, E.A., Bishop, A.P., & Wang, I.J. (2023). Individual-based
+landscape genomics for conservation: An analysis pipeline. *Molecular
+Ecology
+Resources.*[https://doi.org/10.1111/1755-0998.13884.](https://doi.org/10.1111/1755-0998.13884)**
+
+Because algatr makes use of existing software, please also be sure to
+cite the papers for the relevant corresponding method:
+
+|  |  |  |
+|----|----|----|
+| `wingen` | Bishop et al. (2023) | DOI: [10.1111/2041-210X.14090](https://doi.org/10.1111/2041-210X.14090) |
+| `TESS` | Caye et al. (2016) | DOI: [10.1111/1755-0998.12471](https://doi.org/10.1111/1755-0998.12471) |
+| `MMRR` | Wang (2013) | DOI: [10.1111/evo.12134](https://doi.org/10.1111/evo.12134) |
+| `GDM` | Ferrier et al. (2007) | DOI: [10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x) |
+|  | Fitzpatrick et al. (2022) | gdm: Generalized Dissimilarity Modeling. R package version 1.5.0-9.1. |
+| `RDA` | Capblancq & Forester (2021) | DOI: [10.1111/2041-210X.13722](https://doi.org/10.1111/2041-210X.13722) |
+| `LFMM` | Caye et al. (2019) | DOI: [10.1093/molbev/msz008](https://doi.org/10.1093/molbev/msz008) |
+|  | Jumentier (2021) | lfmm: Latent Factor Mixed Models. R package version 1.1. |
+
+## Installation
+
+------------------------------------------------------------------------
+
+algatr can be installed with the following code:
+
+``` r
+
+devtools::install_github("TheWangLab/algatr")
+```
+
+The algatr package depends on many packages for all of the different
+methods implemented. To ensure that algatr can still be installed even
+if one of the many dependencies breaks, the packages required for each
+method are suggested rather than imported. To install all of the
+suggested packages set `dependencies = TRUE` when running
+`install_github()`. To install just the packages required for each
+method, use the `*_packages()` functions below. This is helpful if
+you’re only interested in using a subset of the methods provided and
+don’t want to install unnecessary packages.
+
+``` r
+
+# Install algatr
+devtools::install_github("TheWangLab/algatr")
+
+library(algatr)
+
+# Option 1: Install all of the packages for algatr
+alazygatr_packages()
+
+# Option 2: Install subsets of packages based on what methods you want to use:
+## Genetic distance processing:
+gen_dist_packages()
+## Genetic data processing:
+data_processing_packages()
+## Environmental and geographic data processing:
+envirodata_packages()
+## LFMM:
+lfmm_packages()
+## RDA:
+rda_packages()
+## MMRR:
+mmrr_packages()
+## GDM:
+gdm_packages()
+## TESS:
+tess_packages()
+## wingen:
+wingen_packages()
+```
+
+If you’re installing on Ubuntu, you may run into issues installing the
+rmapshaper package; scroll to the bottom of the README for more
+information.
+
+### Docker
+
+algatr can be run using [Docker](https://docs.docker.com/get-started/),
+in which case prior installation of package dependencies is not
+required. First, install Docker, and then start algatr within a Docker
+container:
+
+``` bash
+docker run --rm -ti ghcr.io/thewanglab/algatr
+```
+
+You can also run the container in an RStudio instance:
+
+``` bash
+docker run --rm -ti -e PASSWORD=yourpassword -p 8787:8787 ghcr.io/thewanglab/algatr
+```
+
+Open localhost:8787 in your browser and log in with username:rstudio and
+password:yourpassword (substitute yourpassword for whatever password you
+would like)
+
+### Codespaces
+
+You can also try out algatr using GitHub codespaces — a cloud-based
+development environment with everything you need installed and ready to
+go. To start a codespace, click the green “Code” button at the top of
+the repository and select “Open with Codespaces”. This will open a new
+codespace with the algatr repository loaded. If you want to make changes
+to any of the files, you will need to fork the repository to save them.
+GitHub Free personal accounts automatically come with 120 codespace core
+hours per month free. For more information about codespaces see
+[here](https://docs.github.com/en/codespaces/overview).
+
+## Introduction
+
+------------------------------------------------------------------------
+
+Landscape genetics (or genomics) combines the fields of landscape
+ecology and population genetics to understand how environmental
+variation affects spatial genetic variation. Thus, at its most basic,
+any landscape genetics method requires genetic and environmental data as
+input.
+
+The methods contained within algatr will perform analyses on:
+
+- Genomic-scale datasets (i.e., those generated using reduced
+  representation or whole genome sequencing)
+
+- Datasets with individual-based sampling (*it will also work on
+  population-based sampling schemes*)
+
+algatr makes use of several existing packages and methods, and we
+provide citations to these packages (and corresponding publications)
+whenever possible. Many of these packages have extensive documentation
+and excellent additional resources, which we provide links to in the
+corresponding vignettes. We have added functionality to each of these
+methods within algatr which we discuss in each of the methods’
+vignettes.
+
+Other than input data processing functions, the main functions within
+algatr are named with the pattern `[method]_do_everything()`. As the
+name implies, these functions will take you from your raw input data
+through to generating results, tables, and figures from the analysis.
+For example,
+[`gdm_do_everything()`](https://thewanglab.github.io/algatr/reference/gdm_do_everything.md)
+will run generalized dissimilarity modeling while also generating a GDM
+map, a table with results, and several other outputs. All of the
+`[method]_do_everything` functions has a `quiet` argument which, when
+set to `"TRUE"`, will not automatically print figures and outputs.
+
+To better understand what’s going on under the hood of these
+`[method]_do_everything()` functions, the algatr vignettes provide a
+line-by-line breakdown of the individual user-facing functions contained
+within the `[method]_do_everything()` function to (a) increase a user’s
+understanding of how the method actually works, and (b) allow users with
+more customizability in how they run their own analysis, if so desired.
+**We strongly encourage all researchers to only use the**
+`[method]_do_everything()` **functions as an initial first-pass
+examination of their data; users should follow the workflows provided in
+the vignettes for more nuanced parameter control and to generally better
+understand how each of these methods works.**
+
+When deciding on methods to have within algatr, we found it best to
+first identify the questions that these methods seek to answer, and we
+think this is a good framework for anyone (particularly beginner
+landscape genomicists) to think about landscape genomic methods. These
+questions fall into four broad categories of analyses:
+
+[TABLE]
+
+You can also view the knitted versions of this README and all of
+algatr’s vignettes on the **package’s pkgdown website
+[here](https://thewanglab.github.io/algatr/index.html).**
+
+### The example dataset
+
+------------------------------------------------------------------------
+
+As an example for the algatr vignettes, we’ll be using the *Sceloporus*
+RADseq dataset from [Bouzid et
+al. 2022](https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.15836).
+Although the original dataset contains \>6K SNPs and 108 individuals
+across Western North America, we’ve pruned the dataset down to 1,000
+SNPs and only those individuals collected in California (53 individuals)
+to make all analyses run a bit faster. This dataset also makes for a
+nice test dataset because the 53 individuals were collected from 53
+separate localities (i.e., individual-based sampling was used) across
+the state the California.
+
+There are four objects loaded within the example dataset:
+
+- `liz_coords`: sampling coordinates for 53 individuals (from 53
+  localities)
+
+- `liz_vcf`: the vcfR object containing variant information
+
+- `liz_gendist`: a matrix of genetic distances generated from the vcf
+  file (*distances were calculated using Plink*)
+
+- `CA_env`: a RasterStack object with three PC environmental layers
+
+Load the example dataset to take a look:
+
+``` r
+
+load_algatr_example()
+#> 
+#> ---------------- example dataset ----------------
+#>  
+#> Objects loaded: 
+#> *liz_vcf* vcfR object (1000 loci x 53 samples) 
+#> *liz_gendist* genetic distance matrix (Plink Distance) 
+#> *liz_coords* dataframe with x and y coordinates 
+#> *CA_env* RasterStack with example environmental layers 
+#> 
+#> -------------------------------------------------
+#> 
+```
+
+Let’s take a look at the environmental layers included in the example
+dataset. These were generated by performing a raster PCA on 19
+bioclimatic variables (obtained from the World Clim database) and
+retaining the top 3 PCs. Let’s take a look at the rasters:
+
+``` r
+
+plot(CA_env, col = turbo(100), axes = FALSE)
+```
+
+![](reference/figures/README-rasters-1.png)
+
+We can combine all three PCs into a single map by scaling each of the
+rasters such that they each correspond to either R, G, or B using the
+[`scaleRGB()`](https://thewanglab.github.io/algatr/reference/scaleRGB.md)
+function and subsequently map using the `plotRGB()` function.
+
+``` r
+
+env <- scaleRGB(CA_env)
+plotRGB(env, r = 1, g = 2, b = 3)
+
+# Add sampling localities on top of this
+points(liz_coords, pch = 19)
+```
+
+![](reference/figures/README-RGB-1.png)
+
+### Your NGS data
+
+------------------------------------------------------------------------
+
+To generate the above files for your own dataset, you’ll need the
+following:
+
+- Sampling coordinates (*always in longitude, latitude \[x,y\] order;
+  refer to `liz_coords` for formatting*)
+
+- Genetic data in vcf file format (*this is the most standard file
+  format for reduced representation or whole genome sequencing data*)
+
+- Environmental data layers of your choice
+
+**Be sure that the ordering of your individuals across your coordinate
+and genetic data files are consistent!**
+
+### Next steps
+
+Read in your vcf file using the `read.vcfR()` function in the vcfR
+package. To see how this works, we can load the example dataset vcf like
+so:
+
+``` r
+
+vcf <- read.vcfR(here("inst", "extdata", "liz_test.vcf"))
+#> Scanning file to determine attributes.
+#> File attributes:
+#>   meta lines: 6
+#>   header_line: 7
+#>   variant count: 1000
+#>   column count: 62
+#> Meta line 6 read in.
+#> All meta lines processed.
+#> gt matrix initialized.
+#> Character matrix gt created.
+#>   Character matrix gt rows: 1000
+#>   Character matrix gt cols: 62
+#>   skip: 0
+#>   nrows: 1000
+#>   row_num: 0
+#> Processed variant 1000Processed variant: 1000
+#> All variants processed
+```
+
+You’ll now want to do some processing of these data, such as file
+conversions and LD-pruning (see the [**data processing
+vignette**](https://thewanglab.github.io/algatr/articles/data_processing_vignette.html)),
+environmental data checking and manipulation (see the [**environmental
+data processing
+vignette**](https://thewanglab.github.io/algatr/articles/enviro_data_vignette.html)),
+and calculating genetic distances (see the [**genetic distances
+vignette**](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.html)).
+
+[TABLE]
+
+### Example
+
+------------------------------------------------------------------------
+
+Do alligators alligate? You can run through all of algatr’s
+functionality which we’ve coded up into a single function,
+[`do_everything_for_me()`](https://thewanglab.github.io/algatr/reference/do_everything_for_me.md).
+The `do_everything` functions provide a useful first pass at analyses,
+but each of algatr’s methods should be thoroughly tested and
+parameterized based on input data. Given this, we ***strongly*** advise
+against using this function for any final analyses.
+
+``` r
+
+# do_everything_for_me(liz_vcf, liz_coords, CA_env)
+```
+
+### Installing on Ubuntu
+
+You may run into issues installing the rmapshaper package if you’re
+using a Ubuntu system. If so, run the following line of code before
+attempting to install the package:
+
+``` R
+sudo apt-get install -y libprotobuf-dev protobuf-compiler libjq-dev
+```
+
+# Package index
+
+## Genetic data processing
+
+- [`data_processing_packages()`](https://thewanglab.github.io/algatr/reference/data_processing_packages.md)
+  : Install data processing packages
+
+- [`gen_to_geno()`](https://thewanglab.github.io/algatr/reference/gen_to_geno.md)
+  : Convert dosage matrix or vcf to geno type object (N.B.: this only
+  works for diploids!)
+
+- [`geno_to_dosage()`](https://thewanglab.github.io/algatr/reference/geno_to_dosage.md)
+  : Convert lfmm/geno matrix to dosage matrix (N.B.: this only works for
+  diploids!)
+
+- [`ld_prune()`](https://thewanglab.github.io/algatr/reference/ld_prune.md)
+  :
+
+  ld_prune prunes SNPs based on linkage disequilibrium using `SNPRelate`
+  and `SeqArray` packages
+
+- [`simple_impute()`](https://thewanglab.github.io/algatr/reference/simple_impute.md)
+  : Impute NA values NOTE: use extreme caution when using this form of
+  simplistic imputation. We mainly provide this code for creating test
+  datasets and highly discourage its use in analyses.
+
+- [`str_impute()`](https://thewanglab.github.io/algatr/reference/str_impute.md)
+  :
+
+  Imputation of missing values using population structure inferred with
+  [`LEA::snmf`](https://rdrr.io/pkg/LEA/man/main_sNMF.html)
+
+- [`vcf_to_dosage()`](https://thewanglab.github.io/algatr/reference/vcf_to_dosage.md)
+  : Convert a vcf to a dosage matrix
+
+## Environmental data processing
+
+- [`envirodata_packages()`](https://thewanglab.github.io/algatr/reference/envirodata_packages.md)
+  : Install environmental and geographic data processing packages
+- [`check_dists()`](https://thewanglab.github.io/algatr/reference/check_dists.md)
+  : Check geographic and environmental distances for collinearity
+- [`check_env()`](https://thewanglab.github.io/algatr/reference/check_env.md)
+  : Check environmental layers for collinearity
+- [`check_vals()`](https://thewanglab.github.io/algatr/reference/check_vals.md)
+  : Check extracted values for collinearity
+- [`env_dist()`](https://thewanglab.github.io/algatr/reference/env_dist.md)
+  : Calculate distance between environmental vars
+- [`geo_dist()`](https://thewanglab.github.io/algatr/reference/geo_dist.md)
+  : Calculate geographic distance between coordinates
+- [`get_worldclim()`](https://thewanglab.github.io/algatr/reference/get_worldclim.md)
+  : Download and merge WorldClim data for study area
+- [`rm_islands()`](https://thewanglab.github.io/algatr/reference/rm_islands.md)
+  : Remove islands from mapping
+
+## Masking
+
+- [`extrap_mask()`](https://thewanglab.github.io/algatr/reference/extrap_mask.md)
+  [`range_mask()`](https://thewanglab.github.io/algatr/reference/extrap_mask.md)
+  [`sd_mask()`](https://thewanglab.github.io/algatr/reference/extrap_mask.md)
+  [`buffer_mask()`](https://thewanglab.github.io/algatr/reference/extrap_mask.md)
+  [`chull_mask()`](https://thewanglab.github.io/algatr/reference/extrap_mask.md)
+  : Create raster mask based on coordinates
+- [`masking_packages()`](https://thewanglab.github.io/algatr/reference/masking_packages.md)
+  : Install masking packages
+
+## Genetic distances
+
+- [`gen_dist()`](https://thewanglab.github.io/algatr/reference/gen_dist.md)
+  : Calculate genetic distances
+- [`gen_dist_corr()`](https://thewanglab.github.io/algatr/reference/gen_dist_corr.md)
+  : Plot the relationship between two distance metrics
+- [`gen_dist_hm()`](https://thewanglab.github.io/algatr/reference/gen_dist_hm.md)
+  : Make heatmap of genetic distances
+- [`gen_dist_packages()`](https://thewanglab.github.io/algatr/reference/gen_dist_packages.md)
+  : Install genetic distance packages
+
+## TESS
+
+- [`tess_barplot()`](https://thewanglab.github.io/algatr/reference/tess_barplot.md)
+  : Create TESS barplot
+- [`tess_col_default()`](https://thewanglab.github.io/algatr/reference/tess_col_default.md)
+  : Create default TESS color palette
+- [`tess_do_everything()`](https://thewanglab.github.io/algatr/reference/tess_do_everything.md)
+  : TESS function to do everything
+- [`tess_ggbarplot()`](https://thewanglab.github.io/algatr/reference/tess_ggbarplot.md)
+  : Create TESS barplot using ggplot2
+- [`tess_ggplot()`](https://thewanglab.github.io/algatr/reference/tess_ggplot.md)
+  : ggplot of TESS results
+- [`tess_krig()`](https://thewanglab.github.io/algatr/reference/tess_krig.md)
+  : Krige admixture values
+- [`tess_ktest()`](https://thewanglab.github.io/algatr/reference/tess_ktest.md)
+  : Test multiple K values
+- [`tess_legend()`](https://thewanglab.github.io/algatr/reference/tess_legend.md)
+  : Create a custom legend for TESS maps
+- [`tess_packages()`](https://thewanglab.github.io/algatr/reference/tess_packages.md)
+  : Install TESS packages
+- [`tess_plot_allK()`](https://thewanglab.github.io/algatr/reference/tess_plot_allK.md)
+  : Plot all kriged Q values for each K
+- [`bestK()`](https://thewanglab.github.io/algatr/reference/bestK.md) :
+  Best K Selection based on cross entropy
+- [`geom_tess()`](https://thewanglab.github.io/algatr/reference/geom_tess.md)
+  : Create geom of TESS results that can be added to a ggplot object
+
+## MMRR
+
+- [`mmrr_df()`](https://thewanglab.github.io/algatr/reference/mmrr_df.md)
+  : Make nice dataframe from MMRR results
+
+- [`mmrr_do_everything()`](https://thewanglab.github.io/algatr/reference/mmrr_do_everything.md)
+  : MMRR function to do everything
+
+- [`mmrr_packages()`](https://thewanglab.github.io/algatr/reference/mmrr_packages.md)
+  : Install MMRR packages
+
+- [`mmrr_plot()`](https://thewanglab.github.io/algatr/reference/mmrr_plot.md)
+  : Plot MMRR results
+
+- [`mmrr_run()`](https://thewanglab.github.io/algatr/reference/mmrr_run.md)
+  : Run MMRR and return model object
+
+- [`mmrr_table()`](https://thewanglab.github.io/algatr/reference/mmrr_table.md)
+  :
+
+  Create `gt` table of MMRR results
+
+- [`mmrr_var_sel()`](https://thewanglab.github.io/algatr/reference/mmrr_var_sel.md)
+  : mmrr_var_sel performs MMRR with backward elimination variable
+  selection
+
+- [`MMRR()`](https://thewanglab.github.io/algatr/reference/MMRR.md) :
+  MMRR performs Multiple Matrix Regression with Randomization analysis
+
+- [`unfold()`](https://thewanglab.github.io/algatr/reference/unfold.md)
+  : unfold converts the lower diagonal elements of a matrix into a
+  vector
+
+## GDM
+
+- [`gdm_coeffs()`](https://thewanglab.github.io/algatr/reference/gdm_coeffs.md)
+  : Get coefficients for each predictor
+
+- [`gdm_df()`](https://thewanglab.github.io/algatr/reference/gdm_df.md)
+  : Create dataframe of GDM results
+
+- [`gdm_do_everything()`](https://thewanglab.github.io/algatr/reference/gdm_do_everything.md)
+  : GDM function to do everything (fit model, get coefficients, make and
+  save raster)
+
+- [`gdm_format()`](https://thewanglab.github.io/algatr/reference/gdm_format.md)
+  : Format Data for Generalized Dissimilarity Modeling (GDM)
+
+- [`gdm_map()`](https://thewanglab.github.io/algatr/reference/gdm_map.md)
+  : Make map from model
+
+- [`gdm_packages()`](https://thewanglab.github.io/algatr/reference/gdm_packages.md)
+  : Install GDM packages
+
+- [`gdm_plot_diss()`](https://thewanglab.github.io/algatr/reference/gdm_plot_diss.md)
+  : Plot compositional dissimilarity spline plots
+
+- [`gdm_plot_isplines()`](https://thewanglab.github.io/algatr/reference/gdm_plot_isplines.md)
+  : Plot I-splines for each variable
+
+- [`gdm_plot_vars()`](https://thewanglab.github.io/algatr/reference/gdm_plot_vars.md)
+  : Create a PCA plot for GDM
+
+- [`gdm_run()`](https://thewanglab.github.io/algatr/reference/gdm_run.md)
+  : Run GDM and return model object
+
+- [`gdm_table()`](https://thewanglab.github.io/algatr/reference/gdm_table.md)
+  :
+
+  Create `gt` table of GDM results
+
+- [`gdm_var_sel()`](https://thewanglab.github.io/algatr/reference/gdm_var_sel.md)
+  : Get best set of variables from a GDM model
+
+- [`gdm_varimp_table()`](https://thewanglab.github.io/algatr/reference/gdm_varimp_table.md)
+  : Generate a Variable Importance Table for GDM Models
+
+- [`scale01()`](https://thewanglab.github.io/algatr/reference/scale01.md)
+  : Scale genetic distances from 0 to 1
+
+- [`scaleRGB()`](https://thewanglab.github.io/algatr/reference/scaleRGB.md)
+  : Scale three layers of environmental data to R, G, and B for mapping
+
+## RDA
+
+- [`rda_cor()`](https://thewanglab.github.io/algatr/reference/rda_cor.md)
+  : Genotype-environment correlation test
+
+- [`rda_do_everything()`](https://thewanglab.github.io/algatr/reference/rda_do_everything.md)
+  : RDA function to do everything
+
+- [`rda_getoutliers()`](https://thewanglab.github.io/algatr/reference/rda_getoutliers.md)
+  : Get significant outliers from RDA model
+
+- [`rda_packages()`](https://thewanglab.github.io/algatr/reference/rda_packages.md)
+  : Install RDA packages
+
+- [`rda_plot()`](https://thewanglab.github.io/algatr/reference/rda_plot.md)
+  : Plot RDA results
+
+- [`rda_run()`](https://thewanglab.github.io/algatr/reference/rda_run.md)
+  : Run RDA
+
+- [`rda_table()`](https://thewanglab.github.io/algatr/reference/rda_table.md)
+  :
+
+  Create `gt` table of RDA results
+
+- [`rda_varpart()`](https://thewanglab.github.io/algatr/reference/rda_varpart.md)
+  : Partial RDA variance partitioning
+
+- [`rda_varpart_table()`](https://thewanglab.github.io/algatr/reference/rda_varpart_table.md)
+  :
+
+  Create `gt` table with RDA variance partitioning results
+
+## LFMM
+
+- [`lfmm_df()`](https://thewanglab.github.io/algatr/reference/lfmm_df.md)
+  : Convert LFMM results into a tidy dataframe for downstream processing
+
+- [`lfmm_do_everything()`](https://thewanglab.github.io/algatr/reference/lfmm_do_everything.md)
+  : LFMM function to do everything
+
+- [`lfmm_manhattanplot()`](https://thewanglab.github.io/algatr/reference/lfmm_manhattanplot.md)
+  : LFMM Manhattan Plot
+
+- [`lfmm_packages()`](https://thewanglab.github.io/algatr/reference/lfmm_packages.md)
+  : Install LFMM packages
+
+- [`lfmm_qqplot()`](https://thewanglab.github.io/algatr/reference/lfmm_qqplot.md)
+  : LFMM QQplot
+
+- [`lfmm_run()`](https://thewanglab.github.io/algatr/reference/lfmm_run.md)
+  : Run LFMM
+
+- [`lfmm_table()`](https://thewanglab.github.io/algatr/reference/lfmm_table.md)
+  :
+
+  Create `gt` table of LFMM results
+
+- [`select_K()`](https://thewanglab.github.io/algatr/reference/select_K.md)
+  [`select_K_tw()`](https://thewanglab.github.io/algatr/reference/select_K.md)
+  [`select_K_elbow()`](https://thewanglab.github.io/algatr/reference/select_K.md)
+  [`select_K_tess()`](https://thewanglab.github.io/algatr/reference/select_K.md)
+  [`select_K_fc()`](https://thewanglab.github.io/algatr/reference/select_K.md)
+  : K selection
+
+- [`quick_elbow()`](https://thewanglab.github.io/algatr/reference/quick_elbow.md)
+  : Quickly choose an elbow for a PC
+
+- [`tw()`](https://thewanglab.github.io/algatr/reference/tw.md) :
+  Tracy–Widom test
+
+## Wingen
+
+- [`wingen_do_everything()`](https://thewanglab.github.io/algatr/reference/wingen_do_everything.md)
+  : wingen function to do everything (preview and generate moving window
+  maps, krige, and mask)
+- [`wingen_packages()`](https://thewanglab.github.io/algatr/reference/wingen_packages.md)
+  : Install wingen packages
+
+## Alazygatr
+
+- [`alazygatr_packages()`](https://thewanglab.github.io/algatr/reference/alazygatr_packages.md)
+  : Install alazygatr packages
+
+- [`do_everything_for_me()`](https://thewanglab.github.io/algatr/reference/do_everything_for_me.md)
+  :
+
+  Lazy run of all landscape genomic analyses contained within `algatr`
+
+## Data
+
+- [`load_algatr_example()`](https://thewanglab.github.io/algatr/reference/load_algatr_example.md)
+  : Load example data
+- [`CA_env`](https://thewanglab.github.io/algatr/reference/CA_env.md) :
+  Example environmental data, calculated by performing a raster PCA on
+  18 bioclimatic variables for state of California
+- [`liz_coords`](https://thewanglab.github.io/algatr/reference/liz_coords.md)
+  : Example coordinates from Bouzid et al. 2022
+- [`liz_gendist`](https://thewanglab.github.io/algatr/reference/liz_gendist.md)
+  : Example genetic distance matrix, calculated with Plink using data
+  from Bouzid et al. 2022
+- [`liz_vcf`](https://thewanglab.github.io/algatr/reference/liz_vcf.md)
+  : Example VCF from Bouzid et al. 2022
+
+## Other
+
+- [`coords_to_sf()`](https://thewanglab.github.io/algatr/reference/coords_to_sf.md)
+  : Convert from matrix, data frame, or sf to sf (sf is a pass through)
+- [`coords_to_sp()`](https://thewanglab.github.io/algatr/reference/coords_to_sp.md)
+  : Convert from matrix, data frame, or sf to formatted sp
+
+# Articles
+
+### All vignettes
+
+- [Alazygatr](https://thewanglab.github.io/algatr/articles/alazygatr_vignette.md):
+- [Genetic data
+  processing](https://thewanglab.github.io/algatr/articles/data_processing_vignette.md):
+- [Environmental data
+  processing](https://thewanglab.github.io/algatr/articles/enviro_data_vignette.md):
+- [GDM](https://thewanglab.github.io/algatr/articles/GDM_vignette.md):
+- [Genetic
+  distances](https://thewanglab.github.io/algatr/articles/gen_dist_vignette.md):
+- [LFMM](https://thewanglab.github.io/algatr/articles/LFMM_vignette.md):
+- [Masking](https://thewanglab.github.io/algatr/articles/masking_vignette.md):
+- [MMRR](https://thewanglab.github.io/algatr/articles/MMRR_vignette.md):
+- [RDA](https://thewanglab.github.io/algatr/articles/RDA_vignette.md):
+- [TESS](https://thewanglab.github.io/algatr/articles/TESS_vignette.md):
+- [Wingen](https://thewanglab.github.io/algatr/articles/wingen_vignette.md):

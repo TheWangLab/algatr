@@ -102,8 +102,6 @@ dissimilarity modeling).</p>
 <li><p><code><a href="../reference/extrap_mask.html">extrap_mask()</a></code> function to reduce extrapolation by
 masking areas that fall outside the data (either based on environmental
 or spatial coverage)</p></li>
-<li><p><code><a href="../reference/plot_extrap_mask.html">plot_extrap_mask()</a></code> generates a map with masked
-areas</p></li>
 <li><p><code><a href="../reference/rm_islands.html">rm_islands()</a></code> masks specified islands from
 map</p></li>
 </ul>
@@ -129,10 +127,13 @@ map</p></li>
 <span><span class="co"># For the purposes of simplicity, let's just use one of the PCs for mapping:</span></span>
 <span><span class="va">envlayers</span> <span class="op">&lt;-</span> <span class="va">CA_env</span><span class="op">$</span><span class="va">CA_rPCA1</span></span>
 <span></span>
+<span><span class="co"># And now let's convert our PC to a terra SpatRaster object:</span></span>
+<span><span class="va">envlayers</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Let's take a look at the map with no masking:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, box <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/data-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="masking_vignette_files/figure-html/data-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="making-masked-maps">Making masked maps<a class="anchor" aria-label="anchor" href="#making-masked-maps"></a>
@@ -151,18 +152,12 @@ variable, the area is masked.</p>
 <span></span>
 <span><span class="co"># Extrapolate env values for given coordinates</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"range"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
 <span></span>
-<span><span class="co"># Now, plot the map with masked areas</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB_cols <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/range%20mask-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Let's make the masked areas white with no transparency</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB_cols <span class="op">=</span> <span class="cn">FALSE</span>, mask_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/range%20mask-2.png" width="480" style="display: block; margin: auto;"></p>
+<span><span class="co"># To make the map, we simply plot the base map (`envlayers`) and the </span></span>
+<span><span class="co"># created masking layer in black (`map_mask`) on top of one another:</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/range%20mask-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="standard-deviation-based-mask">Standard deviation-based mask<a class="anchor" aria-label="anchor" href="#standard-deviation-based-mask"></a>
@@ -172,25 +167,21 @@ all areas outside of the mean, +/- some number of standard deviations
 outside the environmental values included in data (normalized using the
 <code>nsd</code> parameter). This method is still as conservative as the
 <code>"range"</code> argument from above.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Let's start with nsd=2</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"sd"</span>, nsd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/sd%20mask-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/sd%20mask-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Now, increase nsd to 3 and see how the map masking changes:</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"sd"</span>, nsd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/sd%20mask-2.png" width="480" style="display: block; margin: auto;"></p>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/sd%20mask-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="buffer-based-mask">Buffer-based mask<a class="anchor" aria-label="anchor" href="#buffer-based-mask"></a>
@@ -200,36 +191,27 @@ around the coordinates provided using the <code>"buffer"</code>
 argument. Given how the buffer is calculated, this masking is agnostic
 to environment. We can adjust the size of the circular buffer using the
 <code>buffer_width</code> option.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"buffer"</span>, buffer_width <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning: [mask] CRS do not match</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/buffer%20mask-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/buffer%20mask-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Increase buffer size</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"buffer"</span>, buffer_width <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): [mask] CRS do not match</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/buffer%20mask-2.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/buffer%20mask-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Increase buffer size and change masking color and transparency</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"buffer"</span>, buffer_width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): [mask] CRS do not match</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span>, mask_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/buffer%20mask-3.png" width="480" style="display: block; margin: auto;"></p>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"white"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/buffer%20mask-3.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="convex-hull-based-mask">Convex hull-based mask<a class="anchor" aria-label="anchor" href="#convex-hull-based-mask"></a>
@@ -242,33 +224,27 @@ areas outside of a convex hull around the coordinates provided using the
 buffer-based masking, this masking is also agnostic to environment, and
 the size of the buffer is once again changed with the
 <code>buffer_width</code> argument</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"chull"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/chull%20mask-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/chull%20mask-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Increase the buffer size</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"chull"</span>, buffer_width <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/chull%20mask-2.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/chull%20mask-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Increase the buffer size again</span></span>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">envlayers</span>, method <span class="op">=</span> <span class="st">"chull"</span>, buffer_width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
-<span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
-<span><span class="co">#&gt; (see function details or vignette)</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/chull%20mask-3.png" width="480" style="display: block; margin: auto;"></p>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">envlayers</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="masking_vignette_files/figure-html/chull%20mask-3.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -278,9 +254,9 @@ the size of the buffer is once again changed with the
 <p>In some cases, if we have no sampling from islands, we do not want
 those areas mapped at all and can use the <code><a href="../reference/rm_islands.html">rm_islands()</a></code>
 function to do so. For example, our example dataset does not include the
-endemic <em>S. occidentalis</em> subspecies that occurs in the Channel
-Islands in California, and thus, we may want to exclude the Channel
-Islands from our maps. This function largely uses the
+endemic <em>S. becki</em> species that occurs in the Channel Islands in
+California, and thus, we may want to exclude the Channel Islands from
+our maps. This function largely uses the
 <code>ms_filter_islands()</code> function in the rmapshaper package,
 which identifies islands based on them being small in size and detached
 from the larger polygon (i.e., mainland). Users can specify the size of
@@ -293,13 +269,13 @@ is the minimum number of vertices to retain.</p>
 This will include the Channel Islands. We can retrieve administrative
 boundaries using the <code><a href="https://rdrr.io/pkg/geodata/man/gadm.html" class="external-link">gadm()</a></code> function within the geodata
 package.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">states</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geodata/man/gadm.html" class="external-link">gadm</a></span><span class="op">(</span><span class="st">"United States"</span>, level <span class="op">=</span> <span class="fl">1</span>, path <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cali</span> <span class="op">&lt;-</span> <span class="va">states</span><span class="op">[</span><span class="va">states</span><span class="op">$</span><span class="va">NAME_1</span> <span class="op">==</span> <span class="st">"California"</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cali</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/cali%20polygon-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="masking_vignette_files/figure-html/cali%20polygon-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="remove-islands">Remove islands<a class="anchor" aria-label="anchor" href="#remove-islands"></a>
@@ -308,24 +284,24 @@ package.</p>
 state of California from above) and the environmental layers we want the
 island(s) removed from (in our case, <code>CA_env</code> or
 <code>envlayers</code>).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cali_noislands</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rm_islands.html">rm_islands</a></span><span class="op">(</span><span class="va">envlayers</span>, <span class="va">cali</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now, let's plot the env layer and see how it's removed the Channel Islands</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cali_noislands</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/remove%20islands-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="masking_vignette_files/figure-html/remove%20islands-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <p>This function works even if we have multiple layers, as with
 <code>CA_env</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cali_noislands</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rm_islands.html">rm_islands</a></span><span class="op">(</span><span class="va">CA_env</span>, <span class="va">cali</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Islands are gone from all three enviro PC layers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cali_noislands</span><span class="op">)</span></span></code></pre></div>
-<p><img src="masking_vignette_files/figure-html/remove%20islands%20multilayers-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="masking_vignette_files/figure-html/remove%20islands%20multilayers-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 </div>
@@ -340,7 +316,7 @@ island(s) removed from (in our case, <code>CA_env</code> or
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

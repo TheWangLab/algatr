@@ -226,7 +226,7 @@ coordinates on top.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wclim</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/wclim%20plot-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="enviro_data_vignette_files/figure-html/wclim%20plot-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="detecting-collinearity">Detecting collinearity<a class="anchor" aria-label="anchor" href="#detecting-collinearity"></a>
@@ -283,7 +283,7 @@ correlations between environmental variables.</p>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span>
 <span><span class="co">#&gt; Warning: The extracted values for 25 pairs of variables had correlation coefficients &gt; 0.7. algatr recommends reducing collinearity by removing correlated variables or performing a PCA before proceeeding.</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/collin%20vals-1.png" width="960"></p>
+<p><img src="enviro_data_vignette_files/figure-html/collin%20vals-1.png" class="r-plt" width="960"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_result</span><span class="op">$</span><span class="va">cor_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   var1 var2         r</span></span>
@@ -299,7 +299,7 @@ correlations between environmental variables.</p>
 <span><span class="co">#&gt; Warning in crs_check(coords, envlayers): No CRS found for the provided</span></span>
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/collin%20vals%20CA-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/collin%20vals%20CA-1.png" class="r-plt" width="700"></p>
 <pre><code><span><span class="co">#&gt; $cor_df</span></span>
 <span><span class="co">#&gt; [1] var1 var2 r   </span></span>
 <span><span class="co">#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span>
@@ -389,17 +389,17 @@ data, and so only those will be considered for further analyses.</p>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://bleutner.github.io/RStoolbox/reference/ggR.html" class="external-link">ggR</a></span><span class="op">(</span><span class="va">env_pcs</span><span class="op">$</span><span class="va">map</span>, <span class="va">x</span>, geom_raster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plots</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> </span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> </span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-2.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-2.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-3.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/raster%20PCA-3.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can also create a single composite raster plot with 3 PCs (each is assigned R, G, or B)</span></span>
 <span><span class="fu"><a href="https://bleutner.github.io/RStoolbox/reference/ggRGB.html" class="external-link">ggRGB</a></span><span class="op">(</span><span class="va">env_pcs</span><span class="op">$</span><span class="va">map</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, stretch <span class="op">=</span> <span class="st">"lin"</span>, q <span class="op">=</span> <span class="fl">0</span>, geom_raster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/comp%20raster-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/comp%20raster-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="create-raster-from-coordinates-with-wingen-coords_to_raster">Create raster from coordinates with wingen:
@@ -417,7 +417,7 @@ diversity in wingen (see the wingen documentation <a href="https://github.com/An
 <code class="sourceCode R"><span><span class="va">raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/coords_to_raster.html" class="external-link">coords_to_raster</a></span><span class="op">(</span><span class="va">liz_coords</span>, res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">raster</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/coords%20to%20raster-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/coords%20to%20raster-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="calculate-environmental-distances-using-env_dist">Calculate environmental distances using <code>env_dist()</code><a class="anchor" aria-label="anchor" href="#calculate-environmental-distances-using-env_dist"></a>
@@ -445,7 +445,7 @@ environmental variables at sampling coordinates.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">env_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/env_dist.html">env_dist</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/env%20dist-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/env%20dist-1.png" class="r-plt" width="700"></p>
 <p>We can make a heat map in ggplot with the pairwise distances.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">env_dist</span><span class="op">$</span><span class="va">CA_rPCA1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -457,7 +457,7 @@ environmental variables at sampling coordinates.</p>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/env%20dist%20heatmap-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/env%20dist%20heatmap-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="calculate-geographic-distances-using-geo_dist">Calculate geographic distances using <code>geo_dist()</code><a class="anchor" aria-label="anchor" href="#calculate-geographic-distances-using-geo_dist"></a>
@@ -485,7 +485,7 @@ with the <code>lyr</code> argument</p></li>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">geo_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_dist.html">geo_dist</a></span><span class="op">(</span><span class="va">liz_coords</span>, type <span class="op">=</span> <span class="st">"Euclidean"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">geo_dist</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/geo%20dist-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/geo%20dist-1.png" class="r-plt" width="700"></p>
 <p>We can make a heat map in ggplot with the pairwise distances.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a fun heat map with the pairwise distances</span></span>
@@ -500,7 +500,7 @@ with the <code>lyr</code> argument</p></li>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/geo%20dist%20heatmap-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/geo%20dist%20heatmap-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="topographic-distances">Topographic distances<a class="anchor" aria-label="anchor" href="#topographic-distances"></a>
@@ -521,7 +521,7 @@ top.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">CA_dem</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/lines.html" class="external-link">points</a></span><span class="op">(</span><span class="va">liz_coords</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/plot%20dem-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/plot%20dem-1.png" class="r-plt" width="700"></p>
 <p>Now, let’s calculate topographic distances using the
 <code>CA_dem</code> object as our layer with the <code>lyr</code>
 argument.</p>
@@ -544,7 +544,7 @@ argument.</p>
 <span>  <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Sample"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enviro_data_vignette_files/figure-html/topo%20dist%20heatmap-1.png" width="700"></p>
+<p><img src="enviro_data_vignette_files/figure-html/topo%20dist%20heatmap-1.png" class="r-plt" width="700"></p>
 </div>
 </div>
 <div class="section level3">
@@ -621,7 +621,7 @@ distances</td>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

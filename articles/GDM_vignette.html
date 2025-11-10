@@ -282,7 +282,7 @@ dissimilarity within the <code>observed</code> element.</p>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] GDM Modelling Summary</span></span>
-<span><span class="co">#&gt; [1] Creation Date:  Wed Jun  4 01:58:44 2025</span></span>
+<span><span class="co">#&gt; [1] Creation Date:  Mon Nov 10 17:58:38 2025</span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] Name:  $        Name:  gdm_full Name:  model   </span></span>
 <span><span class="co">#&gt; [1] </span></span>
@@ -347,8 +347,15 @@ dissimilarity against observed compositional dissimilarity using the
 point corresponds to a site-pair comparison, and the lines are obtained
 by fitting (applying a link function) to the linear predictor.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gdm_plot_diss.html">gdm_plot_diss</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/exp%20and%20obs%20dists-1.png" width="768" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gdm_plot_diss.html">gdm_plot_diss</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">algatr</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/exp%20and%20obs%20dists-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <div class="section level4">
 <h4 id="plotting-fitted-i-splines-for-variables">Plotting fitted I-splines for variables<a class="anchor" aria-label="anchor" href="#plotting-fitted-i-splines-for-variables"></a>
 </h4>
@@ -370,13 +377,13 @@ the coefficient for this variable is 0.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the I-splines with free x and y-axes</span></span>
 <span><span class="fu"><a href="../reference/gdm_plot_isplines.html">gdm_plot_isplines</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/isplines-1.png" width="480"></p>
+<p><img src="GDM_vignette_files/figure-html/isplines-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Plot the I-splines with a free x-axis and a fixed y-axis</span></span>
 <span><span class="co"># This allows for visualization of relative importance (i.e., the height of the I-splines)</span></span>
 <span><span class="fu"><a href="../reference/gdm_plot_isplines.html">gdm_plot_isplines</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/isplines-2.png" width="480"></p>
+<p><img src="GDM_vignette_files/figure-html/isplines-2.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level4">
 <h4 id="table-of-gdm-statistics">Table of GDM statistics<a class="anchor" aria-label="anchor" href="#table-of-gdm-statistics"></a>
@@ -875,7 +882,7 @@ within the GDM model.</p>
 </td>
 </tr>
 </tbody>
-<tfoot class="gt_footnotes"><tr>
+<tfoot><tr class="gt_footnotes">
 <td class="gt_footnote" colspan="2">
 <span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> The percentage of null deviance explained by the fitted GDM model.</td>
     </tr></tfoot>
@@ -1440,20 +1447,29 @@ plotting each as a vector and coloring the individual points in the same
 PC RGB space.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gdm_map.html">gdm_map</a></span><span class="op">(</span><span class="va">gdm_full</span><span class="op">$</span><span class="va">model</span>, <span class="va">CA_env</span>, <span class="va">liz_coords</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/GDM%20plots-1.png" width="480"><img src="GDM_vignette_files/figure-html/GDM%20plots-2.png" width="480"></p>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plots-1.png" class="r-plt" width="480"></p>
+<pre><code><span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">algatr</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plots-2.png" class="r-plt" width="480"></p>
 <p>The output of <code><a href="../reference/gdm_map.html">gdm_map()</a></code> is a list containing the GDM
 transformed raster layers (<code>map$rastTrans</code>) and the raster
 PCA of the GDM transformed layers, rescaled from 0 to 250 for RGB
 plotting (<code>map$pcaRastRGB</code>)</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can use the map output to plot the individual GDM transformed raster layers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">rastTrans</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-1.png" width="480"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-1.png" class="r-plt" width="480"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># And the individual PCA layers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-2.png" width="480"></p>
+<p><img src="GDM_vignette_files/figure-html/GDM%20plot%20transformed%20layers-2.png" class="r-plt" width="480"></p>
 <div class="section level4">
 <h4 id="masking-out-irrelevant-areas">Masking out irrelevant areas<a class="anchor" aria-label="anchor" href="#masking-out-irrelevant-areas"></a>
 </h4>
@@ -1468,7 +1484,7 @@ algatr’s <code><a href="../reference/extrap_mask.html">extrap_mask()</a></code
 for more information), we can mask out areas from the GDM map in several
 ways. Below, we mask out areas (in white) that fall outside a
 user-defined buffer around our sampling coordinates.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the GDM map from the GDM model object</span></span>
 <span><span class="va">maprgb</span> <span class="op">&lt;-</span> <span class="va">map</span><span class="op">$</span><span class="va">pcaRastRGB</span></span>
 <span></span>
@@ -1477,8 +1493,9 @@ user-defined buffer around our sampling coordinates.</p>
 <span><span class="va">map_mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extrap_mask.html">extrap_mask</a></span><span class="op">(</span><span class="va">liz_coords</span>, <span class="va">maprgb</span>, method <span class="op">=</span> <span class="st">"buffer"</span>, buffer_width <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the resulting masked map</span></span>
-<span><span class="fu"><a href="../reference/plot_extrap_mask.html">plot_extrap_mask</a></span><span class="op">(</span><span class="va">maprgb</span>, <span class="va">map_mask</span>, RGB <span class="op">=</span> <span class="cn">TRUE</span>, mask_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="GDM_vignette_files/figure-html/gdm%20masked-1.png" width="480" style="display: block; margin: auto;"></p>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">maprgb</span><span class="op">)</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_mask</span>, col <span class="op">=</span> <span class="st">"white"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></code></pre></div>
+<p><img src="GDM_vignette_files/figure-html/gdm%20masked-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -1498,7 +1515,7 @@ data files for input: a genetic distance matrix (the
 <code>gendist</code> argument), coordinates for samples (the
 <code>coords</code> argument), and environmental layers (the
 <code>envlayers</code> argument).</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gdm_full_everything</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/gdm_do_everything.html">gdm_do_everything</a></span><span class="op">(</span></span>
 <span>    <span class="va">liz_gendist</span>,</span>
@@ -1512,454 +1529,160 @@ data files for input: a genetic distance matrix (the
 <span><span class="co">#&gt; coordinates. Make sure the coordinates and the raster have the same projection</span></span>
 <span><span class="co">#&gt; (see function details or vignette)</span></span></code></pre></div>
 <div id="cgxmthdhlq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cgxmthdhlq table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#cgxmthdhlq thead, #cgxmthdhlq tbody, #cgxmthdhlq tfoot, #cgxmthdhlq tr, #cgxmthdhlq td, #cgxmthdhlq th {
-  border-style: none;
-}
-
-#cgxmthdhlq p {
-  margin: 0;
-  padding: 0;
-}
-
-#cgxmthdhlq .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#cgxmthdhlq .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#cgxmthdhlq .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#cgxmthdhlq .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#cgxmthdhlq .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#cgxmthdhlq .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#cgxmthdhlq .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#cgxmthdhlq .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#cgxmthdhlq .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#cgxmthdhlq .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#cgxmthdhlq .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#cgxmthdhlq .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#cgxmthdhlq .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#cgxmthdhlq .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#cgxmthdhlq .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cgxmthdhlq .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#cgxmthdhlq .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#cgxmthdhlq .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#cgxmthdhlq .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cgxmthdhlq .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#cgxmthdhlq .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cgxmthdhlq .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#cgxmthdhlq .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cgxmthdhlq .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#cgxmthdhlq .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#cgxmthdhlq .gt_left {
-  text-align: left;
-}
-
-#cgxmthdhlq .gt_center {
-  text-align: center;
-}
-
-#cgxmthdhlq .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#cgxmthdhlq .gt_font_normal {
-  font-weight: normal;
-}
-
-#cgxmthdhlq .gt_font_bold {
-  font-weight: bold;
-}
-
-#cgxmthdhlq .gt_font_italic {
-  font-style: italic;
-}
-
-#cgxmthdhlq .gt_super {
-  font-size: 65%;
-}
-
-#cgxmthdhlq .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#cgxmthdhlq .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#cgxmthdhlq .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#cgxmthdhlq .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#cgxmthdhlq .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#cgxmthdhlq .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#cgxmthdhlq .gt_indent_5 {
-  text-indent: 25px;
-}
-
-#cgxmthdhlq .katex-display {
-  display: inline-flex !important;
-  margin-bottom: 0.75em !important;
-}
-
-#cgxmthdhlq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
-  height: 0px !important;
-}
-</style>
+<p><style>#cgxmthdhlq table { font-family: system-ui, ‘Segoe UI’,
+Roboto, Helvetica, Arial, sans-serif, ‘Apple Color Emoji’, ‘Segoe UI
+Emoji’, ‘Segoe UI Symbol’, ‘Noto Color Emoji’; -webkit-font-smoothing:
+antialiased; -moz-osx-font-smoothing: grayscale; }</p>
+<p>#cgxmthdhlq thead, #cgxmthdhlq tbody, #cgxmthdhlq tfoot, #cgxmthdhlq
+tr, #cgxmthdhlq td, #cgxmthdhlq th { border-style: none; }</p>
+<p>#cgxmthdhlq p { margin: 0; padding: 0; }</p>
+<p>#cgxmthdhlq .gt_table { display: table; border-collapse: collapse;
+line-height: normal; margin-left: auto; margin-right: auto; color:
+#333333; font-size: 16px; font-weight: normal; font-style: normal;
+background-color: #FFFFFF; width: auto; border-top-style: solid;
+border-top-width: 2px; border-top-color: #A8A8A8; border-right-style:
+none; border-right-width: 2px; border-right-color: #D3D3D3;
+border-bottom-style: solid; border-bottom-width: 2px;
+border-bottom-color: #A8A8A8; border-left-style: none;
+border-left-width: 2px; border-left-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_caption { padding-top: 4px; padding-bottom: 4px;
+}</p>
+<p>#cgxmthdhlq .gt_title { color: #333333; font-size: 125%; font-weight:
+initial; padding-top: 4px; padding-bottom: 4px; padding-left: 5px;
+padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width:
+0; }</p>
+<p>#cgxmthdhlq .gt_subtitle { color: #333333; font-size: 85%;
+font-weight: initial; padding-top: 3px; padding-bottom: 5px;
+padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF;
+border-top-width: 0; }</p>
+<p>#cgxmthdhlq .gt_heading { background-color: #FFFFFF; text-align:
+center; border-bottom-color: #FFFFFF; border-left-style: none;
+border-left-width: 1px; border-left-color: #D3D3D3; border-right-style:
+none; border-right-width: 1px; border-right-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_bottom_border { border-bottom-style: solid;
+border-bottom-width: 2px; border-bottom-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_col_headings { border-top-style: solid;
+border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style:
+solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3;
+border-left-style: none; border-left-width: 1px; border-left-color:
+#D3D3D3; border-right-style: none; border-right-width: 1px;
+border-right-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_col_heading { color: #333333; background-color:
+#FFFFFF; font-size: 100%; font-weight: normal; text-transform: inherit;
+border-left-style: none; border-left-width: 1px; border-left-color:
+#D3D3D3; border-right-style: none; border-right-width: 1px;
+border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 5px;
+padding-bottom: 6px; padding-left: 5px; padding-right: 5px; overflow-x:
+hidden; }</p>
+<p>#cgxmthdhlq .gt_column_spanner_outer { color: #333333;
+background-color: #FFFFFF; font-size: 100%; font-weight: normal;
+text-transform: inherit; padding-top: 0; padding-bottom: 0;
+padding-left: 4px; padding-right: 4px; }</p>
+<p>#cgxmthdhlq .gt_column_spanner_outer:first-child { padding-left: 0;
+}</p>
+<p>#cgxmthdhlq .gt_column_spanner_outer:last-child { padding-right: 0;
+}</p>
+<p>#cgxmthdhlq .gt_column_spanner { border-bottom-style: solid;
+border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align:
+bottom; padding-top: 5px; padding-bottom: 5px; overflow-x: hidden;
+display: inline-block; width: 100%; }</p>
+<p>#cgxmthdhlq .gt_spanner_row { border-bottom-style: hidden; }</p>
+<p>#cgxmthdhlq .gt_group_heading { padding-top: 8px; padding-bottom:
+8px; padding-left: 5px; padding-right: 5px; color: #333333;
+background-color: #FFFFFF; font-size: 100%; font-weight: initial;
+text-transform: inherit; border-top-style: solid; border-top-width: 2px;
+border-top-color: #D3D3D3; border-bottom-style: solid;
+border-bottom-width: 2px; border-bottom-color: #D3D3D3;
+border-left-style: none; border-left-width: 1px; border-left-color:
+#D3D3D3; border-right-style: none; border-right-width: 1px;
+border-right-color: #D3D3D3; vertical-align: middle; text-align: left;
+}</p>
+<p>#cgxmthdhlq .gt_empty_group_heading { padding: 0.5px; color: #333333;
+background-color: #FFFFFF; font-size: 100%; font-weight: initial;
+border-top-style: solid; border-top-width: 2px; border-top-color:
+#D3D3D3; border-bottom-style: solid; border-bottom-width: 2px;
+border-bottom-color: #D3D3D3; vertical-align: middle; }</p>
+<p>#cgxmthdhlq .gt_from_md &gt; :first-child { margin-top: 0; }</p>
+<p>#cgxmthdhlq .gt_from_md &gt; :last-child { margin-bottom: 0; }</p>
+<p>#cgxmthdhlq .gt_row { padding-top: 8px; padding-bottom: 8px;
+padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style:
+solid; border-top-width: 1px; border-top-color: #D3D3D3;
+border-left-style: none; border-left-width: 1px; border-left-color:
+#D3D3D3; border-right-style: none; border-right-width: 1px;
+border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden;
+}</p>
+<p>#cgxmthdhlq .gt_stub { color: #333333; background-color: #FFFFFF;
+font-size: 100%; font-weight: initial; text-transform: inherit;
+border-right-style: solid; border-right-width: 2px; border-right-color:
+#D3D3D3; padding-left: 5px; padding-right: 5px; }</p>
+<p>#cgxmthdhlq .gt_stub_row_group { color: #333333; background-color:
+#FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit;
+border-right-style: solid; border-right-width: 2px; border-right-color:
+#D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top;
+}</p>
+<p>#cgxmthdhlq .gt_row_group_first td { border-top-width: 2px; }</p>
+<p>#cgxmthdhlq .gt_row_group_first th { border-top-width: 2px; }</p>
+<p>#cgxmthdhlq .gt_summary_row { color: #333333; background-color:
+#FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px;
+padding-left: 5px; padding-right: 5px; }</p>
+<p>#cgxmthdhlq .gt_first_summary_row { border-top-style: solid;
+border-top-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_first_summary_row.thick { border-top-width: 2px;
+}</p>
+<p>#cgxmthdhlq .gt_last_summary_row { padding-top: 8px; padding-bottom:
+8px; padding-left: 5px; padding-right: 5px; border-bottom-style: solid;
+border-bottom-width: 2px; border-bottom-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_grand_summary_row { color: #333333; background-color:
+#FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px;
+padding-left: 5px; padding-right: 5px; }</p>
+<p>#cgxmthdhlq .gt_first_grand_summary_row { padding-top: 8px;
+padding-bottom: 8px; padding-left: 5px; padding-right: 5px;
+border-top-style: double; border-top-width: 6px; border-top-color:
+#D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_last_grand_summary_row_top { padding-top: 8px;
+padding-bottom: 8px; padding-left: 5px; padding-right: 5px;
+border-bottom-style: double; border-bottom-width: 6px;
+border-bottom-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_striped { background-color: rgba(128, 128, 128,
+0.05); }</p>
+<p>#cgxmthdhlq .gt_table_body { border-top-style: solid;
+border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style:
+solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_footnotes { color: #333333; background-color:
+#FFFFFF; border-bottom-style: none; border-bottom-width: 2px;
+border-bottom-color: #D3D3D3; border-left-style: none;
+border-left-width: 2px; border-left-color: #D3D3D3; border-right-style:
+none; border-right-width: 2px; border-right-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_footnote { margin: 0px; font-size: 90%; padding-top:
+4px; padding-bottom: 4px; padding-left: 5px; padding-right: 5px; }</p>
+<p>#cgxmthdhlq .gt_sourcenotes { color: #333333; background-color:
+#FFFFFF; border-bottom-style: none; border-bottom-width: 2px;
+border-bottom-color: #D3D3D3; border-left-style: none;
+border-left-width: 2px; border-left-color: #D3D3D3; border-right-style:
+none; border-right-width: 2px; border-right-color: #D3D3D3; }</p>
+<p>#cgxmthdhlq .gt_sourcenote { font-size: 90%; padding-top: 4px;
+padding-bottom: 4px; padding-left: 5px; padding-right: 5px; }</p>
+<p>#cgxmthdhlq .gt_left { text-align: left; }</p>
+<p>#cgxmthdhlq .gt_center { text-align: center; }</p>
+<p>#cgxmthdhlq .gt_right { text-align: right; font-variant-numeric:
+tabular-nums; }</p>
+<p>#cgxmthdhlq .gt_font_normal { font-weight: normal; }</p>
+<p>#cgxmthdhlq .gt_font_bold { font-weight: bold; }</p>
+<p>#cgxmthdhlq .gt_font_italic { font-style: italic; }</p>
+<p>#cgxmthdhlq .gt_super { font-size: 65%; }</p>
+<p>#cgxmthdhlq .gt_footnote_marks { font-size: 75%; vertical-align:
+0.4em; position: initial; }</p>
+<p>#cgxmthdhlq .gt_asterisk { font-size: 100%; vertical-align: 0; }</p>
+<p>#cgxmthdhlq .gt_indent_1 { text-indent: 5px; }</p>
+<p>#cgxmthdhlq .gt_indent_2 { text-indent: 10px; }</p>
+<p>#cgxmthdhlq .gt_indent_3 { text-indent: 15px; }</p>
+<p>#cgxmthdhlq .gt_indent_4 { text-indent: 20px; }</p>
+<p>#cgxmthdhlq .gt_indent_5 { text-indent: 25px; }</p>
+<p>#cgxmthdhlq .katex-display { display: inline-flex !important;
+margin-bottom: 0.75em !important; }</p>
+#cgxmthdhlq div.Reactable &gt; div.rt-table &gt; div.rt-thead &gt;
+div.rt-tr.rt-tr-group-header &gt; div.rt-th-group:after { height: 0px
+!important; } </style></p>
 <table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
 <thead><tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="predictor">
@@ -2019,7 +1742,7 @@ CA_rPCA3
 </td>
 </tr>
 </tbody>
-<tfoot class="gt_footnotes"><tr>
+<tfoot><tr class="gt_footnotes">
 <td class="gt_footnote" colspan="2">
 <span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span>
 The percentage of null deviance explained by the fitted GDM model.
@@ -2027,7 +1750,7 @@ The percentage of null deviance explained by the fitted GDM model.
 </tr></tfoot>
 </table>
 </div>
-<p><img src="GDM_vignette_files/figure-html/do%20everything-1.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-2.png" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-3.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="GDM_vignette_files/figure-html/do%20everything-1.png" class="r-plt" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-2.png" class="r-plt" width="480" style="display: block; margin: auto;"><img src="GDM_vignette_files/figure-html/do%20everything-3.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="additional-documentation-and-citations">Additional documentation and citations<a class="anchor" aria-label="anchor" href="#additional-documentation-and-citations"></a>
@@ -2091,7 +1814,7 @@ et al. 2022</a></td>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

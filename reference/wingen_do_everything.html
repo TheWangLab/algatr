@@ -81,31 +81,31 @@
 
 
 <dl><dt id="arg-gen">gen<a class="anchor" aria-label="anchor" href="#arg-gen"></a></dt>
-<dd><p>genetic data either as an object of type vcf or a path to a vcf file (<em>note:</em> order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this)</p></dd>
+<dd><p>Genetic data either as an object of type vcf or a path to a vcf file (<em>note:</em> order matters! The coordinate and genetic data should be in the same order; there are currently no checks for this).</p></dd>
 
 
 <dt id="arg-lyr">lyr<a class="anchor" aria-label="anchor" href="#arg-lyr"></a></dt>
-<dd><p>SpatRaster or RasterLayer to slide the window across (see Details for important information about projections). For <code>method = "resist"</code> this should also be the conductivity layer (see <a href="https://rdrr.io/pkg/wingen/man/resist_gd.html" class="external-link">resist_gd</a>)</p></dd>
+<dd><p>SpatRaster or RasterLayer to slide the window across (see Details for important information about projections). For <code>method = "resist"</code> this should also be the conductivity layer (see <a href="https://rdrr.io/pkg/wingen/man/resist_gd.html" class="external-link">resist_gd</a>).</p></dd>
 
 
 <dt id="arg-coords">coords<a class="anchor" aria-label="anchor" href="#arg-coords"></a></dt>
-<dd><p>coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)</p></dd>
+<dd><p>Coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections).</p></dd>
 
 
 <dt id="arg-wdim">wdim<a class="anchor" aria-label="anchor" href="#arg-wdim"></a></dt>
-<dd><p>if <code>method = "window"</code>, dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window)</p></dd>
+<dd><p>If <code>method = "window"</code>, dimensions (height x width) of window; if only one value is provided, a square window is created (defaults to 3 x 3 window).</p></dd>
 
 
 <dt id="arg-fact">fact<a class="anchor" aria-label="anchor" href="#arg-fact"></a></dt>
-<dd><p>aggregation factor to apply to <code>lyr</code> (defaults to 0; <em>note:</em> increasing this value reduces computational time)</p></dd>
+<dd><p>Aggregation factor to apply to <code>lyr</code> (defaults to 0; <em>note:</em> increasing this value reduces computational time).</p></dd>
 
 
 <dt id="arg-sample-count">sample_count<a class="anchor" aria-label="anchor" href="#arg-sample-count"></a></dt>
-<dd><p>whether to create plot of sample counts for each cell (defaults to TRUE)</p></dd>
+<dd><p>Whether to create plot of sample counts for each cell (defaults to TRUE).</p></dd>
 
 
 <dt id="arg-min-n">min_n<a class="anchor" aria-label="anchor" href="#arg-min-n"></a></dt>
-<dd><p>minimum number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA)</p></dd>
+<dd><p>Minimum number of samples to use in calculations (any focal cell with a window containing less than this number of samples will be assigned a value of NA).</p></dd>
 
 
 <dt id="arg-preview">preview<a class="anchor" aria-label="anchor" href="#arg-preview"></a></dt>
@@ -113,11 +113,11 @@
 
 
 <dt id="arg-stat">stat<a class="anchor" aria-label="anchor" href="#arg-stat"></a></dt>
-<dd><p>genetic diversity statistic(s) to calculate (see Details, defaults to <code>"pi"</code>). Can be a single statistic or a vector of statistics</p></dd>
+<dd><p>Genetic diversity statistic(s) to calculate (see Details, defaults to <code>"pi"</code>). Can be a single statistic or a vector of statistics.</p></dd>
 
 
 <dt id="arg-rarify">rarify<a class="anchor" aria-label="anchor" href="#arg-rarify"></a></dt>
-<dd><p>if rarify = TRUE, rarefaction is performed (defaults to FALSE)</p></dd>
+<dd><p>If rarify = TRUE, rarefaction is performed (defaults to FALSE).</p></dd>
 
 
 <dt id="arg-kriged">kriged<a class="anchor" aria-label="anchor" href="#arg-kriged"></a></dt>
@@ -125,27 +125,27 @@
 
 
 <dt id="arg-grd">grd<a class="anchor" aria-label="anchor" href="#arg-grd"></a></dt>
-<dd><p>object to create grid for kriging; can be a SpatRaster or RasterLayer. If undefined, will use <code>r</code> to create a grid.</p></dd>
+<dd><p>Object to create grid for kriging; can be a SpatRaster or RasterLayer. If undefined, will use <code>r</code> to create a grid.</p></dd>
 
 
 <dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
-<dd><p>integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer)</p></dd>
+<dd><p>Integer indices of layers in raster stack to krige (defaults to 1; i.e., the first layer).</p></dd>
 
 
 <dt id="arg-agg-grd">agg_grd<a class="anchor" aria-label="anchor" href="#arg-agg-grd"></a></dt>
-<dd><p>factor to use for aggregation of <code>grd</code>, if provided (this will decrease the resolution of the final kriged raster; defaults to NULL)</p></dd>
+<dd><p>Factor to use for aggregation of <code>grd</code>, if provided (this will decrease the resolution of the final kriged raster; defaults to NULL).</p></dd>
 
 
 <dt id="arg-disagg-grd">disagg_grd<a class="anchor" aria-label="anchor" href="#arg-disagg-grd"></a></dt>
-<dd><p>factor to use for disaggregation of <code>grd</code>, if provided (this will increase the resolution of the final kriged raster; defaults to NULL)</p></dd>
+<dd><p>Factor to use for disaggregation of <code>grd</code>, if provided (this will increase the resolution of the final kriged raster; defaults to NULL).</p></dd>
 
 
 <dt id="arg-agg-r">agg_r<a class="anchor" aria-label="anchor" href="#arg-agg-r"></a></dt>
-<dd><p>factor to use for aggregation of <code>r</code>, if provided (this will decrease the number of points used in the kriging model; defaults to NULL)</p></dd>
+<dd><p>Factor to use for aggregation of <code>r</code>, if provided (this will decrease the number of points used in the kriging model; defaults to NULL).</p></dd>
 
 
 <dt id="arg-disagg-r">disagg_r<a class="anchor" aria-label="anchor" href="#arg-disagg-r"></a></dt>
-<dd><p>factor to use for disaggregation, of <code>r</code> if provided (this will increase the number of points used in the kriging model; defaults to NULL)</p></dd>
+<dd><p>Factor to use for disaggregation of <code>r</code>, if provided (this will increase the number of points used in the kriging model; defaults to NULL).</p></dd>
 
 
 <dt id="arg-masked">masked<a class="anchor" aria-label="anchor" href="#arg-masked"></a></dt>
@@ -172,8 +172,8 @@ N.B.: Be aware that this function sets <em>many</em> of the wingen function argu
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other wingen functions:
-<code><a href="krig_agg_helper.html">krig_agg_helper</a>()</code>,
-<code><a href="krig_helper.html">krig_helper</a>()</code></p></div>
+<code><a href="krig_agg_helper.html">krig_agg_helper()</a></code>,
+<code><a href="krig_helper.html">krig_helper()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -185,7 +185,7 @@ N.B.: Be aware that this function sets <em>many</em> of the wingen function argu
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

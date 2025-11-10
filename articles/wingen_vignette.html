@@ -196,7 +196,7 @@ large cells) of 50 km to make processing time faster. Note that the
 resolution units depend on the coordinate reference system.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">liz_lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/coords_to_raster.html" class="external-link">coords_to_raster</a></span><span class="op">(</span><span class="va">coords_proj</span>, res <span class="op">=</span> <span class="fl">50000</span>, buffer <span class="op">=</span> <span class="fl">5</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/coords%20to%20raster-1.png" width="480"></p>
+<p><img src="wingen_vignette_files/figure-html/coords%20to%20raster-1.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="moving-window-calculations-using-preview_gd-and-window_gd">Moving window calculations using <code>preview_gd()</code> and
@@ -241,12 +241,12 @@ each cell’s calculation (to stop this raster from being produced set
 <code>sample_count = FALSE</code>).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/preview_gd.html" class="external-link">preview_gd</a></span><span class="op">(</span><span class="va">liz_lyr</span>, <span class="va">coords_proj</span>, wdim <span class="op">=</span> <span class="fl">3</span>, fact <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/preview%20gd-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/preview%20gd-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Visualize the sample count layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_count.html" class="external-link">ggplot_count</a></span><span class="op">(</span><span class="va">sample_count</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/preview%20gd-2.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/preview%20gd-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="run-the-moving-window">Run the moving window<a class="anchor" aria-label="anchor" href="#run-the-moving-window"></a>
@@ -284,12 +284,12 @@ the <code>bkg</code> argument. You can produce base R plots using
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot map of pi</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_gd.html" class="external-link">ggplot_gd</a></span><span class="op">(</span><span class="va">wgd</span>, bkg <span class="op">=</span> <span class="va">envlayer</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Moving window pi"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/plot%20window-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/plot%20window-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Plot sample count map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_count.html" class="external-link">ggplot_count</a></span><span class="op">(</span><span class="va">wgd</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Sample count"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/plot%20window-2.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/plot%20window-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="krige-results">Krige results<a class="anchor" aria-label="anchor" href="#krige-results"></a>
@@ -337,12 +337,12 @@ because of the <code>lyr</code> raster shape.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot kriged map of pi</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_gd.html" class="external-link">ggplot_gd</a></span><span class="op">(</span><span class="va">kgd</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Kriged pi"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/plot%20krige-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/plot%20krige-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Plot kriged sample count map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_count.html" class="external-link">ggplot_count</a></span><span class="op">(</span><span class="va">kgd</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Kriged sample counts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/plot%20krige-2.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/plot%20krige-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="mask-using-sample-counts">Mask using sample counts<a class="anchor" aria-label="anchor" href="#mask-using-sample-counts"></a>
@@ -367,10 +367,10 @@ masked in this way with differing <code>minval</code> values.</p>
 <span><span class="va">mgd_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wingen/man/mask_gd.html" class="external-link">mask_gd</a></span><span class="op">(</span><span class="va">kgd</span>, <span class="va">kgd</span><span class="op">[[</span><span class="st">"sample_count"</span><span class="op">]</span><span class="op">]</span>, minval <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_gd.html" class="external-link">ggplot_gd</a></span><span class="op">(</span><span class="va">mgd_1</span>, bkg <span class="op">=</span> <span class="va">envlayer</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Kriged &amp; masked pi"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/mask%20sample%20count-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/mask%20sample%20count-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_gd.html" class="external-link">ggplot_gd</a></span><span class="op">(</span><span class="va">mgd_2</span>, bkg <span class="op">=</span> <span class="va">envlayer</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Kriged &amp; masked pi"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/mask%20sample%20count-2.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/mask%20sample%20count-2.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="mask-using-state-boundaries">Mask using state boundaries<a class="anchor" aria-label="anchor" href="#mask-using-state-boundaries"></a>
@@ -394,7 +394,7 @@ function. This function will resample a raster (here,
 <span></span>
 <span><span class="co"># Plot masked map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/wingen/man/ggplot_gd.html" class="external-link">ggplot_gd</a></span><span class="op">(</span><span class="va">mgd</span>, bkg <span class="op">=</span> <span class="va">envlayer</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Kriged &amp; masked pi"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/mask%20sd-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="wingen_vignette_files/figure-html/mask%20sd-1.png" class="r-plt" width="672" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -456,7 +456,7 @@ disaggregation factor of 4 for kriging
 <span>  bkg <span class="op">=</span> <span class="va">envlayer</span>, plot_count <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.</span></span></code></pre></div>
-<p><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-1.png" width="480"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-2.png" width="480"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-3.png" width="480"></p>
+<p><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-1.png" class="r-plt" width="480"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-2.png" class="r-plt" width="480"><img src="wingen_vignette_files/figure-html/wingen%20do%20everything-3.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="additional-documentation-and-citations">Additional documentation and citations<a class="anchor" aria-label="anchor" href="#additional-documentation-and-citations"></a>
@@ -504,7 +504,7 @@ Github</a></td>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
