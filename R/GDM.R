@@ -296,7 +296,7 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Get p-values from variable selection model
   pvalues <- vars[[3]]
 
-  # Subset out final mod variables
+  # Extract variable names from selected model
   finalvars <- names(pvalues)
 
   # If the geodist matrix (matrix_1) is a significant variable, add geo to the list of vars
