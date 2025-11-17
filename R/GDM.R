@@ -296,28 +296,8 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
   # Get p-values from variable selection model
   pvalues <- vars[[3]]
 
-  # Identify which cells have p-values lower than sig and not NA
-  # NB: NA occurs when variables are removed during model testing
-  cond <- (pvalues < sig) | is.na(pvalues)
-
-  # Identify which columns (i.e., models) have all significant p-values (or NA)
-  mods <- apply(cond, 2, all)
-
-  # Stop if there are no models with all sig p-values
-  if (all(!mods)) {
-    warning("No significant model variable set found, returning NULL")
-    return(NULL)
-  }
-
-  # Identify the first model (i.e., minimum) that has all significant p-values
-  finalmod <- min(which(mods))
-
   # Subset out final mod variables
-  finalmod <- pvalues[, finalmod]
-
-  # Get final variable names (i.e., names that are not NA)
-  finalvars <- rownames(pvalues)[which(!is.na(finalmod))]
-  finalpval <- finalmod[which(!is.na(finalmod))]
+  finalvars <- names(pvalues)
 
   # If the geodist matrix (matrix_1) is a significant variable, add geo to the list of vars
   if ("matrix_1" %in% finalvars) {
@@ -327,9 +307,8 @@ gdm_var_sel <- function(gdmData, sig = 0.05, nperm = 10) {
     finalvars <- c("geo", finalvars)
   }
 
-  return(list(finalvars = finalvars, pvalues = finalpval, varimp = vars))
+  return(list(finalvars = finalvars, pvalues = pvalues, varimp = vars))
 }
-
 
 #' Make map from model
 #'
