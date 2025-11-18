@@ -359,9 +359,12 @@ mod_best <- rda_run(gen, env,
 #> Call: gen ~ CA_rPCA2 + CA_rPCA3 
 #>  
 #>                 R2.adjusted
-#> + CA_rPCA1       0.04243263
 #> <All variables>  0.04243263
+#> + CA_rPCA1       0.04243263
 #> <model>          0.03919420
+#> 
+#>            Df    AIC      F Pr(>F)
+#> + CA_rPCA1  1 264.72 1.1691   0.17
 ```
 
 Let’s look at our best model, and see how it compares to our full model.
@@ -691,7 +694,7 @@ varpart <- rda_varpart(gen, env, liz_coords,
 #> <model>         0.0000000000
 #> 
 #>            Df    AIC      F Pr(>F)   
-#> + CA_rPCA2  1 264.09 2.0407  0.002 **
+#> + CA_rPCA2  1 264.09 2.0407  0.004 **
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -705,7 +708,7 @@ varpart <- rda_varpart(gen, env, liz_coords,
 #> <model>          0.01962140
 #> 
 #>            Df    AIC      F Pr(>F)   
-#> + CA_rPCA3  1 263.97 2.0389  0.002 **
+#> + CA_rPCA3  1 263.97 2.0389  0.006 **
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -713,9 +716,12 @@ varpart <- rda_varpart(gen, env, liz_coords,
 #> Call: gen ~ CA_rPCA2 + CA_rPCA3 
 #>  
 #>                 R2.adjusted
-#> + CA_rPCA1       0.04243263
 #> <All variables>  0.04243263
+#> + CA_rPCA1       0.04243263
 #> <model>          0.03919420
+#> 
+#>            Df    AIC      F Pr(>F)
+#> + CA_rPCA1  1 264.72 1.1691  0.164
 ```
 
 ![](RDA_vignette_files/figure-html/varpart-1.png)
@@ -782,7 +788,7 @@ mod_pRDA <- rda_run(gen, env, model = "best", correctPC = TRUE, nPC = 2)
     #> + Condition(PC1 + PC2) 0.0000000000
     #> 
     #>            Df    AIC      F Pr(>F)   
-    #> + CA_rPCA2  1 264.09 2.0407  0.008 **
+    #> + CA_rPCA2  1 264.09 2.0407  0.004 **
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     #> 
@@ -803,7 +809,7 @@ significant.
 
 mod_pRDA$anova
 #>                   R2.adj Df    AIC      F Pr(>F)   
-#> + CA_rPCA2      0.019621  1 264.09 2.0407  0.008 **
+#> + CA_rPCA2      0.019621  1 264.09 2.0407  0.004 **
 #> <All variables> 0.020253                           
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -1202,18 +1208,18 @@ results <- rda_do_everything(liz_vcf, CA_env, liz_coords,
 
 ![](RDA_vignette_files/figure-html/pRDA%20do%20everything-2.png)![](RDA_vignette_files/figure-html/pRDA%20do%20everything-3.png)![](RDA_vignette_files/figure-html/pRDA%20do%20everything-4.png)![](RDA_vignette_files/figure-html/pRDA%20do%20everything-5.png)
 
-| r     | p   | snp        | var      |
-|-------|-----|------------|----------|
-| -0.47 | 0   | Locus_771  | CA_rPCA2 |
-| -0.42 | 0   | Locus_2338 | CA_rPCA3 |
-| -0.37 | 0   | Locus_636  | CA_rPCA1 |
-| -0.37 | 0   | Locus_636  | CA_rPCA1 |
-| 0.36  | 0   | Locus_2425 | CA_rPCA3 |
-| 0.36  | 0   | Locus_770  | CA_rPCA3 |
-| -0.35 | 0   | Locus_2767 | CA_rPCA1 |
-| 0.35  | 0   | Locus_263  | CA_rPCA3 |
-| 0.33  | 0   | Locus_2839 | CA_rPCA3 |
-| 0.33  | 0   | Locus_2839 | CA_rPCA3 |
+| r     | p    | snp        | var      |
+|-------|------|------------|----------|
+| -0.42 | 0.00 | Locus_2338 | CA_rPCA3 |
+| -0.35 | 0.00 | Locus_2767 | CA_rPCA1 |
+| 0.31  | 0.01 | Locus_2665 | CA_rPCA2 |
+| 0.29  | 0.01 | Locus_2053 | CA_rPCA1 |
+| -0.29 | 0.01 | Locus_1005 | CA_rPCA1 |
+| -0.29 | 0.01 | Locus_1005 | CA_rPCA1 |
+| 0.29  | 0.01 | Locus_3058 | CA_rPCA3 |
+| 0.28  | 0.01 | Locus_1660 | CA_rPCA2 |
+| 0.27  | 0.01 | Locus_469  | CA_rPCA3 |
+| 0.27  | 0.02 | Locus_2995 | CA_rPCA2 |
 
 ### Additional documentation and citations
 
