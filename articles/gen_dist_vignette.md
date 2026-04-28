@@ -190,7 +190,7 @@ p_euc_plink <- gen_dist_corr(euc_dists, plink_dists, "Euclidean", "Plink")
 #> ℹ See also `vignette("ggplot2-in-packages")` for more information.
 #> ℹ The deprecated feature was likely used in the algatr package.
 #>   Please report the issue to the authors.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
 p_pc_plink <- gen_dist_corr(pc_dists, plink_dists, "PC_based", "Plink")

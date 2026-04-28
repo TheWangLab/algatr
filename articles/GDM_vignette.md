@@ -242,7 +242,7 @@ summary(gdm_full$model)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Tue Nov 18 18:13:19 2025
+#> [1] Creation Date:  Tue Apr 28 00:23:20 2026
 #> [1] 
 #> [1] Name:  $        Name:  gdm_full Name:  model   
 #> [1] 
@@ -317,7 +317,7 @@ gdm_plot_diss(gdm_full$model)
 #> ℹ Please use `linewidth` instead.
 #> ℹ The deprecated feature was likely used in the algatr package.
 #>   Please report the issue to the authors.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
 ```
@@ -457,7 +457,7 @@ map <- gdm_map(gdm_full$model, CA_env, liz_coords)
     #> ℹ See also `vignette("ggplot2-in-packages")` for more information.
     #> ℹ The deprecated feature was likely used in the algatr package.
     #>   Please report the issue to the authors.
-    #> This warning is displayed once every 8 hours.
+    #> This warning is displayed once per session.
     #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     #> generated.
 
