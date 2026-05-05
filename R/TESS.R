@@ -714,3 +714,185 @@ algatr_col_default <- function(x) {
   return(col)
 }
 
+
+#' Krige admixture values
+#'
+#' @param qmat qmatrix
+#' @inheritParams tess_do_everything
+#' @param models variogram models to try
+#' @param nmax max neighbors for kriging
+#' @param maxdist max neighbor distance
+#' @param psill_start starting partial sill
+#' @param nugget_start starting nugget
+#' @param range_start starting range
+#' @param max_range_frac fraction of max variogram distance used for range start
+#' @param fit_method method passed to gstat::fit.variogram
+#' @param model_output if TRUE, return rasters plus variogram/model info
+#'
+#' @return Raster* type object of kriged Q values
+#' @export
+#'
+#' @family TESS functions
+tess_krig2 <- function(qmat, coords, grid, correct_kriged_Q = TRUE,
+                      models = c("Sph", "Exp", "Gau", "Mat"),
+                      nmax = Inf, maxdist = Inf,
+                      psill_start = NULL, nugget_start = NULL,
+                      range_start = NULL, max_range_frac = 0.5,
+                      fit_method = 6, model_output = FALSE) {
+
+  crs_check(coords, grid)
+
+  K <- ncol(qmat)
+
+  if (!inherits(grid, "SpatRaster")) grid <- terra::rast(grid)
+  krig_grid <- raster_to_grid(grid)
+  krig_df <- coords_to_sf(coords)
+
+  krig_out <-
+    purrr::map(
+      1:K,
+      ~krig_K2(
+        K = .x,
+        qmat = qmat,
+        krig_grid = krig_grid,
+        krig_df = krig_df,
+        models = models,
+        nmax = nmax,
+        maxdist = maxdist,
+        psill_start = psill_start,
+        nugget_start = nugget_start,
+        range_start = range_start,
+        max_range_frac = max_range_frac,
+        fit_method = fit_method,
+        model_output = model_output
+      )
+    )
+
+  if (model_output) {
+    krig_admix <- terra::rast(purrr::map(krig_out, "raster"))
+  } else {
+    krig_admix <- terra::rast(krig_out)
+  }
+
+  grid <- terra::resample(grid, krig_admix[[1]])
+  krig_admix <- terra::mask(krig_admix, grid)
+
+  if (correct_kriged_Q) {
+    krig_admix[krig_admix < 0] <- 0
+    krig_admix[krig_admix > 1] <- 1
+  }
+
+  names(krig_admix) <- paste0("K", 1:K)
+
+  if (model_output) {
+    return(list(
+      raster = krig_admix,
+      variograms = purrr::map(krig_out, "variogram"),
+      models = purrr::map(krig_out, "model")
+    ))
+  }
+
+  return(krig_admix)
+}
+
+
+#' Krige one K value
+#'
+#' @param K K value
+#' @param qmat Q matrix
+#'
+#' @export
+#' @noRd
+#' @family TESS functions
+krig_K2 <- function(K, qmat, krig_grid, krig_df,
+                   models = c("Sph", "Exp", "Gau", "Mat"),
+                   nmax = Inf, maxdist = Inf,
+                   psill_start = NULL, nugget_start = NULL,
+                   range_start = NULL, max_range_frac = 0.5,
+                   fit_method = 6, model_output = FALSE) {
+
+  krig_df$Q <- qmat[, K]
+
+  if (length(unique(krig_df$Q)) == 1) {
+    warning(
+      paste0(
+        "Only one unique Q value for K = ", K,
+        ", returning NULL (note: may want to consider different K value)"
+      )
+    )
+    return(NULL)
+  }
+
+  v <- gstat::variogram(Q ~ 1, data = krig_df)
+
+  if (is.null(psill_start)) {
+    psill_start <- stats::var(krig_df$Q, na.rm = TRUE) * 0.8
+  }
+
+  if (is.null(nugget_start)) {
+    nugget_start <- stats::var(krig_df$Q, na.rm = TRUE) * 0.2
+  }
+
+  if (is.null(range_start)) {
+    range_start <- max(v$dist, na.rm = TRUE) * max_range_frac
+  }
+
+  fitted_models <-
+    purrr::map(
+      models,
+      purrr::safely(function(mod) {
+        start_model <- gstat::vgm(
+          psill = psill_start,
+          model = mod,
+          range = range_start,
+          nugget = nugget_start
+        )
+
+        fit <- gstat::fit.variogram(
+          v,
+          model = start_model,
+          fit.method = fit_method
+        )
+
+        attr(fit, "model_name") <- mod
+        fit
+      })
+    ) %>%
+    purrr::map("result") %>%
+    purrr::compact()
+
+  if (length(fitted_models) == 0) {
+    stop("Variogram fitting failed for all models for K = ", K)
+  }
+
+  sse <- sapply(fitted_models, function(f) attr(f, "SSErr"))
+  best_fit <- fitted_models[[which.min(sse)]]
+
+  krig_model <- gstat::gstat(
+    formula = Q ~ 1,
+    locations = krig_df,
+    model = best_fit,
+    nmax = nmax,
+    maxdist = maxdist
+  )
+
+  krig_pred <- terra::predict(krig_model, newdata = krig_grid)
+
+  krig_r <- terra::rasterize(
+    krig_pred,
+    terra::rast(krig_grid),
+    field = "var1.pred"
+  )
+
+  names(krig_r) <- paste0("K", K)
+
+  if (model_output) {
+    return(list(
+      raster = krig_r,
+      variogram = v,
+      model = best_fit
+    ))
+  }
+
+  return(krig_r)
+}

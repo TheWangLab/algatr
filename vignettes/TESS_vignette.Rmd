@@ -172,6 +172,9 @@ krig_raster <- projectRaster(krig_raster, crs = "epsg:3310")
 
 # Now, we can run kriging using these coordinates
 krig_admix <- tess_krig(qmat, coords_proj, krig_raster)
+
+devtools::load_all()
+krig_admix2 <- tess_krig2(qmat, coords_proj, krig_raster)
 ```
 
 ## Visualizing TESS results

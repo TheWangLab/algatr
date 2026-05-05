@@ -64,7 +64,8 @@ Coordinates and rasters used in wingen should be in a projected (planar) coordin
 
 ```{r}
 # First, we reformat our dataframe of coordinates into sf coordinates
-coords_longlat <- st_as_sf(liz_coords, coords = c("x", "y"), crs = "+proj=longlat")
+# Note: the CRS argument specifies the coordinate reference system of the input coordinates; in this case, our coordinates are WGS84 longitude and latitude coordinates, so we specify a WGS84 CRS using the EPSG code 4326. Make sure to specify the correct CRS for your coordinates here.
+coords_longlat <- st_as_sf(liz_coords, coords = c("x", "y"), crs = 4326)
 
 # Next, the coordinates and raster can be projected to an equal area projection, in this case NAD83 / California Albers (EPSG 3310)
 coords_proj <- st_transform(coords_longlat, crs = 3310)
