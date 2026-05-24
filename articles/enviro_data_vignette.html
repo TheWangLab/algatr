@@ -90,7 +90,7 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bleutner.github.io/RStoolbox/" class="external-link">RStoolbox</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">geodata</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.github.io/geodata/" class="external-link">geodata</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/AnushaPB/wingen" class="external-link">wingen</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
@@ -192,7 +192,7 @@ projected system.</p>
 entire globe (excluding Antarctica); the data contained are four monthly
 variables and 18 bioclimatic variables, which are provided in tiles. The
 <code><a href="../reference/get_worldclim.html">get_worldclim()</a></code> function retrieves and extracts WorldClim
-data (using the <code><a href="https://rdrr.io/pkg/geodata/man/worldclim.html" class="external-link">worldclim_tile()</a></code> function in the geodata
+data (using the <code><a href="https://rspatial.github.io/geodata/reference/worldclim.html" class="external-link">worldclim_tile()</a></code> function in the geodata
 package) from relevant tiles based on your sampling coordinates, drawing
 a convex hull shape to connect all data points.</p>
 <p>Users can add a buffer around sampling coordinates using the
@@ -512,7 +512,8 @@ using the geodata package, cropping to California using the
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download the DEM raster using the elevation_30s function</span></span>
 <span><span class="co"># This will save a .tif file in your current dir</span></span>
-<span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/geodata/man/elevation.html" class="external-link">elevation_30s</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"USA"</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/geodata/reference/elevation.html" class="external-link">elevation_30s</a></span><span class="op">(</span>country <span class="op">=</span> <span class="st">"USA"</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Cached as: /tmp/Rtmp6GYK9Q/elevation/USA_elv_msk.zip</span></span>
 <span></span>
 <span><span class="co"># Crop to California limits</span></span>
 <span><span class="va">CA_dem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">dem</span>, <span class="va">CA_env</span><span class="op">)</span></span></code></pre></div>

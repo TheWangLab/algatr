@@ -378,6 +378,19 @@ Let’s see what the top candidate SNPs were for each of our LFMM runs:
 
 # Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)
 lfmm_table(lasso_results$df, order = TRUE)
+#> Warning: There was 1 warning in `dplyr::mutate()`.
+#> ℹ In argument: `dplyr::across(-c(var, snp), round, digits)`.
+#> Caused by warning:
+#> ! The `...` argument of `across()` is deprecated as of dplyr 1.1.0.
+#> Supply arguments directly to `.fns` through an anonymous function instead.
+#> 
+#>   # Previously
+#>   across(a:b, mean, na.rm = TRUE)
+#> 
+#>   # Now
+#>   across(a:b, \(x) mean(x, na.rm = TRUE))
+#> ℹ The deprecated feature was likely used in the algatr package.
+#>   Please report the issue to the authors.
 ```
 
 | snp | variable | B¹ | z-score | p-value | calibrated z-score | calibrated p-value | adjusted p-value |

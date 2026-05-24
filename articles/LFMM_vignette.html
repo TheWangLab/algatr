@@ -407,7 +407,20 @@ defined significance threshold.</p></li>
 runs:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Build tables for each of our LFMM runs, displaying only significant SNPs and ordering according to effect size (B)</span></span>
-<span><span class="fu"><a href="../reference/lfmm_table.html">lfmm_table</a></span><span class="op">(</span><span class="va">lasso_results</span><span class="op">$</span><span class="va">df</span>, order <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/lfmm_table.html">lfmm_table</a></span><span class="op">(</span><span class="va">lasso_results</span><span class="op">$</span><span class="va">df</span>, order <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: There was 1 warning in `dplyr::mutate()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> In argument: `dplyr::across(-c(var, snp), round, digits)`.</span></span>
+<span><span class="co">#&gt; Caused by warning:</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The `...` argument of `across()` is deprecated as of dplyr 1.1.0.</span></span>
+<span><span class="co">#&gt; Supply arguments directly to `.fns` through an anonymous function instead.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   # Previously</span></span>
+<span><span class="co">#&gt;   across(a:b, mean, na.rm = TRUE)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   # Now</span></span>
+<span><span class="co">#&gt;   across(a:b, \(x) mean(x, na.rm = TRUE))</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">algatr</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue to the authors.</span></span></code></pre></div>
 <div id="kcoblywemr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#kcoblywemr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';

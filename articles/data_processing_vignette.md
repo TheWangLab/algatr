@@ -85,7 +85,7 @@ A dosage matrix contains each row as an individual (unlike a vcf) and
 each column as a site. Importantly, genotypes are now encoded with a
 single number. For a diploid organism, there are three possibilities for
 coding genotypes in a dosage matrix: 0, 1, or 2 (corresponding to 0/0,
-1/1, and 0/1 from the vcf, respectively). `NA` still represents missing
+0/1, and 1/1 from the vcf, respectively). `NA` still represents missing
 data. We can convert our vcf to a dosage matrix using the
 [`vcf_to_dosage()`](https://thewanglab.github.io/algatr/reference/vcf_to_dosage.md)
 function:

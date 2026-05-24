@@ -135,7 +135,7 @@ entire globe (excluding Antarctica); the data contained are four monthly
 variables and 18 bioclimatic variables, which are provided in tiles. The
 [`get_worldclim()`](https://thewanglab.github.io/algatr/reference/get_worldclim.md)
 function retrieves and extracts WorldClim data (using the
-[`worldclim_tile()`](https://rdrr.io/pkg/geodata/man/worldclim.html)
+[`worldclim_tile()`](https://rspatial.github.io/geodata/reference/worldclim.html)
 function in the geodata package) from relevant tiles based on your
 sampling coordinates, drawing a convex hull shape to connect all data
 points.
@@ -545,6 +545,7 @@ object in our example dataset.
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
 dem <- elevation_30s(country = "USA", path = tempdir())
+#> Cached as: /tmp/Rtmp6GYK9Q/elevation/USA_elv_msk.zip
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)

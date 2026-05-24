@@ -235,14 +235,15 @@ retain.
 First, let’s get the shape (polygon) for the state of California. This
 will include the Channel Islands. We can retrieve administrative
 boundaries using the
-[`gadm()`](https://rdrr.io/pkg/geodata/man/gadm.html) function within
-the geodata package.
+[`gadm()`](https://rspatial.github.io/geodata/reference/gadm.html)
+function within the geodata package.
 
 ``` r
 
 par(mar = c(0, 0, 0, 0))
 
 states <- gadm("United States", level = 1, path = here())
+#> Cached as: /__w/algatr/algatr/gadm/gadm41_USA_1_pk.rds
 cali <- states[states$NAME_1 == "California", ]
 plot(cali)
 ```
