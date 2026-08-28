@@ -3,7 +3,7 @@
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords  coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)
-#' @param grid SpatRaster for kriging
+#' @param grid Optional SpatRaster for kriging (defaults to NULL)
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
@@ -13,11 +13,11 @@
 #' @param lambda numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
+#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #' @param model variogram model(s) to test during automatic kriging.
 #'   Passed to \code{\link[automap]{autoKrige}}. Defaults to
 #'   \code{c("Sph", "Exp", "Gau", "Ste")}. To restrict fitting to specific
 #'   models, provide one or more model names (e.g., \code{c("Sph", "Exp")}).
-#' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #'
 #' @family TESS functions
 #'
@@ -31,7 +31,7 @@
 #'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
-tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
+tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", lambda = 1, ploidy = 2, 
                                correct_kriged_Q = TRUE, quiet = FALSE,
