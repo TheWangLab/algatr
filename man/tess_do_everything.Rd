@@ -7,7 +7,7 @@
 tess_do_everything(
   gen,
   coords,
-  grid = NULL,
+  grid,
   Kvals = 1:10,
   K_selection = "manual",
   plot_method = "maxQ",
@@ -26,7 +26,7 @@ tess_do_everything(
 
 \item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
-\item{grid}{Optional SpatRaster for kriging (defaults to NULL)}
+\item{grid}{SpatRaster for kriging}
 
 \item{Kvals}{vector of K values to test}
 

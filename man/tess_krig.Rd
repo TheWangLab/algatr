@@ -17,7 +17,7 @@ tess_krig(
 
 \item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
-\item{grid}{Optional SpatRaster for kriging (defaults to NULL)}
+\item{grid}{SpatRaster for kriging}
 
 \item{model}{variogram model(s) to test during automatic kriging.
 Passed to \code{\link[automap]{autoKrige}}. Defaults to
