@@ -17,8 +17,8 @@ tess_do_everything(
   lambda = 1,
   ploidy = 2,
   correct_kriged_Q = TRUE,
-  model = c("Sph", "Exp", "Gau", "Ste"),
-  quiet = FALSE
+  quiet = FALSE,
+  model = c("Sph", "Exp", "Gau", "Ste")
 )
 }
 \arguments{
