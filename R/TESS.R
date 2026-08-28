@@ -249,7 +249,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE, model 
 #' @export
 #' @noRd
 #' @family TESS functions
-krig_K <- function(K, qmat, krig_grid, krig_df, model) {
+krig_K <- function(K, qmat, krig_grid, krig_df, model = c("Sph", "Exp", "Gau", "Ste")) {
   # Add Q values to spatial dataframe
   krig_df$Q <- qmat[, K]
 
