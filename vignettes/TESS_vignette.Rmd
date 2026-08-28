@@ -173,7 +173,8 @@ krig_raster <- projectRaster(krig_raster, crs = "epsg:3310")
 # krig_raster <- terra::project(krig_raster, "epsg:3310")
 
 # Now, we can run kriging using these coordinates
-krig_admix <- tess_krig(qmat, coords_proj, krig_raster)
+# Here we specify the variogram models to test during automatic kriging, but you can also specify other models or leave it to the default.
+krig_admix <- tess_krig(qmat, coords_proj, krig_raster, model = c("Sph", "Exp"))
 ```
 
 ## Visualizing TESS results
