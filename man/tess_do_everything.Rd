@@ -17,6 +17,7 @@ tess_do_everything(
   lambda = 1,
   ploidy = 2,
   correct_kriged_Q = TRUE,
+  model = c("Sph", "Exp", "Gau", "Ste"),
   quiet = FALSE
 )
 }
@@ -25,7 +26,7 @@ tess_do_everything(
 
 \item{coords}{coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)}
 
-\item{grid}{SpatRaster for kriging}
+\item{grid}{Optional SpatRaster for kriging (defaults to NULL)}
 
 \item{Kvals}{vector of K values to test}
 
@@ -44,6 +45,11 @@ tess_do_everything(
 \item{ploidy}{ploidy of data (defaults to 2)}
 
 \item{correct_kriged_Q}{whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)}
+
+\item{model}{variogram model(s) to test during automatic kriging.
+Passed to \code{\link[automap]{autoKrige}}. Defaults to
+\code{c("Sph", "Exp", "Gau", "Ste")}. To restrict fitting to specific
+models, provide one or more model names (e.g., \code{c("Sph", "Exp")}).}
 
 \item{quiet}{whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)}
 }

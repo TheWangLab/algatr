@@ -3,7 +3,7 @@
 #'
 #' @param gen genotype dosage matrix (rows = individuals & columns = snps) or `vcfR` object
 #' @param coords  coordinates of samples as sf points, a two-column matrix, or a data.frame representing x and y coordinates (see Details for important information about projections)
-#' @param grid SpatRaster for kriging
+#' @param grid Optional SpatRaster for kriging (defaults to NULL)
 #' @param Kvals vector of K values to test
 #' @param K_selection how to perform K selection ("manual" to enter into console (default) or "auto" for automatic selection based on \link[algatr]{bestK})
 #' @param plot_method method for making rainbow map of kriged layers (options: "maxQ" to only plot the max Q value for each cell (default), "allQ" to plot all Q values greater than \code{minQ}, "maxQ_poly" or "allQ_poly" to create the plots as previously described, but as polygons for each K instead of continuous Q values)
@@ -31,7 +31,7 @@
 #'
 #' @return list with all TESS results, final K value, and final kriged raster
 #' @export
-tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
+tess_do_everything <- function(gen, coords, grid = NULL, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", lambda = 1, ploidy = 2, 
                                correct_kriged_Q = TRUE, model = c("Sph", "Exp", "Gau", "Ste"),

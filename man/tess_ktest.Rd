@@ -23,7 +23,7 @@ tess_ktest(
 
 \item{Kvals}{vector of K values to test}
 
-\item{grid}{SpatRaster for kriging}
+\item{grid}{Optional SpatRaster for kriging (defaults to NULL)}
 
 \item{tess_method}{the type of TESS method to be run ("projected.ls" for projected least squares algorithm (default) or "qp" for quadratic programming algorithm)}
 
