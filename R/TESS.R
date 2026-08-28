@@ -34,8 +34,8 @@
 tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
                                tess_method = "projected.ls", lambda = 1, ploidy = 2, 
-                               correct_kriged_Q = TRUE, model = c("Sph", "Exp", "Gau", "Ste"),
-                               quiet = FALSE) {
+                               correct_kriged_Q = TRUE, quiet = FALSE,
+                               model = c("Sph", "Exp", "Gau", "Ste")) {
   message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
 
   # RUN TESS ---------------------------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #' @export
 #'
 #' @family TESS functions
-tess_krig <- function(qmat, coords, grid = NULL, model = c("Sph", "Exp", "Gau", "Ste"), correct_kriged_Q = TRUE) {
+tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE, model = c("Sph", "Exp", "Gau", "Ste")) {
   # Check CRS
   crs_check(coords, grid)
 
