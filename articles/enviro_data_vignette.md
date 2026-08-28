@@ -545,7 +545,7 @@ object in our example dataset.
 # Download the DEM raster using the elevation_30s function
 # This will save a .tif file in your current dir
 dem <- elevation_30s(country = "USA", path = tempdir())
-#> Cached as: /tmp/Rtmp6GYK9Q/elevation/USA_elv_msk.zip
+#> Cached as: /tmp/RtmpnKV5Gj/elevation/USA_elv_msk.zip
 
 # Crop to California limits
 CA_dem <- crop(dem, CA_env)

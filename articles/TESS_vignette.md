@@ -307,6 +307,21 @@ An example of how this can be accomplished is shown below. If no CRS is
 provided, a warning will be given and the function will assume the data
 are provided in a projected system.
 
+By default,
+[`tess_krig()`](https://thewanglab.github.io/algatr/reference/tess_krig.md)
+uses [`autoKrige()`](https://rdrr.io/pkg/automap/man/autoKrige.html) to
+automatically select among spherical (`"Sph"`), exponential (`"Exp"`),
+Gaussian (`"Gau"`), and Stein (`"Ste"`) variogram models. We have found
+that automatic variogram fitting can sometimes produce poor fits with
+unusual spatial patterns, particularly when there are many sampling
+points that are located very close together (for example, multiple
+individuals sampled from the same locality). In our experience, the
+spherical (`"Sph"`) and exponential (`"Exp"`) models tend to produce
+better fits. You can test different models by specifying the `model`
+argument in the
+[`tess_krig()`](https://thewanglab.github.io/algatr/reference/tess_krig.md)
+function.
+
 ``` r
 
 # First, create sf coordinates (note: EPSG 4326 is WGS84/latitude-longitude)
@@ -321,7 +336,8 @@ krig_raster <- projectRaster(krig_raster, crs = "epsg:3310")
 # krig_raster <- terra::project(krig_raster, "epsg:3310")
 
 # Now, we can run kriging using these coordinates
-krig_admix <- tess_krig(qmat, coords_proj, krig_raster)
+# Here we specify the variogram models to test during automatic kriging, but you can also specify other models or leave it to the default.
+krig_admix <- tess_krig(qmat, coords_proj, krig_raster, model = c("Sph", "Exp"))
 ```
 
 ### Visualizing TESS results

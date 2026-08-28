@@ -106,8 +106,8 @@ prints the best K value given the specified K selection procedure
 
 ## Note
 
-uses the \`tw\` function (originally from the archived CRAN package
-AssocTests)
+uses the [tw](https://thewanglab.github.io/algatr/reference/tw.md)
+function, previously from the archived CRAN package AssocTests
 
 uses the
 [find.clusters](https://rdrr.io/pkg/adegenet/man/find.clusters.html)

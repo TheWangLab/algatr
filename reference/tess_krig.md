@@ -5,7 +5,13 @@ Krige admixture values
 ## Usage
 
 ``` r
-tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
+tess_krig(
+  qmat,
+  coords,
+  grid = NULL,
+  correct_kriged_Q = TRUE,
+  model = c("Sph", "Exp", "Gau", "Ste")
+)
 ```
 
 ## Arguments
@@ -22,12 +28,20 @@ tess_krig(qmat, coords, grid = NULL, correct_kriged_Q = TRUE)
 
 - grid:
 
-  SpatRaster for kriging
+  Optional SpatRaster for kriging (defaults to NULL)
 
 - correct_kriged_Q:
 
   whether to correct kriged Q values so values greater than 1 are set to
   1 and values less than 0 are set to 0 (defaults to TRUE)
+
+- model:
+
+  variogram model(s) to test during automatic kriging. Passed to
+  [`autoKrige`](https://rdrr.io/pkg/automap/man/autoKrige.html).
+  Defaults to `c("Sph", "Exp", "Gau", "Ste")`. To restrict fitting to
+  specific models, provide one or more model names (e.g.,
+  `c("Sph", "Exp")`).
 
 ## Value
 

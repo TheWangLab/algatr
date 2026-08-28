@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="TESS">
 </head>
@@ -334,6 +334,18 @@ latitude-longitude coordinate systems) should be projected prior to use.
 An example of how this can be accomplished is shown below. If no CRS is
 provided, a warning will be given and the function will assume the data
 are provided in a projected system.</p>
+<p>By default, <code><a href="../reference/tess_krig.html">tess_krig()</a></code> uses <code><a href="https://rdrr.io/pkg/automap/man/autoKrige.html" class="external-link">autoKrige()</a></code> to
+automatically select among spherical (<code>"Sph"</code>), exponential
+(<code>"Exp"</code>), Gaussian (<code>"Gau"</code>), and Stein
+(<code>"Ste"</code>) variogram models. We have found that automatic
+variogram fitting can sometimes produce poor fits with unusual spatial
+patterns, particularly when there are many sampling points that are
+located very close together (for example, multiple individuals sampled
+from the same locality). In our experience, the spherical
+(<code>"Sph"</code>) and exponential (<code>"Exp"</code>) models tend to
+produce better fits. You can test different models by specifying the
+<code>model</code> argument in the <code><a href="../reference/tess_krig.html">tess_krig()</a></code>
+function.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># First, create sf coordinates (note: EPSG 4326 is WGS84/latitude-longitude)</span></span>
 <span><span class="va">coords_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">liz_coords</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
@@ -347,7 +359,8 @@ are provided in a projected system.</p>
 <span><span class="co"># krig_raster &lt;- terra::project(krig_raster, "epsg:3310")</span></span>
 <span></span>
 <span><span class="co"># Now, we can run kriging using these coordinates</span></span>
-<span><span class="va">krig_admix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_krig.html">tess_krig</a></span><span class="op">(</span><span class="va">qmat</span>, <span class="va">coords_proj</span>, <span class="va">krig_raster</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Here we specify the variogram models to test during automatic kriging, but you can also specify other models or leave it to the default.</span></span>
+<span><span class="va">krig_admix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tess_krig.html">tess_krig</a></span><span class="op">(</span><span class="va">qmat</span>, <span class="va">coords_proj</span>, <span class="va">krig_raster</span>, model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sph"</span>, <span class="st">"Exp"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualizing-tess-results">Visualizing TESS results<a class="anchor" aria-label="anchor" href="#visualizing-tess-results"></a>
@@ -605,7 +618,7 @@ K selection</a></td>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

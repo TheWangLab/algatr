@@ -18,7 +18,8 @@ tess_do_everything(
   lambda = 1,
   ploidy = 2,
   correct_kriged_Q = TRUE,
-  quiet = FALSE
+  quiet = FALSE,
+  model = c("Sph", "Exp", "Gau", "Ste")
 )
 ```
 
@@ -37,7 +38,7 @@ tess_do_everything(
 
 - grid:
 
-  SpatRaster for kriging
+  Optional SpatRaster for kriging (defaults to NULL)
 
 - Kvals:
 
@@ -91,6 +92,14 @@ tess_do_everything(
 
   whether to operate quietly and suppress the output of tables and
   figures (defaults to FALSE)
+
+- model:
+
+  variogram model(s) to test during automatic kriging. Passed to
+  [`autoKrige`](https://rdrr.io/pkg/automap/man/autoKrige.html).
+  Defaults to `c("Sph", "Exp", "Gau", "Ste")`. To restrict fitting to
+  specific models, provide one or more model names (e.g.,
+  `c("Sph", "Exp")`).
 
 ## Value
 

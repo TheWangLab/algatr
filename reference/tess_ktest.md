@@ -37,7 +37,7 @@ tess_ktest(
 
 - grid:
 
-  SpatRaster for kriging
+  Optional SpatRaster for kriging (defaults to NULL)
 
 - tess_method:
 
