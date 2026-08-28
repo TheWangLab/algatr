@@ -8,8 +8,8 @@ tess_krig(
   qmat,
   coords,
   grid = NULL,
-  model = c("Sph", "Exp", "Gau", "Ste"),
-  correct_kriged_Q = TRUE
+  correct_kriged_Q = TRUE,
+  model = c("Sph", "Exp", "Gau", "Ste")
 )
 }
 \arguments{
