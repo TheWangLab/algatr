@@ -13,6 +13,10 @@
 #' @param lambda numeric value for the spatial regularization parameter. The default value lambda = 1 attributes equal weights to the loss function and to the penalty function.
 #' @param ploidy ploidy of data (defaults to 2)
 #' @param correct_kriged_Q whether to correct kriged Q values so values greater than 1 are set to 1 and values less than 0 are set to 0 (defaults to TRUE)
+#' @param model variogram model(s) to test during automatic kriging.
+#'   Passed to \code{\link[automap]{autoKrige}}. Defaults to
+#'   \code{c("Sph", "Exp", "Gau", "Ste")}. To restrict fitting to specific
+#'   models, provide one or more model names (e.g., \code{c("Sph", "Exp")}).
 #' @param quiet whether to operate quietly and suppress the output of tables and figures (defaults to FALSE)
 #'
 #' @family TESS functions
@@ -29,7 +33,8 @@
 #' @export
 tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "manual",
                                plot_method = "maxQ", col_breaks = 20, minQ = 0.10,
-                               tess_method = "projected.ls", lambda = 1, ploidy = 2, correct_kriged_Q = TRUE,
+                               tess_method = "projected.ls", lambda = 1, ploidy = 2, 
+                               correct_kriged_Q = TRUE, model = c("Sph", "Exp", "Gau", "Ste"),
                                quiet = FALSE) {
   message("Please be aware: the do_everything functions are meant to be exploratory. We do not recommend their use for final analyses unless certain they are properly parameterized.")
 
@@ -87,7 +92,7 @@ tess_do_everything <- function(gen, coords, grid, Kvals = 1:10, K_selection = "m
 
   # Krige Qmatrix
   if (K != 1 & !is.null(grid)) {
-    krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q)
+    krig_admix <- tess_krig(qmat = qmat, coords = coords, grid = grid, correct_kriged_Q = correct_kriged_Q, model = model)
   } else {
     krig_admix <- NULL
   }
@@ -199,7 +204,7 @@ tess_ktest <- function(gen, coords, Kvals = 1:10, grid = NULL, tess_method = "pr
 #' @export
 #'
 #' @family TESS functions
-tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
+tess_krig <- function(qmat, coords, grid = NULL, model = c("Sph", "Exp", "Gau", "Ste"), correct_kriged_Q = TRUE) {
   # Check CRS
   crs_check(coords, grid)
 
@@ -215,7 +220,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
 
   # Krige each K value
   krig_admix <-
-    purrr::map(1:K, ~krig_K(.x, qmat, krig_grid, krig_df)) %>%
+    purrr::map(1:K, ~krig_K(.x, qmat, krig_grid, krig_df, model = model)) %>%
     terra::rast()
 
   # mask with original raster layer because the grid fills in all NAs
@@ -244,7 +249,7 @@ tess_krig <- function(qmat, coords, grid = NULL, correct_kriged_Q = TRUE) {
 #' @export
 #' @noRd
 #' @family TESS functions
-krig_K <- function(K, qmat, krig_grid, krig_df) {
+krig_K <- function(K, qmat, krig_grid, krig_df, model) {
   # Add Q values to spatial dataframe
   krig_df$Q <- qmat[, K]
 
@@ -256,7 +261,7 @@ krig_K <- function(K, qmat, krig_grid, krig_df) {
 
   # Krige (capture output so it is not printed automatically)
   quiet_krig <- purrr::quietly(automap::autoKrige)
-  co <- capture.output(krig_res <- quiet_krig(Q ~ 1, krig_df, new_data = krig_grid))
+  co <- capture.output(krig_res <- quiet_krig(Q ~ 1, krig_df, new_data = krig_grid, model = model))
   krig_res <- krig_res$result
 
   # Get Krige output
